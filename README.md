@@ -17,10 +17,12 @@ ARC GNU tool chain user guide or on the
 Finally you will need to check out the repositories for each of the tool chain
 components (its not all one big repository), including the linux repository
 for building the tool chain. These should be peers of this toolchain
-directory. if you are in this toolchain directory, then the following commands
-should be suitable
+directory. If you have yet to check any repository out, then the following
+should be appropriate for creating a new directory, `arc` with all the
+components.
 
-    cd ..
+    mkdir arc
+    cd arc
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
@@ -28,6 +30,7 @@ should be suitable
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
+    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
     cd toolchain
 
 Building the tool chain
