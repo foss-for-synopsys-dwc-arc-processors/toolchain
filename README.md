@@ -33,5 +33,18 @@ should be suitable
 Building the tool chain
 -----------------------
 
-Details will appear here very shortly.
+The script `build-all.sh` will build and install both *arc-elf32-* and
+*arc-linux-uclibc-* tool chains. The comments at the head of this script
+explain how it works and the parameters to use. It uses script
+`symlink-trunks.sh` to build a unified source directory.
+
+The script `arc-versions.sh` specifies the branches to use in each component
+git repository. It should be edited to change the default branches if
+required.
+
+Having built a unified source directory and checked out the correct branches,
+`build-all.sh` in turn uses `build-elf32.sh` and `build-uclibc.sh`. These
+build respectively the *arc-elf32* and *arc-linux-uclibc* tool chains. Details
+of the operation are provided as comments in each script file. Both these
+scripts use a common initialization script, `arc-init.sh`.
 
