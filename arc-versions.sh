@@ -46,7 +46,7 @@ do
     branch=`echo ${version} | cut -d ':' -f 2`
 
     cd ${ARC_GNU}/${tool}
-    if git co ${branch}
+    if git checkout ${branch}
     then
 	continue
     else
