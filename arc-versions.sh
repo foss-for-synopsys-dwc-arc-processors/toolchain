@@ -31,13 +31,13 @@
 # we fail.
 
 # Specify the versions to use as a string <tool>:<branch>. These are the
-# stable versions for the ARC 4.4 tool chain release.
-cgen="cgen:arc_4_4-cgen-1_0-stable"
-binutils="binutils:arc_4_4-binutils-2_19-stable"
-gcc="gcc:arc_4_4-gcc-4_4-stable"
-gdb="gdb:arc_4_4-gdb-6_8-stable"
-newlib="newlib:arc_4_4-newlib-1_17-stable"
-uclibc="uClibc:arc_4_4-uClibc-0_9_30-stable"
+# development versions for the ARC 4.4 tool chain release.
+cgen="cgen:arc_4_4-cgen-1_0-dev"
+binutils="binutils:arc_4_4-binutils-2_19-dev"
+gcc="gcc:arc_4_4-gcc-4_4-dev"
+gdb="gdb:arc_4_4-gdb-6_8-dev"
+newlib="newlib:arc_4_4-newlib-1_17-dev"
+uclibc="uClibc:arc_4_4-uClibc-0_9_30-dev"
 linux="linux:arc-2.6.35"
 
 for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
@@ -53,4 +53,3 @@ do
 	exit 1
     fi
 done
-
