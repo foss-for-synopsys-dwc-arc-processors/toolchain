@@ -9,7 +9,7 @@ contains various patches applied since the official tool chain release. The
 tool chain should still be reliable, but has not been through full release
 testing.
 
-The build script will check out the development branches for the 4.4 tool
+The build script will check out the development branches from the 4.4 tool
 chain component repositories.
 
 Prequisites
