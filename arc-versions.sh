@@ -38,7 +38,7 @@ gcc="gcc:arc_4_4-gcc-4_4-dev"
 gdb="gdb:arc_4_4-gdb-6_8-dev"
 newlib="newlib:arc_4_4-newlib-1_17-dev"
 uclibc="uClibc:arc_4_4-uClibc-0_9_30-dev"
-linux="linux:arc-2.6.35"
+linux="linux:stable-arc-3.2"
 
 for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
 do
