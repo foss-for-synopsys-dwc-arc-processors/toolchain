@@ -48,7 +48,10 @@ do
     cd ${ARC_GNU}/${tool}
     if git checkout ${branch}
     then
-	continue
+	if [ "x$1" == "x--auto-pull" ]
+	then
+	    git pull
+	fi
     else
 	exit 1
     fi
