@@ -249,9 +249,11 @@ then
     ARC_GNU=`(cd "$d/.." && pwd)`
 fi
 
+linux_user_spec=1
 # Default Linux directory if not already set.
 if [ "x${LINUXDIR}" = "x" ]
 then
+    linux_user_spec=0
     if [ -d "${ARC_GNU}"/linux ]
     then
 	LINUXDIR="${ARC_GNU}"/linux
@@ -313,7 +315,8 @@ echo "Checking out GIT trees" >> "${logfile}"
 echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
-if ${ARC_GNU}/toolchain/arc-versions.sh ${autopull} >> ${logfile} 2>&1
+if ${ARC_GNU}/toolchain/arc-versions.sh ${linux_user_spec} ${autopull} \
+    >> ${logfile} 2>&1
 then
     true
 else

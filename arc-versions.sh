@@ -38,7 +38,12 @@ gcc="gcc:arc_4_4-gcc-4_4-dev"
 gdb="gdb:arc_4_4-gdb-6_8-dev"
 newlib="newlib:arc_4_4-newlib-1_17-dev"
 uclibc="uClibc:arc_4_4-uClibc-0_9_30-dev"
-linux="linux:stable-arc-3.2"
+
+# If Linux dir was specified by user, don't bother with it's repository
+if [ $1 -eq 0 ]
+then
+	linux="linux:stable-arc-3.2"
+fi
 
 for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
 do
