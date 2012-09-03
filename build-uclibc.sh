@@ -254,7 +254,7 @@ sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
     -e "s#%CROSS_COMPILER_PREFIX%##" \
     < "${ARC_GNU}"/uClibc/arc_config > .config
 
-if make ARCH=${arch} install_headers >> "${logfile}" 2>&1
+if make ARCH=${arch} V=1 install_headers >> "${logfile}" 2>&1
 then
     echo "  finished installing UCLIBC headers"
 else
@@ -350,7 +350,7 @@ else
     exit 1
 fi
   
-if make ARCH=${arch} >> "${logfile}" 2>&1
+if make ARCH=${arch} V=1 >> "${logfile}" 2>&1
 then
     echo "  finished building UCLIBC"
 else
@@ -359,7 +359,7 @@ else
     exit 1
 fi
 
-if make ARCH=${arch} install >> "${logfile}" 2>&1
+if make ARCH=${arch} V=1 install >> "${logfile}" 2>&1
 then
     echo "  finished installing UCLIBC"
 else
