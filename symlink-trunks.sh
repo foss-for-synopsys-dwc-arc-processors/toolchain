@@ -95,13 +95,13 @@ for srcdir in ${srcdirs}; do
   for f in ${files}; do
     found=
     for i in ${ignore} ${ignore_additional}; do
-      if [ "$f" = "$i" ]; then
+      if [ "x$f" = "x$i" ]; then
 	found=yes
       fi
     done
     if [ -z "${found}" ]; then
       echo "$f		..linked"
-      if [ "${remove_old}" == yes ]; then
+      if [ "x${remove_old}" = "xyes" ]; then
 	rm -f $f
       fi
       ln -s ${srcdir}/$f .

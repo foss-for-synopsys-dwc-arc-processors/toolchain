@@ -1,0 +1,59 @@
+2012-09-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* ChangeLog: Created
+	* symlink-trunks.sh: Fix comparison operations in script.
+
+2012-09-03  Vineet Gupta <vgupta@synopsys.com>
+
+	* build-uclib.sh: Enable verbose building of uClibc.
+
+    Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+
+2012-09-03  Vineet Gupta <vgupta@synopsys.com>
+
+	* build-all.sh, arc-versions.sh: Don't bother with Linux repo if
+	user specifies --linux-dir.
+
+2012-09-03  Vineet Gupta <vgupta@synopsys.com>
+
+	* arc-versions.sh: Typo in prev commit for --auto-pull option.
+
+2012-08-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh, build-all.sh: Add --auto-pull option.
+	* build-all.sh: Ensure exits if GIT checkout fails.
+
+2012-08-27  Vineet Gupta <vgupta@synopsys.com>
+
+	* arc-versions.sh: switch to Linux 3.2.
+
+2012-08-24  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* README.md: Minor typo fixed.
+
+2012-08-24  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* README.md, arc-versions.sh: Updated for development branch.
+
+2012-08-24  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Use the full "git checkout" as command name.
+
+2012-08-24  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* README.md: Clarified instructions.
+
+2012-08-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh, arc-versions.sh, build-all.sh, build-elf32.sh
+	* build-uclibc.sh, symlink-trunks.sh: Baseline set of working
+	scripts.
+	* README.md: Updated for new scripts.
+
+2012-08-17  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* README.md: Some better initial instructions.
+
+2012-08-17  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* README.md: Initial commit.
