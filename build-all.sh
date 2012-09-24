@@ -306,6 +306,7 @@ then
     true
 else
     echo "ERROR: Failed to checkout GIT versions of tools"
+    exit 1
 fi
 
 # Make a unified source tree in the build directory
