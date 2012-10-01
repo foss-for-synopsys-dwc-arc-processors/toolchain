@@ -1,3 +1,8 @@
+2012-10-01  Simon Cook <simon.cook@embecosm.com>
+
+  * arc-versions.sh: Update for branches to build 4.8 toolchain.
+  * build-all.sh: Temporarily disable 4.8 uClibc building.
+
 2012-09-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* ChangeLog: Created

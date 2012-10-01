@@ -34,7 +34,7 @@
 # development versions for the ARC 4.4 tool chain release.
 cgen="cgen:arc_4_4-cgen-1_0-dev"
 binutils="binutils:arc_4_4-binutils-2_19-dev"
-gcc="gcc:arc_4_4-gcc-4_4-dev"
+gcc="gcc:arc_4_8-gcc-mainline-dev"
 gdb="gdb:arc_4_4-gdb-6_8-dev"
 newlib="newlib:arc_4_4-newlib-1_17-dev"
 uclibc="uClibc:arc_4_4-uClibc-0_9_30-dev"

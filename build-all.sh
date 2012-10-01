@@ -351,13 +351,13 @@ else
 fi
 
 # Build the arc-linux-uclibc- tool chain
-if "${ARC_GNU}"/toolchain/build-uclibc.sh --force
-then
-    true
-else
-    echo "ERROR: arc-linux-uclibc- tool chain build failed."
-    exit 1
-fi
+#if "${ARC_GNU}"/toolchain/build-uclibc.sh --force
+#then
+#    true
+#else
+#    echo "ERROR: arc-linux-uclibc- tool chain build failed."
+#    exit 1
+#fi
 
 # Link to the defined place. Note the introductory comments about the need to
 # specify explicitly the install directory.
