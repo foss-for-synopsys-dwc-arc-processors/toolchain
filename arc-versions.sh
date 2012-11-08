@@ -22,13 +22,38 @@
 # -----------------------------------------------------------------------------
 # Usage:
 
-#     ${ARC_GNU}/toolchain/arc-versions.sh
+#     ${ARC_GNU}/toolchain/arc-versions.sh [--linux-user-spec] [--auto-pull]
 
 # The environment variable ${ARC_GNU} should point to the directory within
 # which the GIT trees live.
 
 # We checkout the desired branch for each tool. Note that these must exist or
 # we fail.
+
+# Parse options
+until
+opt=$1
+case ${opt} in
+    --auto-pull)
+	autopull=$1
+	;;
+
+    --linux-user-spec)
+	linux_user_spec=$1
+	;;
+
+    ?*)
+	echo "Usage: ./arc-versions.sh [--linux-user-spec] [--auto-pull]"
+	exit 1
+	;;
+
+    *)
+	;;
+esac
+[ "x${opt}" = "x" ]
+do
+    shift
+done
 
 # Specify the versions to use as a string <tool>:<branch>. These are the
 # development versions for the ARC 4.4 tool chain release.
@@ -39,10 +64,11 @@ gdb="gdb:arc_4_4-gdb-6_8-dev"
 newlib="newlib:arc_4_4-newlib-1_17-dev"
 uclibc="uClibc:arc_4_4-uClibc-0_9_30-dev"
 
-# If Linux dir was specified by user, don't bother with it's repository
-if [ $1 -eq 0 ]
+# Only checkout the Linux repo if it wasn't specified by the user
+if [ "x${linux_user_spec}" = "x" ]
 then
-	linux="linux:stable-arc-3.2"
+    echo "Checking out default Linux"
+    linux="linux:stable-arc-3.2"
 fi
 
 for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
@@ -53,7 +79,7 @@ do
     cd ${ARC_GNU}/${tool}
     if git checkout ${branch}
     then
-	if [ "x$2" = "x--auto-pull" ]
+	if [ "x${autopull}" = "x--auto-pull" ]
 	then
 	    git pull
 	fi

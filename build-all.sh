@@ -58,6 +58,10 @@
 #     If a valid Linux directory cannot be determined, the script will
 #     terminate with an error.
 
+#     If an argument is specified with this option, then the arc-versions.sh
+#     script will assume it is already checked out on the desired branch (to
+#     help Linux developers).
+
 # --build-dir <build_dir>
 
 #     The directory in which the unified source tree will be constructed and
@@ -249,11 +253,11 @@ then
     ARC_GNU=`(cd "$d/.." && pwd)`
 fi
 
-linux_user_spec=1
 # Default Linux directory if not already set.
+linux_user_spec=--linux-user-spec
 if [ "x${LINUXDIR}" = "x" ]
 then
-    linux_user_spec=0
+    linux_user_spec=
     if [ -d "${ARC_GNU}"/linux ]
     then
 	LINUXDIR="${ARC_GNU}"/linux
