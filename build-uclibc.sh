@@ -153,7 +153,7 @@ case ${opt} in
 	rm -rf ${build_dir} ${build_dir_gdb}
 	;;
     ?*)
-	echo "Usage: ./build-elf32.sh [--force]"
+	echo "Usage: ./build-uclibc.sh [--force]"
 	exit 1
 	;;
 esac
