@@ -26,8 +26,11 @@
 
 #     build-all.sh [--source-dir <source_dir>]  [--linux-dir <linux_dir>]
 #                  [--build-dir <build_dir>] [--install-dir <install_dir>]
-#                  [--symlink-dir <symlink_dir>] [--datestamp-install]
-#                  [--auto-pull] [--comment-install <comment>] [--big-endian]
+#                  [--symlink-dir <symlink_dir>]
+#                  [--auto-pull | --no-auto-pull]
+#                  [--auto-checkout | --no-auto-checkout]
+#                  [--datestamp-install]
+#                  [--comment-install <comment>] [--big-endian]
 #                  [--enable-multilib | --disable-multilib]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
@@ -91,16 +94,21 @@
 #     versions of the tool chains remain available under the dated
 #     directories.
 
+# --auto-checkout | --no-auto-checkout
+
+#     If specified, a "git checkout" will be done in each component repository
+#     to ensure the correct branch is checked out. Default is to checkout.
+
+# --auto-pull | --no-auto-pull
+
+#     If specified, a "git pull" will be done in each component repository
+#     after checkout to ensure the latest code is in use. Default is to pull.
+
 # --datestamp-install
 
 #     If specified, this will append a date and timestamp to the install
 #     directory name. (see the comments under --symlink-dir above for reasons
 #     why this might be useful).
-
-# --auto-pull
-
-#     If specified, a "git pull" will be done in each component repository
-#     after checkout to ensure the latest code is in use.
 
 # --comment-install <comment>
 
@@ -138,6 +146,7 @@ unset builddir
 unset INSTALLDIR
 unset SYMLINKDIR
 unset ARC_ENDIAN
+unset autocheckout
 unset autopull
 unset datestamp
 unset commentstamp
@@ -167,6 +176,10 @@ build_pathnm ()
     fi
     echo $RESULT
 }
+
+# Set defaults for some options
+autocheckout="--auto-checkout"
+autopull="--auto-pull"
 
 # Parse options
 until
@@ -204,7 +217,11 @@ case ${opt} in
 	SYMLINKDIR=$(build_pathnm $@)
 	;;
 
-    --auto-pull)
+    --auto-checkout | --no-auto-checkout)
+	autocheckout=$1
+	;;
+
+    --auto-pull | --no-auto-pull)
 	autopull=$1
 	;;
 
@@ -231,7 +248,8 @@ case ${opt} in
         echo "                      [--build-dir <build_dir>]"
         echo "                      [--install-dir <install_dir>]"
 	echo "                      [--symlink-dir <symlink_dir>]"
-	echo "                      [--auto-pull]"
+	echo "                      [--auto-checkout | --no-auto-checkout]"
+        echo "                      [--auto-pull | --no-auto-pull]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
 	echo "                      [--enable-multilib | --disable-multilib]"
@@ -254,10 +272,8 @@ then
 fi
 
 # Default Linux directory if not already set.
-linux_user_spec=--linux-user-spec
 if [ "x${LINUXDIR}" = "x" ]
 then
-    linux_user_spec=
     if [ -d "${ARC_GNU}"/linux ]
     then
 	LINUXDIR="${ARC_GNU}"/linux
@@ -319,7 +335,7 @@ echo "Checking out GIT trees" >> "${logfile}"
 echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
-if ${ARC_GNU}/toolchain/arc-versions.sh ${linux_user_spec} ${autopull} \
+if ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
     >> ${logfile} 2>&1
 then
     true
