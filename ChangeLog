@@ -1,5 +1,9 @@
 2012-12-12  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-cleanup.sh: New script.
+
+2012-12-12  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* arc-versions.sh: Simplified to use just --auto-checkout and
 	--auto-pull options for all repositories.
 	* build-all.sh: Add --auto-checkout/--no-auto-checkout and
