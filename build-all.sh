@@ -327,7 +327,8 @@ export DISABLE_MULTILIB
 cd ${builddir}
 
 # Set up a logfile
-logfile="$(echo "${PWD}")/all-build-$(date -u +%F-%H%M).log"
+mkdir -p ${PWD}/logs
+logfile="$(echo "${PWD}")/logs/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 # Checkout the correct branch for each tool
@@ -349,7 +350,10 @@ echo "Linking unified tree" >> "${logfile}"
 echo "====================" >> "${logfile}"
 
 echo "Linking unified tree ..."
-component_dirs="${ARC_GNU}/gcc ${ARC_GNU}/newlib ${ARC_GNU}/binutils"
+component_dirs="${ARC_GNU}/gcc \
+                ${ARC_GNU}/newlib \
+                ${ARC_GNU}/binutils \
+                ${ARC_GNU}/gdb"
 rm -rf ${UNISRC}
 
 if ${ARC_GNU}/toolchain/symlink-trunks.sh --dest ${UNISRC} \

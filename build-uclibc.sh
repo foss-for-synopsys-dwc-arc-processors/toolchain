@@ -114,8 +114,7 @@
 # 5. Build & install the whole tool chain from scratch (including GCC stage 2)
 #    using the temporary headers
 
-# At present the GDB binutils libraries are out of step, so GDB has to be
-# built separately. gdbserver also has to be built and installed
+# We build GDB after GCC. gdbserver also has to be built and installed
 # separately. So we add two extra steps
 
 # 6. Build & install GDB
@@ -134,7 +133,6 @@ fi
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
 build_dir="$(echo "${PWD}")"/bd-uclibc
-build_dir_gdb="$(echo "${PWD}")"/bd-uclibc-gdb
 
 version_str="ARCompact Linux uClibc toolchain (built $(date +%Y%m%d))"
 bugurl_str="http://solvnet.synopsys.com"
@@ -150,7 +148,7 @@ until
 opt=$1
 case ${opt} in
     --force)
-	rm -rf ${build_dir} ${build_dir_gdb}
+	rm -rf ${build_dir}
 	;;
     ?*)
 	echo "Usage: ./build-uclibc.sh [--force]"
@@ -163,7 +161,8 @@ do
 done
 
 # Set up a logfile
-logfile="$(echo "${PWD}")/uclibc-build-$(date -u +%F-%H%M).log"
+mkdir -p ${PWD}/logs
+logfile="$(echo "${PWD}")/logs/uclibc-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" >> ${logfile}
@@ -174,7 +173,6 @@ echo "START ${ARC_ENDIAN}-endian uClibc: $(date)"
 . "${ARC_GNU}"/toolchain/arc-init.sh
 uclibc_build_dir="$(echo "${PWD}")"/uClibc
 linux_build_dir="$(echo "${PWD}")"/linux
-gdb_dir="${ARC_GNU}/gdb"
 
 # Note stuff for the log
 echo "Installing in ${INSTALLDIR}" >> ${logfile} 2>&1
@@ -430,35 +428,14 @@ fi
 export PATH=${INSTALLDIR}/bin:$PATH
 
 # -----------------------------------------------------------------------------
-# Build and install GDB separately. We need to do this, because its binutils
-# libraries are not compatible.
+# Build and install GDB
 echo "Building GDB" >> "${logfile}"
 echo "============" >> "${logfile}"
 
 echo "Start building GDB ..."
 
-# Create the build dir
-rm -rf "${build_dir_gdb}"
-mkdir -p "${build_dir_gdb}"
-cd "${build_dir_gdb}"
-
-# Configure the build. This time we allow things, and use the headers from the
-# stage 1 build. We still have to disable libgomp
-config_path=$(calcConfigPath "${gdb_dir}")
-if "${config_path}"/configure --target=${arche}-linux-uclibc --with-cpu=arc700 \
-        --disable-werror ${DISABLE_MULTILIB} \
-        --with-pkgversion="${version_str}"\
-        --with-bugurl="${bugurl_str}" \
-        --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} \
-        --prefix="${INSTALLDIR}" \
-    >> "${logfile}" 2>&1
-then
-    echo "  finished configuring GDB"
-else
-    echo "ERROR: GDB configure failed. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
+# Create the build dir, then build and install
+cd "${build_dir}"
 
 if make ${PARALLEL} all-sim all-gdb >> "${logfile}" 2>&1
 then
@@ -486,11 +463,11 @@ echo "===================================" >> "${logfile}"
 
 echo "Start building GDBSERVER to run on an ARC ..."
 
-rm -rf ${build_dir_gdb}/gdb/gdbserver
-mkdir -p ${build_dir_gdb}/gdb/gdbserver
-cd ${build_dir_gdb}/gdb/gdbserver
+rm -rf ${build_dir}/gdb/gdbserver
+mkdir -p ${build_dir}/gdb/gdbserver
+cd ${build_dir}/gdb/gdbserver
 
-config_path=$(calcConfigPath "${gdb_dir}"/gdb/gdbserver)
+config_path=$(calcConfigPath "${unified_src_abs}")/gdb/gdbserver)
 if "${config_path}"/configure \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}"  --with-endian=${ARC_ENDIAN} \

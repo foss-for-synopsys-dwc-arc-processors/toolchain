@@ -62,9 +62,6 @@
 # executed. The script generates a date and time stamped log file in that
 # directory.
 
-# At present the GDB binutils libraries are out of step, so GDB has to be
-# built separately.
-
 # This version is modified to work with the source tree as organized in
 # GitHub.
 
@@ -74,14 +71,13 @@
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
 build_dir="$(echo "${PWD}")"/bd-elf32
-build_dir_gdb="$(echo "${PWD}")"/bd-elf32-gdb
 
 # parse options
 until
 opt=$1
 case ${opt} in
     --force)
-	rm -rf ${build_dir} ${build_dir_gdb}
+	rm -rf ${build_dir}
 	;;
     ?*)
 	echo "Usage: ./build-elf32.sh [--force]"
@@ -94,16 +90,15 @@ do
 done
 
 # Set up a logfile
-logfile="$(echo "${PWD}")/elf32-build-$(date -u +%F-%H%M).log"
+mkdir -p ${PWD}/logs
+logfile="$(echo "${PWD}")/logs/elf32-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 echo "START ELF32: $(date)" >> ${logfile}
 echo "START ELF32: $(date)"
 
-# ARC initialization (Note. source, not exec), and our local variables that
-# depend on it.
+# ARC initialization (Note. source, not exec)
 . "${ARC_GNU}"/toolchain/arc-init.sh
-gdb_dir="${ARC_GNU}/gdb"
 
 # Note stuff for the log
 log_path=$(calcConfigPath "${logfile}")
@@ -142,7 +137,7 @@ else
     exit 1
 fi
 
-# Build binutils, GCC and newlib
+# Build binutils, GCC, newlib and GDB
 echo "Building tools" >> "${log_path}"
 echo "==============" >> "${log_path}"
 
@@ -152,7 +147,7 @@ cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
 if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
         all-target-libgcc all-target-libgloss all-target-newlib \
-        all-target-libstdc++-v3 >> "${log_path}" 2>&1
+        all-target-libstdc++-v3 all-sim all-gdb >> "${log_path}" 2>&1
 then
     echo "  finished building tools"
 else
@@ -160,7 +155,7 @@ else
     exit 1
 fi
 
-# Install binutils, GCC and newlib
+# Install binutils, GCC, newlib and GDB
 echo "Installing tools" >> "${log_path}"
 echo "================" >> "${log_path}"
 
@@ -170,74 +165,12 @@ cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
 if make install-binutils install-gas install-ld install-gcc \
         install-target-libgcc install-target-libgloss install-target-newlib \
-        install-target-libstdc++-v3 >> "${log_path}" 2>&1
+        install-target-libstdc++-v3 install-sim install-gdb \
+    >> "${log_path}" 2>&1
 then
     echo "  finished installing tools"
 else
     echo "ERROR: tools install failed."
-    exit 1
-fi
-
-# Configure GDB. We have to do this separately, because its binutils libraries
-# are incompatible.
-# TODO: should fix warnings instead of using --disable-werror.
-echo "Configuring GDB" >> "${log_path}"
-echo "===============" >> "${log_path}"
-
-echo "Configuring GDB ..."
-
-# Create the build dir
-build_path=$(calcConfigPath "${build_dir_gdb}")
-mkdir -p "${build_path}"
-cd "${build_path}"
-
-# Configure the build.
-config_path=$(calcConfigPath "${gdb_dir}")
-log_path=$(calcConfigPath "${logfile}")
-if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=arc700 \
-        --disable-werror ${DISABLE_MULTILIB} \
-        --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
-        --with-bugurl="http://solvnet.synopsys.com" \
-        --enable-fast-install=N/A \
-        --enable-languages=c,c++ --prefix=${INSTALLDIR} \
-        --with-headers="${config_path}"/newlib/libc/include \
-    >> "${log_path}" 2>&1
-then
-    echo "  finished configuring tools"
-else
-    echo "ERROR: configure failed."
-    exit 1
-fi
-
-# Build GDB
-echo "Building GDB" >> "${log_path}"
-echo "============" >> "${log_path}"
-
-echo "Building GDB ..."
-build_path=$(calcConfigPath "${build_dir_gdb}")
-cd "${build_path}"
-log_path=$(calcConfigPath "${logfile}")
-if make ${PARALLEL} all-gdb all-sim >> "${log_path}" 2>&1
-then
-    echo "  finished building GDB"
-else
-    echo "ERROR: GDB build failed."
-    exit 1
-fi
-
-# Install GDB
-echo "Installing GDB" >> "${log_path}"
-echo "==============" >> "${log_path}"
-
-echo "Installing GDB ..."
-build_path=$(calcConfigPath "${build_dir_gdb}")
-cd "${build_path}"
-log_path=$(calcConfigPath "${logfile}")
-if make install-gdb install-sim >> "${log_path}" 2>&1
-then
-    echo "  finished installing GDB"
-else
-    echo "ERROR: GDB install failed."
     exit 1
 fi
 
