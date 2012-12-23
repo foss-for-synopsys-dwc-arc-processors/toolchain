@@ -1,3 +1,8 @@
+2012-12-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* ChangeLog: Incorporated historical record prior to transferring
+	to git.
+
 2012-12-12  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-cleanup.sh: New script.
@@ -72,3 +77,461 @@
 2012-08-17  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* README.md: Initial commit.
+
+2012-07-16  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-uclibc.sh: Error message for usage corrected.
+
+2012-05-23  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-aa4.exp: Specify target_install
+	triplet. Use [find_gcc] to locate the compiler and remove all
+	hard-coded compiler names. No need to set target alias.
+	* build-linux.sh: Blow away existing libraries. Add the
+	uclibc_nonshared.a static library. Edit correct path names in to
+	libc.so.
+
+2012-04-07  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Tidied up comments
+	* README.arc: Brought up to date.
+
+2012-04-02  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Remove redundant exports.
+
+2012-04-02  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Make explicit that build-elf32.sh and
+	build-uclibc.sh are in the ARC_GNU directory.
+
+2012-04-02  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh, build-uclibc.sh: Code to recognize ARC_ENDIAN to
+	specify tool chain endianness.
+	* README.ARC: Updated for big-endian tool chains.
+
+2012-03-31  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-aa4.exp: Remove hard-coded compiler
+	locations.
+
+2012-03-30  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-aa4.exp <shell_prompt>: Revert
+	incorrect change to prompt.
+
+2012-03-30  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-elf32.sh, build-uclibc.sh: Build GDB separately, due to
+	incompatibility of its binutils libraries.
+	* README.ARC: Updated with new features and warning about
+	specifying the Linux directory.
+
+2012-03-29  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Remove echoing of install directory (duplicated later).
+
+2012-03-29  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* arc_initramfs/etc/inetd.conf: Mark telnetd to be executed under
+	inetd with -i flag.
+	* dejagnu/baseboards/arc-linux-aa4.exp <shell_prompt>: Changed to
+	match correction to telnetd invocation.
+
+2012-03-29  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-elf32.sh: Use INSTALLDIR rather than INSTALLDIR_ELF32.
+	* build-uclibc.sh: Use INSTALLDIR rather than
+	INSTALLDIR_UCLIBC. Use native C compiler to install uClibc
+	headers, and combine stage 1 binutils and GCC build.
+
+2012-03-27  Vineet Gupta       <vgupta@synopsys.com>
+
+	* build-all.sh: Remove --linux-defconfig from build system
+	and rely on kernel defconfig. Single install directory.
+	(build_pathnm): New function to build path names.
+	* build-rel.sh: Deleted.
+	* build-uclibc.sh: Remove --linux-defconfig from build system
+	and rely on kernel defconfig. Additionally don't generate .config
+	if it exists already (to avoid clobbering a dev kernel tree)
+	* README.ARC: Updated to match new interface.
+
+2012-03-27  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* bootstrap: Deleted - now redundant.
+
+2012-03-23  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* do_patches.sh: Allow new scripts, ignore build directories and
+	LTP
+	* README.ARC: Minor tidy ups.
+	* build-uclibc.sh: Remove temporary build directory correctly.
+
+2012-03-19  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Correct test for valid Linux directory.
+
+2012-03-19  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* README.ARC: Updated with details of the new build scripts.
+
+2012-03-19  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-uclibc.sh: Delete temporary directory when done. Give it a
+	process specific name to avoid clashing.
+
+2012-03-19  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Tidy up typos. Add --linux-defconfig argument.
+	* build-elf32.sh: Remove special treatment of newlib (not needed
+	for GCC 4.4.7).
+	* build-rel.sh: Rewrite to give legacy behaviour by calling
+	build-all.sh, add license header.
+	* build-uclibc.sh: Made consistent with build-elf32.sh, use
+	unified source tree.
+
+2012-03-19  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh: Name trapped signals, use standard format and width
+	for error messages, force to use bash or sh instead of all shells,
+	not just tcsh, incorporate arc-relpath.sh in this script, since it
+	is the only place it is used, make non-executable (it should be
+	sourced).
+	* arc-relpath.sh: Deleted (incorporated into arc-init.sh).
+	* arc-versions.sh: Added export of newlib, incorporated copyright
+	notice, made non-executable (it should be sourced).
+	* symlink-trunks: Renamed as symlink-trunks.sh for consistency.
+	* symlink-trunks.sh: Renamed from symlink-trunks for consistency.
+	* bld_elf32.sh: Renamed as build-elf32.sh for consistency.
+	* build_elf32_gcc.sh: Deleted: obsolete.
+	* build-elf32.sh: Renamed from bld_elf32.sh
+	* build-all.sh: Added argument handling to meet requirements for
+	backwards compatibility with build-rel.sh.
+	* build-rel.sh: Deleted, replaced by build-all.sh.
+	* build_uclibc.sh: Renamed as build-uclibc.sh
+	* build-uclibc.sh: Renamed from build_uclibc.sh.
+
+2012-03-08  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* bld_elf32.sh: Reinstate old default install directory selection.
+
+2012-03-01  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* dejagnu/debugger.exp
+	* dejagnu/target.exp
+	* dejagnu/ftp.exp
+	* dejagnu/dg.exp
+	* dejagnu/rlogin.exp
+	* dejagnu/remote.exp
+	* dejagnu/telnet.exp
+	* dejagnu/kermit.exp
+	* dejagnu/rsh.exp
+	* dejagnu/targetdb.exp
+	* dejagnu/tip.exp
+	* dejagnu/framework.exp
+	* dejagnu/utils.exp
+	* dejagnu/standard.exp
+	* dejagnu/runtest.exp
+	* dejagnu/stub-loader.c
+	* dejagnu/baseboards/vr4111-sim.exp
+	* dejagnu/baseboards/vxsparc.exp
+	* dejagnu/baseboards/mips-sim-idt64.exp
+	* dejagnu/baseboards/usparc-cygmon.exp
+	* dejagnu/baseboards/xtensa-sim.exp
+	* dejagnu/baseboards/vx960.exp
+	* dejagnu/baseboards/mips-sim.exp
+	* dejagnu/baseboards/i386-bozo.exp
+	* dejagnu/baseboards/fr30-sim.exp
+	* dejagnu/baseboards/frv-elf.exp
+	* dejagnu/baseboards/am33_2.0-libremote.exp
+	* dejagnu/baseboards/fr30-cygmon.exp
+	* dejagnu/baseboards/i960-sim.exp
+	* dejagnu/baseboards/arm-ice.exp
+	* dejagnu/baseboards/m68hc11-sim.exp
+	* dejagnu/baseboards/mips-sim-idt32.exp
+	* dejagnu/baseboards/mips-lnews-sim.exp
+	* dejagnu/baseboards/dos.exp
+	* dejagnu/baseboards/cris-sim.exp
+	* dejagnu/baseboards/m32r-elf.exp
+	* dejagnu/baseboards/mn10200-cygmon.exp
+	* dejagnu/baseboards/v850-sim.exp
+	* dejagnu/baseboards/cf.exp
+	* dejagnu/baseboards/h8300-sim.exp
+	* dejagnu/baseboards/powerpc-bug.exp
+	* dejagnu/baseboards/cygmon.exp
+	* dejagnu/baseboards/mt-sid.exp
+	* dejagnu/baseboards/vr4300.exp
+	* dejagnu/baseboards/sh-hms.exp
+	* dejagnu/baseboards/d10v-sim.exp
+	* dejagnu/baseboards/iq2000-sim.exp
+	* dejagnu/baseboards/gdbserver-sample.exp
+	* dejagnu/baseboards/d30v-sim.exp
+	* dejagnu/baseboards/vx4300.exp
+	* dejagnu/baseboards/frv-tiger.exp
+	* dejagnu/baseboards/mcore-moto-sim.exp
+	* dejagnu/baseboards/mcore-pe.exp
+	* dejagnu/baseboards/sparc64-sim.exp
+	* dejagnu/baseboards/mcore-elf.exp
+	* dejagnu/baseboards/powerpc-bug1.exp
+	* dejagnu/baseboards/sparclite-sim.exp
+	* dejagnu/baseboards/x86-cygmon.exp
+	* dejagnu/baseboards/sparclite-cygmon.exp
+	* dejagnu/baseboards/i960-cyclone.exp
+	* dejagnu/baseboards/unix.exp
+	* dejagnu/baseboards/tx39-dve.exp
+	* dejagnu/baseboards/sparclet-aout.exp
+	* dejagnu/baseboards/frv-sim.exp
+	* dejagnu/baseboards/mips-lsi-sim.exp
+	* dejagnu/baseboards/danlite-elf.exp
+	* dejagnu/baseboards/mn10300-sim.exp
+	* dejagnu/baseboards/vx68k.exp
+	* dejagnu/baseboards/powerpcle-sim.exp
+	* dejagnu/baseboards/m68k-emc.exp
+	* dejagnu/baseboards/mn10300-cygmon.exp
+	* dejagnu/baseboards/sparc-sim.exp
+	* dejagnu/baseboards/jmr3904-sim.exp
+	* dejagnu/baseboards/m32r-sid.exp
+	* dejagnu/baseboards/rom68k-idp.exp
+	* dejagnu/baseboards/sparclite-coff.exp
+	* dejagnu/baseboards/m68k-sid.exp
+	* dejagnu/baseboards/strongarm-cygmon.exp
+	* dejagnu/baseboards/i386-sid.exp
+	* dejagnu/baseboards/m32r-linux-sim.exp
+	* dejagnu/baseboards/m32r-sim.exp
+	* dejagnu/baseboards/sparclite-sim-le.exp
+	* dejagnu/baseboards/telnet-extra.exp
+	* dejagnu/baseboards/fr30-elf.exp
+	* dejagnu/baseboards/vr4100-sim.exp
+	* dejagnu/baseboards/vr4100-ddb.exp
+	* dejagnu/baseboards/vr4300-sim.exp
+	* dejagnu/baseboards/vr4300-ddb.exp
+	* dejagnu/baseboards/mips64vr4100-sim.exp
+	* dejagnu/baseboards/mips-idt.exp
+	* dejagnu/baseboards/sh-sid.exp
+	* dejagnu/baseboards/mcore-sim.exp
+	* dejagnu/baseboards/arm-sid.exp
+	* dejagnu/baseboards/tx39-sim.exp
+	* dejagnu/baseboards/basic-sid.exp
+	* dejagnu/baseboards/cygwin.exp
+	* dejagnu/baseboards/sh-sim.exp
+	* dejagnu/baseboards/op50n.exp
+	* dejagnu/baseboards/README
+	* dejagnu/baseboards/h8300.exp
+	* dejagnu/baseboards/arm-sim.exp
+	* dejagnu/baseboards/powerpc-sim.exp
+	* dejagnu/baseboards/basic-sim.exp
+	* dejagnu/baseboards/mips64-sim.exp
+	* dejagnu/baseboards/xscale-cygmon.exp
+	* dejagnu/baseboards/d10v.exp
+	* dejagnu/baseboards/ftp-extra.exp
+	* dejagnu/baseboards/tic80-sim.exp
+	* dejagnu/baseboards/mmixware-sim.exp
+	* dejagnu/baseboards/linux-libremote.exp
+	* dejagnu/baseboards/msparc-cygmon.exp
+	* dejagnu/baseboards/linux-gdbserver.exp
+	* dejagnu/baseboards/frv-tomcat.exp
+	* dejagnu/baseboards/mn10200-sim.exp
+	* dejagnu/baseboards/vr5000-ddb.exp
+	* dejagnu/config
+	* dejagnu/config/rom68k.exp
+	* dejagnu/config/m68k-emc.exp
+	* dejagnu/config/tic80.exp
+	* dejagnu/config/vr5000.exp
+	* dejagnu/config/m32r-stub.exp
+	* dejagnu/config/i386-bozo.exp
+	* dejagnu/config/arm-ice.exp
+	* dejagnu/config/sparclet.exp
+	* dejagnu/config/bug.exp
+	* dejagnu/config/sid.exp
+	* dejagnu/config/slite.exp
+	* dejagnu/config/mn10200-eval.exp
+	* dejagnu/config/m32r.exp
+	* dejagnu/config/vxworks.exp
+	* dejagnu/config/default.exp
+	* dejagnu/config/gdb-comm.exp
+	* dejagnu/config/dos.exp
+	* dejagnu/config/mips-idt.exp
+	* dejagnu/config/m68hc11.exp
+	* dejagnu/config/i960.exp
+	* dejagnu/config/proelf.exp
+	* dejagnu/config/sim.exp
+	* dejagnu/config/ddb.exp
+	* dejagnu/config/gdb_stub.exp
+	* dejagnu/config/cfdbug.exp
+	* dejagnu/config/powerpc-bug.exp
+	* dejagnu/config/cygmon.exp
+	* dejagnu/config/vr4100.exp
+	* dejagnu/config/vr4300.exp
+	* dejagnu/config/ddb-ether.exp
+	* dejagnu/config/README
+	* dejagnu/config/h8300.exp
+	* dejagnu/config/base68k.exp
+	* dejagnu/config/netware.exp
+	* dejagnu/config/arc.exp
+	* dejagnu/config/sh.exp
+	* dejagnu/config/d10v.exp
+	* dejagnu/config/base-config.exp
+	* dejagnu/config/dve.exp
+	* dejagnu/config/unix.exp
+	* dejagnu/config/mn10300-eval.exp
+	* dejagnu/dejagnu.exp
+	* dejagnu/libgloss.exp
+	* dejagnu/libexec
+	* dejagnu/libexec/config.guess
+	* dejagnu/testglue.c: Deleted.
+	* dejagnu/ftp-extra.exp, dejagnu/telnet-extra.exp: Moved from
+	baseboards directory.
+	* README.ARC: Updated for new scripts.
+
+2012-02-29  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build_uclibc.sh, bld_elf32.sh: Corrected bugurl.
+
+2012-02-24  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* lmbench3: Imported (based on LMBench 3.0-a8) from ARC.
+
+2012-01-31  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-aa4.exp: Correctly source
+	telnet-extra.exp and ftp-extra.exp.
+	* dejagnu/baseboards/ftp-extra.exp:
+	* dejagnu/baseboards/telnet-extra.exp: Generate verbose
+	notification when sourced.
+
+2012-01-27  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build_uclibc.sh: Corrected to build gdbserver in build
+	directory, not source directory and specify correct host.
+
+2012-01-25  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/ftp-extra.exp: Added.
+	* dejagnu/baseboards/telnet-extra.exp: Added.
+	* dejagnu/baseboards/arc-linux-aa4.exp: Added.
+
+2012-01-11  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* arc_linux_2.6.35.12/arch/arc/include/asm/checksum.h (csum_fold):
+	Use faster C implementation.
+	(ip_fast_csum): Show that we are reading memory from *iph.
+	Unroll and apply modulo scheduling.
+
+2012-01-09  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* site.exp: Added copyright notice. Extended to look for boards
+	dir locally.
+
+2012-01-09  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* bld_elf32.sh: Allow install dir to be passed optionally as first
+	argument. Send most output to log file.
+	* build_all.sh: Unified script for complete clean build of ELF
+	and uClibc tool chians.
+
+2012-01-07  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh: Better parallelism calculation. Exit if ARC_GNU is
+	not defined. Fix layout so the script is readable.
+	* build_uclibc.sh: Added license header comment. Rewritten to use
+	targets for installing headers for Linux and uClibc and with a
+	2-stage GCC build. Removed redundant check for arc-version.sh
+	which is in arc-init.sh anyway.
+
+2012-01-04  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* dejagnu/baseboards/arc-sim.exp: Use load_board_description instead
+	of load_base_board_description.
+	(xldflags): Increase heap and stack size.
+
+2012-01-03  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* arc-versions.sh (gcc): Change to gcc-4.4.7 .
+	* bld_elf32.sh (component_dirs): Change gcc directory to gcc-4.4.7 .
+	* gcc-4.4.7: copy of gcc-4.4.2, with gcc-4_4-branch up to
+	FSF version 182853 merged in.
+
+2012-01-01  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* bld_elf32.sh: Remove stale newlib link.
+
+2011-11-25  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* symlink-trunks, bld_elf32.sh: Adapt Embecosm build machinery.
+
+2011-06-29  Brendan Kehoe  <brendan@zen.org>
+
+	* arc-versions.sh (qt): Delete variable, not related to the
+	build.
+
+	* build_elf32.sh: Always dup newlib freshly into the source tree,
+	so we are definitely using the latest copy.
+
+	* build-rel.sh (INITRAMFS): Delete var.  Delete lines which
+	replace its value in the linux .config file---we don't need it,
+	since we're not building the kernel ourselves, and we shouldn't be
+	messing with the kernel tree to begin with.
+	(kernel_prep): Don't check it.
+
+	* build_uclibc.sh (KVER): Just do the work directly here.
+	(kernel_ver): Delete function, since that makes the script
+	fail on non-bash hosts (like Ubuntu's /bin/sh -> /bin/dash).
+
+2011-06-29 Brendan Kehoe  <brendan@zen.org>
+
+	* arc-init.sh (PARALLEL): Uncomment, since most builds happen
+	on machines capable of doing it.
+
+2011-06-28  Brendan Kehoe  <brendan@zen.org>
+
+	* build-rel.sh (SHELL): Force /bin/sh in the environment
+	so users of csh can build this too.
+
+2010-12-29  Michael Eager  <eager@eagercon.com>
+
+	* build_elf32_gcc.sh: NEW, build only gcc.
+
+2010-10-27  Brendan Kehoe  <brendan@zen.org>
+
+	* arc-init.sh [$MSYSTEM]: Load arc-relpath.sh on MSYS hosts.
+	* build_elf32.sh (build): Use calcConfigPath to compute the
+	relative path to the configure script.  Avoids gcc failing on
+	gengtype because of /c/... vs c:/... paths.
+	* build_uclibc.sh: Adjust each configure script likewise.
+	* arc-relpath.sh: New file.
+
+2010-09-28  Brendan Kehoe  <brendan@zen.org>
+
+	* arc-versions.sh (uclibc): Bump from 0.9.29 to 0.9.30.3.
+
+2010-09-03  Brendan Kehoe  <brendan@zen.org>
+
+	* build_uclibc.sh: Add '-p' to uncoditional mkdir cmds.
+
+2010-09-01  Michael Eager  <eager@eagercon.com>
+
+	* cgen-1.0: New: Copy from cgen-20070427-arc-int branch.
+
+2010-08-30  Brendan Kehoe  <brendan@zen.org>
+
+	* arc-versions.sh (qt): Define and export.
+
+	* bootstrap/bits/kernel_types.h (__kernel_old_dev_t): Add
+	missing definition.
+
+	* build-rel.sh: Fix subst of ${INITRAMFS}.
+
+2010-08-20  Brendan Kehoe  <brendan@zen.org>
+
+	* build_uclibc.sh: Adjust messages and add comment to point
+	out that the gdbserver binary is an ARC binary, not x86/host.
+	(ARC_GNU_ONLY_CONFIGURE): Add support, adjusting messages.
+
+2010-08-09  Brendan Kehoe  <brendan@zen.org>
+
+	* arc-versions.sh (uclibc): Set to 0.9.29 until 0.9.30 is known
+	to be functional.
+	(qt): Add qt version for test/* use.
+
+	* site.exp (arc*-*-elf32): Test both "arc-sim" and "arc600-sim".
