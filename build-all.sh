@@ -350,13 +350,10 @@ echo "Linking unified tree" >> "${logfile}"
 echo "====================" >> "${logfile}"
 
 echo "Linking unified tree ..."
-component_dirs="${ARC_GNU}/gcc \
-                ${ARC_GNU}/newlib \
-                ${ARC_GNU}/binutils \
-                ${ARC_GNU}/gdb"
+component_dirs="gcc newlib binutils gdb"
 rm -rf ${UNISRC}
 
-if ${ARC_GNU}/toolchain/symlink-trunks.sh --dest ${UNISRC} \
+if ${ARC_GNU}/toolchain/symlink-all.sh ${UNISRC} \
     "${component_dirs}" >> "${logfile}" 2>&1
 then
     true
@@ -364,6 +361,8 @@ else
     echo "ERROR: Failed to create ${UNISRC}"
     exit 1
 fi
+
+exit 0
 
 # Build the arc-elf32- tool chain
 if "${ARC_GNU}"/toolchain/build-elf32.sh --force
