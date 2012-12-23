@@ -1,0 +1,4 @@
+#  ARC simulation using CGEN simulator
+set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
+
+load_board_description "arc-sim-base"

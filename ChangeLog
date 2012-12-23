@@ -1,5 +1,17 @@
 2012-12-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* dejagnu: New directory for DejaGnu specific testing
+	* dejagnu/baseboards: New directory for ARC specific DejaGnu board
+	descriptions.
+	* dejagnu/baseboards/arc-linux-aa4.exp,
+	* dejagnu/baseboards/arc-sim-base.exp,
+	* dejagnu/baseboards/arc-sim-mdb.exp,
+	* dejagnu/baseboards/arc-sim.exp, dejagnu/baseboards/arc600-sim.exp,
+	* dejagnu/ftp-extra.exp, dejagnu/telnet-extra.exp, site.exp:
+	Transferred from ARC 4.4 tool chain in Subversion.
+
+2012-12-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* ChangeLog: Incorporated historical record prior to transferring
 	to git.
 

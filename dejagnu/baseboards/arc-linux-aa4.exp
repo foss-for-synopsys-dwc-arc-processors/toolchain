@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Copyright (C) 2010, 2011, 2012 Embecosm Limited
+
+# Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Joern Rennecke <joern.rennecke@embecosm.com>
+
+# This file is additional DejaGnu procs to support telnet based testing.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+
+# Make sure we tell people we are being executed.
+send_user "ARC Linux ARCAngel 4 test setup\n"
+
+# We need some extra and modified procs for testing with telnet and FTP.
+search_and_load_file "library file" "telnet-extra.exp" ${boards_dir}
+search_and_load_file "library file" "ftp-extra.exp" ${boards_dir}
+
+# This is a list of toolchains that are supported on this board.
+set_board_info target_install {arc-linux-uclibc}
+
+# Load the generic configuration for this board. This will define a basic set
+# of routines needed by the tool to communicate with the board.
+load_generic_config "unix"
+
+# No multilib options needed by default.
+process_multilib_options ""
+
+# Set up remote target info. For now this is hard-wired to an IP address, but
+# we ought to get name resolution working
+set_board_info hostname 192.168.0.100
+set_board_info username root
+
+# Specify the compilers to use.
+set_board_info compiler [find_gcc]
+
+# Set up to connect using telnet and FTP
+set_board_info connect               telnet
+set_board_info shell_prompt          "\[^\r\n\]*# "
+set_board_info telnet_username       "root"
+set_board_info telnet_password       ""
+set_board_info telnet_exec_timeout   120
+
+set_board_info file_transfer         ftp
+set_board_info ftp_username          root
+set_board_info ftp_password          ""
+set_board_info ftp_download_timeout  10
+set_board_info ftp_upload_timeout    10
+
+
+# We only support newlib on this target. We assume that all multilib
+# options have been specified before we get here.
+
+# We need to define this flag to generate default .gcda files if we are using
+# a stock compiler, without the profopt.exp changes. No problem with doubling
+# up the argument in normal circumstances.
+set_board_info cflags    "-fprofile-dir=."
+set_board_info cxxflags  "-fprofile-dir=."
+
+# No linker script needed.
+set_board_info ldscript ""
+
+# This simulator isn't slow.
+set_board_info slow_simulator 0
+
+# Can't pass arguments to programs on this target..
+set_board_info noargs  1
+
+# Used by a few gcc.c-torture testcases to delimit how large the stack can
+# be.
+set_board_info gcc,stack_size 65536
+
+# GDB options
+
+# We can't do input in GDB (yet! HA!). It *will* do output, hurrah.
+set_board_info gdb,noinferiorio 1
+# Or pass arguments.
+set_board_info gdb,noargs  1
+# And there's no support for signals.
+set_board_info gdb,nosignals  1
+# GDB can't return results
+set_board_info gdb,noresults 1

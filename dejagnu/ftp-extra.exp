@@ -1,0 +1,207 @@
+#!/bin/bash
+
+# Copyright (C) 2010 Embecosm Limited
+
+# This file is additional DejaGnu procs to support ftp based testing.
+
+# This file is a board description for testing OpenRISC with uClibc and
+# Or1ksim running Linux.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+
+
+# -----------------------------------------------------------------------------
+# For FTP we need to redefine some existing functions to add additional
+# features.
+
+verbose "Sourcing FTP extra definitions"
+
+# -----------------------------------------------------------------------------
+# Upload REMOTEFILE from HOST as LOCALFILE by FTP
+
+# This version swaps the argument order, which is what the regression test
+# seems to expect.
+
+# Also allows a custom timeout to be set.
+
+# @param[in] host        The host we are connected to.
+# @param[in] localfile   The local file to send
+# @param[in] remotefile  Name of file at remote end.
+# -----------------------------------------------------------------------------
+proc ftp_upload {host localfile remotefile} {
+    global board_info
+
+    set prompt "ftp>"
+    verbose "ftping $remotefile from $host to $localfile"
+
+    # JPB to set custom timeout (not marked global, so we don't need to save
+    # and restore)
+    if [board_info $host exists ftp_upload_timeout] {
+	set timeout [board_info $host ftp_upload_timeout]
+	verbose "FTP upload timeout set to $timeout"
+    } else {
+	# Appropriate default
+	set timeout 15
+	verbose "FTP upload timeout set to default value $timeout"
+    }
+
+    set spawn_id [ftp_open $host]
+    if {$spawn_id < 0} {
+	return ""
+    }
+    set loop 1
+
+    while {$loop} {
+	send -i $spawn_id "get $remotefile $localfile\n"
+	expect {
+	    -i $spawn_id -re ".*Too many open files.*$prompt" {
+		ftp_close $host
+	    }
+	    -i $spawn_id -re ".*No such file or directory.*$prompt" {
+		set loop 0
+		set remotefile ""
+	    }
+	    -i $spawn_id -re "(^|\[\r\n\])226.*$prompt" {set loop 0}
+	    -i $spawn_id -re "(^|\[\r\n\])\[0-9\]\[0-9\]\[0-9\].*$prompt" {
+		set loop 0
+		set remotefile ""
+	    }
+	    -i $spawn_id default {
+		ftp_close $host
+	    }
+	}
+	if {$loop} {
+	    set spawn_id [ftp_open $host]
+	    if {$spawn_id < 0} {
+		return ""
+	    }
+	}
+    }
+    return $localfile
+}
+
+
+proc make_relative {filename} {
+
+    set cwd [pwd]
+    verbose "Making $filename relative to $cwd" 2
+
+    # Find common parent directory
+    set prefx $cwd
+    set upsteps ""
+
+    while {0 != [string first $prefix $filename]} {
+	set prefix [file dirname $prefix]
+	set upsteps "../$upsteps"
+    }
+
+    if {0 == [string length $prefix]} {
+	verbose "No common file prefix found" 2
+	return $filename
+    } else {
+	verbose "common prefix is $prefix, relative to CWD by $upsteps" 2
+    }
+
+    # Delete the common prefix from the filename and replace it by $upsteps
+
+    # TODO...
+}
+    
+# -----------------------------------------------------------------------------
+# Download LOCALFILE to HOST as REMOTEFILE by FTP
+
+# This version takes a user specified timeout, which we need for our slow
+# simulated connection.
+
+# The standard test scripts seem to use the fully qualified localfile name,
+# which leads to FTP command lines that are too long. We turn it into a
+# relative filename.
+
+# @param[in] host        The host we are connected to.
+# @param[in] localfile   The local file to send
+# @param[in] remotefile  Name of file at remote end.
+# -----------------------------------------------------------------------------
+proc ftp_download {host localfile remotefile} {
+    global board_info
+
+    # Make our localfile relative to our current working directory
+    # set new_localfile [make_relative $localfile]
+    # verbose "new localfile is $new_localfile"
+
+    set prompt "ftp>"
+
+    verbose "putting $localfile $remotefile"
+
+    if [board_info $host exists hostname] {
+	set remotehost [board_info $host hostname]
+    } else {
+	set remotehost $host
+    }
+
+    set spawn_id [ftp_open $host]
+    if {$spawn_id < 0} {
+	return ""
+    }
+    set loop 1
+
+    # JPB to set custom timeout (not marked global, so we don't need to save
+    # and restore)
+    if [board_info $host exists ftp_download_timeout] {
+	set timeout [board_info $host ftp_download_timeout]
+	verbose "FTP download timeout set to $timeout"
+    } else {
+	# Appropriate default
+	set timeout 15
+	verbose "FTP download timeout set to default value $timeout"
+    }
+
+    while {$loop} {
+	send -i $spawn_id "put $localfile $remotefile\n"
+	expect {
+	    -i $spawn_id -re ".*Too many open files.*$prompt" {
+		ftp_close $host
+	    }
+	    -i $spawn_id -re ".*No such file or directory.*$prompt" {
+		set loop 0
+		set remotefile ""
+	    }
+	    -re "(^|\[\r\n\])150.*connection for (.*) \[(\]\[0-9.,\]+\\)\[\r\n\]" {
+		set remotefile $expect_out(2,string)
+		exp_continue
+	    }
+	    -i $spawn_id -re "(^|\[\r\n\])226.*$prompt" {
+		set loop 0
+	    }
+	    -i $spawn_id -re "Timeout.*$prompt" {
+		ftp_close $host
+	    }
+	    -i $spawn_id -re "(^|\[\r\n\])\[0-9\]\[0-9\]\[0-9\].*$prompt" {
+		set loop 0
+		set remotefile ""
+	    }
+	    -i $spawn_id default {
+		ftp_close $host
+	    }
+	}
+	if {$loop} {
+	    set spawn_id [ftp_open $host]
+	    if {$spawn_id < 0} {
+		return ""
+	    }
+	}
+    }
+    return $remotefile
+}
+
+
