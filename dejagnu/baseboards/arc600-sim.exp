@@ -1,0 +1,5 @@
+# We have to call this before loading the rest in order for it to be used.
+process_multilib_options "-mARC600"
+
+load_generic_config "arc-sim.exp"
+

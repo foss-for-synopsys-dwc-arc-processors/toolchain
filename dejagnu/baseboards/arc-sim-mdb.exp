@@ -1,0 +1,4 @@
+#  ARC simulation using MDB
+set xldflags "-Wl,--whole-archive /store/Virage/libhlt.a -Wl,--no-whole-archive"
+
+load_base_board_description "arc-sim-base"
