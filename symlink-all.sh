@@ -44,17 +44,15 @@ unisrc=$1
 shift
 cd ${unisrc}
 
+echo "Symlink-all" ${unisrc}
+
 # Symlink each tree
 for component in $*
 do
-    echo "Symlinking" ${component}
-    for d in ${component}/*
-    do
-	if ! ${ARC_GNU}/gcc/symlink-tree ${ARC_GNU}/${component}/${d}
-	then
-	    exit 1
-	fi
-    done
+    if ! ${ARC_GNU}/gcc/symlink-tree ${ARC_GNU}/${component}
+    then
+	exit 1
+    fi
 done
 
 exit 0

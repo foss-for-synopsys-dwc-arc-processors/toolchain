@@ -336,48 +336,45 @@ echo "Checking out GIT trees" >> "${logfile}"
 echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
-if ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
-    >> ${logfile} 2>&1
+if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
+      >> ${logfile} 2>&1
 then
-    true
-else
     echo "ERROR: Failed to checkout GIT versions of tools"
     exit 1
 fi
 
-# Make a unified source tree in the build directory
+# Make a unified source tree in the build directory. Note that later versions
+# override earlier versions with the current symlinking version.
 echo "Linking unified tree" >> "${logfile}"
 echo "====================" >> "${logfile}"
 
 echo "Linking unified tree ..."
-component_dirs="gcc newlib binutils gdb"
+component_dirs="gdb newlib gcc binutils"
 rm -rf ${UNISRC}
 
-if ${ARC_GNU}/toolchain/symlink-all.sh ${UNISRC} \
-    "${component_dirs}" >> "${logfile}" 2>&1
+if ! mkdir -p ${UNISRC}
 then
-    true
-else
     echo "ERROR: Failed to create ${UNISRC}"
     exit 1
 fi
 
-exit 0
+if ! ${ARC_GNU}/toolchain/symlink-all.sh ${UNISRC} \
+    "${component_dirs}" >> "${logfile}" 2>&1
+then
+    echo "ERROR: Failed to symlink ${UNISRC}"
+    exit 1
+fi
 
 # Build the arc-elf32- tool chain
-if "${ARC_GNU}"/toolchain/build-elf32.sh --force
+if ! "${ARC_GNU}"/toolchain/build-elf32.sh --force
 then
-    true
-else
     echo "ERROR: arc-elf32- tool chain build failed."
     exit 1
 fi
 
 # Build the arc-linux-uclibc- tool chain
-if "${ARC_GNU}"/toolchain/build-uclibc.sh --force
+if ! "${ARC_GNU}"/toolchain/build-uclibc.sh --force
 then
-    true
-else
     echo "ERROR: arc-linux-uclibc- tool chain build failed."
     exit 1
 fi
