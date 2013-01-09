@@ -65,6 +65,10 @@ function save_res {
     dos2unix --newfile ${bd}/${resfile}.sum \
                        ${rd}/${resbase}.sum >> ${logfile} 2>&1
     chmod ugo-wx ${rd}/${resbase}.sum
+
+    # Report the summary to the user
+    sed -n -e '/Summary/,$p' < ${rd}/${resbase}.sum
+    echo
 }
     
 
@@ -93,9 +97,9 @@ rm -f "${logfile_linux}"
 
 # Create build results directories
 mkdir -p ${ARC_GNU}/results
-res_elf="$(echo "${ARC_GNU}")/results/elf32-results-$(date -u +%F-%H%M).log"
+res_elf="$(echo "${ARC_GNU}")/results/elf32-results-$(date -u +%F-%H%M)"
 mkdir ${res_elf}
-res_linux="$(echo "${ARC_GNU}")/results/linux-results-$(date -u +%F-%H%M).log"
+res_linux="$(echo "${ARC_GNU}")/results/linux-results-$(date -u +%F-%H%M)"
 mkdir ${res_linux}
 
 # Run each regression in turn and gather results. Gathering results is a
@@ -104,6 +108,8 @@ mkdir ${res_linux}
 export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 
 # ELF tool chain tests
+echo "Running elf32 tests"
+
 run_check ${bd_elf}     binutils            "${logfile_elf}"
 save_res  ${bd_elf}     ${res_elf} binutils/binutils     "${logfile_elf}"
 run_check ${bd_elf}     gas                 "${logfile_elf}"
@@ -128,6 +134,8 @@ run_check ${bd_elf_gdb} gdb                 "${logfile_elf}"
 save_res  ${bd_elf_gdb} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}"
 
 # Linux tool chain tests
+echo "Running uClibc Linux tests"
+
 run_check ${bd_uclibc}     binutils            "${logfile_linux}"
 save_res  ${bd_uclibc}     ${res_linux} binutils/binutils     "${logfile_linux}"
 run_check ${bd_uclibc}     gas                 "${logfile_linux}"
