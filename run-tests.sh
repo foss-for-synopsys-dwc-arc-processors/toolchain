@@ -22,55 +22,65 @@
 #	SCRIPT TO RUN ARC-ELF32 and ARC-LINUX-UCLIBC REGRESSION TESTS
 #       =============================================================
 
-# Function to run a particular test in a particular directory
+# This script runs the ARC regression tests for the arc-elf32- and/or
+# arc-uclibc-linux- tool chains. It is designed to work with the source tree
+# as organized in GitHub. The arguments have the followign meaning.
 
-# $1 - build directory
-# $2 - tool to test (e.g. "binutils" will run "check-binutils"
-# $3 - log file
-function run_check {
-    bd=$1
-    tool=$2
-    logfile=$3
-    echo -n "Testing ${tool}..."
-    echo "Regression test ${tool}" >> "${logfile}"
-    echo "=======================" >> "${logfile}"
+# --source-dir <source_dir>
 
-    cd ${bd}
-    if make ${PARALLEL} "check-${tool}" >>  "${logfile}" 2>&1
-    then
-	echo " passed"
-    else
-	echo " failed"
-    fi
-    cd - > /dev/null 2>&1
-}
+#     The location of the ARC GNU tools source tree. If not specified, the
+#     script will use the value of the ARC_GNU environment variable if
+#     available.
 
-# Save the results files to the results directory, removing spare line feed
-# characters at the end of lines and marking as not writable or executable.
+#     If this argument is not specified, and the ARC_GNU environment variable
+#     is also not set, the script will use the parent of the directory where
+#     this script is installed.
 
-# $1 - build directory
-# $2 - results directory
-# $3 - results file name w/o suffix
-# $4 - logfile
-function save_res {
-    bd=$1
-    rd=$2
-    resfile=$3
-    logfile=$4
-    resbase=`basename $resfile`
+# --elf32 | --no-elf32
 
-    dos2unix --newfile ${bd}/${resfile}.log \
-	               ${rd}/${resbase}.log >> ${logfile} 2>&1
-    chmod ugo-wx ${rd}/${resbase}.log
-    dos2unix --newfile ${bd}/${resfile}.sum \
-                       ${rd}/${resbase}.sum >> ${logfile} 2>&1
-    chmod ugo-wx ${rd}/${resbase}.sum
+#     If specified, run the arc-elf32- tests (default is --elf32).
 
-    # Report the summary to the user
-    sed -n -e '/Summary/,$p' < ${rd}/${resbase}.sum
-    echo
-}
-    
+# --uclibc | --no-uclibc
+
+#     If specified, run the arc-uclibc-linux- tests (default is --uclibc).
+
+# ------------------------------------------------------------------------------
+# Set default values for some options
+elf32="--elf32"
+uclibc="--uclibc"
+
+# Parse options
+until
+opt=$1
+case ${opt} in
+    --source-dir)
+	shift
+	ARC_GNU=`(cd "$1" && pwd)`
+	;;
+
+    --elf32 | --no-elf32)
+	elf32=$1
+	;;
+
+    --uclibc | --no-uclibc)
+	uclibc=$1
+	;;
+
+    ?*)
+	echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
+        echo "                      [--elf32 | --no-elf32]"
+        echo "                      [--uclibc | --no-uclibc]"
+	exit 1
+	;;
+
+    *)
+	;;
+esac
+[ "x${opt}" = "x" ]
+do
+    shift
+done
+
 
 # Default source directory if not already set.
 if [ "x${ARC_GNU}" = "x" ]
@@ -79,78 +89,27 @@ then
     ARC_GNU=`(cd "$d/.." && pwd)`
 fi
 
-# Standard setup
-. "${ARC_GNU}"/toolchain/arc-init.sh
-
-# Set the build directories
-bd_elf=${ARC_GNU}/bd-elf32
-bd_elf_gdb=${ARC_GNU}/bd-elf32-gdb
-bd_linux=${ARC_GNU}/bd-uclibc
-bd_linux_gdb=${ARC_GNU}/bd-uclibc-gdb
-
-# Set up logfiles
+# Set up logfile and results directories if either does not exist
 mkdir -p ${ARC_GNU}/logs
-logfile_elf="$(echo "${ARC_GNU}")/logs/elf32-check-$(date -u +%F-%H%M).log"
-rm -f "${logfile_elf}"
-logfile_linux="$(echo "${ARC_GNU}")/logs/linux-check-$(date -u +%F-%H%M).log"
-rm -f "${logfile_linux}"
-
-# Create build results directories
 mkdir -p ${ARC_GNU}/results
-res_elf="$(echo "${ARC_GNU}")/results/elf32-results-$(date -u +%F-%H%M)"
-mkdir ${res_elf}
-res_linux="$(echo "${ARC_GNU}")/results/linux-results-$(date -u +%F-%H%M)"
-mkdir ${res_linux}
 
-# Run each regression in turn and gather results. Gathering results is a
-# separate function because of the variation in the location and number of
-# results files for each tool.
-export DEJAGNU=${ARC_GNU}/toolchain/site.exp
+# Export everything needed by sub-scripts
+export ARC_GNU
 
-# ELF tool chain tests
-echo "Running elf32 tests"
+# Run the ELF32 tests
+if [ "${elf32}" = "--elf32" ]
+then
+    if ! "${ARC_GNU}"/toolchain/run-elf32-tests.sh
+    then
+	echo "ERROR: arc-elf32- tests failed to run."
+    fi
+fi
 
-run_check ${bd_elf}     binutils            "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} binutils/binutils     "${logfile_elf}"
-run_check ${bd_elf}     gas                 "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} gas/testsuite/gas     "${logfile_elf}"
-run_check ${bd_elf}     ld                  "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} ld/ld                 "${logfile_elf}"
-run_check ${bd_elf}     gcc                 "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} gcc/testsuite/gcc/gcc "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} gcc/testsuite/g++/g++ "${logfile_elf}"
-# libgcc and libgloss tests are currently empty, so nothing to run or save.
-# run_check ${bd_elf}     target-libgcc       "${logfile_elf}"
-# run_check ${bd_elf}     target-libgloss     "${logfile_elf}"
-run_check ${bd_elf}     target-newlib       "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} arc-elf32/newlib/testsuite/newlib \
-    "${logfile_elf}"
-run_check ${bd_elf}     target-libstdc++-v3 "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} arc-elf32/libstdc++-v3/testsuite/libstdc++ \
-    "${logfile_elf}"
-run_check ${bd_elf_gdb} sim                 "${logfile_elf}"
-save_res  ${bd_elf_gdb} ${res_elf} sim/testsuite/sim     "${logfile_elf}"
-run_check ${bd_elf_gdb} gdb                 "${logfile_elf}"
-save_res  ${bd_elf_gdb} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}"
-
-# Linux tool chain tests
-echo "Running uClibc Linux tests"
-
-run_check ${bd_uclibc}     binutils            "${logfile_linux}"
-save_res  ${bd_uclibc}     ${res_linux} binutils/binutils     "${logfile_linux}"
-run_check ${bd_uclibc}     gas                 "${logfile_linux}"
-save_res  ${bd_uclibc}     ${res_linux} gas/testsuite/gas     "${logfile_linux}"
-run_check ${bd_uclibc}     ld                  "${logfile_linux}"
-save_res  ${bd_uclibc}     ${res_linux} ld/ld                 "${logfile_linux}"
-run_check ${bd_uclibc}     gcc                 "${logfile_linux}"
-save_res  ${bd_uclibc}     ${res_linux} gcc/testsuite/gcc/gcc "${logfile_linux}"
-save_res  ${bd_uclibc}     ${res_linux} gcc/testsuite/g++/g++ "${logfile_linux}"
-# libgcc tests are currently empty, so nothing to run or save.
-# run_check ${bd_uclibc}     target-libgcc       "${logfile_linux}"
-run_check ${bd_uclibc}     target-libstdc++-v3 "${logfile_linux}"
-save_res  ${bd_uclibc}     ${res_linux} \
-    arc-linux32/libstdc++-v3/testsuite/libstdc++ "${logfile_linux}"
-run_check ${bd_uclibc_gdb} sim                 "${logfile_linux}"
-save_res  ${bd_uclibc_gdb} ${res_linux} sim/testsuite/sim     "${logfile_linux}"
-run_check ${bd_uclibc_gdb} gdb                 "${logfile_linux}"
-save_res  ${bd_uclibc_gdb} ${res_linux} gdb/testsuite/gdb     "${logfile_linux}"
+# Run the UCLIBC tests
+if [ "${uclibc}" = "--uclibc" ]
+then
+    if ! "${ARC_GNU}"/toolchain/run-uclibc-tests.sh
+    then
+	echo "ERROR: arc-linux-uclibc- tests failed to run."
+    fi
+fi

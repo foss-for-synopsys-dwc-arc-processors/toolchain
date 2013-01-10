@@ -72,8 +72,59 @@
 #            shells, not just tcsh. Incorporate arc-relpath.sh in this script,
 #            since it is the only place it is used.
 
+# 10-Jan-13; Jeremy Bennett. Add useful functions.
+
 
 # -----------------------------------------------------------------------------
+# Useful functions
+# Function to run a particular test in a particular directory
+
+# $1 - build directory
+# $2 - tool to test (e.g. "binutils" will run "check-binutils"
+# $3 - log file
+function run_check {
+    bd=$1
+    tool=$2
+    logfile=$3
+    echo -n "Testing ${tool}..."
+    echo "Regression test ${tool}" >> "${logfile}"
+    echo "=======================" >> "${logfile}"
+
+    cd ${bd}
+    make ${PARALLEL} "check-${tool}" >>  "${logfile}" 2>&1
+    echo
+    cd - > /dev/null 2>&1
+}
+
+# Save the results files to the results directory, removing spare line feed
+# characters at the end of lines and marking as not writable or executable.
+
+# $1 - build directory
+# $2 - results directory
+# $3 - results file name w/o suffix
+# $4 - logfile
+function save_res {
+    bd=$1
+    rd=$2
+    resfile=$3
+    logfile=$4
+    resbase=`basename $resfile`
+
+    # Use -f, since funny line endings can cause dos2unix to think these are
+    # binary files.
+    dos2unix -f --newfile ${bd}/${resfile}.log \
+	                  ${rd}/${resbase}.log >> ${logfile} 2>&1
+    chmod ugo-wx ${rd}/${resbase}.log
+    dos2unix -f --newfile ${bd}/${resfile}.sum \
+                          ${rd}/${resbase}.sum >> ${logfile} 2>&1
+    chmod ugo-wx ${rd}/${resbase}.sum
+
+    # Report the summary to the user
+    echo
+    sed -n -e '/Summary/,$p' < ${rd}/${resbase}.sum | grep '^#' || true
+    echo
+}
+    
 # Make sure we stop if something failed. Since we are run with source, not exec
 # the build=*.sh scripts will also do this.
 trap "echo ERROR: Failed due to signal ; date ; exit 1" \
