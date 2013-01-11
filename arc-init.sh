@@ -91,7 +91,7 @@ function run_check {
     echo "=======================" >> "${logfile}"
 
     cd ${bd}
-    make ${PARALLEL} "check-${tool}" >>  "${logfile}" 2>&1
+    make ${PARALLEL} "check-${tool}" >>  "${logfile}" 2>&1 || true
     echo
     cd - > /dev/null 2>&1
 }

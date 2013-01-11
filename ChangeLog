@@ -1,3 +1,7 @@
+2013-01-11  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh (run_check): Don't fail overall if make fails.
+
 2013-01-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-init.sh (run_check, save_res): move functions to run tests
