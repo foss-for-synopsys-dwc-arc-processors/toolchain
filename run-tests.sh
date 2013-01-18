@@ -44,6 +44,12 @@
 
 #     If specified, run the arc-uclibc-linux- tests (default is --uclibc).
 
+# --big-endian
+
+#     If specified, test the big-endian version of the tool chains
+#     (i.e. arceb-elf32- and arceb-linux-uclibc-). At present this is only
+#     implemented for the Linux tool chain.
+
 # This script exits with zero if every test has passed and with non-zero value
 # otherwise.
 
@@ -69,10 +75,14 @@ case ${opt} in
 	uclibc=$1
 	;;
 
+    --big-endian)
+        ARC_ENDIAN=big
+        ;;
     ?*)
 	echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
+        echo "                      [--big-endian]"
 	exit 1
 	;;
 
@@ -92,12 +102,19 @@ then
     ARC_GNU=`(cd "$d/.." && pwd)`
 fi
 
+# Little endian is default
+if [ "x${ARC_ENDIAN}" = "x" ]
+then
+    ARC_ENDIAN=little
+fi
+
 # Set up logfile and results directories if either does not exist
 mkdir -p ${ARC_GNU}/logs
 mkdir -p ${ARC_GNU}/results
 
 # Export everything needed by sub-scripts
 export ARC_GNU
+export ARC_ENDIAN
 
 status=0
 

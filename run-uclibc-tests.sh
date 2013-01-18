@@ -35,6 +35,9 @@
 
 #   ${ARC_GNU}/results must exist and be writable
 
+#   ARC_ENDIAN environment variable must be either "big" or "little" to
+#   identify which type of toolchain tool chain to test.
+
 # Result is 0 if successful, 1 otherwise.
 
 
@@ -61,6 +64,14 @@ rm -f "${logfile_linux}"
 res_linux="$(echo "${ARC_GNU}")/results/linux-results-$(date -u +%F-%H%M)"
 mkdir ${res_linux}
 
+# Location of some files depends on endiannes
+if [ "${ARC_ENDIAN}" = "little" ]
+then
+    arc_linux_directory=arc-linux-uclibc
+else
+    arc_linux_directory=arceb-linux-uclibc
+fi
+
 # Run tests
 status=0
 run_check ${bd_linux}     binutils            "${logfile_linux}" || status=1
@@ -82,7 +93,7 @@ save_res  ${bd_linux}     ${res_linux} gcc/testsuite/g++/g++ "${logfile_linux}" 
 # run_check ${bd_linux}     target-libgcc       "${logfile_linux}"
 run_check ${bd_linux}     target-libstdc++-v3 "${logfile_linux}" || status=1
 save_res  ${bd_linux}     ${res_linux} \
-    arc-linux-uclibc/libstdc++-v3/testsuite/libstdc++ "${logfile_linux}" \
+    ${arc_linux_directory}/libstdc++-v3/testsuite/libstdc++ "${logfile_linux}" \
     || status=1
 run_check ${bd_linux_gdb} gdb                 "${logfile_linux}" || status=1
 save_res  ${bd_linux_gdb} ${res_linux} gdb/testsuite/gdb     "${logfile_linux}" \
