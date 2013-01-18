@@ -1,5 +1,9 @@
 2013-01-18  Anton Kolesov <akolesov@synopsys.com>
 
+	* run-tests.sh. run-uclibc-tests.sh: Handle tests for big endian properly.
+
+2013-01-18  Anton Kolesov <akolesov@synopsys.com>
+
 	* run-tests.sh, run-elf32-tests.sh, run-uclibc-tests.sh, arc-init
 	(run_check): Return non-zero value from scripts if there are failed tests.
 
