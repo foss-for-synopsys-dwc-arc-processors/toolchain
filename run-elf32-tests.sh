@@ -62,29 +62,36 @@ res_elf="$(echo "${ARC_GNU}")/results/elf32-results-$(date -u +%F-%H%M)"
 mkdir ${res_elf}
 
 # Run the tests
-run_check ${bd_elf}     binutils            "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} binutils/binutils     "${logfile_elf}"
-run_check ${bd_elf}     gas                 "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} gas/testsuite/gas     "${logfile_elf}"
-run_check ${bd_elf}     ld                  "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} ld/ld                 "${logfile_elf}"
-run_check ${bd_elf}     gcc                 "${logfile_elf}"
-save_res  ${bd_elf}     ${res_elf} gcc/testsuite/gcc/gcc "${logfile_elf}"
+status=0
+run_check ${bd_elf}     binutils            "${logfile_elf}" || status=1
+save_res  ${bd_elf}     ${res_elf} binutils/binutils     "${logfile_elf}" \
+    || status=1
+run_check ${bd_elf}     gas                 "${logfile_elf}" || status=1
+save_res  ${bd_elf}     ${res_elf} gas/testsuite/gas     "${logfile_elf}" \
+    || status=1
+run_check ${bd_elf}     ld                  "${logfile_elf}" || status=1
+save_res  ${bd_elf}     ${res_elf} ld/ld                 "${logfile_elf}" \
+    || status=1
+run_check ${bd_elf}     gcc                 "${logfile_elf}" || status=1
+save_res  ${bd_elf}     ${res_elf} gcc/testsuite/gcc/gcc "${logfile_elf}" \
+    || status=1
 echo "Testing g++..."
-save_res  ${bd_elf}     ${res_elf} gcc/testsuite/g++/g++ "${logfile_elf}"
+save_res  ${bd_elf}     ${res_elf} gcc/testsuite/g++/g++ "${logfile_elf}" \
+    || status=1
 # libgcc and libgloss tests are currently empty, so nothing to run or save.
 # run_check ${bd_elf}     target-libgcc       "${logfile_elf}"
 # run_check ${bd_elf}     target-libgloss     "${logfile_elf}"
-run_check ${bd_elf}     target-newlib       "${logfile_elf}"
+run_check ${bd_elf}     target-newlib       "${logfile_elf}" || status=1
 save_res  ${bd_elf}     ${res_elf} arc-elf32/newlib/testsuite/newlib \
-    "${logfile_elf}"
-run_check ${bd_elf}     target-libstdc++-v3 "${logfile_elf}"
+    "${logfile_elf}" || status=1
+run_check ${bd_elf}     target-libstdc++-v3 "${logfile_elf}" || status=1
 save_res  ${bd_elf}     ${res_elf} arc-elf32/libstdc++-v3/testsuite/libstdc++ \
-    "${logfile_elf}"
-run_check ${bd_elf_gdb} sim                 "${logfile_elf}"
-save_res  ${bd_elf_gdb} ${res_elf} sim/testsuite/sim     "${logfile_elf}"
-run_check ${bd_elf_gdb} gdb                 "${logfile_elf}"
-save_res  ${bd_elf_gdb} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}"
+    "${logfile_elf}" || status=1
+run_check ${bd_elf_gdb} sim                 "${logfile_elf}" || status=1
+save_res  ${bd_elf_gdb} ${res_elf} sim/testsuite/sim     "${logfile_elf}" \
+    || status=1
+run_check ${bd_elf_gdb} gdb                 "${logfile_elf}" || status=1
+save_res  ${bd_elf_gdb} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}" \
+    || status=1
 
-# Success
-exit 0
+exit ${status}

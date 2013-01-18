@@ -1,3 +1,8 @@
+2013-01-18  Anton Kolesov <akolesov@synopsys.com>
+
+	* run-tests.sh, run-elf32-tests.sh, run-uclibc-tests.sh, arc-init
+	(run_check): Return non-zero value from scripts if there are failed tests.
+
 2013-01-11  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-init.sh (run_check): Don't fail overall if make fails.
