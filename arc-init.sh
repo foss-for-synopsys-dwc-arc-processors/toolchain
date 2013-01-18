@@ -78,6 +78,7 @@
 # -----------------------------------------------------------------------------
 # Useful functions
 # Function to run a particular test in a particular directory
+# Returns non-zero value if make fails.
 
 # $1 - build directory
 # $2 - tool to test (e.g. "binutils" will run "check-binutils"
@@ -91,9 +92,11 @@ function run_check {
     echo "=======================" >> "${logfile}"
 
     cd ${bd}
-    make ${PARALLEL} "check-${tool}" >>  "${logfile}" 2>&1 || true
+    test_result=0
+    make ${PARALLEL} "check-${tool}" >>  "${logfile}" 2>&1 || test_result=1
     echo
     cd - > /dev/null 2>&1
+    return ${test_result}
 }
 
 # Save the results files to the results directory, removing spare line feed

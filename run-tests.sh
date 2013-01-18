@@ -44,6 +44,9 @@
 
 #     If specified, run the arc-uclibc-linux- tests (default is --uclibc).
 
+# This script exits with zero if every test has passed and with non-zero value
+# otherwise.
+
 # ------------------------------------------------------------------------------
 # Set default values for some options
 elf32="--elf32"
@@ -96,12 +99,15 @@ mkdir -p ${ARC_GNU}/results
 # Export everything needed by sub-scripts
 export ARC_GNU
 
+status=0
+
 # Run the ELF32 tests
 if [ "${elf32}" = "--elf32" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-elf32-tests.sh
     then
-	echo "ERROR: arc-elf32- tests failed to run."
+        echo "ERROR: arc-elf32- tests failed to run."
+        status=1
     fi
 fi
 
@@ -110,6 +116,10 @@ if [ "${uclibc}" = "--uclibc" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-uclibc-tests.sh
     then
-	echo "ERROR: arc-linux-uclibc- tests failed to run."
+        echo "ERROR: arc-linux-uclibc- tests failed to run."
+        status=1
     fi
 fi
+
+exit ${status}
+
