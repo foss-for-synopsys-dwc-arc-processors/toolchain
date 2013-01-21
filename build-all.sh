@@ -29,6 +29,7 @@
 #                  [--symlink-dir <symlink_dir>]
 #                  [--auto-pull | --no-auto-pull]
 #                  [--auto-checkout | --no-auto-checkout]
+#                  [--elf32 | --no-elf32] [--linux | --no-linux]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>] [--big-endian]
 #                  [--enable-multilib | --disable-multilib]
@@ -103,6 +104,15 @@
 
 #     If specified, a "git pull" will be done in each component repository
 #     after checkout to ensure the latest code is in use. Default is to pull.
+
+# --elf32 | --no-elf32
+
+#     If specified, build the arc-elf32- tool chain (default is --elf32).
+
+# --linux | --no-linux
+
+#     If specified, build the arc-uclibc-linux- tool chain (default is
+#     --linux).
 
 # --datestamp-install
 
@@ -180,6 +190,8 @@ build_pathnm ()
 # Set defaults for some options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
+elf32="--elf32"
+linux="--linux"
 
 # Parse options
 until
@@ -225,6 +237,14 @@ case ${opt} in
 	autopull=$1
 	;;
 
+    --elf32 | --no-elf32)
+	elf32=$1
+	;;
+
+    --linux | --no-linux)
+	linux=$1
+	;;
+
     --datestamp-install)
 	datestamp=-`date -u +%F-%H%M`
 	;;
@@ -250,6 +270,8 @@ case ${opt} in
 	echo "                      [--symlink-dir <symlink_dir>]"
 	echo "                      [--auto-checkout | --no-auto-checkout]"
         echo "                      [--auto-pull | --no-auto-pull]"
+        echo "                      [--elf32 | --no-elf32]"
+        echo "                      [--linux | --no-linux]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
 	echo "                      [--enable-multilib | --disable-multilib]"
@@ -335,11 +357,9 @@ echo "Checking out GIT trees" >> "${logfile}"
 echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
-if ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
+if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
     >> ${logfile} 2>&1
 then
-    true
-else
     echo "ERROR: Failed to checkout GIT versions of tools"
     exit 1
 fi
@@ -352,31 +372,31 @@ echo "Linking unified tree ..."
 component_dirs="${ARC_GNU}/gcc ${ARC_GNU}/newlib ${ARC_GNU}/binutils"
 rm -rf ${UNISRC}
 
-if ${ARC_GNU}/toolchain/symlink-trunks.sh --dest ${UNISRC} \
+if ! ${ARC_GNU}/toolchain/symlink-trunks.sh --dest ${UNISRC} \
     "${component_dirs}" >> "${logfile}" 2>&1
 then
-    true
-else
     echo "ERROR: Failed to create ${UNISRC}"
     exit 1
 fi
 
-# Build the arc-elf32- tool chain
-if "${ARC_GNU}"/toolchain/build-elf32.sh --force
+# Optionally build the arc-elf32- tool chain
+if [ "x${elf32}" == "x--elf32" ]
 then
-    true
-else
-    echo "ERROR: arc-elf32- tool chain build failed."
-    exit 1
+    if ! "${ARC_GNU}"/toolchain/build-elf32.sh --force
+    then
+	echo "ERROR: arc-elf32- tool chain build failed."
+	exit 1
+    fi
 fi
 
-# Build the arc-linux-uclibc- tool chain
-if "${ARC_GNU}"/toolchain/build-uclibc.sh --force
+# Optionally build the arc-linux-uclibc- tool chain
+if [ "x${linux}" == "x--linux" ]
 then
-    true
-else
-    echo "ERROR: arc-linux-uclibc- tool chain build failed."
-    exit 1
+    if ! "${ARC_GNU}"/toolchain/build-uclibc.sh --force
+    then
+	echo "ERROR: arc-linux-uclibc- tool chain build failed."
+	exit 1
+    fi
 fi
 
 # Link to the defined place. Note the introductory comments about the need to

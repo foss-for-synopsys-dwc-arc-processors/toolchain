@@ -431,7 +431,7 @@ export PATH=${INSTALLDIR}/bin:$PATH
 
 # -----------------------------------------------------------------------------
 # Build and install GDB separately. We need to do this, because its binutils
-# libraries are not compatible.
+# libraries are not compatible. No simulator build for Linux
 echo "Building GDB" >> "${logfile}"
 echo "============" >> "${logfile}"
 
@@ -460,7 +460,7 @@ else
     exit 1
 fi
 
-if make ${PARALLEL} all-sim all-gdb >> "${logfile}" 2>&1
+if make ${PARALLEL} all-gdb >> "${logfile}" 2>&1
 then
     echo "  finished building GDB"
 else
@@ -469,7 +469,7 @@ else
     exit 1
 fi
 
-if make install-sim install-gdb >> "${logfile}" 2>&1
+if make install-gdb >> "${logfile}" 2>&1
 then
     echo "  finished installing GDB"
 else
