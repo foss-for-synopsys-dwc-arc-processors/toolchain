@@ -37,9 +37,9 @@ load_generic_config "unix"
 # No multilib options needed by default.
 process_multilib_options ""
 
-# Set up remote target info. For now this is hard-wired to an IP address, but
-# we ought to get name resolution working
-set_board_info hostname 192.168.0.100
+# Set up remote target info. The name used here is an AA4 runing Linux 3.2. It
+# would be better to get this from an environment variable.
+set_board_info hostname aa4_32
 set_board_info username root
 
 # Specify the compilers to use.

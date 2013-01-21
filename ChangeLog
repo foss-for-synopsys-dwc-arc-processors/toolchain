@@ -1,3 +1,8 @@
+2013-01-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-aa4.exp: Use a hostname rather than
+	number.
+
 2013-01-18  Anton Kolesov <akolesov@synopsys.com>
 
 	* run-tests.sh, run-elf32-tests.sh, run-uclibc-tests.sh, arc-init
