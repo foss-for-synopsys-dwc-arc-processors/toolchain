@@ -1,3 +1,43 @@
+2013-01-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-aa4.exp: Use a hostname rather than
+	number.
+
+2013-01-18  Anton Kolesov <akolesov@synopsys.com>
+
+	* arc-init.sh (save_res): use "tr" instead of "dos2unix" to replace
+	Windows' line endings with Linux' line endings.
+
+2013-01-18  Anton Kolesov <akolesov@synopsys.com>
+
+	* run-tests.sh. run-uclibc-tests.sh: Handle tests for big endian properly.
+
+2013-01-18  Anton Kolesov <akolesov@synopsys.com>
+
+	* run-tests.sh, run-elf32-tests.sh, run-uclibc-tests.sh, arc-init
+	(run_check): Return non-zero value from scripts if there are failed tests.
+
+2013-01-11  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh (run_check): Don't fail overall if make fails.
+
+2013-01-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh (run_check, save_res): move functions to run tests
+	and process results to this script. Clean up recording of results.
+	* run-elf32-tests.sh, run-uclibc-tests.sh: New scripts
+	incorporating target specific code from run-tests.sh.
+	* run-tests.sh: split ELF and Linux tests out into their own
+	scripts. Add options to allow just one or the other to be run.
+
+2013-01-08  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* run-tests.sh: Minor tidy ups to directory names etc.
+
+2013-01-08  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* run-tests.sh: Script to run all the regression tests.
+
 2013-01-08  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Create unisrc directory. Use negation of tests,
