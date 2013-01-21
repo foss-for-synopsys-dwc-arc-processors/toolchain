@@ -113,13 +113,14 @@ function save_res {
     logfile=$4
     resbase=`basename $resfile`
 
-    # Use -f, since funny line endings can cause dos2unix to think these are
-    # binary files.
-    dos2unix -f --newfile ${bd}/${resfile}.log \
-	                  ${rd}/${resbase}.log >> ${logfile} 2>&1
+    # Generated files have Windows line endings. dos2unix tool cannot be used
+    # because sometimes it recognizes input files as binary and refuses to
+    # work. Specifying option "-f" could solve this problem, but RedHats
+    # dos2unix is too old to understand this option. "tr -d '\015\" seems to be
+    # more universal solution.
+    tr -d '\015' < ${bd}/${resfile}.log > ${rd}/${resbase}.log 2> ${logfile}
     chmod ugo-wx ${rd}/${resbase}.log
-    dos2unix -f --newfile ${bd}/${resfile}.sum \
-                          ${rd}/${resbase}.sum >> ${logfile} 2>&1
+    tr -d '\015' < ${bd}/${resfile}.sum > ${rd}/${resbase}.sum 2> ${logfile}
     chmod ugo-wx ${rd}/${resbase}.sum
 
     # Report the summary to the user
