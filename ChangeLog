@@ -1,3 +1,7 @@
+2013-01-22  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Restore creation of unified tree accidentally deleted.
+
 2013-01-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Add --elf32/--no-elf32 and --linux/--no-linux

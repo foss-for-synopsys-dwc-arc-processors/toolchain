@@ -380,6 +380,13 @@ then
     exit 1
 fi
 
+if ! ${ARC_GNU}/toolchain/symlink-all.sh ${UNISRC} \
+    "${component_dirs}" >> "${logfile}" 2>&1
+then
+    echo "ERROR: Failed to symlink ${UNISRC}"
+    exit 1
+fi
+
 # Optionally build the arc-elf32- tool chain
 if [ "x${elf32}" == "x--elf32" ]
 then
