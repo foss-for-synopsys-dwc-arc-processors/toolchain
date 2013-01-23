@@ -18,7 +18,20 @@
 # more details.
 
 # You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+       
+# Before using, make the following changes
+
+# 1. Edit the value of hostname to an IP address or machine name
+
+# 2. Edit the value of the username and password to use on the board
+
+# 3. Edit the prompt string. Remember that if it includes "$", this will need
+#    escaping as "\\\$".
+
+# 4. edit the values of telnet_username, telnet_password, ftp_username and
+#    ftp_password as necessary. These are probably the sanem as username and
+#    password.
 
 # Make sure we tell people we are being executed.
 send_user "ARC Linux ARCAngel 4 test setup\n"
@@ -41,6 +54,7 @@ process_multilib_options ""
 # would be better to get this from an environment variable.
 set_board_info hostname aa4_32
 set_board_info username root
+set_board_info password ""
 
 # Specify the compilers to use.
 set_board_info compiler [find_gcc]

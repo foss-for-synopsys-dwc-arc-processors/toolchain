@@ -118,9 +118,9 @@ function save_res {
     # work. Specifying option "-f" could solve this problem, but RedHats
     # dos2unix is too old to understand this option. "tr -d '\015\" seems to be
     # more universal solution.
-    tr -d '\015' < ${bd}/${resfile}.log > ${rd}/${resbase}.log 2> ${logfile}
+    tr -d '\015' < ${bd}/${resfile}.log > ${rd}/${resbase}.log 2>> ${logfile}
     chmod ugo-wx ${rd}/${resbase}.log
-    tr -d '\015' < ${bd}/${resfile}.sum > ${rd}/${resbase}.sum 2> ${logfile}
+    tr -d '\015' < ${bd}/${resfile}.sum > ${rd}/${resbase}.sum 2>> ${logfile}
     chmod ugo-wx ${rd}/${resbase}.sum
 
     # Report the summary to the user

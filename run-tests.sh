@@ -24,7 +24,16 @@
 
 # This script runs the ARC regression tests for the arc-elf32- and/or
 # arc-uclibc-linux- tool chains. It is designed to work with the source tree
-# as organized in GitHub. The arguments have the followign meaning.
+# as organized in GitHub.
+
+# PREPARATION:
+
+# Before running the tests, edit dejagnu/baseboards/arc-linux-aa4.exp,
+# following the guideline in the comments at the top of that file.
+
+# ARGUMENTS:
+
+# The arguments have the following meaning.
 
 # --source-dir <source_dir>
 
@@ -123,7 +132,7 @@ if [ "${elf32}" = "--elf32" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-elf32-tests.sh
     then
-        echo "ERROR: arc-elf32- tests failed to run."
+        echo "ERROR: arc-elf32- tests failed"
         status=1
     fi
 fi
@@ -133,10 +142,9 @@ if [ "${uclibc}" = "--uclibc" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-uclibc-tests.sh
     then
-        echo "ERROR: arc-linux-uclibc- tests failed to run."
+        echo "ERROR: arc-linux-uclibc- tests failed"
         status=1
     fi
 fi
 
 exit ${status}
-

@@ -1,3 +1,12 @@
+2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh (save_res): Append errors to log, not overwrite.
+	* dejagnu/baseboards/arc-linux-aa4.exp: Improve commenting, and
+	general password field.
+	* run-elf32-tests.sh: Add target_dir.
+	* run-tests.sh: Tidy up error messages. Add better commenting
+	* run-uclibc-tests.sh: Make target_dir generic, tidy up layout
+
 2013-01-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Add --elf32/--no-elf32 and --linux/--no-linux
