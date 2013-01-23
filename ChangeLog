@@ -1,3 +1,8 @@
+2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Swap order of binutils and gcc in unified tree,
+	due to binutils being too old for gcc.
+
 2013-01-22  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Restore creation of unified tree accidentally deleted.
