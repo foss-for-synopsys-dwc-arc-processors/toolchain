@@ -75,9 +75,9 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-elf32) local to the directory in which it is
-# executed. The script generates a date and time stamped log file in that
-# directory.
+# and uses a build directory (bd-4.8-uclibc) local to the directory in which
+# it is executed. The script generates a date and time stamped log file in
+# that directory.
 
 # This approach is based on Mike Frysinger's guidelines on building a
 # cross-compiler.
@@ -132,7 +132,7 @@ fi
 
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
-build_dir="$(echo "${PWD}")"/bd-uclibc
+build_dir="$(echo "${PWD}")"/bd-4.8-uclibc
 
 version_str="ARCompact Linux uClibc toolchain (built $(date +%Y%m%d))"
 bugurl_str="http://solvnet.synopsys.com"

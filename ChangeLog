@@ -1,5 +1,12 @@
 2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-all.sh: Restore order of binutils and gcc, following
+	binutils update.
+	* build-uclibc.sh: Use 4.8 specific build-dir
+	* build-elf32.sh: Likewise.
+
+2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Swap order of binutils and gcc in unified tree,
 	due to binutils being too old for gcc.
 

@@ -58,8 +58,8 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-elf32) local to the directory in which it is
-# executed. The script generates a date and time stamped log file in that
+# and uses a build directory (bd-4.8-elf32) local to the directory in which it
+# is executed. The script generates a date and time stamped log file in that
 # directory.
 
 # This version is modified to work with the source tree as organized in
@@ -70,7 +70,7 @@
 # constructing.
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
-build_dir="$(echo "${PWD}")"/bd-elf32
+build_dir="$(echo "${PWD}")"/bd-4.8-elf32
 
 # parse options
 until
@@ -147,11 +147,19 @@ cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
 if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
         all-target-libgcc all-target-libgloss all-target-newlib \
-        all-target-libstdc++-v3 all-sim all-gdb >> "${log_path}" 2>&1
+        all-target-libstdc++-v3 all-sim >> "${log_path}" 2>&1
 then
-    echo "  finished building tools"
+    echo "  finished building tools (excl GDB)"
 else
-    echo "ERROR: tools build failed."
+    echo "ERROR: tools build (excl GDB) failed."
+    exit 1
+fi
+
+if make ${PARALLEL} all-gdb >> "${log_path}" 2>&1
+then
+    echo "  finished building GDB"
+else
+    echo "ERROR: GDB build failed."
     exit 1
 fi
 
