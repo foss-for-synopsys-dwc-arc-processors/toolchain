@@ -1,3 +1,9 @@
+2013-01-31  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Make 4.8 specific unisrc.
+	* build-uclibc.sh: Remove duplicate bugurl setting from gdbserver
+	configuration.
+
 2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Restore order of binutils and gcc, following

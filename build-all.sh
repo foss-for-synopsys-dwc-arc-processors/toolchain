@@ -338,7 +338,7 @@ then
 fi
 
 # All the things we export to the scripts
-export UNISRC=unisrc
+export UNISRC=unisrc-4.8
 export ARC_GNU
 export LINUXDIR
 export INSTALLDIR

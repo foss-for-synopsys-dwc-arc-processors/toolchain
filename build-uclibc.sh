@@ -471,7 +471,6 @@ config_path=$(calcConfigPath "${unified_src_abs}")/gdb/gdbserver)
 if "${config_path}"/configure \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}"  --with-endian=${ARC_ENDIAN} \
-        --with-bugurl="http://solvnet.synopsys.com" \
         --host=${arche}-linux-uclibc >> "${logfile}" 2>> "${logfile}"
 then
     echo "  finished configuring gdbserver"
