@@ -1,3 +1,8 @@
+2012-01-31  Simon Cook  <simon.cook@embecosm.com>
+
+	*  build-elf32.sh: Add --enable-sim-endian=no to configure options to
+	allow correct endian simulator to be built.
+
 2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Restore order of binutils and gcc, following

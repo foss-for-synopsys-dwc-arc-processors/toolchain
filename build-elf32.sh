@@ -129,6 +129,7 @@ if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=arc700 \
         --enable-fast-install=N/A \
         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
         --with-headers="${config_path}"/newlib/libc/include \
+        --enable-sim-endian=no \
     >> "${log_path}" 2>&1
 then
     echo "  finished configuring tools"
