@@ -400,7 +400,7 @@ fi
 PARALLEL="-j ${jobs} -l ${load}"
 
 # All the things we export to the scripts
-export UNISRC=unisrc
+export UNISRC=unisrc-4.8
 export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
@@ -412,7 +412,8 @@ export PARALLEL
 cd ${builddir}
 
 # Set up a logfile
-logfile="$(echo "${PWD}")/all-build-$(date -u +%F-%H%M).log"
+mkdir -p ${PWD}/logs
+logfile="$(echo "${PWD}")/logs/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 # Checkout the correct branch for each tool
@@ -421,7 +422,7 @@ echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
 if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
-    >> ${logfile} 2>&1
+      >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
     exit 1
@@ -437,13 +438,19 @@ then
     echo "Linking unified tree ..."
     component_dirs="gdb newlib gcc binutils"
     # component_dirs="gdb newlib binutils gcc"
-     rm -rf ${UNISRC}
+    rm -rf ${UNISRC}
+
+    if ! mkdir -p ${UNISRC}
+    then
+	echo "ERROR: Failed to create ${UNISRC}"
+	exit 1
+    fi
 
     if ! ${ARC_GNU}/toolchain/symlink-all.sh ${UNISRC} \
-        "${component_dirs}" >> "${logfile}" 2>&1
+	"${component_dirs}" >> "${logfile}" 2>&1
     then
-        echo "ERROR: Failed to symlink ${UNISRC}"
-        exit 1
+	echo "ERROR: Failed to symlink ${UNISRC}"
+	exit 1
     fi
 fi
 
