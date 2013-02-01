@@ -32,6 +32,7 @@
 #                  [--elf32 | --no-elf32] [--linux | --no-linux]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>] [--big-endian]
+#                  [--jobs <count> | --single-thread] [--load <load>]
 #                  [--enable-multilib | --disable-multilib]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
@@ -132,6 +133,19 @@
 #     (i.e. arceb-elf32- and arceb-linux-uclibc-). At present this is only
 #     implemented for the Linux tool chain.
 
+# --jobs <count> | --single-thread
+
+#     Specify that parallel make should run at most <count>
+#     jobs. --single-thread is equivalent to --jobs 1. The default is
+#     <count> equal to one more than the number of processor cores shown by
+#     /proc/cpuinfo.
+
+# --load <load>
+
+#     Specify that parallel make should not start a new job if the load
+#     average exceed <load>. The default is <load> equal to one more than the
+#     number of processor cores shown by /proc/cpuinfo.
+
 # --disable-multilib | --enable-multilib
 
 #     Use these to control whether mutlilibs should be built. If this argument
@@ -156,10 +170,13 @@ unset builddir
 unset INSTALLDIR
 unset SYMLINKDIR
 unset ARC_ENDIAN
+unset PARALLEL
 unset autocheckout
 unset autopull
 unset datestamp
 unset commentstamp
+unset jobs
+unset load
 
 # In bash we typically write function blah_blah () { }. However Ubuntu default
 # /bin/sh -> dash doesn't recognize the "function" keyword It's exclusion
@@ -258,8 +275,18 @@ case ${opt} in
 	ARC_ENDIAN="big"
 	;;
 
-    --disable-multilib|--enable-multilib)
-	DISABLE_MULTILIB=$1
+    --jobs)
+	shift
+	jobs=$1
+	;;
+
+    --single-thread)
+	jobs=1
+	;;
+
+    --load)
+	shift
+	load=$1
 	;;
 
     ?*)
@@ -274,6 +301,7 @@ case ${opt} in
         echo "                      [--linux | --no-linux]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
+        echo "                      [--jobs <count> | --single-thread]"
 	echo "                      [--enable-multilib | --disable-multilib]"
 	exit 1
 	;;
@@ -337,6 +365,22 @@ then
     DISABLE_MULTILIB=--enable-multilib
 fi
 
+# Default parallellism
+make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
+           | grep -c processor`"
+
+if [ "x${jobs}" = "x" ]
+then
+    jobs=${make_load}
+fi
+
+if [ "x${load}" = "x" ]
+then
+    jobs=${make_load}
+fi
+
+PARALLEL="-j ${jobs} -l ${load}"
+
 # All the things we export to the scripts
 export UNISRC=unisrc-4.8
 export ARC_GNU
@@ -344,6 +388,7 @@ export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
 export DISABLE_MULTILIB
+export PARALLEL
 
 # Change to the build directory
 cd ${builddir}

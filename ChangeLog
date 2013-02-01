@@ -1,12 +1,17 @@
 2013-01-31  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-all.sh, run-tests.sh: Add options to control parallelism
+	* all-version.sh: Remove specification of PARALLEL
+
+2013-01-31  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Make 4.8 specific unisrc.
 	* build-uclibc.sh: Remove duplicate bugurl setting from gdbserver
 	configuration.
 
 2012-01-31  Simon Cook  <simon.cook@embecosm.com>
 
-	*  build-elf32.sh: Add --enable-sim-endian=no to configure options to
+	* build-elf32.sh: Add --enable-sim-endian=no to configure options to
 	allow correct endian simulator to be built.
 
 2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>

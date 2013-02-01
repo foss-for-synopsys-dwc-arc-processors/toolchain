@@ -26,6 +26,13 @@
 # arc-uclibc-linux- tool chains. It is designed to work with the source tree
 # as organized in GitHub. The arguments have the followign meaning.
 
+# Invocation Syntax
+
+#     run-tests.sh [--source-dir <source_dir>]  [--linux-dir <linux_dir>]
+#                  [--jobs <count> | --single-thread] [--load <load>]
+#                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
+#                  [--big-endian]
+
 # --source-dir <source_dir>
 
 #     The location of the ARC GNU tools source tree. If not specified, the
@@ -35,6 +42,19 @@
 #     If this argument is not specified, and the ARC_GNU environment variable
 #     is also not set, the script will use the parent of the directory where
 #     this script is installed.
+
+# --jobs <count> | --single-thread
+
+#     Specify that parallel make should run at most <count>
+#     jobs. --single-thread is equivalent to --jobs 1. The default is
+#     <count> equal to one more than the number of processor cores shown by
+#     /proc/cpuinfo.
+
+# --load <load>
+
+#     Specify that parallel make should not start a new job if the load
+#     average exceed <load>. The default is <load> equal to one more than the
+#     number of processor cores shown by /proc/cpuinfo.
 
 # --elf32 | --no-elf32
 
@@ -55,6 +75,10 @@
 
 # ------------------------------------------------------------------------------
 # Set default values for some options
+make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
+           | grep -c processor`"
+jobs=${make_load}
+load=${make_load}
 elf32="--elf32"
 uclibc="--uclibc"
 
@@ -65,6 +89,20 @@ case ${opt} in
     --source-dir)
 	shift
 	ARC_GNU=`(cd "$1" && pwd)`
+	;;
+
+    --jobs)
+	shift
+	jobs=$1
+	;;
+
+    --single-thread)
+	jobs=1
+	;;
+
+    --load)
+	shift
+	load=$1
 	;;
 
     --elf32 | --no-elf32)
@@ -112,9 +150,13 @@ fi
 mkdir -p ${ARC_GNU}/logs
 mkdir -p ${ARC_GNU}/results
 
+# Parallelism
+PARALLEL="-j ${jobs} -l ${load}"
+
 # Export everything needed by sub-scripts
 export ARC_GNU
 export ARC_ENDIAN
+export PARALLEL
 
 status=0
 
