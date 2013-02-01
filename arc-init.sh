@@ -51,9 +51,6 @@
 
 # - check that ${ARC_GNU}/arc-versions.sh exists, and if so exit.
 
-# - define a parameter string for parallel make invocation in the PARALLEL
-#   environment variable.
-
 # - force the shell to be bash (if available) or sh, rather than any
 #   alternatives.
 
@@ -155,12 +152,6 @@ then
     echo "       binutils, gcc, insight, newlib and uclibc versions."
     exit 1
 fi
-
-# If you don't want to do parallel builds, comment this out.
-make_load="`(echo processor;cat /proc/cpuinfo 2>/dev/null || echo processor) \
-            | grep -c processor`"
-PARALLEL="-j ${make_load} -l ${make_load}"
-export PARALLEL
 
 # Always use bash (if available) or else sh
 bash_cmd=$(which bash)

@@ -1,3 +1,8 @@
+2013-01-31  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh, run-tests.sh: Add options to control parallelism
+	* all-version.sh: Remove specification of PARALLEL
+
 2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-init.sh (save_res): Append errors to log, not overwrite.
@@ -53,6 +58,12 @@
 
 	* run-tests.sh: Script to run all the regression tests.
 
+2013-01-08  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Create unisrc directory. Use negation of tests,
+	rather than else clauses.
+	* symlink-tree.sh: Complete coding.
+
 2012-12-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* dejagnu: New directory for DejaGnu specific testing
@@ -69,6 +80,14 @@
 
 	* ChangeLog: Incorporated historical record prior to transferring
 	to git.
+
+2012-12-13  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Add GDB mainline.
+	* build-all.sh: Unified source includes GDB, put log in logs
+	directory.
+	* build-elf.sh, build-uclib.sh: Use single unified source
+	directory (nothing separate for GDB), put log in logs directory.
 
 2012-12-12  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
