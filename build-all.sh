@@ -289,7 +289,13 @@ case ${opt} in
 	load=$1
 	;;
 
+    --disable-multilib|--enable-multilib)
+	DISABLE_MULTILIB=$1
+	;;
+
     ?*)
+	echo "Unknown argument $1"
+	echo
 	echo "Usage: ./build-all.sh [--source-dir <source_dir>]"
         echo "                      [--linux-dir <linux_dir>]"
         echo "                      [--build-dir <build_dir>]"

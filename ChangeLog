@@ -1,3 +1,8 @@
+2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh (--enable-multilib, --disable-multilib): Add
+	argument handling accidentally deleted.
+
 2013-01-31  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh, run-tests.sh: Add options to control parallelism
