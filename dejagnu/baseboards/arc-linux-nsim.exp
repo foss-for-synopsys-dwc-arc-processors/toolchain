@@ -19,7 +19,7 @@
 
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
-       
+
 #		   ARC Linux DejaGnu Board Support for nSim
 #		   ========================================
 
@@ -40,27 +40,28 @@
 #    password.
 
 # Make sure we tell people we are being executed.
-send_user "ARC Linux ARCAngel 4 test setup\n"
+send_user "ARC Linux nSim test setup\n"
 
 # Do a generic ARC Linux setup first.
 search_and_load_file "library file" "arc-linux-generic.exp" ${boards_dir}
 
-# Set up remote target generic login info. The hostname is specified
-# generically via the environment variable ARC_TEST_TARGET.
+# Set up remote target info. The name used here is an nSim instance runing
+# Linux 3.2. It would be better to get this from an environment variable.
+set_board_info hostname nsim_32
 set_board_info username root
 set_board_info password ""
 
-# Set up telnet connection details
+# Set up telnet connection details.
 set_board_info shell_prompt          "\[^\r\n\]*# "
 set_board_info telnet_username       "root"
 set_board_info telnet_password       ""
-set_board_info telnet_exec_timeout   120
+set_board_info telnet_exec_timeout   300
 
 # Set up FTP connection details.
 set_board_info ftp_username          root
 set_board_info ftp_password          ""
-set_board_info ftp_download_timeout  10
-set_board_info ftp_upload_timeout    10
+set_board_info ftp_download_timeout  60
+set_board_info ftp_upload_timeout    60
 
-# This simulator isn't slow.
-set_board_info slow_simulator 0
+# This simulator is slow.
+set_board_info slow_simulator 1

@@ -37,7 +37,7 @@
 
 # Invocation Syntax
 
-#     run-tests.sh [--source-dir <source_dir>]  [--linux-dir <linux_dir>]
+#     run-tests.sh [--source-dir <source_dir>]  [--target <address>]
 #                  [--jobs <count> | --single-thread] [--load <load>]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--big-endian]
@@ -51,6 +51,11 @@
 #     If this argument is not specified, and the ARC_GNU environment variable
 #     is also not set, the script will use the parent of the directory where
 #     this script is installed.
+
+# --target <address>
+
+#     The address of the target, either symbolic, or as an IP address. The
+#     default is aa4-32.
 
 # --jobs <count> | --single-thread
 
@@ -84,6 +89,7 @@
 
 # ------------------------------------------------------------------------------
 # Set default values for some options
+ARC_TEST_TARGET=aa4-32
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
 jobs=${make_load}
@@ -98,6 +104,11 @@ case ${opt} in
     --source-dir)
 	shift
 	ARC_GNU=`(cd "$1" && pwd)`
+	;;
+
+    --target)
+	shift
+	ARC_TEST_TARGET=$1
 	;;
 
     --jobs)
@@ -127,6 +138,7 @@ case ${opt} in
         ;;
     ?*)
 	echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
+        echo "                      [--target <address>]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
         echo "                      [--big-endian]"
@@ -166,6 +178,7 @@ PARALLEL="-j ${jobs} -l ${load}"
 export ARC_GNU
 export ARC_ENDIAN
 export PARALLEL
+export ARC_TEST_TARGET
 
 status=0
 
