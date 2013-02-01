@@ -1,5 +1,9 @@
 2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* dejagnu/baseboards/arc-linux-aa4.exp: Correct commenting.
+
+2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Add option to control building of unified source
 	tree.
 
