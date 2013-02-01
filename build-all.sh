@@ -29,6 +29,7 @@
 #                  [--symlink-dir <symlink_dir>]
 #                  [--auto-pull | --no-auto-pull]
 #                  [--auto-checkout | --no-auto-checkout]
+#                  [--unisrc | --no-unisrc]
 #                  [--elf32 | --no-elf32] [--linux | --no-linux]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>] [--big-endian]
@@ -105,6 +106,11 @@
 
 #     If specified, a "git pull" will be done in each component repository
 #     after checkout to ensure the latest code is in use. Default is to pull.
+
+# --unisrc | --no-unisrc
+
+#     If --unisrc is specified, rebuild the unified source tree. If
+#     --no-unisrc is specified, do not rebuild it. The default is --unisrc.
 
 # --elf32 | --no-elf32
 
@@ -207,6 +213,7 @@ build_pathnm ()
 # Set defaults for some options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
+do_unisrc="--unisrc"
 elf32="--elf32"
 linux="--linux"
 
@@ -252,6 +259,10 @@ case ${opt} in
 
     --auto-pull | --no-auto-pull)
 	autopull=$1
+	;;
+
+    --unisrc | --no-unisrc)
+	do_unisrc=$1
 	;;
 
     --elf32 | --no-elf32)
@@ -303,6 +314,7 @@ case ${opt} in
 	echo "                      [--symlink-dir <symlink_dir>]"
 	echo "                      [--auto-checkout | --no-auto-checkout]"
         echo "                      [--auto-pull | --no-auto-pull]"
+        echo "                      [--unisrc | --no-unisrc]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--linux | --no-linux]"
 	echo "                      [--datestamp-install]"
@@ -415,19 +427,22 @@ then
     exit 1
 fi
 
-# Make a unified source tree in the build directory
-echo "Linking unified tree" >> "${logfile}"
-echo "====================" >> "${logfile}"
-
-echo "Linking unified tree ..."
-component_dirs="${ARC_GNU}/gcc ${ARC_GNU}/newlib ${ARC_GNU}/binutils"
-rm -rf ${UNISRC}
-
-if ! ${ARC_GNU}/toolchain/symlink-trunks.sh --dest ${UNISRC} \
-    "${component_dirs}" >> "${logfile}" 2>&1
+# Optionally make a unified source tree in the build directory
+if [ "x${do_unisrc}" = "x--unisrc" ]
 then
-    echo "ERROR: Failed to create ${UNISRC}"
-    exit 1
+    echo "Linking unified tree" >> "${logfile}"
+    echo "====================" >> "${logfile}"
+
+    echo "Linking unified tree ..."
+    component_dirs="${ARC_GNU}/gcc ${ARC_GNU}/newlib ${ARC_GNU}/binutils"
+    rm -rf ${UNISRC}
+
+    if ! ${ARC_GNU}/toolchain/symlink-trunks.sh --dest ${UNISRC} \
+	"${component_dirs}" >> "${logfile}" 2>&1
+    then
+	echo "ERROR: Failed to create ${UNISRC}"
+	exit 1
+    fi
 fi
 
 # Optionally build the arc-elf32- tool chain
