@@ -1,5 +1,14 @@
 2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* dejagnu/baseboards/arc-linux-aa4.exp: Break out the generic
+	Linux setup into its own file, specify target in environment variable.
+	* dejagnu/baseboards/arc-linux-generic.exp: Generic set up shared
+	between all Linux boards.
+	* dejagnu/baseboards/arc-linux-nsim.exp: Created.
+	* run-tests.sh (--target): New option to specify target address.
+
+2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh (--enable-multilib, --disable-multilib): Add
 	argument handling accidentally deleted.
 
