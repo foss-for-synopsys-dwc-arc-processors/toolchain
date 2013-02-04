@@ -29,24 +29,29 @@ if ![info exists boards_dir] {
     lappend boards_dir "[file dirname $env(DEJAGNU)]/dejagnu/baseboards"
 }
 
+# $target_list is set by the --target_board option. If it is not set, then we
+# should use $target_triplet to set a single target board in ${target_list}.
 global target_list
 
 case "$target_triplet" in {
-    { "arc*-*-elf32" } {
-        set target_list { "arc-sim" }
 
-# To use this, you need to invoke something like
-#    PATH=$HOME/arc/MetaWare:$PATH make check-gcc DEJAGNULIBS=$HOME/arc/src-2.0/trunk/dejagnu RUNTESTFLAGS='gcc.c-torture/execute/execute.exp'
-#        set target_list { "arc-sim-mdb" }
+    { "arc*-*-elf32" } {
+	if {! [info exists target_list]} {
+	    # Default is to test on the CGEN simulator
+	    set target_list { "arc-sim" }
+	}
     }
 
     { "arc*-linux-uclibc" } {
-        set target_list { "arc-linux-aa4" }
-#        set target_list { "arc-box" }
+	if {! [info exists target_list]} {
+	    # Default is to test on AA4
+	    set target_list { "arc-linux-aa4" }
+	}
     }
-
+    
     default {
-        set target_list { "unix" }
+	# Any other triplet is an error.
+	error "Unknown target $target_triplet in site.exp."
     }
 }
 

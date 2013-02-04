@@ -72,18 +72,21 @@ else
     target_dir=arceb-linux-uclibc
 fi
 
+# The target board to use
+board=arc-linux-aa4
+
 # Run tests
 status=0
-run_check ${bd_linux} binutils "${logfile_linux}" || status=1
+run_check ${bd_linux} binutils "${logfile_linux}" ${board} || status=1
 save_res  ${bd_linux} ${res_linux} binutils/binutils "${logfile_linux}" \
     || status=1
-run_check ${bd_linux} gas "${logfile_linux}" || status=1
+run_check ${bd_linux} gas "${logfile_linux}" ${board} || status=1
 save_res  ${bd_linux} ${res_linux} gas/testsuite/gas "${logfile_linux}" \
     || status=1
-run_check ${bd_linux} ld "${logfile_linux}" || status=1
+run_check ${bd_linux} ld "${logfile_linux}" ${board} || status=1
 save_res  ${bd_linux} ${res_linux} ld/ld "${logfile_linux}" \
     || status=1
-run_check ${bd_linux} gcc "${logfile_linux}" || status=1
+run_check ${bd_linux} gcc "${logfile_linux}" ${board} || status=1
 save_res  ${bd_linux} ${res_linux} gcc/testsuite/gcc/gcc "${logfile_linux}" \
     || status=1
 echo "Testing g++..."
@@ -91,11 +94,12 @@ save_res  ${bd_linux} ${res_linux} gcc/testsuite/g++/g++ "${logfile_linux}" \
     || status=1
 # libgcc tests are currently empty, so nothing to run or save.
 # run_check ${bd_linux} target-libgcc       "${logfile_linux}"
-run_check ${bd_linux} target-libstdc++-v3 "${logfile_linux}" || status=1
+run_check ${bd_linux} target-libstdc++-v3 "${logfile_linux}" ${board} \
+    || status=1
 save_res  ${bd_linux} ${res_linux} \
     ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_linux}" \
     || status=1
-run_check ${bd_linux_gdb} gdb "${logfile_linux}" || status=1
+run_check ${bd_linux_gdb} gdb "${logfile_linux}" ${board} || status=1
 save_res  ${bd_linux_gdb} ${res_linux} gdb/testsuite/gdb "${logfile_linux}" \
     || status=1
 
