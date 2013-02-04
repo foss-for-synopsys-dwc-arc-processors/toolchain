@@ -1,5 +1,10 @@
 2013-02-04  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* arc-init.sh (run_check): Use '=' when specifying board
+	(save_res): Correct tests.
+
+2013-02-04  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* arc-init.sh (run_check): Add board as fourth argument.
 	(save_res): Only run if there is a result file, and put all
 	results to log.
