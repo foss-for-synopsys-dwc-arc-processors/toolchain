@@ -61,18 +61,35 @@ rm -f "${logfile_elf}"
 res_elf="$(echo "${ARC_GNU}")/results/elf32-results-$(date -u +%F-%H%M)"
 mkdir ${res_elf}
 
+# Location of some files depends on endianess. For now with ELF this is
+# ignored, but this code is a holding position.
+if [ "${ARC_ENDIAN}" = "little" ]
+then
+    target_dir=arc-elf32
+else
+#    target_dir=arceb-elf32
+    target_dir=arc-elf32
+fi
+
+# The target board to use
+board=arc-sim
+
 # Run the tests
 status=0
-run_check ${bd_elf}     binutils            "${logfile_elf}" || status=1
+run_check ${bd_elf}     binutils            "${logfile_elf}" ${board} \
+    || status=1
 save_res  ${bd_elf}     ${res_elf} binutils/binutils     "${logfile_elf}" \
     || status=1
-run_check ${bd_elf}     gas                 "${logfile_elf}" || status=1
+run_check ${bd_elf}     gas                 "${logfile_elf}" ${board} \
+    || status=1
 save_res  ${bd_elf}     ${res_elf} gas/testsuite/gas     "${logfile_elf}" \
     || status=1
-run_check ${bd_elf}     ld                  "${logfile_elf}" || status=1
+run_check ${bd_elf}     ld                  "${logfile_elf}" ${board} \
+    || status=1
 save_res  ${bd_elf}     ${res_elf} ld/ld                 "${logfile_elf}" \
     || status=1
-run_check ${bd_elf}     gcc                 "${logfile_elf}" || status=1
+run_check ${bd_elf}     gcc                 "${logfile_elf}" ${board} \
+    || status=1
 save_res  ${bd_elf}     ${res_elf} gcc/testsuite/gcc/gcc "${logfile_elf}" \
     || status=1
 echo "Testing g++..."
@@ -81,16 +98,21 @@ save_res  ${bd_elf}     ${res_elf} gcc/testsuite/g++/g++ "${logfile_elf}" \
 # libgcc and libgloss tests are currently empty, so nothing to run or save.
 # run_check ${bd_elf}     target-libgcc       "${logfile_elf}"
 # run_check ${bd_elf}     target-libgloss     "${logfile_elf}"
-run_check ${bd_elf}     target-newlib       "${logfile_elf}" || status=1
-save_res  ${bd_elf}     ${res_elf} arc-elf32/newlib/testsuite/newlib \
+run_check ${bd_elf}     target-newlib       "${logfile_elf}" ${board} \
+    || status=1
+save_res  ${bd_elf}     ${res_elf} ${target_dir}/newlib/testsuite/newlib \
     "${logfile_elf}" || status=1
-run_check ${bd_elf}     target-libstdc++-v3 "${logfile_elf}" || status=1
-save_res  ${bd_elf}     ${res_elf} arc-elf32/libstdc++-v3/testsuite/libstdc++ \
-    "${logfile_elf}" || status=1
-run_check ${bd_elf_gdb} sim                 "${logfile_elf}" || status=1
+run_check ${bd_elf}     target-libstdc++-v3 "${logfile_elf}" ${board} \
+    || status=1
+save_res  ${bd_elf}     ${res_elf} \
+    ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_elf}" \
+    || status=1
+run_check ${bd_elf_gdb} sim                 "${logfile_elf}" ${board} \
+    || status=1
 save_res  ${bd_elf_gdb} ${res_elf} sim/testsuite/sim     "${logfile_elf}" \
     || status=1
-run_check ${bd_elf_gdb} gdb                 "${logfile_elf}" || status=1
+run_check ${bd_elf_gdb} gdb                 "${logfile_elf}" ${board} \
+    || status=1
 save_res  ${bd_elf_gdb} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}" \
     || status=1
 

@@ -1,3 +1,17 @@
+2013-02-04  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh (run_check): Add board as fourth argument.
+	(save_res): Only run if there is a result file, and put all
+	results to log.
+	* dejagnu/baseboards/arc-linux-generic.exp: Take the
+	target_install data from ${target_triplet}.
+	* dejagnu/baseboards/arc-sim-base.exp: Likewise.
+	* run-elf32-tests.sh: Add board when running tests.
+	* run-tests.sh (ARC_TEST_TARGET): Correct typo in default value
+	* run-uclibc-tests.sh: Add board when running tests
+	* site.exp: Only set target_list if not already set. Error if not
+	a recognized ARC triplet.
+
 2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Correct error in merging option to control

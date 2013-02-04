@@ -84,13 +84,15 @@ function run_check {
     bd=$1
     tool=$2
     logfile=$3
+    board=$4
     echo -n "Testing ${tool}..."
     echo "Regression test ${tool}" >> "${logfile}"
     echo "=======================" >> "${logfile}"
 
     cd ${bd}
     test_result=0
-    make ${PARALLEL} "check-${tool}" >>  "${logfile}" 2>&1 || test_result=1
+    make ${PARALLEL} "check-${tool}" RUNTESTFLAGS="--target_board ${board}" \
+	>> "${logfile}" 2>&1 || test_result=1
     echo
     cd - > /dev/null 2>&1
     return ${test_result}
@@ -110,20 +112,28 @@ function save_res {
     logfile=$4
     resbase=`basename $resfile`
 
-    # Generated files have Windows line endings. dos2unix tool cannot be used
-    # because sometimes it recognizes input files as binary and refuses to
-    # work. Specifying option "-f" could solve this problem, but RedHats
-    # dos2unix is too old to understand this option. "tr -d '\015\" seems to be
-    # more universal solution.
-    tr -d '\015' < ${bd}/${resfile}.log > ${rd}/${resbase}.log 2> ${logfile}
-    chmod ugo-wx ${rd}/${resbase}.log
-    tr -d '\015' < ${bd}/${resfile}.sum > ${rd}/${resbase}.sum 2> ${logfile}
-    chmod ugo-wx ${rd}/${resbase}.sum
+    if [ \( -w ${rd}/${resbase}.log \) -a \( -w ${rd}/${resbase}.log \) ]
+    then
+        # Generated files have Windows line endings. dos2unix tool cannot be
+        # used because sometimes it recognizes input files as binary and
+        # refuses to work. Specifying option "-f" could solve this problem,
+        # but RedHats dos2unix is too old to understand this option. "tr -d
+        # '\015\" seems to be more universal solution.
+	tr -d '\015' < ${bd}/${resfile}.log > ${rd}/${resbase}.log \
+	    2>> ${logfile}
+	chmod ugo-wx ${rd}/${resbase}.log >> ${logfile} 2>&1
+	tr -d '\015' < ${bd}/${resfile}.sum > ${rd}/${resbase}.sum \
+	    2>> ${logfile}
+	chmod ugo-wx ${rd}/${resbase}.sum >>${logfile} 2>&1
 
-    # Report the summary to the user
-    echo
-    sed -n -e '/Summary/,$p' < ${rd}/${resbase}.sum | grep '^#' || true
-    echo
+        # Report the summary to the user
+	echo
+	sed -n -e '/Summary/,$p' < ${rd}/${resbase}.sum | grep '^#' || true
+	echo
+    else
+	# Silent failure
+	return  1
+    fi
 }
     
 # Make sure we stop if something failed. Since we are run with source, not exec

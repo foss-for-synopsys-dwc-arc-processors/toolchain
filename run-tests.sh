@@ -80,7 +80,7 @@
 
 # ------------------------------------------------------------------------------
 # Set default values for some options
-ARC_TEST_TARGET=aa4-32
+ARC_TEST_TARGET=aa4_32
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
 jobs=${make_load}
