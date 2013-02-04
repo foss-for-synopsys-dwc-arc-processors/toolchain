@@ -91,7 +91,10 @@ function run_check {
 
     cd ${bd}
     test_result=0
-    make ${PARALLEL} "check-${tool}" RUNTESTFLAGS="--target_board ${board}" \
+    # Important note. Must use --target_board=${board}, *not* --target_board
+    # ${board} or GNU will think this is not parallelizable (horrible kludgy
+    # test in the makefile).
+    make ${PARALLEL} "check-${tool}" RUNTESTFLAGS="--target_board=${board}" \
 	>> "${logfile}" 2>&1 || test_result=1
     echo
     cd - > /dev/null 2>&1
@@ -112,7 +115,7 @@ function save_res {
     logfile=$4
     resbase=`basename $resfile`
 
-    if [ \( -w ${rd}/${resbase}.log \) -a \( -w ${rd}/${resbase}.log \) ]
+    if [ \( -r ${bd}/${resfile}.log \) -a \( -r ${bd}/${resfile}.sum \) ]
     then
         # Generated files have Windows line endings. dos2unix tool cannot be
         # used because sometimes it recognizes input files as binary and
