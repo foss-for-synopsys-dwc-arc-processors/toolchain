@@ -45,8 +45,11 @@ send_user "ARC Linux nSim test setup\n"
 # Do a generic ARC Linux setup first.
 search_and_load_file "library file" "arc-linux-generic.exp" ${boards_dir}
 
-# Set up remote target info. The name used here is an nSim instance runing
-# Linux 3.2. It would be better to get this from an environment variable.
+# Set up remote target info. We get it from a program, since we may have
+# multiple instances. See the comments in get-ip.sh for more details.
+set linux_hostname [exec [file dirname $env(DEJAGNU)]/get-ip.sh --rotate]
+send_user "nSim hostname is $linux_hostname.\n"
+
 set_board_info hostname nsim_32
 set_board_info username root
 set_board_info password ""
