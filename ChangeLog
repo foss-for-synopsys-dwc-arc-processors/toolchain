@@ -1,5 +1,13 @@
 2013-02-04  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* dejagnu/baseboards/arc-linux-aa4.exp: Specify hostname.
+	* dejagnu/baseboards/arc-linux-generic.exp: Don't specify hostname
+	* dejagnu/baseboards/arc-linux-nsim.exp: Set hostname using
+	get-ip.sh script.
+	* get-ip.sh, ip-avail.txt: Created.
+
+2013-02-04  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* arc-init.sh (run_check): Use '=' when specifying board
 	(save_res): Correct tests.
 

@@ -43,9 +43,8 @@ process_multilib_options ""
 # Specify the compilers to use.
 set_board_info compiler [find_gcc]
 
-# Set up hostname and connection using telnet and FTP. Prompts, usernames and
+# Set up connection using telnet and FTP. Hostname, prompts, usernames and
 # passwords are in the board specific files.
-set_board_info hostname       $env(ARC_TEST_TARGET)
 set_board_info connect        telnet
 set_board_info file_transfer  ftp
 
