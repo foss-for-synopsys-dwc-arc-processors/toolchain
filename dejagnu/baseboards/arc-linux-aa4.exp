@@ -46,7 +46,7 @@ search_and_load_file "library file" "arc-linux-generic.exp" ${boards_dir}
 
 # Set up remote target generic login info. The hostname is specified
 # generically via the environment variable ARC_TEST_TARGET.
-set_board_info hostname       $env(ARC_TEST_TARGET)
+set_board_info hostname $env(ARC_TEST_TARGET)
 set_board_info username root
 set_board_info password ""
 

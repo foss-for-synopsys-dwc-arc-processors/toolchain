@@ -1,3 +1,9 @@
+2013-02-05  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-aa4.exp: Correct layout
+	* dejagnu/baseboards/arc-linux-nsim.exp: Correct assignment of
+	hostname.
+
 2013-02-04  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* dejagnu/baseboards/arc-linux-aa4.exp: Specify hostname.
