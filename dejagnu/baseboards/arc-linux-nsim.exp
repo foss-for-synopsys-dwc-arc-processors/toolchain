@@ -49,8 +49,7 @@ search_and_load_file "library file" "arc-linux-generic.exp" ${boards_dir}
 # multiple instances. See the comments in get-ip.sh for more details.
 set linux_hostname [exec [file dirname $env(DEJAGNU)]/get-ip.sh --rotate]
 send_user "nSim hostname is $linux_hostname.\n"
-
-set_board_info hostname nsim_32
+set_board_info hostname $linux_hostname
 set_board_info username root
 set_board_info password ""
 
