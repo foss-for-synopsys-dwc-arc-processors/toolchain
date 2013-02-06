@@ -33,7 +33,7 @@
 #                  [--elf32 | --no-elf32] [--linux | --no-linux]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>] [--big-endian]
-#                  [--jobs <count> | --single-thread] [--load <load>]
+#                  [--jobs <count>] [--load <load>] [--single-thread]
 #                  [--enable-multilib | --disable-multilib]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
@@ -139,11 +139,10 @@
 #     (i.e. arceb-elf32- and arceb-linux-uclibc-). At present this is only
 #     implemented for the Linux tool chain.
 
-# --jobs <count> | --single-thread
+# --jobs <count>
 
-#     Specify that parallel make should run at most <count>
-#     jobs. --single-thread is equivalent to --jobs 1. The default is
-#     <count> equal to one more than the number of processor cores shown by
+#     Specify that parallel make should run at most <count> jobs. The default
+#     is <count> equal to one more than the number of processor cores shown by
 #     /proc/cpuinfo.
 
 # --load <load>
@@ -151,6 +150,11 @@
 #     Specify that parallel make should not start a new job if the load
 #     average exceed <load>. The default is <load> equal to one more than the
 #     number of processor cores shown by /proc/cpuinfo.
+
+# --single-thread
+
+#     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
+#     whatever the load average.
 
 # --disable-multilib | --enable-multilib
 
@@ -291,13 +295,14 @@ case ${opt} in
 	jobs=$1
 	;;
 
-    --single-thread)
-	jobs=1
-	;;
-
     --load)
 	shift
 	load=$1
+	;;
+
+    --single-thread)
+	jobs=1
+	load=1000
 	;;
 
     --disable-multilib|--enable-multilib)
@@ -319,7 +324,8 @@ case ${opt} in
         echo "                      [--linux | --no-linux]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
-        echo "                      [--jobs <count> | --single-thread]"
+        echo "                      [--jobs <count>] [--load <load>]"
+        echo "                      [--single-thread]"
 	echo "                      [--enable-multilib | --disable-multilib]"
 	exit 1
 	;;
@@ -394,7 +400,7 @@ fi
 
 if [ "x${load}" = "x" ]
 then
-    jobs=${make_load}
+    load=${make_load}
 fi
 
 PARALLEL="-j ${jobs} -l ${load}"

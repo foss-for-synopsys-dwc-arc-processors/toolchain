@@ -38,7 +38,7 @@
 # Invocation Syntax
 
 #     run-tests.sh [--source-dir <source_dir>]  [--target <address>]
-#                  [--jobs <count> | --single-thread] [--load <load>]
+#                  [--jobs <count>] [--load <load>][--single-thread]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--big-endian]
 
@@ -57,11 +57,10 @@
 #     The address of the target, either symbolic, or as an IP address. The
 #     default is aa4-32.
 
-# --jobs <count> | --single-thread
+# --jobs <count>
 
-#     Specify that parallel make should run at most <count>
-#     jobs. --single-thread is equivalent to --jobs 1. The default is
-#     <count> equal to one more than the number of processor cores shown by
+#     Specify that parallel make should run at most <count> jobs. The default
+#     is <count> equal to one more than the number of processor cores shown by
 #     /proc/cpuinfo.
 
 # --load <load>
@@ -69,6 +68,11 @@
 #     Specify that parallel make should not start a new job if the load
 #     average exceed <load>. The default is <load> equal to one more than the
 #     number of processor cores shown by /proc/cpuinfo.
+
+# --single-thread
+
+#     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
+#     whatever the load average.
 
 # --elf32 | --no-elf32
 
@@ -116,13 +120,14 @@ case ${opt} in
 	jobs=$1
 	;;
 
-    --single-thread)
-	jobs=1
-	;;
-
     --load)
 	shift
 	load=$1
+	;;
+
+    --single-thread)
+	jobs=1
+	load=1000
 	;;
 
     --elf32 | --no-elf32)

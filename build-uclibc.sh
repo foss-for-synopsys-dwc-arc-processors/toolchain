@@ -75,9 +75,9 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-elf32) local to the directory in which it is
-# executed. The script generates a date and time stamped log file in that
-# directory.
+# and uses build directories (bd-uclibc and bd-uclibc-gdb) local to the
+# directory in which it is executed. The script generates a date and time
+# stamped log file in that directory.
 
 # This approach is based on Mike Frysinger's guidelines on building a
 # cross-compiler.
@@ -494,7 +494,6 @@ config_path=$(calcConfigPath "${gdb_dir}"/gdb/gdbserver)
 if "${config_path}"/configure \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}"  --with-endian=${ARC_ENDIAN} \
-        --with-bugurl="http://solvnet.synopsys.com" \
         --host=${arche}-linux-uclibc >> "${logfile}" 2>> "${logfile}"
 then
     echo "  finished configuring gdbserver"
