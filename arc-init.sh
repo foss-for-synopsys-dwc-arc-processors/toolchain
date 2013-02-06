@@ -74,13 +74,18 @@
 
 # -----------------------------------------------------------------------------
 # Useful functions
+
+# In bash we typically write function blah_blah () { }. However Ubuntu default
+# /bin/sh -> dash doesn't recognize the "function" keyword. Its exclusion
+# seems to work for both
+
 # Function to run a particular test in a particular directory
 # Returns non-zero value if make fails.
 
 # $1 - build directory
 # $2 - tool to test (e.g. "binutils" will run "check-binutils"
 # $3 - log file
-function run_check {
+run_check () {
     bd=$1
     tool=$2
     logfile=$3
@@ -108,7 +113,7 @@ function run_check {
 # $2 - results directory
 # $3 - results file name w/o suffix
 # $4 - logfile
-function save_res {
+save_res () {
     bd=$1
     rd=$2
     resfile=$3

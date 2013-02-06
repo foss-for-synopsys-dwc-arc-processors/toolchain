@@ -1,5 +1,11 @@
 2013-02-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* arc-init.sh (run_check, save_res): Remove use of bash "function"
+	keywords.
+	* build-all.sh: Correct comment typo.
+
+2013-02-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Use "=" not "==" in [] comparisons.
 
 2013-02-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
