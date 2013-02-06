@@ -467,7 +467,7 @@ rm -rf ${build_dir}/gdb/gdbserver
 mkdir -p ${build_dir}/gdb/gdbserver
 cd ${build_dir}/gdb/gdbserver
 
-config_path=$(calcConfigPath "${unified_src_abs}")/gdb/gdbserver)
+config_path=$(calcConfigPath "${unified_src_abs}")/gdb/gdbserver
 if "${config_path}"/configure \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}"  --with-endian=${ARC_ENDIAN} \
