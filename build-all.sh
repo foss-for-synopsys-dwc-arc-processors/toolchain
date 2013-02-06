@@ -189,7 +189,7 @@ unset jobs
 unset load
 
 # In bash we typically write function blah_blah () { }. However Ubuntu default
-# /bin/sh -> dash doesn't recognize the "function" keyword It's exclusion
+# /bin/sh -> dash doesn't recognize the "function" keyword. Its exclusion
 # seems to work for both
 build_pathnm ()
 {
