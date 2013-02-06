@@ -452,7 +452,7 @@ then
 fi
 
 # Optionally build the arc-elf32- tool chain
-if [ "x${elf32}" == "x--elf32" ]
+if [ "x${elf32}" = "x--elf32" ]
 then
     if ! "${ARC_GNU}"/toolchain/build-elf32.sh --force
     then
@@ -462,7 +462,7 @@ then
 fi
 
 # Optionally build the arc-linux-uclibc- tool chain
-if [ "x${linux}" == "x--linux" ]
+if [ "x${linux}" = "x--linux" ]
 then
     if ! "${ARC_GNU}"/toolchain/build-uclibc.sh --force
     then

@@ -1,5 +1,9 @@
 2013-02-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-all.sh: Use "=" not "==" in [] comparisons.
+
+2013-02-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh, run-tests.sh: Correct handling of --jobs, --load
 	and --single-thread.
 	* build-uclibc.sh: Correct typo in gdbserver config.
