@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012 Synopsys Inc.
+# Copyright (C) 2012, 2013 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -45,14 +45,15 @@
 # ------------------------------------------------------------------------------
 
 # Useful constants. Some day these will be set from args
-TOOLDIR=/opt/arc-4.4
+TOOLDIR=/opt/arc-4.8
 # LINUX_DEFCONFIG=4.10_defconfig
 LINUX_DEFCONFIG=fpga_defconfig_patched
 LINUX_TREE=linux
 # ARC_INITRAMFS=arc_initramfs_10_2012_dyn_dev.tgz
 ARC_INITRAMFS=arc_initramfs_08_2012_gnu_4_4_ABI_v2.tgz
 
-logfile="$(echo "${PWD}")/../linux-build-$(date -u +%F-%H%M).log"
+mkdir -p ${PWD}/../logs
+logfile="$(echo "${PWD}")/../logs/linux-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 # Create arc_initramfs. Need to patch the ownership.
@@ -79,15 +80,23 @@ cp -df ${TOOLDIR}/arc-linux-uclibc/lib/uclibc_nonshared.a \
       arc_initramfs/lib >> $logfile 2>&1
 sed -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
 
-# Build and install busybox.
+# Build busybox.
 echo "Building busybox..."
 echo "Building busybox" >> $logfile 2>&1
 echo "================" >> $logfile 2>&1
 
 cd busybox
+OLDPATH=${PATH}
+PATH=${TOOLDIR}/bin:${PATH}
 make clean >> $logfile 2>&1
 make >> $logfile 2>&1
+
+echo "Installing busybox..."
+echo "Installing busybox" >> $logfile 2>&1
+echo "==================" >> $logfile 2>&1
+
 make install >> $logfile 2>&1
+PATH=${OLDPATH}
 
 echo "Changing ownership and setuid of busybox..."
 echo "Changing ownership and setuid of busybox" >> $logfile 2>&1

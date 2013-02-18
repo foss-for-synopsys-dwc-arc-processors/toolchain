@@ -55,8 +55,7 @@ export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running uClibc Linux tests"
 
 # Set the build directories
-bd_linux=${ARC_GNU}/bd-uclibc
-bd_linux_gdb=${ARC_GNU}/bd-uclibc-gdb
+bd_linux=${ARC_GNU}/bd-4.8-uclibc
 
 # Create the Linux log file and results directory
 logfile_linux="$(echo "${ARC_GNU}")/logs/linux-check-$(date -u +%F-%H%M).log"
@@ -99,8 +98,8 @@ run_check ${bd_linux} target-libstdc++-v3 "${logfile_linux}" ${board} \
 save_res  ${bd_linux} ${res_linux} \
     ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_linux}" \
     || status=1
-run_check ${bd_linux_gdb} gdb "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux_gdb} ${res_linux} gdb/testsuite/gdb "${logfile_linux}" \
+run_check ${bd_linux} gdb "${logfile_linux}" ${board} || status=1
+save_res  ${bd_linux} ${res_linux} gdb/testsuite/gdb "${logfile_linux}" \
     || status=1
 
 exit ${status}

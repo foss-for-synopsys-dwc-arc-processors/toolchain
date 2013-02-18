@@ -69,7 +69,7 @@ binutils="binutils:arc_4_8-binutils-mainline-dev"
 gcc="gcc:arc_4_8-gcc-mainline-dev"
 gdb="gdb:arc_4_8-gdb-mainline-dev"
 newlib="newlib:arc_4_4-newlib-1_17-dev"
-uclibc="uClibc:arc_4_4-uClibc-0_9_30-dev"
+uclibc="uClibc:arc_4_8-uClibc-0_9_30-dev"
 linux="linux:stable-arc-3.2"
 
 for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
