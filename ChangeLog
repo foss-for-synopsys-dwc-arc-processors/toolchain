@@ -1,5 +1,9 @@
 2013-02-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-linux.sh: Use -fcommon -mno-sdata when building gdbserver.
+
+2013-02-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-linux.sh: Build a 4.8 static busybox only.
 	* run-uclibc-tests.sh: Build directories corrected for 4.8 release.
 

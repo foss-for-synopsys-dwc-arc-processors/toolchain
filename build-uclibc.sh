@@ -470,7 +470,7 @@ cd ${build_dir}/gdb/gdbserver
 config_path=$(calcConfigPath "${unified_src_abs}")/gdb/gdbserver
 if "${config_path}"/configure \
         --with-pkgversion="${version_str}"\
-        --with-bugurl="${bugurl_str}"  --with-endian=${ARC_ENDIAN} \
+        --with-bugurl="${bugurl_str}" \
         --host=${arche}-linux-uclibc >> "${logfile}" 2>> "${logfile}"
 then
     echo "  finished configuring gdbserver"
@@ -481,7 +481,8 @@ else
 fi
 
 export CC=${arche}-linux-uclibc-gcc
-if make ${PARALLEL} CFLAGS="${CFLAGS} -static" >> "${logfile}" 2>&1
+if make ${PARALLEL} CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
+    >> "${logfile}" 2>&1
 then
     echo "  finished building GDBSERVER to run on an arc"
 else
