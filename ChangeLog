@@ -1,3 +1,14 @@
+2013-02-20  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-aa4.exp: Configure to run with
+	gdbserver target if GDB is the tool.
+	* dejagnu/baseboards/arc-linux-nsim.exp: Likewise.
+	* dejagnu/baseboards/arc-linux-generic.exp: Decide base
+	configuration to load based on tool.
+	* dejagnu/ftp-extra.exp (ftp_download): Add code to set executable
+	bits of transferred file if necessary.
+	* dejagnu/telnet-extra.exp (telnet_spawn): New proc.
+
 2013-02-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-init.sh (run_check, save_res): Remove use of bash "function"
