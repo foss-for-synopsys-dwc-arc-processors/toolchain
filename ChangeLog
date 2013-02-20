@@ -1,5 +1,10 @@
 2013-02-20  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* dejagnu/baseboards/arc-linux-nsim.exp: Correct code accidentally
+	introduced.
+
+2013-02-20  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* dejagnu/baseboards/arc-linux-aa4.exp: Configure to run with
 	gdbserver target if GDB is the tool.
 	* dejagnu/baseboards/arc-linux-nsim.exp: Likewise.
