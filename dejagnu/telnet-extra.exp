@@ -294,3 +294,89 @@ proc telnet_exec {hostname cmd args} {
 	return [list "1" "$output"]
     }
 }
+
+
+# -----------------------------------------------------------------------------
+# Custom proc to spawn programs using telnet
+
+# Code is copied from that of the ubicom32 toolchain. No known author.
+
+# @param[in] board        The board we are telnetting to
+# @param[in] commandline  The command line to run
+
+# @return  spawn_id of the telnet session.
+# -----------------------------------------------------------------------------
+proc telnet_spawn { board commandline } {
+
+    verbose "telnet_spawn $board $commandline" 3
+
+    if {[board_info $board exists name]} {
+	set connhost [board_info $board name]
+    } else {
+	set connhost $board
+    }
+    verbose "telnet_spawn: connhost is $connhost" 2
+
+    if [board_info $connhost exists hostname] {
+	set hostname [board_info $connhost hostname]
+    } else {
+	set hostname $board
+    }
+    verbose "telnet_spawn: hostname is $hostname" 2
+
+    # Set the shell prompt
+    if [board_info $connhost exists shell_prompt] {
+	set shell_prompt [board_info $connhost shell_prompt]
+    } elseif ![info exists shell_prompt] {
+	# if no prompt, then set it to something generic
+	set shell_prompt "\[^\r\n\]*\[$#\] "
+    }
+
+    # Start a new telnet session if one doesn't already exist. If sucessful
+    # the fileid field associated with $connhost will be set to the spawn_id
+    # of the new telnet process.
+    if ![board_info $connhost exists fileid] {
+	verbose "telnet_spawn: opening new telnet connection"
+	if {[telnet_open $connhost] == -1} {
+	    return -1
+	}
+    }
+
+    # The spawn_id we'll use throughout
+    set spawn_id [board_info $connhost fileid]
+    verbose "telnet_spawn: spawn_id is now $spawn_id"
+    
+    # Use a relatively short timeout for most operations. Only the command
+    # itself uses a long timeout.
+    set timeout 30
+
+    # Hit enter to make sure you get a shell prompt
+    send -i $spawn_id "\r"
+
+    expect {
+	# A prompt indicates the current session is alive
+	-i $spawn_id -re "$shell_prompt" {
+	    verbose "telnet_spawn: got prompt at start"
+	}
+	-i $spawn_id default {
+	    # Timeout or EOF. Die if we have had too many failures
+	    telnet_failure_check $connhost "no prompt at telnet start"
+
+	    # Try closing the connection and reopening.
+	    telnet_close $connhost
+	    if {[telnet_open $connhost] != -1} {
+		set spawn_id [board_info $connhost fileid]
+		verbose "telnet_spawn: new telnet session, spawn_id: $spawn_id"
+		send -i $spawn_id "\r"
+		exp_continue
+	    } else {
+		return -1
+	    }
+	}
+    }
+
+    # Send the command.
+    send -i $spawn_id -- "${commandline}\r"
+
+    return $spawn_id
+}

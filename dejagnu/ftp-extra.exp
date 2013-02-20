@@ -201,6 +201,14 @@ proc ftp_download {host localfile remotefile} {
 	    }
 	}
     }
+
+    # FTP doesn't look after the file mode bits, which means executable local
+    # files will not be executable remote files. So we need to fix that.
+    if [file executable $localfile] {
+	verbose "Changing file mode of $remotefile" 2
+	call_remote "" exec $host chmod "ugo+x $remotefile"
+    }
+
     return $remotefile
 }
 
