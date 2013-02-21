@@ -26,10 +26,6 @@
 # This is the generic board setup for all ARC Linux ports. It is loaded by the
 # boards specific to particular systems. It should not be used directly.
 
-# We need some extra and modified procs for testing with telnet and FTP.
-search_and_load_file "library file" "telnet-extra.exp" ${boards_dir}
-search_and_load_file "library file" "ftp-extra.exp" ${boards_dir}
-
 # This is a list of toolchains that are supported on this board.
 set_board_info target_install ${target_triplet}
 
@@ -41,6 +37,12 @@ if { $tool == "gdb" } {
 } else {
     load_generic_config "unix"
 }
+
+# We need some extra and modified procs for testing with telnet, FTP and
+# gdbserver.
+search_and_load_file "library file" "telnet-extra.exp" ${boards_dir}
+search_and_load_file "library file" "ftp-extra.exp" ${boards_dir}
+search_and_load_file "library file" "gdb-extra.exp" ${boards_dir}
 
 # No multilib options needed by default.
 process_multilib_options ""
@@ -96,4 +98,6 @@ if { $tool == "gdb" } {
     set_board_info gdb,no_hardware_watchpoints 1
     # The command to use
     set_board_info gdb_server_prog /bin/gdbserver
+    # Use a GDB stug
+    set_board_info use_gdb_stub 1
 }

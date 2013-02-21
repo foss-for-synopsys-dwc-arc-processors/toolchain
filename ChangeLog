@@ -1,3 +1,10 @@
+2013-02-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* dejagnu/baseboards/arc-linux-generic.exp: Move extra file loads
+	to after the main config file is loaded. Add gdb-extra.exp. Mark
+	as using GDB stub.
+	* dejagnu/gdb-extra.exp: Created as placeholder.
+
 2013-02-20  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* dejagnu/baseboards/arc-linux-aa4.exp: Move most gdbserver config
