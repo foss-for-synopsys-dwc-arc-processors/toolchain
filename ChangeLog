@@ -1,5 +1,13 @@
 2013-02-20  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* dejagnu/baseboards/arc-linux-aa4.exp: Move most gdbserver config
+	to arc-linux-generic.exp
+	* dejagnu/baseboards/arc-linux-nsim.exp: Likewise.
+	* dejagnu/baseboards/arc-linux-generic.exp: Set most gdbserver
+	config.
+
+2013-02-20  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* dejagnu/baseboards/arc-linux-nsim.exp: Correct code accidentally
 	introduced.
 

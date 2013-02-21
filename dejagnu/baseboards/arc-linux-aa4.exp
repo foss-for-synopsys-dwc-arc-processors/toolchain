@@ -66,18 +66,6 @@ set_board_info ftp_upload_timeout    10
 set_board_info slow_simulator 0
 
 if { $tool == "gdb" } {
-    # GDB specific setup to enable gdbserver on the target.
-
-    # Use telnet as protocol to spawn gdbserver
-    set_board_info protocol telnet
-    # Standard remote serial protocol
-    set_board_info gdb_protocol "remote"
-    # We can only run one program at a time
-    set_board_info gdb,do_reload_on_run 1
-    # No hardware watchpoints
-    set_board_info gdb,no_hardware_watchpoints 1
     # IP address of target
     set_board_info sockethost "$env(ARC_TEST_TARGET):"
-    # The command to use
-    set_board_info gdb_server_prog /bin/gdbserver
 }

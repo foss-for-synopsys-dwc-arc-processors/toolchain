@@ -82,3 +82,18 @@ set_board_info gdb,noargs  1
 set_board_info gdb,nosignals  1
 # GDB can't return results
 set_board_info gdb,noresults 1
+
+if { $tool == "gdb" } {
+    # GDB specific setup to enable gdbserver on the target.
+
+    # Use telnet as protocol to spawn gdbserver
+    set_board_info protocol telnet
+    # Standard remote serial protocol
+    set_board_info gdb_protocol "remote"
+    # We can only run one program at a time
+    set_board_info gdb,do_reload_on_run 1
+    # No hardware watchpoints
+    set_board_info gdb,no_hardware_watchpoints 1
+    # The command to use
+    set_board_info gdb_server_prog /bin/gdbserver
+}
