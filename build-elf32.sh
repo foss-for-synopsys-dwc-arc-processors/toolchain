@@ -156,13 +156,13 @@ else
     exit 1
 fi
 
-if make ${PARALLEL} all-gdb >> "${log_path}" 2>&1
-then
-    echo "  finished building GDB"
-else
-    echo "ERROR: GDB build failed."
-    exit 1
-fi
+# if make ${PARALLEL} all-gdb >> "${log_path}" 2>&1
+# then
+#     echo "  finished building GDB"
+# else
+#     echo "ERROR: GDB build failed."
+#     exit 1
+# fi
 
 # Install binutils, GCC, newlib and GDB
 echo "Installing tools" >> "${log_path}"
@@ -174,12 +174,12 @@ cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
 if make install-binutils install-gas install-ld install-gcc \
         install-target-libgcc install-target-libgloss install-target-newlib \
-        install-target-libstdc++-v3 install-sim install-gdb \
+        install-target-libstdc++-v3 install-sim \
     >> "${log_path}" 2>&1
 then
-    echo "  finished installing tools"
+    echo "  finished installing tools (excl GDB)"
 else
-    echo "ERROR: tools install failed."
+    echo "ERROR: tools install (excl GDB) failed."
     exit 1
 fi
 
