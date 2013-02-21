@@ -166,6 +166,9 @@ proc ftp_download {host localfile remotefile} {
 	verbose "FTP download timeout set to default value $timeout"
     }
 
+    # Save remote file name for future chmod.
+    set remotefile_orig $remotefile
+
     while {$loop} {
 	send -i $spawn_id "put $localfile $remotefile\n"
 	expect {
@@ -205,11 +208,11 @@ proc ftp_download {host localfile remotefile} {
     # FTP doesn't look after the file mode bits, which means executable local
     # files will not be executable remote files. So we need to fix that.
     if [file executable $localfile] {
-	verbose "Changing file mode of $remotefile" 2
-	call_remote "" exec $host chmod "ugo+x $remotefile"
+	verbose "Changing file mode of $remotefile_orig" 2
+	call_remote "" exec $host chmod "ugo+x $remotefile_orig"
     }
 
-    return $remotefile
+    return $remotefile_orig
 }
 
 

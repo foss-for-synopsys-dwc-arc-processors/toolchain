@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# Copyright (C) 2010, 2011, 2012 Embecosm Limited
+
+# Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Joern Rennecke <joern.rennecke@embecosm.com>
+
+# This file is additional DejaGnu procs to support GDB testing with gdbserver.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+
+
+# -----------------------------------------------------------------------------
+# For gdbserver targets we need to define some functions.
+
+verbose "Sourcing GDB extra definitions"
+
+#
+# Generic run command.
+#
+# The second pattern below matches up to the first newline *only*.
+# Using ``.*$'' could swallow up output that we attempt to match
+# elsewhere.
+#
+# Modified to use a remote simulator instead.
+
+proc gdb_run_cmd {args} {
+    global gdb_prompt
+
+    set use_gdb_stub [target_info exists use_gdb_stub]
+
+    if $use_gdb_stub {
+	if [target_info exists gdb,do_reload_on_run] {
+	    if { [gdb_reload] != 0 } {
+		return;
+	    }
+	    send_gdb "continue\n";
+	    gdb_expect 60 {
+		-re "Continu\[^\r\n\]*\[\r\n\]" {}
+		default {}
+	    }
+	    return;
+	}
+
+	if [target_info exists gdb,start_symbol] {
+	    set start [target_info gdb,start_symbol];
+	} else {
+	    set start "start";
+	}
+	send_gdb  "jump *$start\n"
+	set start_attempt 1;
+	while { $start_attempt } {
+	    # Cap (re)start attempts at three to ensure that this loop
+	    # always eventually fails.  Don't worry about trying to be
+	    # clever and not send a command when it has failed.
+	    if [expr $start_attempt > 3] {
+		perror "Jump to start() failed (retry count exceeded)";
+		return;
+	    }
+	    set start_attempt [expr $start_attempt + 1];
+	    gdb_expect 30 {
+		-re "Continuing at \[^\r\n\]*\[\r\n\]" {
+		    set start_attempt 0;
+		}
+		-re "No symbol \"_start\" in current.*$gdb_prompt $" {
+		    perror "Can't find start symbol to run in gdb_run";
+		    return;
+		}
+		-re "No symbol \"start\" in current.*$gdb_prompt $" {
+		    send_gdb "jump *_start\n";
+		}
+		-re "No symbol.*context.*$gdb_prompt $" {
+		    set start_attempt 0;
+		}
+		-re "Line.* Jump anyway.*y or n. $" {
+		    send_gdb "y\n"
+		}
+		-re "The program is not being run.*$gdb_prompt $" {
+		    if { [gdb_reload] != 0 } {
+			return;
+		    }
+		    send_gdb "jump *$start\n";
+		}
+		timeout {
+		    perror "Jump to start() failed (timeout)"; 
+		    return
+		}
+	    }
+	}
+	return
+    }
+
+    if [target_info exists gdb,do_reload_on_run] {
+	if { [gdb_reload] != 0 } {
+	    return;
+	}
+    }
+    send_gdb "run $args\n"
+# This doesn't work quite right yet.
+# Use -notransfer here so that test cases (like chng-sym.exp)
+# may test for additional start-up messages.
+   gdb_expect 60 {
+	-re "The program .* has been started already.*y or n. $" {
+	    send_gdb "y\n"
+	    exp_continue
+	}
+	-notransfer -re "Starting program: \[^\r\n\]*" {}
+	-notransfer -re "$gdb_prompt $" {
+	    # There is no more input expected.
+	}
+    }
+}
