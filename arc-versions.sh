@@ -79,6 +79,18 @@ do
 
     cd ${ARC_GNU}/${tool}
 
+    if [ "x${autopull}" = "x--auto-pull" ]
+    then
+	# Need to fetch first, in case it is a branch that is new. But only do
+	# this if we have auto-pull enabled (so we can still work if not
+	# online). Assumes the remote has not changed (if it has, you'll need
+	# to sort it out by hand).
+	if ! git fetch
+	then
+	    exit 1
+	fi
+    fi
+
     if [ "x${autocheckout}" = "x--auto-checkout" ]
     then
 	if ! git checkout ${branch}
