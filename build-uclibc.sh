@@ -456,14 +456,12 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# gdbserver has to be built on its own and with the old tool chain.
+# gdbserver has to be built on its own.
 
 echo "Building gdbserver to run on an ARC" >> "${logfile}"
 echo "===================================" >> "${logfile}"
 
 echo "Start building GDBSERVER to run on an ARC ..."
-
-PATH=/opt/arc-4.4/bin:$PATH
 
 rm -rf ${build_dir}/gdb/gdbserver
 mkdir -p ${build_dir}/gdb/gdbserver

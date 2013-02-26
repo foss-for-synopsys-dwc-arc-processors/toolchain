@@ -45,7 +45,7 @@
 # ------------------------------------------------------------------------------
 
 # Useful constants. Some day these will be set from args
-TOOLDIR=/opt/arc-4.4
+TOOLDIR=/opt/arc-4.8
 # LINUX_DEFCONFIG=4.10_defconfig
 LINUX_DEFCONFIG=fpga_defconfig_patched
 LINUX_TREE=linux

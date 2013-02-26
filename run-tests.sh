@@ -89,7 +89,7 @@ make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
 jobs=${make_load}
 load=${make_load}
-elf32="--no-elf32"
+elf32="--elf32"
 uclibc="--uclibc"
 
 # Parse options
