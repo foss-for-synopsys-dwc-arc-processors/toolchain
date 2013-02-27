@@ -481,7 +481,8 @@ else
 fi
 
 export CC=${arche}-linux-uclibc-gcc
-if make ${PARALLEL} CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
+if make ${PARALLEL} \
+    CFLAGS="${CFLAGS} -static -fcommon -mno-sdata -DARC_LEGACY_PTRACE_ABI" \
     >> "${logfile}" 2>&1
 then
     echo "  finished building GDBSERVER to run on an arc"
