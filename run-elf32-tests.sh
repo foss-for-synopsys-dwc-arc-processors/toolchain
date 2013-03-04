@@ -52,7 +52,6 @@ export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running elf32 tests"
 
 # Set the build directories
-bd_elf=${ARC_GNU}/bd-elf32
 bd_elf_gdb=${ARC_GNU}/bd-elf32-gdb
 
 # Create the ELF log file and results directory
@@ -66,9 +65,10 @@ mkdir ${res_elf}
 if [ "${ARC_ENDIAN}" = "little" ]
 then
     target_dir=arc-elf32
+    bd_elf=${ARC_GNU}/bd-4.8-elf32
 else
-#    target_dir=arceb-elf32
-    target_dir=arc-elf32
+    target_dir=arceb-elf32
+    bd_elf=${ARC_GNU}/bd-4.8-elf32eb
 fi
 
 # The target board to use

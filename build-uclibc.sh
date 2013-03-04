@@ -126,13 +126,14 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arche=arceb
+    build_dir="$(echo "${PWD}")"/bd-4.8-uclibceb
 else
     arche=arc
+    build_dir="$(echo "${PWD}")"/bd-4.8-uclibc
 fi
 
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
-build_dir="$(echo "${PWD}")"/bd-4.8-uclibc
 
 version_str="ARCompact Linux uClibc toolchain (built $(date +%Y%m%d))"
 bugurl_str="http://solvnet.synopsys.com"

@@ -68,9 +68,16 @@
 # ------------------------------------------------------------------------------
 # Local variables. We need to use unified_src as a relative directory when
 # constructing.
-arch=arc
+if [ "${ARC_ENDIAN}" = "big" ]
+then
+    arch=arceb
+    build_dir="$(echo "${PWD}")"/bd-4.8-elf32eb
+else
+    arch=arc
+    build_dir="$(echo "${PWD}")"/bd-4.8-elf32
+fi
+
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
-build_dir="$(echo "${PWD}")"/bd-4.8-elf32
 
 # parse options
 until
@@ -127,6 +134,7 @@ if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=arc700 \
         --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
         --with-bugurl="http://solvnet.synopsys.com" \
         --enable-fast-install=N/A \
+        --with-endian=${ARC_ENDIAN} \
         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
         --with-headers="${config_path}"/newlib/libc/include \
         --enable-sim-endian=no \
