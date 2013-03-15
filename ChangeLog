@@ -1,5 +1,10 @@
 2013-03-15  Vineet Gupta <vgupta@synopsys.com>
 
+	* build-uclibc.sh: Allow a defconfig based uClibc build
+	Do a distclean and also increase the verbosity
+
+2013-03-15  Vineet Gupta <vgupta@synopsys.com>
+
 	* build-uclibc.sh: No need to copy Linux sources
 
 2013-03-04  Simon Cook  <simon.cook@embecosm.com>

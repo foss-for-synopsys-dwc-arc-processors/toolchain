@@ -235,13 +235,24 @@ then
 	--exclude='*.a' -cf - . | tar -xf -
 fi
 
-# Patch the temporary install directories used into the uClibc config. There
-# are better ways to do this using defconfig, but for now we'll leave it.
-sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
-    -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-    -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-    -e "s#%CROSS_COMPILER_PREFIX%##" \
-    < "${ARC_GNU}"/uClibc/arc_config > .config
+make distclean >> "${logfile}" 2>&1
+
+# Patch the temporary install directories used into the uClibc config.
+# uClibc 0.9.34 onwards use defconfig
+if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
+then
+    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
+        -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+        -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+        -e "s#%CROSS_COMPILER_PREFIX%##" \
+        < "${ARC_GNU}"/uClibc/arc_config > .config
+else
+    make ARCH=arc defconfig
+    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
+        -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+        -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+	-i .config
+fi
 
 if make ARCH=${arch} V=1 install_headers >> "${logfile}" 2>&1
 then
@@ -322,13 +333,21 @@ echo "Start building UCLIBC ..."
 cd ${uclibc_build_dir}
 
 # Patch the directories used into the uClibc config. Note that the kernel
-# headers will have been moved by the previous header install. There are
-# better ways to do this using defconfig, but for now we'll leave it.
-sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
-    -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-    -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-    -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
-    < "${ARC_GNU}"/uClibc/arc_config > .config
+# headers will have been moved by the previous header install.
+if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
+then
+    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
+        -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
+        < "${ARC_GNU}"/uClibc/arc_config > .config
+else
+    make ARCH=arc defconfig
+    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
+        -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -i .config
+fi
 
 if make ARCH=${arch} clean >> "${logfile}" 2>&1
 then
@@ -339,7 +358,7 @@ else
     exit 1
 fi
   
-if make ARCH=${arch} V=1 >> "${logfile}" 2>&1
+if make ARCH=${arch} V=2 >> "${logfile}" 2>&1
 then
     echo "  finished building UCLIBC"
 else
@@ -348,7 +367,7 @@ else
     exit 1
 fi
 
-if make ARCH=${arch} V=1 install >> "${logfile}" 2>&1
+if make ARCH=${arch} V=2 install >> "${logfile}" 2>&1
 then
     echo "  finished installing UCLIBC"
 else
