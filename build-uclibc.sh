@@ -173,7 +173,7 @@ echo "START ${ARC_ENDIAN}-endian uClibc: $(date)"
 # newlib for now if we rebuild our unified source tree.
 . "${ARC_GNU}"/toolchain/arc-init.sh
 uclibc_build_dir="$(echo "${PWD}")"/uClibc
-linux_build_dir="$(echo "${PWD}")"/linux
+linux_build_dir=${LINUXDIR}
 gdb_dir="${ARC_GNU}/gdb"
 
 # Note stuff for the log
@@ -188,17 +188,7 @@ echo "========================" >> "${logfile}"
 
 echo "Start installing LINUX headers ..."
 
-# Linux builds in place, so if ${ARC_GNU} is set (to a different location) we
-# have to create the directory and copy the source across.
-mkdir -p "${linux_build_dir}"
 cd "${linux_build_dir}"
-
-if [ ! -f Makefile ]
-then
-    echo Copying over Linux sources
-    tar -C "${LINUXDIR}" --exclude=.svn --exclude='*.o' \
-	--exclude='*.a' -cf - . | tar -xf -
-fi
 
 # Configure Linux if not already
 if [ ! -f .config ]; then

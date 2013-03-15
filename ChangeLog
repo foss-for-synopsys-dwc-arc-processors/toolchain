@@ -1,3 +1,7 @@
+2013-03-15  Vineet Gupta <vgupta@synopsys.com>
+
+	* build-uclibc.sh: No need to copy Linux sources
+
 2013-02-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-linux-generic.exp: Move extra file loads to after the main
