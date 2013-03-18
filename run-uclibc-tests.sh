@@ -63,10 +63,10 @@ mkdir ${res_linux}
 # Location of some files depends on endianess
 if [ "${ARC_ENDIAN}" = "little" ]
 then
-    bd_linux=${ARC_GNU}/bd-4.8-uclibc
+    bd_linux=${ARC_GNU}/bd-mainline-uclibc
     target_dir=arc-linux-uclibc
 else
-    bd_linux=${ARC_GNU}/bd-4.8-uclibceb
+    bd_linux=${ARC_GNU}/bd-mainline-uclibceb
     target_dir=arceb-linux-uclibc
 fi
 

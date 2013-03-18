@@ -58,9 +58,9 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-4.8-elf32) local to the directory in which it
-# is executed. The script generates a date and time stamped log file in that
-# directory.
+# and uses a build directory (bd-mainline-elf32) local to the directory in
+# which it is executed. The script generates a date and time stamped log file
+# in that directory.
 
 # This version is modified to work with the source tree as organized in
 # GitHub.
@@ -71,10 +71,10 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arch=arceb
-    build_dir="$(echo "${PWD}")"/bd-4.8-elf32eb
+    build_dir="$(echo "${PWD}")"/bd-mainline-elf32eb
 else
     arch=arc
-    build_dir="$(echo "${PWD}")"/bd-4.8-elf32
+    build_dir="$(echo "${PWD}")"/bd-mainline-elf32
 fi
 
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}

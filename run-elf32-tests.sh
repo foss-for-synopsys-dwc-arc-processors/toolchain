@@ -65,10 +65,10 @@ mkdir ${res_elf}
 if [ "${ARC_ENDIAN}" = "little" ]
 then
     target_dir=arc-elf32
-    bd_elf=${ARC_GNU}/bd-4.8-elf32
+    bd_elf=${ARC_GNU}/bd-mainline-elf32
 else
     target_dir=arceb-elf32
-    bd_elf=${ARC_GNU}/bd-4.8-elf32eb
+    bd_elf=${ARC_GNU}/bd-mainline-elf32eb
 fi
 
 # The target board to use

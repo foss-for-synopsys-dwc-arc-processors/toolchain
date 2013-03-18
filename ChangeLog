@@ -1,5 +1,13 @@
 2013-03-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-all.sh: Replace "4.8" by "mainline" throughout.
+	* build-elf32.sh: Likewise.
+	* build-uclibc.sh: Likewise.
+	* run-elf32-tests.sh: Likewise.
+	* run-uclibc-tests.sh: Likewise.
+
+2013-03-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Add --big-endian to help.
 
 2013-03-15  Vineet Gupta <vgupta@synopsys.com>
