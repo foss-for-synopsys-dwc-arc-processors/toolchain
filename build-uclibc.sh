@@ -126,13 +126,14 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arche=arceb
+    build_dir="$(echo "${PWD}")"/bd-4.8-uclibceb
 else
     arche=arc
+    build_dir="$(echo "${PWD}")"/bd-4.8-uclibc
 fi
 
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
-build_dir="$(echo "${PWD}")"/bd-4.8-uclibc
 
 version_str="ARCompact Linux uClibc toolchain (built $(date +%Y%m%d))"
 bugurl_str="http://solvnet.synopsys.com"
@@ -172,7 +173,7 @@ echo "START ${ARC_ENDIAN}-endian uClibc: $(date)"
 # newlib for now if we rebuild our unified source tree.
 . "${ARC_GNU}"/toolchain/arc-init.sh
 uclibc_build_dir="$(echo "${PWD}")"/uClibc
-linux_build_dir="$(echo "${PWD}")"/linux
+linux_build_dir=${LINUXDIR}
 
 # Note stuff for the log
 echo "Installing in ${INSTALLDIR}" >> ${logfile} 2>&1
@@ -186,17 +187,7 @@ echo "========================" >> "${logfile}"
 
 echo "Start installing LINUX headers ..."
 
-# Linux builds in place, so if ${ARC_GNU} is set (to a different location) we
-# have to create the directory and copy the source across.
-mkdir -p "${linux_build_dir}"
 cd "${linux_build_dir}"
-
-if [ ! -f Makefile ]
-then
-    echo Copying over Linux sources
-    tar -C "${LINUXDIR}" --exclude=.svn --exclude='*.o' \
-	--exclude='*.a' -cf - . | tar -xf -
-fi
 
 # Configure Linux if not already
 if [ ! -f .config ]; then
@@ -244,13 +235,24 @@ then
 	--exclude='*.a' -cf - . | tar -xf -
 fi
 
-# Patch the temporary install directories used into the uClibc config. There
-# are better ways to do this using defconfig, but for now we'll leave it.
-sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
-    -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-    -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-    -e "s#%CROSS_COMPILER_PREFIX%##" \
-    < "${ARC_GNU}"/uClibc/arc_config > .config
+make distclean >> "${logfile}" 2>&1
+
+# Patch the temporary install directories used into the uClibc config.
+# uClibc 0.9.34 onwards use defconfig
+if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
+then
+    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
+        -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+        -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+        -e "s#%CROSS_COMPILER_PREFIX%##" \
+        < "${ARC_GNU}"/uClibc/arc_config > .config
+else
+    make ARCH=arc defconfig
+    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
+        -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+        -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+	-i .config
+fi
 
 if make ARCH=${arch} V=1 install_headers >> "${logfile}" 2>&1
 then
@@ -331,13 +333,21 @@ echo "Start building UCLIBC ..."
 cd ${uclibc_build_dir}
 
 # Patch the directories used into the uClibc config. Note that the kernel
-# headers will have been moved by the previous header install. There are
-# better ways to do this using defconfig, but for now we'll leave it.
-sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
-    -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-    -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-    -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
-    < "${ARC_GNU}"/uClibc/arc_config > .config
+# headers will have been moved by the previous header install.
+if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
+then
+    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
+        -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
+        < "${ARC_GNU}"/uClibc/arc_config > .config
+else
+    make ARCH=arc defconfig
+    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
+        -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -i .config
+fi
 
 if make ARCH=${arch} clean >> "${logfile}" 2>&1
 then
@@ -348,7 +358,7 @@ else
     exit 1
 fi
   
-if make ARCH=${arch} V=1 >> "${logfile}" 2>&1
+if make ARCH=${arch} V=2 >> "${logfile}" 2>&1
 then
     echo "  finished building UCLIBC"
 else
@@ -357,7 +367,7 @@ else
     exit 1
 fi
 
-if make ARCH=${arch} V=1 install >> "${logfile}" 2>&1
+if make ARCH=${arch} V=2 install >> "${logfile}" 2>&1
 then
     echo "  finished installing UCLIBC"
 else
@@ -481,7 +491,8 @@ else
 fi
 
 export CC=${arche}-linux-uclibc-gcc
-if make ${PARALLEL} CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
+if make ${PARALLEL} \
+    CFLAGS="${CFLAGS} -static -fcommon -mno-sdata -DARC_LEGACY_PTRACE_ABI" \
     >> "${logfile}" 2>&1
 then
     echo "  finished building GDBSERVER to run on an arc"

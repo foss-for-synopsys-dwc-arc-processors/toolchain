@@ -54,9 +54,6 @@ mkdir -p ${ARC_GNU}/results
 export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running uClibc Linux tests"
 
-# Set the build directories
-bd_linux=${ARC_GNU}/bd-4.8-uclibc
-
 # Create the Linux log file and results directory
 logfile_linux="$(echo "${ARC_GNU}")/logs/linux-check-$(date -u +%F-%H%M).log"
 rm -f "${logfile_linux}"
@@ -66,8 +63,10 @@ mkdir ${res_linux}
 # Location of some files depends on endianess
 if [ "${ARC_ENDIAN}" = "little" ]
 then
+    bd_linux=${ARC_GNU}/bd-4.8-uclibc
     target_dir=arc-linux-uclibc
 else
+    bd_linux=${ARC_GNU}/bd-4.8-uclibceb
     target_dir=arceb-linux-uclibc
 fi
 
