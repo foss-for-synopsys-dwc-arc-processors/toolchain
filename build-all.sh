@@ -324,6 +324,7 @@ case ${opt} in
         echo "                      [--linux | --no-linux]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
+	echo "                      [--big-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
 	echo "                      [--enable-multilib | --disable-multilib]"

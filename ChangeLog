@@ -1,3 +1,7 @@
+2013-03-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Add --big-endian to help.
+
 2013-03-15  Vineet Gupta <vgupta@synopsys.com>
 
 	* build-uclibc.sh: Allow a defconfig based uClibc build
