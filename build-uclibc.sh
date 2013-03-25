@@ -76,8 +76,9 @@
 
 # The script constructs a unified source directory (if --force is specified)
 # and uses a build directory (bd-4.8-uclibc) local to the directory in which
-# it is executed. The script generates a date and time stamped log file in
-# that directory.
+# it is executed.
+
+# The script generates a date and time stamped log file in the logs directory.
 
 # This approach is based on Mike Frysinger's guidelines on building a
 # cross-compiler.

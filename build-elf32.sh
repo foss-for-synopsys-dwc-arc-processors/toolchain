@@ -59,8 +59,9 @@
 
 # The script constructs a unified source directory (if --force is specified)
 # and uses a build directory (bd-4.8-elf32) local to the directory in which it
-# is executed. The script generates a date and time stamped log file in that
-# directory.
+# is executed.
+
+# The script generates a date and time stamped log file in the logs directory.
 
 # This version is modified to work with the source tree as organized in
 # GitHub.
@@ -156,21 +157,13 @@ cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
 if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
         all-target-libgcc all-target-libgloss all-target-newlib \
-        all-target-libstdc++-v3 all-sim >> "${log_path}" 2>&1
+        all-target-libstdc++-v3 all-sim all-gdb >> "${log_path}" 2>&1
 then
-    echo "  finished building tools (excl GDB)"
+    echo "  finished building tools"
 else
-    echo "ERROR: tools build (excl GDB) failed."
+    echo "ERROR: tools build failed."
     exit 1
 fi
-
-# if make ${PARALLEL} all-gdb >> "${log_path}" 2>&1
-# then
-#     echo "  finished building GDB"
-# else
-#     echo "ERROR: GDB build failed."
-#     exit 1
-# fi
 
 # Install binutils, GCC, newlib and GDB
 echo "Installing tools" >> "${log_path}"
@@ -182,12 +175,12 @@ cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
 if make install-binutils install-gas install-ld install-gcc \
         install-target-libgcc install-target-libgloss install-target-newlib \
-        install-target-libstdc++-v3 install-sim \
+        install-target-libstdc++-v3 install-sim install-gdb \
     >> "${log_path}" 2>&1
 then
-    echo "  finished installing tools (excl GDB)"
+    echo "  finished installing tools"
 else
-    echo "ERROR: tools install (excl GDB) failed."
+    echo "ERROR: tools install failed."
     exit 1
 fi
 
