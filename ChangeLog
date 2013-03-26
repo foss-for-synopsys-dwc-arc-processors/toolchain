@@ -1,5 +1,9 @@
 2013-03-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* dejagnu/telnet-extra.exp (telnet_spawn): Remove duplicate line.
+
+2013-03-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* run-elf32-tests.sh, run-uclibc-tests.sh: Make build directories
 	endian and tool chain release specific.
 
