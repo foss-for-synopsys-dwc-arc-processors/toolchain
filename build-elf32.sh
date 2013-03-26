@@ -61,7 +61,7 @@
 # and uses a build directory (bd-mainline-elf32) local to the directory in
 # which it is executed.
 
-The script generates a date and time stamped log file in the logs directory.
+# The script generates a date and time stamped log file in the logs directory.
 
 # This version is modified to work with the source tree as organized in
 # GitHub.
