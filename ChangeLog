@@ -1,3 +1,19 @@
+2013-03-25  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-elf32.sh: Build GDB.
+	* build-linux.sh: Ensure we have the right tool chain on the path.
+	* build-uclibc.sh: Tidy up commenting.
+	* dejagnu/baseboards/arc-linux-generic.exp: Set up sysroot command
+	file.
+	* dejagnu/ftp-extra.exp (make_relative): Correct typo for prefix.
+	(ftp_download): Silently ignore long remote file names.
+	* dejagnu/telnet-extra.exp (telnet_close): Correct logic.
+	(telnet_exec): Tidy up details of proc.
+	(telnet_spawn_open): New proc.
+	(telnet_spawn): Rewrite logic of proc.
+	* run-uclibc-tests.sh (ARC_GDB_COMMFILE): Create command file for
+	GDB tests.
+
 2013-03-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Replace "4.8" by "mainline" throughout.
@@ -35,11 +51,6 @@
 
 	* arc-versions.sh: Optionally do a fetch first, to deal with new
 	branches.
-
-2013-02-25  Simon Cook  <simon.cook@embecosm.com>
-
-	* arc-versions.sh: Updated binutils, gcc and newlib branches to
-	checkout upstream mainline tracking branches.
 
 2013-02-25  Simon Cook  <simon.cook@embecosm.com>
 

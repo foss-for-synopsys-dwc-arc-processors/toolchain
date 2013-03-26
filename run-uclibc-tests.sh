@@ -73,6 +73,11 @@ fi
 # The target board to use
 board=arc-linux-aa4
 
+# Create a file of start up commands for GDB
+commfile="${ARC_GNU}/commfile"
+echo "set sysroot /opt/arc-4.4-gdb-7.5/arc-linux-uclibc" >${commfile}
+export ARC_GDB_COMMFILE=${commfile}
+
 # Run tests
 status=0
 run_check ${bd_linux} binutils "${logfile_linux}" ${board} || status=1

@@ -76,8 +76,9 @@
 
 # The script constructs a unified source directory (if --force is specified)
 # and uses a build directory (bd-mainline-uclibc) local to the directory in
-# which it is executed. The script generates a date and time stamped log file
-# in that directory.
+# which it is executed.
+
+# The script generates a date and time stamped log file in the logs directory.
 
 # This approach is based on Mike Frysinger's guidelines on building a
 # cross-compiler.
@@ -93,9 +94,12 @@
 
 # The basic approach recommended by Frysinger is:
 
-# 1. Build binutils 2. Install the Linux kernel headers 3. Install the uClibc
-# headers 4. Build gcc stage 1 (C only) 5. Build uClibc 6. Build gcc stage 2
-# (C, C++ etc)
+# 1. Build binutils
+# 2. Install the Linux kernel headers
+# 3. Install the uClibc headers
+# 4. Build gcc stage 1 (C only)
+# 5. Build uClibc
+# 6. Build gcc stage 2 (C, C++ etc)
 
 # We create a sysroot, where we can put our intermediate stuff. However there
 # is a catch with GCC 4.4.7 (fixed in in GCC 4.7) that libgcc is muddled up in
@@ -104,24 +108,29 @@
 
 # So we use a revised flow.
 
-# 1. Install the Linux kernel headers into the temporary directory 2. Install
-# uClibc headers into the temporary directory using host GCC 3. Build and
-# install GCC stage 1 without headers into temporary directory 4. Build &
-# install uClibc using the stage 1 compiler into the final directory 5. Build
-# & install the whole tool chain from scratch (including GCC stage 2) using
-# the temporary headers
+# 1. Install the Linux kernel headers into the temporary directory
+# 2. Install uClibc headers into the temporary directory using host GCC
+# 3. Build and install GCC stage 1 without headers into temporary directory
+# 4. Build & install uClibc using the stage 1 compiler into the final directory
+# 5. Build & install the whole tool chain from scratch (including GCC stage 2)
+#    using the temporary headers
 
 # We build GDB after GCC. gdbserver also has to be built and installed
 # separately. So we add two extra steps
 
-# 6. Build & install GDB 7. Build & install gdbserver
+# 6. Build & install GDB
+# 7. Build & install gdbserver
 
 
-#
------------------------------------------------------------------------------
-# Local variables.  if [ "${ARC_ENDIAN}" = "big" ] then arche=arceb
-build_dir="$(echo "${PWD}")"/bd-mainline-uclibceb else arche=arc
-build_dir="$(echo "${PWD}")"/bd-mainline-uclibc
+# -----------------------------------------------------------------------------
+# Local variables.
+if [ "${ARC_ENDIAN}" = "big" ]
+then
+    arche=arceb
+    build_dir="$(echo "${PWD}")"/bd-mainline-uclibceb
+else
+    arche=arc
+    build_dir="$(echo "${PWD}")"/bd-mainline-uclibc
 fi
 
 arch=arc

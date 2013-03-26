@@ -47,10 +47,13 @@
 # Useful constants. Some day these will be set from args
 TOOLDIR=/opt/arc-4.8
 # LINUX_DEFCONFIG=4.10_defconfig
-LINUX_DEFCONFIG=fpga_defconfig_patched
+LINUX_DEFCONFIG=fpga_defconfig_patched_no_sasid
 LINUX_TREE=linux
 # ARC_INITRAMFS=arc_initramfs_10_2012_dyn_dev.tgz
 ARC_INITRAMFS=arc_initramfs_08_2012_gnu_4_4_ABI_v2.tgz
+
+# Ensure we have the right tool chain on the path!
+PATH=${TOOLDIR}/bin:${PATH}
 
 mkdir -p ${PWD}/../logs
 logfile="$(echo "${PWD}")/../logs/linux-build-$(date -u +%F-%H%M).log"
