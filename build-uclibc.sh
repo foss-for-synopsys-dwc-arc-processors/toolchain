@@ -76,8 +76,9 @@
 
 # The script constructs a unified source directory (if --force is specified)
 # and uses build directories (bd-uclibc and bd-uclibc-gdb) local to the
-# directory in which it is executed. The script generates a date and time
-# stamped log file in that directory.
+# directory in which it is executed.
+
+# The script generates a date and time stamped log file in that directory.
 
 # This approach is based on Mike Frysinger's guidelines on building a
 # cross-compiler.
@@ -127,8 +128,10 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arche=arceb
+    build_dir="$(echo "${PWD}")"/bd-4.8-uclibceb
 else
     arche=arc
+    build_dir="$(echo "${PWD}")"/bd-4.8-uclibc
 fi
 
 arch=arc

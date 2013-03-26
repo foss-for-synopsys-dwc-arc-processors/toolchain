@@ -98,7 +98,7 @@ proc make_relative {filename} {
     verbose "Making $filename relative to $cwd" 2
 
     # Find common parent directory
-    set prefx $cwd
+    set prefix $cwd
     set upsteps ""
 
     while {0 != [string first $prefix $filename]} {
@@ -139,6 +139,13 @@ proc ftp_download {host localfile remotefile} {
     # set new_localfile [make_relative $localfile]
     # verbose "new localfile is $new_localfile"
 
+    # For now just give up with very long files. We pretend to have succeeded
+    # to avoid issues with forever retrying.
+    if {[string length $remotefile] > 75} {
+	send_user "remote file $remotefile too long for ftp_download\n"
+	return $remotefile
+    }
+ 
     set prompt "ftp>"
 
     verbose "putting $localfile $remotefile"

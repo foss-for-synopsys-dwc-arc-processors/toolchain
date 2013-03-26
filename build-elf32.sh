@@ -59,7 +59,9 @@
 
 # The script constructs a unified source directory (if --force is specified)
 # and uses a build directory (bd-elf32) local to the directory in which it is
-# executed. The script generates a date and time stamped log file in that
+# executed.
+
+# The script generates a date and time stamped log file in that
 # directory.
 
 # At present the GDB binutils libraries are out of step, so GDB has to be
@@ -132,8 +134,10 @@ if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=arc700 \
         --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
         --with-bugurl="http://solvnet.synopsys.com" \
         --enable-fast-install=N/A \
+        --with-endian=${ARC_ENDIAN} \
         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
         --with-headers="${config_path}"/newlib/libc/include \
+        --enable-sim-endian=no \
     >> "${log_path}" 2>&1
 then
     echo "  finished configuring tools"
@@ -154,9 +158,9 @@ if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
         all-target-libgcc all-target-libgloss all-target-newlib \
         all-target-libstdc++-v3 >> "${log_path}" 2>&1
 then
-    echo "  finished building tools"
+    echo "  finished building tools (excl GDB)"
 else
-    echo "ERROR: tools build failed."
+    echo "ERROR: tools build (excl GDB) failed."
     exit 1
 fi
 
@@ -172,9 +176,9 @@ if make install-binutils install-gas install-ld install-gcc \
         install-target-libgcc install-target-libgloss install-target-newlib \
         install-target-libstdc++-v3 >> "${log_path}" 2>&1
 then
-    echo "  finished installing tools"
+    echo "  finished installing tools (excl GDB)"
 else
-    echo "ERROR: tools install failed."
+    echo "ERROR: tools install (exck GDB) failed."
     exit 1
 fi
 

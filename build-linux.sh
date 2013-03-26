@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012 Synopsys Inc.
+# Copyright (C) 2012, 2013 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -85,9 +85,17 @@ echo "Building busybox" >> $logfile 2>&1
 echo "================" >> $logfile 2>&1
 
 cd busybox
+OLDPATH=${PATH}
+PATH=${TOOLDIR}/bin:${PATH}
 make clean >> $logfile 2>&1
 make >> $logfile 2>&1
+
+echo "Installing busybox..."
+echo "Installing busybox" >> $logfile 2>&1
+echo "==================" >> $logfile 2>&1
+
 make install >> $logfile 2>&1
+PATH=${OLDPATH}
 
 echo "Changing ownership and setuid of busybox..."
 echo "Changing ownership and setuid of busybox" >> $logfile 2>&1
