@@ -54,10 +54,6 @@ mkdir -p ${ARC_GNU}/results
 export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running uClibc Linux tests"
 
-# Set the build directories
-bd_linux=${ARC_GNU}/bd-uclibc
-bd_linux_gdb=${ARC_GNU}/bd-uclibc-gdb
-
 # Create the Linux log file and results directory
 logfile_linux="$(echo "${ARC_GNU}")/logs/linux-check-$(date -u +%F-%H%M).log"
 rm -f "${logfile_linux}"
@@ -68,8 +64,12 @@ mkdir ${res_linux}
 if [ "${ARC_ENDIAN}" = "little" ]
 then
     target_dir=arc-linux-uclibc
+    bd_linux=${ARC_GNU}/bd-4.4-uclibc
+    bd_linux_gdb=${ARC_GNU}/bd-4.4-uclibc-gdb
 else
     target_dir=arceb-linux-uclibc
+    bd_linux=${ARC_GNU}/bd-4.4-uclibceb
+    bd_linux_gdb=${ARC_GNU}/bd-4.4-uclibceb-gdb
 fi
 
 # The target board to use
