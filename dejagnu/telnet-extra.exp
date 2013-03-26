@@ -29,22 +29,31 @@ verbose "Sourcing telnet extra definitions"
 # -----------------------------------------------------------------------------
 # Custom proc to close a telnet session
 
+# @note We must declare spawn_id as global since we write it (see CAVEATS in
+#       "man expect" for the reason).
+
 # @param[in] connhost  The connected host being closed.
 # -----------------------------------------------------------------------------
 proc telnet_close {connhost} {
     global board_info
+    global errorInfo
+    global spawn_id
     
     verbose "telnet_close: connhost $connhost" 3
 
     # Close the session
-    set spawn_id [board_info $connhost fileid]
-    catch close -i $spawn_id
-    catch wait -i $spawn_id
-
-    # Check we really succeeded in closing
     if [board_info $connhost exists fileid] {
-	verbose "telnet_close: deleting remaining fileid"
+	set spawn_id [board_info $connhost fileid]
+	if [catch {close -i $spawn_id}] {
+	    verbose "telnet_close: failed to close $spawn_id: $errorInfo"
+	}
+
+	if [catch {wait -i $spawn_id}] {
+	    verbose "telnet_close: failed to wait $spawn_id: $errorInfo"
+	}
+
 	unset board_info(${connhost},fileid)
+	unset spawn_id
     }
 }
 
@@ -63,7 +72,7 @@ proc telnet_failure_check { connhost errmess } {
     if [board_info $connhost exists max_failure_count] {
 	set max_fc [board_info $connhost max_failure_count]
     }
-    verbose "telnet_failure_check: Max failure count $max_fc"
+    verbose "telnet_failure_check: Max failure count $max_fc for $errmess"
 
     # Increment the current failure count
     set fc 1
@@ -84,32 +93,41 @@ proc telnet_failure_check { connhost errmess } {
 # -----------------------------------------------------------------------------
 # Custom proc to exec programs using telnet
 
-# We seem to only pass in the first of the arguments supplied to the command.
-
 # The timeout is a mess. It seems to always be 10, not the timeout needed to
 # execute a regression test (typicall 300 seconds). Fixed by not making it
 # global and using our own timeout data.
 
-# It also seems that only the first argument is passed.
+# The naming of the target for telnet is confusing.
+# - "boardname" is the name of the board
+# - "connhost" is the name with which this connection's info is associated.
+# - "hostname" is the IP name/address to which we telnet.
 
-# @param[in] hostname  The board we are telnetting to
-# @param[in] cmd        The command to run
-# @param[in] args       Arguments to the command
+# Typically "connhost" is the same as "boardname".
+
+# The assumption is we have an extant telnet session (created by telnet_open),
+# which we try to reuse if it is still alive. Otherwise we recreate one.
+
+# Potentially the pogram has arguments, an input stream (ignored) and an
+# output stream (ignored), all of which are broken out of "args".
+
+# @note We must declare spawn_id as global since we write it (see CAVEATS in
+#       "man expect" for the reason).
+
+# @param[in] boardname  The board we are telnetting to
+# @param[in] program    The program to run
+# @param[in] args       All other args
 
 # @return  A list of the return code (-1 on failure) and any error message.
-# -----------------------------------------------------------------------------
-proc telnet_exec {hostname cmd args} {
-    global board_info
-    global verbose
+proc telnet_exec {boardname program args} {
+    global timeout
+    global spawn_id
 
-    # Get the connected host name, if it exists. This code matches
-    # telnet_open.
-    verbose "telnet_exec: original hostname is $hostname"
+    verbose "telnet_exec: boardname is $boardname"
 
-    if {[board_info $hostname exists name]} {
-	set connhost [board_info $hostname name]
+    if {[board_info $boardname exists name]} {
+	set connhost [board_info $boardname name]
     } else {
-	set connhost $hostname
+	set connhost $boardname
     }
     verbose "telnet_exec: connhost is $connhost"
 
@@ -118,23 +136,31 @@ proc telnet_exec {hostname cmd args} {
     }
     verbose "telnet_exec: hostname is $hostname"
 
-    # Get the first argument, if any.
+    # Break out the rest of the arguments
     if { [llength $args] > 0 } {
+	# arguments to the program
 	set pargs [lindex $args 0];
     } else {
 	set pargs ""
     }
 
-    verbose "telnet_exec: executing on $connhost, command \"$cmd\", pargs \"$pargs\""
-
-    # Just check if we have more args. Potentially a second arg is an input
-    # file.
     if { [llength $args] > 1 } {
-	set tinp [lindex $args 1]
-	if {$tinp != {}} {
-	    verbose "telnet_exec: long args: $args"
-	}
+	# Next argument is an input stream (ignored)
+       set inp [lindex $args 1]
+       if {$inp != {}} {
+           verbose "telnet_exec: input stream ignored: $inp"
+       }
     }
+
+    if { [llength $args] > 2 } {
+	# Next argument is an output stream (ignored)
+       set outp [lindex $args 2]
+       if {$outp != {}} {
+           verbose "telnet_exec: output stream ignored: $outp"
+       }
+    }
+
+    verbose "telnet_exec: executing on $hostname, \"$program $pargs\""
 
     # Set the shell prompt
     if [board_info $connhost exists shell_prompt] {
@@ -150,7 +176,7 @@ proc telnet_exec {hostname cmd args} {
     if ![board_info $connhost exists fileid] {
 	verbose "telnet_exec: opening new telnet connection"
 	if {[telnet_open $connhost] == -1} {
-	    return [list -1 "telnet to $hostname failed for $cmd, couldn't begin telnet session"]
+	    return [list -1 "telnet to $hostname failed for $program, couldn't begin telnet session"]
 	}
     }
 
@@ -162,8 +188,11 @@ proc telnet_exec {hostname cmd args} {
     # itself uses a long timeout.
     set timeout 30
 
-    #Hit enter to make sure you get a shell prompt
-    send -i $spawn_id "\r"
+    # Hit enter to make sure you get a shell prompt
+    if [catch {send -i $spawn_id "\r"}] {
+	verbose "telnet_exec: caught send enter to $spawn_id: $errorInfo"
+	return [list -1 "telnet to $hostname failed for $program: invalid spawn_id $spawn_id"]
+    }
 
     expect {
 	# A prompt indicates the current session is alive
@@ -182,19 +211,19 @@ proc telnet_exec {hostname cmd args} {
 		send -i $spawn_id "\r"
 		exp_continue
 	    } else {
-		return [list -1 "telnet to $hostname failed for $cmd, couldn't get a shell prompt"]
+		return [list -1 "telnet to $hostname failed for $program, couldn't get a shell prompt"]
 	    }
 	}
     }
 
     # Send the command. We can't cope with any input, so only the first
     # argument (group) is sent.
-    send -i $spawn_id -- "$cmd $pargs\r"
+    send -i $spawn_id -- "$program $pargs\r"
 
     # We really should get the command echoed back immediately. This is a good
     # way of slurping up unexpected prompts. We first swap out any characters
     # from the command and args that might cause us grief.
-    regsub -all "\\+" "$cmd $pargs" "." cmdpargs
+    regsub -all "\\+" "$program $pargs" "." cmdpargs
     verbose "telnet_exec: command match string is \"$cmdpargs\""
     
     expect {
@@ -224,7 +253,7 @@ proc telnet_exec {hostname cmd args} {
 	-i $spawn_id default {
 	    # Give up on timeout or EOF
 	    telnet_close $connhost
-	    return [list -1 "telnet to $hostname for $cmd $pargs failed (timeout)"]
+	    return [list -1 "telnet to $hostname for $program $pargs failed (timeout)"]
 	}		
     }
 
@@ -297,54 +326,133 @@ proc telnet_exec {hostname cmd args} {
 
 
 # -----------------------------------------------------------------------------
+# Custom proc to open a telnet session for spawn
+
+# We open a separate telnet session for a telnet_spawn. This means temporarily
+# parking any fileid from telnet_open, while we use it to open a new session.
+
+# @note We must declare spawn_id as global since we write it (see CAVEATS in
+#       "man expect" for the reason).
+
+# @param[in] connhost  The host connection associated with telnet to the board
+# @return              The spawn_id of the new connection or -1 on failure.
+# -----------------------------------------------------------------------------
+proc telnet_spawn_open { connhost } {
+    global board_info
+    global spawn_id
+
+    # Park any existing telnet session, and create a new one just for
+    # telnet_spawn.
+    if {[board_info $connhost exists fileid]} {
+	set old_spawn_id [board_info $connhost fileid]
+	set board_info($connhost,old_spawn_id) $old_spawn_id
+	verbose "telnet_spawn_open: temporarily removing fileid ${old_spawn_id}"
+	unset board_info($connhost,fileid)
+    }
+
+    # Start a new telnet session, just for this spawn.
+    verbose "telnet_spawn_open: opening new telnet connection"
+    set spawn_id [telnet_open $connhost]
+    if {[board_info $connhost exists fileid]} {
+	set spawn_id [board_info $connhost fileid]
+	verbose "telnet_spawn_open: opened fileid $spawn_id"
+	# Clear out the new fileid
+	unset board_info($connhost,fileid)
+    } else {
+	verbose "telnet_spawn_open: failed to open for spawn"
+	set spawn_id -1
+    }
+
+    # Restore the old fileid if there was one
+    if {[board_info $connhost exists old_spawn_id]} {
+	set old_spawn_id [board_info $connhost old_spawn_id]
+	set board_info($connhost,fileid) $old_spawn_id
+	verbose "telnet_spawn_open: restoring fileid ${old_spawn_id}"
+	unset board_info($connhost,old_spawn_id)
+    }
+
+    return $spawn_id
+}
+
+
+# -----------------------------------------------------------------------------
 # Custom proc to spawn programs using telnet
 
-# Code is copied from that of the ubicom32 toolchain. No known author.
+# Based on ideas from the ubicom32 toolchain. No known author.
 
-# @param[in] board        The board we are telnetting to
+# The difference between "spawn" and "exec" is that on return from "spawn" the
+# command is still executing.
+
+# "exec" relies on the command having completed, so that the same telnet
+# connection can be used for future commands.
+
+# So for each "spawn", we must open a new connection. That requires a little
+# juggling, since telnet_open and telnet_close believe there is a single
+# connection.
+
+# We also don't want this to become the current process (that would be
+# confusing), so we must save the old spawn_id and reset it before returning.
+
+# The naming of the target for telnet is confusing.
+# - "boardname" is the name of the board
+# - "connhost" is the name with which this connection's info is associated.
+# - "hostname" is the IP name/address to which we telnet.
+
+# @note This means that you really must not use telnet_close to close a
+#       telnet_spawn connection. However since you are given the spawn_id, you
+#       should not need to.
+
+# @note We must declare spawn_id as global since we write it (see CAVEATS in
+#       "man expect" for the reason).
+
+# @param[in] boardname    The board we are telnetting to
 # @param[in] commandline  The command line to run
 
 # @return  spawn_id of the telnet session.
 # -----------------------------------------------------------------------------
-proc telnet_spawn { board commandline } {
+proc telnet_spawn { boardname commandline } {
+    global spawn_id
 
-    verbose "telnet_spawn $board $commandline" 3
+    verbose "telnet_spawn $boardname $commandline"
 
-    if {[board_info $board exists name]} {
-	set connhost [board_info $board name]
+    if {[board_info $boardname exists name]} {
+	set connhost [board_info $boardname name]
     } else {
-	set connhost $board
+	set connhost $boardname
     }
-    verbose "telnet_spawn: connhost is $connhost" 2
+    verbose "telnet_spawn: connhost is $connhost"
 
+    if {[board_info $connhost exists hostname]} {
     if [board_info $connhost exists hostname] {
 	set hostname [board_info $connhost hostname]
     } else {
-	set hostname $board
+	set hostname $boardname
     }
-    verbose "telnet_spawn: hostname is $hostname" 2
+    verbose "telnet_spawn: hostname is $hostname"
 
     # Set the shell prompt
-    if [board_info $connhost exists shell_prompt] {
+    if {[board_info $connhost exists shell_prompt]} {
 	set shell_prompt [board_info $connhost shell_prompt]
     } elseif ![info exists shell_prompt] {
 	# if no prompt, then set it to something generic
 	set shell_prompt "\[^\r\n\]*\[$#\] "
     }
 
-    # Start a new telnet session if one doesn't already exist. If sucessful
-    # the fileid field associated with $connhost will be set to the spawn_id
-    # of the new telnet process.
-    if ![board_info $connhost exists fileid] {
-	verbose "telnet_spawn: opening new telnet connection"
-	if {[telnet_open $connhost] == -1} {
-	    return -1
-	}
+    # Restore
+    if {[info exists spawn_id]} {
+	verbose "telnet_spawn: Existing spawn_id $spawn_id"
+	set old_spawn_id $spawn_id
+    } else {
+	verbose "telnet_spawn: No existing spawn_id"
     }
 
-    # The spawn_id we'll use throughout
-    set spawn_id [board_info $connhost fileid]
-    verbose "telnet_spawn: spawn_id is now $spawn_id"
+    # Create a new telnet session. Give up if we fail
+    set spawn_id [telnet_spawn_open $connhost]
+    if {$spawn_id == -1} {
+	verbose  "telnet_spawn: Failed to create a new session.";
+	return  -1;
+    }
+    verbose "telnet_spawn: new spawn_id is $spawn_id"
     
     # Use a relatively short timeout for most operations. Only the command
     # itself uses a long timeout.
@@ -364,19 +472,41 @@ proc telnet_spawn { board commandline } {
 
 	    # Try closing the connection and reopening.
 	    telnet_close $connhost
-	    if {[telnet_open $connhost] != -1} {
+	    if {[telnet_spawn_open $connhost] != -1} {
 		set spawn_id [board_info $connhost fileid]
 		verbose "telnet_spawn: new telnet session, spawn_id: $spawn_id"
 		send -i $spawn_id "\r"
 		exp_continue
 	    } else {
+		verbose  "telnet_spawn: Failed to recreate a new session.";
+		if {[info exists old_spawn_id]} {
+		    set spawn_id $old_spawn_id
+		} else {
+		    unset spawn_id
+		}
 		return -1
 	    }
 	}
     }
 
-    # Send the command.
-    send -i $spawn_id -- "${commandline}\r"
+    # Send the command, followed by exit, so that when the command completes,
+    # we also close the telnet session. However that can throw things if
+    # something completes *too* quickly, so we'll put a little sleep in as
+    # well.
 
-    return $spawn_id
+    send -i $spawn_id -- "${commandline}\r"
+    send -i $spawn_id -- "sleep 5\r"
+    send -i $spawn_id -- "exit\r"
+
+    # Restore the old spawn ID, since we want that to remain the current
+    # process.
+    set new_spawn_id $spawn_id
+    if {[info exists old_spawn_id]} {
+	set spawn_id $old_spawn_id
+	verbose "telnet_spawn: Restored existing spawn_id $spawn_id"
+    } else {
+	unset spawn_id
+	verbose "telnet_spawn: No existing spawn_id to restore"
+    }
+    return $new_spawn_id
 }

@@ -98,6 +98,10 @@ if { $tool == "gdb" } {
     set_board_info gdb,no_hardware_watchpoints 1
     # The command to use
     set_board_info gdb_server_prog /bin/gdbserver
-    # Use a GDB stug
+    # Use a GDB stub
     set_board_info use_gdb_stub 1
+
+    # Set up sysroot. This is an option relating to the host running GDB, not
+    # the board, hence the contortion.
+    set board_info([get_local_hostname],gdb_opts) "-x $env(ARC_GDB_COMMFILE)"
 }
