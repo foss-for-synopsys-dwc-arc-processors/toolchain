@@ -75,8 +75,9 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses build directories (bd-uclibc and bd-uclibc-gdb) local to the
-# directory in which it is executed.
+# and uses build directories (bd-4.4-uclibc and bd-4.4-uclibc-gdb or
+# bd-4.4-uclibceb and bd-4.4-uclibceb-gdb) local to the directory in which it
+# is executed.
 
 # The script generates a date and time stamped log file in that directory.
 
@@ -128,16 +129,16 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arche=arceb
-    build_dir="$(echo "${PWD}")"/bd-4.8-uclibceb
+    build_dir="$(echo "${PWD}")"/bd-4.4-uclibceb
+    build_dir_gdb="$(echo "${PWD}")"/bd-4.4-uclibceb-gdb
 else
     arche=arc
-    build_dir="$(echo "${PWD}")"/bd-4.8-uclibc
+    build_dir="$(echo "${PWD}")"/bd-4.4-uclibc
+    build_dir_gdb="$(echo "${PWD}")"/bd-4.4-uclibc-gdb
 fi
 
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
-build_dir="$(echo "${PWD}")"/bd-uclibc
-build_dir_gdb="$(echo "${PWD}")"/bd-uclibc-gdb
 
 version_str="ARCompact Linux uClibc toolchain (built $(date +%Y%m%d))"
 bugurl_str="http://solvnet.synopsys.com"

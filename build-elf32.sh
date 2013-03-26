@@ -58,8 +58,8 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-elf32) local to the directory in which it is
-# executed.
+# and uses build directories (bd-4.4-elf32 and bd-4.4-elf32-gdb) local to the
+# directory in which it is executed.
 
 # The script generates a date and time stamped log file in that
 # directory.
@@ -75,8 +75,8 @@
 # constructing.
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
-build_dir="$(echo "${PWD}")"/bd-elf32
-build_dir_gdb="$(echo "${PWD}")"/bd-elf32-gdb
+build_dir="$(echo "${PWD}")"/bd-4.4-elf32
+build_dir_gdb="$(echo "${PWD}")"/bd-4.4-elf32-gdb
 
 # parse options
 until
