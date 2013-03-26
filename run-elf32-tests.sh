@@ -51,9 +51,6 @@ mkdir -p ${ARC_GNU}/results
 export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running elf32 tests"
 
-# Set the build directories
-bd_elf_gdb=${ARC_GNU}/bd-elf32-gdb
-
 # Create the ELF log file and results directory
 logfile_elf="$(echo "${ARC_GNU}")/logs/elf32-check-$(date -u +%F-%H%M).log"
 rm -f "${logfile_elf}"
@@ -107,13 +104,13 @@ run_check ${bd_elf}     target-libstdc++-v3 "${logfile_elf}" ${board} \
 save_res  ${bd_elf}     ${res_elf} \
     ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_elf}" \
     || status=1
-run_check ${bd_elf_gdb} sim                 "${logfile_elf}" ${board} \
+run_check ${bd_elf} sim                 "${logfile_elf}" ${board} \
     || status=1
-save_res  ${bd_elf_gdb} ${res_elf} sim/testsuite/sim     "${logfile_elf}" \
+save_res  ${bd_elf} ${res_elf} sim/testsuite/sim     "${logfile_elf}" \
     || status=1
-run_check ${bd_elf_gdb} gdb                 "${logfile_elf}" ${board} \
+run_check ${bd_elf} gdb                 "${logfile_elf}" ${board} \
     || status=1
-save_res  ${bd_elf_gdb} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}" \
+save_res  ${bd_elf} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}" \
     || status=1
 
 exit ${status}
