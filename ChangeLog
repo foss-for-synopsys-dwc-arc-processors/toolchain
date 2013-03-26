@@ -1,3 +1,8 @@
+2013-03-26	Anton Kolesov <anton.kolesov@synopsys.com>
+
+	* build-uclibc.sh: Fix error with uClibc distclean which caused build
+	process to fail.
+
 2013-03-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* run-elf32-tests.sh: Replace bd_elf_gdb with bd_elf throughout.
