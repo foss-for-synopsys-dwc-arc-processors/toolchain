@@ -423,7 +423,6 @@ proc telnet_spawn { boardname commandline } {
     verbose "telnet_spawn: connhost is $connhost"
 
     if {[board_info $connhost exists hostname]} {
-    if [board_info $connhost exists hostname] {
 	set hostname [board_info $connhost hostname]
     } else {
 	set hostname $boardname
