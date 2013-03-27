@@ -1,3 +1,8 @@
+2013-03-27  Anton Kolesov <anton.kolesov@synopsys.com>
+
+	* build-uclibc.sh: Ignore error which happens when running 'make
+	distclean' on uClibc.
+
 2013-03-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* dejagnu/telnet-extra.exp (telnet_spawn): Remove duplicate line.
