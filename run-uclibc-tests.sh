@@ -54,19 +54,19 @@ mkdir -p ${ARC_GNU}/results
 export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running uClibc Linux tests"
 
-# Create the Linux log file and results directory
-logfile_linux="$(echo "${ARC_GNU}")/logs/linux-check-$(date -u +%F-%H%M).log"
-rm -f "${logfile_linux}"
-res_linux="$(echo "${ARC_GNU}")/results/linux-results-$(date -u +%F-%H%M)"
-mkdir ${res_linux}
+# Create the Uclibc log file and results directory
+logfile_uclibc="$(echo "${ARC_GNU}")/logs/uclibc-check-$(date -u +%F-%H%M).log"
+rm -f "${logfile_uclibc}"
+res_uclibc="$(echo "${ARC_GNU}")/results/uclibc-results-$(date -u +%F-%H%M)"
+mkdir ${res_uclibc}
 
 # Location of some files depends on endianess
 if [ "${ARC_ENDIAN}" = "little" ]
 then
-    bd_linux=${ARC_GNU}/bd-4.8-uclibc
+    bd_uclibc=${ARC_GNU}/bd-4.8-uclibc
     target_dir=arc-linux-uclibc
 else
-    bd_linux=${ARC_GNU}/bd-4.8-uclibceb
+    bd_uclibc=${ARC_GNU}/bd-4.8-uclibceb
     target_dir=arceb-linux-uclibc
 fi
 
@@ -80,30 +80,30 @@ export ARC_GDB_COMMFILE=${commfile}
 
 # Run tests
 status=0
-run_check ${bd_linux} binutils "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} binutils/binutils "${logfile_linux}" \
+run_check ${bd_uclibc} binutils "${logfile_uclibc}" ${board} || status=1
+save_res  ${bd_uclibc} ${res_uclibc} binutils/binutils "${logfile_uclibc}" \
     || status=1
-run_check ${bd_linux} gas "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} gas/testsuite/gas "${logfile_linux}" \
+run_check ${bd_uclibc} gas "${logfile_uclibc}" ${board} || status=1
+save_res  ${bd_uclibc} ${res_uclibc} gas/testsuite/gas "${logfile_uclibc}" \
     || status=1
-run_check ${bd_linux} ld "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} ld/ld "${logfile_linux}" \
+run_check ${bd_uclibc} ld "${logfile_uclibc}" ${board} || status=1
+save_res  ${bd_uclibc} ${res_uclibc} ld/ld "${logfile_uclibc}" \
     || status=1
-run_check ${bd_linux} gcc "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} gcc/testsuite/gcc/gcc "${logfile_linux}" \
+run_check ${bd_uclibc} gcc "${logfile_uclibc}" ${board} || status=1
+save_res  ${bd_uclibc} ${res_uclibc} gcc/testsuite/gcc/gcc "${logfile_uclibc}" \
     || status=1
 echo "Testing g++..."
-save_res  ${bd_linux} ${res_linux} gcc/testsuite/g++/g++ "${logfile_linux}" \
+save_res  ${bd_uclibc} ${res_uclibc} gcc/testsuite/g++/g++ "${logfile_uclibc}" \
     || status=1
 # libgcc tests are currently empty, so nothing to run or save.
-# run_check ${bd_linux} target-libgcc       "${logfile_linux}"
-run_check ${bd_linux} target-libstdc++-v3 "${logfile_linux}" ${board} \
+# run_check ${bd_uclibc} target-libgcc       "${logfile_uclibc}"
+run_check ${bd_uclibc} target-libstdc++-v3 "${logfile_uclibc}" ${board} \
     || status=1
-save_res  ${bd_linux} ${res_linux} \
-    ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_linux}" \
+save_res  ${bd_uclibc} ${res_uclibc} \
+    ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_uclibc}" \
     || status=1
-run_check ${bd_linux} gdb "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} gdb/testsuite/gdb "${logfile_linux}" \
+run_check ${bd_uclibc} gdb "${logfile_uclibc}" ${board} || status=1
+save_res  ${bd_uclibc} ${res_uclibc} gdb/testsuite/gdb "${logfile_uclibc}" \
     || status=1
 
 exit ${status}

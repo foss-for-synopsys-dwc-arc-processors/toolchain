@@ -1,5 +1,16 @@
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-all.sh: Renamed options --linux to --uclibc and --no-linux
+	to --no-uclibc and changed associated variable from linux to
+	uclibc throughout.
+	* run-uclibc-tests.sh: Renamed bd_linux as bd_uclibc,
+	logfile_linux as logfile_uclibc and res_linux as res_uclibc
+	throughout. Use uclibc instead of linux in logfile and results
+	file names.
+	* symlink-trunks.sh: Deleted.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-kernel.sh: Renamed from build-linux.sh to avoid confusion.
 
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>

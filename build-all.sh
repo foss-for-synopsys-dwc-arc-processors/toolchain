@@ -30,7 +30,7 @@
 #                  [--auto-pull | --no-auto-pull]
 #                  [--auto-checkout | --no-auto-checkout]
 #                  [--unisrc | --no-unisrc]
-#                  [--elf32 | --no-elf32] [--linux | --no-linux]
+#                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>] [--big-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
@@ -116,10 +116,10 @@
 
 #     If specified, build the arc-elf32- tool chain (default is --elf32).
 
-# --linux | --no-linux
+# --uclibc | --no-uclibc
 
 #     If specified, build the arc-uclibc-linux- tool chain (default is
-#     --linux).
+#     --uclibc).
 
 # --datestamp-install
 
@@ -219,7 +219,7 @@ autocheckout="--auto-checkout"
 autopull="--auto-pull"
 do_unisrc="--unisrc"
 elf32="--elf32"
-linux="--linux"
+uclibc="--uclibc"
 
 # Parse options
 until
@@ -273,8 +273,8 @@ case ${opt} in
 	elf32=$1
 	;;
 
-    --linux | --no-linux)
-	linux=$1
+    --uclibc | --no-uclibc)
+	uclibc=$1
 	;;
 
     --datestamp-install)
@@ -321,7 +321,7 @@ case ${opt} in
         echo "                      [--auto-pull | --no-auto-pull]"
         echo "                      [--unisrc | --no-unisrc]"
         echo "                      [--elf32 | --no-elf32]"
-        echo "                      [--linux | --no-linux]"
+        echo "                      [--uclibc | --no-uclibc]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
 	echo "                      [--big-endian]"
@@ -472,7 +472,7 @@ then
 fi
 
 # Optionally build the arc-linux-uclibc- tool chain
-if [ "x${linux}" = "x--linux" ]
+if [ "x${uclibc}" = "x--uclibc" ]
 then
     if ! "${ARC_GNU}"/toolchain/build-uclibc.sh --force
     then
