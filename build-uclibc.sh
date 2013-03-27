@@ -236,7 +236,8 @@ then
 	--exclude='*.a' -cf - . | tar -xf -
 fi
 
-make distclean >> "${logfile}" 2>&1
+# make will fail if there is yet no .config file, but we can ignore this error.
+make distclean >> "${logfile}" 2>&1 || true
 
 # Patch the temporary install directories used into the uClibc config.
 # uClibc 0.9.34 onwards use defconfig
