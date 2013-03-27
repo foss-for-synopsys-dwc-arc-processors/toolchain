@@ -1,5 +1,9 @@
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* check-results.sh: New script.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Renamed options --linux to --uclibc and --no-linux
 	to --no-uclibc and changed associated variable from linux to
 	uclibc throughout.
