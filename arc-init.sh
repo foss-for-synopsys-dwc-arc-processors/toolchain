@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2007-2012 Synopsys Inc.
+# Copyright (C) 2007-2013 Synopsys Inc.
 
 # This file is a common initialization script for ARC tool chains.
 
