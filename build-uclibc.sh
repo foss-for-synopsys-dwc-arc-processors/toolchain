@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2010-2012 Synopsys Inc.
+# Copyright (C) 2010-2013 Synopsys Inc.
 
 # Contributor Brendan Kehoe <brendan@zen.org>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
