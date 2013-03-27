@@ -491,30 +491,27 @@ else
     exit 1
 fi
 
-# Temporarily disable building and installing gdbserver, while header issues
-# are fixed.
-
-# export CC=${arche}-linux-uclibc-gcc
-# if make ${PARALLEL} \
-#     CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
-#     >> "${logfile}" 2>&1
-# then
-#     echo "  finished building GDBSERVER to run on an arc"
-# else
-#     echo "ERROR: gdbserver build was not successful. Please see"
-#     echo "       \"${logfile}\" for details."
-#     exit 1
-# fi
+export CC=${arche}-linux-uclibc-gcc
+if make ${PARALLEL} \
+    CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
+    >> "${logfile}" 2>&1
+then
+    echo "  finished building GDBSERVER to run on an arc"
+else
+    echo "ERROR: gdbserver build was not successful. Please see"
+    echo "       \"${logfile}\" for details."
+    exit 1
+fi
 
 mkdir -p ${INSTALLDIR}/target-bin
-# if cp gdbserver ${INSTALLDIR}/target-bin
-# then
-#     echo "  finished installing GDBSERVER to run on an ARC"
-# else
-#     echo "ERROR: gdbserver install was not successful. Please see"
-#     echo "       \"${logfile}\" for details."
-#     exit 1
-# fi
+if cp gdbserver ${INSTALLDIR}/target-bin
+then
+    echo "  finished installing GDBSERVER to run on an ARC"
+else
+    echo "ERROR: gdbserver install was not successful. Please see"
+    echo "       \"${logfile}\" for details."
+    exit 1
+fi
 
 rm -rf "${tmp_install_dir}"
 
