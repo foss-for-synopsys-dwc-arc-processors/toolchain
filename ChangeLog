@@ -1,3 +1,8 @@
+2013-03-27  Anton Kolesov <anton.kolesov@synopsys.com>
+
+	* build-uclibc.sh: Ignore error which happens when running 'make
+	distclean' on uClibc.
+
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-versions.sh: Updated for arc-uclibc-mainline branch of
@@ -42,6 +47,14 @@
 
 2013-03-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-all.sh: Replace "4.8" by "mainline" throughout.
+	* build-elf32.sh: Likewise.
+	* build-uclibc.sh: Likewise.
+	* run-elf32-tests.sh: Likewise.
+	* run-uclibc-tests.sh: Likewise.
+
+2013-03-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Add --big-endian to help.
 
 2013-03-15  Vineet Gupta <vgupta@synopsys.com>
@@ -53,38 +66,13 @@
 
 	* build-uclibc.sh: No need to copy Linux sources
 
-2013-03-04  Simon Cook  <simon.cook@embecosm.com>
-
-	* build-elf32.sh: Add support for building big endian ELF tool chain.
-	* build-uclibc.sh: Set build_dir based on endianness of tools.
-	* run-elf32-tests.sh: Set test directories based on endianness.
-	* run-uclibc-tests.sh: Likewise.
-
-2013-02-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* build-uclibc.sh: Add ARC_LEGACY_PTRACE_ABI defintion when
-	building gdbserver.
-
-2013-02-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* arc-versions.sh: Optionally do a fetch first, to deal with new
-	branches.
-
-2013-02-25  Simon Cook  <simon.cook@embecosm.com>
-
-	* arc-versions.sh: Updated binutils, gcc, gdb and newlib branch
-	references
-
 2013-02-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
-	* build-elf32.sh: Don't build and install GDB.
-
-2013-02-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* dejagnu/baseboards/arc-linux-generic.exp: Move extra file loads
-	to after the main config file is loaded. Add gdb-extra.exp. Mark
-	as using GDB stub.
-	* dejagnu/gdb-extra.exp: Created as placeholder.
+	* arc-linux-generic.exp: Move extra file loads to after the main
+	config file is loaded. Add gdb-extra.exp. Mark as using GDB stub.
+	* ftp-extra.exp: Use filename from before transfer to change mode
+	and return result.
+	* gdb-extra.exp: Created.
 
 2013-02-20  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -109,19 +97,6 @@
 	* dejagnu/ftp-extra.exp (ftp_download): Add code to set executable
 	bits of transferred file if necessary.
 	* dejagnu/telnet-extra.exp (telnet_spawn): New proc.
-
-2013-02-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* build-linux.sh: Use -fcommon -mno-sdata when building gdbserver.
-
-2013-02-18  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* build-linux.sh: Build a 4.8 static busybox only.
-	* run-uclibc-tests.sh: Build directories corrected for 4.8 release.
-
-2013-02-11  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* arc-versions.sh (uclibc): Switch to 4.8 branch.
 
 2013-02-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -174,11 +149,6 @@
 
 2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
-	* build-all.sh: Correct error in merging option to control
-	building of unified source tree.
-
-2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
 	* dejagnu/baseboards/arc-linux-aa4.exp: Correct commenting.
 
 2013-02-01  Jeremy Bennett <jeremy.bennett@embecosm.com>
@@ -205,32 +175,14 @@
 	* build-all.sh, run-tests.sh: Add options to control parallelism
 	* all-version.sh: Remove specification of PARALLEL
 
-2013-01-31  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* build-all.sh: Make 4.8 specific unisrc.
-	* build-uclibc.sh: Remove duplicate bugurl setting from gdbserver
-	configuration.
-
-2012-01-31  Simon Cook  <simon.cook@embecosm.com>
-
-	* build-elf32.sh: Add --enable-sim-endian=no to configure options to
-	allow correct endian simulator to be built.
-
 2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
-	* build-all.sh: Restore order of binutils and gcc, following
-	binutils update.
-	* build-uclibc.sh: Use 4.8 specific build-dir
-	* build-elf32.sh: Likewise.
-
-2013-01-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* build-all.sh: Swap order of binutils and gcc in unified tree,
-	due to binutils being too old for gcc.
-
-2013-01-22  Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-	* build-all.sh: Restore creation of unified tree accidentally deleted.
+	* arc-init.sh (save_res): Append errors to log, not overwrite.
+	* dejagnu/baseboards/arc-linux-aa4.exp: Improve commenting, and
+	general password field.
+	* run-elf32-tests.sh: Add target_dir.
+	* run-tests.sh: Tidy up error messages. Add better commenting
+	* run-uclibc-tests.sh: Make target_dir generic, tidy up layout
 
 2013-01-21  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
