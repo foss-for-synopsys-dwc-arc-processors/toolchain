@@ -1,5 +1,9 @@
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-kernel.sh: Renamed from build-linux.sh to avoid confusion.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-uclibc.sh: enable building gdbserver.
 
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
