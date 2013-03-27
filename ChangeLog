@@ -1,5 +1,9 @@
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* README.md: Updated for 4.8 dev release.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* arc-init.sh, arc-versions.sh, build-all.sh: Update copyright.
 	* build-cleanup.sh, build-elf32.sh, build-elf32.sh: Likewise.
 	* build-uclibc.sh, run-elf32-tests.sh, run-tests.sh: Likewise.

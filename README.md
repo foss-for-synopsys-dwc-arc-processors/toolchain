@@ -4,12 +4,12 @@ ARC GNU Tool Chain
 This is the main git repository for the ARC GNU tool chain. It contains just
 the scripts required to build the entire tool chain.
 
-This is the version for the 4.4 tool chain release development branches. It
+This is the version for the 4.8 tool chain release development branches. It
 contains various patches applied since the official tool chain release. The
 tool chain should still be reliable, but has not been through full release
 testing.
 
-The build script will check out the development branches from the 4.4 tool
+The build script will check out the development branches from the 4.8 tool
 chain component repositories.
 
 Prequisites
@@ -44,10 +44,10 @@ components.
 Building the tool chain
 -----------------------
 
-The script `build-all.sh` will build and install both *arc-elf32-* and
-*arc-linux-uclibc-* tool chains. The comments at the head of this script
+The script `build-all.sh` will build and install both *arc*-elf32-* and
+*arc*-linux-uclibc-* tool chains. The comments at the head of this script
 explain how it works and the parameters to use. It uses script
-`symlink-trunks.sh` to build a unified source directory.
+`symlink-all.sh` to build a unified source directory.
 
 The script `arc-versions.sh` specifies the branches to use in each component
 git repository. It should be edited to change the default branches if
@@ -55,7 +55,18 @@ required.
 
 Having built a unified source directory and checked out the correct branches,
 `build-all.sh` in turn uses `build-elf32.sh` and `build-uclibc.sh`. These
-build respectively the *arc-elf32* and *arc-linux-uclibc* tool chains. Details
+build respectively the *arc*-elf32* and *arc*-linux-uclibc* tool chains. Details
 of the operation are provided as comments in each script file. Both these
 scripts use a common initialization script, `arc-init.sh`.
 
+Testing the tool chain
+----------------------
+
+The script `run-tests.sh` will run the regression test suites against all the
+main tool chain components. The comments at the htead of this script explain
+how it works and the parameters to use. It in turn uses the run-elf32-tests.sh
+and run-uclibc-tests.sh scripts.
+
+You should be familiar with DejaGnu testing before using these scripts. Some
+configuration of the target board specifications (in the `dejagnu/baseboards`
+directory) may be required for your particular test target.
