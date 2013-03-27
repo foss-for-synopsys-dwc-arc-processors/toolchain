@@ -1,3 +1,11 @@
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Updated for arc-uclibc-mainline branch of
+	uClibc and arc-3.8-ABI-v3 for Linux.
+	* build-uclibc.sh: No need for -DARC_LEGACY_PTRACE_ABI with
+	gdbserver. Temporarily disable building gdbserver while fixing
+	header problems.
+
 2013-03-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* run-elf32-tests.sh: Replace bd_elf_gdb with bd_elf throughout.

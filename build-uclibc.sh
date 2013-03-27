@@ -248,7 +248,7 @@ then
         -e "s#%CROSS_COMPILER_PREFIX%##" \
         < "${ARC_GNU}"/uClibc/arc_config > .config
 else
-    make ARCH=arc defconfig
+    make ARCH=arc defconfig >> "${logfile}" 2>&1
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
         -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
@@ -343,7 +343,7 @@ then
         -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
         < "${ARC_GNU}"/uClibc/arc_config > .config
 else
-    make ARCH=arc defconfig
+    make ARCH=arc defconfig >> "${logfile}" 2>&1
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
         -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
@@ -491,27 +491,30 @@ else
     exit 1
 fi
 
-export CC=${arche}-linux-uclibc-gcc
-if make ${PARALLEL} \
-    CFLAGS="${CFLAGS} -static -fcommon -mno-sdata -DARC_LEGACY_PTRACE_ABI" \
-    >> "${logfile}" 2>&1
-then
-    echo "  finished building GDBSERVER to run on an arc"
-else
-    echo "ERROR: gdbserver build was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
+# Temporarily disable building and installing gdbserver, while header issues
+# are fixed.
+
+# export CC=${arche}-linux-uclibc-gcc
+# if make ${PARALLEL} \
+#     CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
+#     >> "${logfile}" 2>&1
+# then
+#     echo "  finished building GDBSERVER to run on an arc"
+# else
+#     echo "ERROR: gdbserver build was not successful. Please see"
+#     echo "       \"${logfile}\" for details."
+#     exit 1
+# fi
 
 mkdir -p ${INSTALLDIR}/target-bin
-if cp gdbserver ${INSTALLDIR}/target-bin
-then
-    echo "  finished installing GDBSERVER to run on an ARC"
-else
-    echo "ERROR: gdbserver install was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
+# if cp gdbserver ${INSTALLDIR}/target-bin
+# then
+#     echo "  finished installing GDBSERVER to run on an ARC"
+# else
+#     echo "ERROR: gdbserver install was not successful. Please see"
+#     echo "       \"${logfile}\" for details."
+#     exit 1
+# fi
 
 rm -rf "${tmp_install_dir}"
 
