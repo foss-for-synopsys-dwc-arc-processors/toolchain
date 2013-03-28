@@ -41,13 +41,13 @@
 #     The directory containing all the sources. If not set, this will default
 #     to the directory containing this script.
 
-# LINUXDIR
-
-#     The directory containing the Linux source tree (needed for headers).
-
 # UNISRC
 
 #     The name of the unified source directory within the build directory
+
+# LINUXDIR
+
+#     The name of the Linux directory (absolute path)
 
 # INSTALLDIR
 
@@ -55,12 +55,21 @@
 
 # ARC_ENDIAN
 
-#     "big" or "little" to indicate the endianness to use.
+#     "little" or "big"
 
 # DISABLE_MULTILIB
 
 #     Either --enable-multilib or --disable-multilib to control the building
-#     of multilibs
+#     of multilibs.
+
+# DO_PDF
+
+#     Either --pdf or --no-pdf to control whether we build and install PDFs of
+#     the user guides.
+
+# PARALLEL
+
+#     string "-j <jobs> -l <load>" to control parallel make.
 
 # Unlike earlier versions of this script, we do not recognize the
 # ARC_GNU_ONLY_CONFIGURE and ARC_GNU_CONTINUE environment variables. If you
@@ -511,6 +520,37 @@ else
     echo "ERROR: gdbserver install was not successful. Please see"
     echo "       \"${logfile}\" for details."
     exit 1
+fi
+
+# Optionally build and install PDF documentation
+if [ "x${DO_PDF}" == "x--pdf" ]
+then
+    echo "Building PDF documentation" >> "${logfile}"
+    echo "==========================" >> "${logfile}"
+
+    echo "Building PDFs ..."
+    cd "${build_dir}"
+    if make ${PARALLEL} pdf-binutils pdf-gas pdf-ld pdf-gcc \
+	pdf-gdb >> "${logfile}" 2>&1
+    then
+	echo "  finished building PDFs"
+    else
+	echo "ERROR: PDF build failed."
+	exit 1
+    fi
+
+    echo "Installing PDF documentation" >> "${logfile}"
+    echo "============================" >> "${logfile}"
+
+    echo "Installing PDFs ..."
+    if make install-pdf-binutils install-pdf-gas install-pdf-ld \
+	install-pdf-gcc install-pdf-gdb >> "${logfile}" 2>&1
+    then
+	echo "  finished installing PDFs"
+    else
+	echo "ERROR: PDF install failed."
+	exit 1
+    fi
 fi
 
 rm -rf "${tmp_install_dir}"

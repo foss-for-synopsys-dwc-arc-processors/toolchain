@@ -44,14 +44,31 @@
 
 #     The name of the unified source directory within the build directory
 
+# LINUXDIR
+
+#     The name of the Linux directory (absolute path)
+
 # INSTALLDIR
 
 #     The directory where the tool chain should be installed
 
+# ARC_ENDIAN
+
+#     "little" or "big"
+
 # DISABLE_MULTILIB
 
 #     Either --enable-multilib or --disable-multilib to control the building
-#     of multilibs
+#     of multilibs.
+
+# DO_PDF
+
+#     Either --pdf or --no-pdf to control whether we build and install PDFs of
+#     the user guides.
+
+# PARALLEL
+
+#     string "-j <jobs> -l <load>" to control parallel make.
 
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
@@ -182,6 +199,43 @@ then
 else
     echo "ERROR: tools install failed."
     exit 1
+fi
+
+# Optionally build and install PDF documentation
+if [ "x${DO_PDF}" == "x--pdf" ]
+then
+    echo "Building PDF documentation" >> "${log_path}"
+    echo "==========================" >> "${log_path}"
+
+    echo "Building PDFs ..."
+    build_path=$(calcConfigPath "${build_dir}")
+    cd "${build_path}"
+    log_path=$(calcConfigPath "${logfile}")
+    if make ${PARALLEL} pdf-binutils pdf-gas pdf-ld pdf-gcc \
+	pdf-target-newlib pdf-gdb >> "${log_path}" 2>&1
+    then
+	echo "  finished building PDFs"
+    else
+	echo "ERROR: PDF build failed."
+	exit 1
+    fi
+
+    echo "Installing PDF documentation" >> "${log_path}"
+    echo "============================" >> "${log_path}"
+
+    echo "Installing PDFs ..."
+    build_path=$(calcConfigPath "${build_dir}")
+    cd "${build_path}"
+    log_path=$(calcConfigPath "${logfile}")
+    if make install-pdf-binutils install-pdf-gas install-pdf-ld \
+	install-pdf-gcc install-pdf-target-newlib install-pdf-gdb \
+	>> "${log_path}" 2>&1
+    then
+	echo "  finished installing PDFs"
+    else
+	echo "ERROR: PDF install failed."
+	exit 1
+    fi
 fi
 
 echo "DONE  ELF32: $(date)" >> "${log_path}"

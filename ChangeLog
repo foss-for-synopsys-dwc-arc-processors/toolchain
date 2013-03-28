@@ -1,5 +1,11 @@
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-all.sh: Add option to generate PDF manuals.
+	* build-elf32.sh, build-uclibc.sh: Optionaly build PDF
+	manuals. Tidy up commenting.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* README.md: Updated for 4.8 dev release.
 
 2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>

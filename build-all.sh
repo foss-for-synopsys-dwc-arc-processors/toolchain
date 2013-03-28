@@ -35,6 +35,7 @@
 #                  [--comment-install <comment>] [--big-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
 #                  [--enable-multilib | --disable-multilib]
+#                  [--pdf | --no-pdf]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -163,6 +164,11 @@
 #     DISABLE_MULTILIB, will be used if set. If it is not set, then the
 #     default is to enable multilibs.
 
+# --pdf | --no-pdf
+
+#     Use these to control whether PDF versions of user guides should be built
+#     and installed (default --pdf).
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -220,6 +226,7 @@ autopull="--auto-pull"
 do_unisrc="--unisrc"
 elf32="--elf32"
 uclibc="--uclibc"
+DO_PDF="--pdf"
 
 # Parse options
 until
@@ -309,6 +316,9 @@ case ${opt} in
 	DISABLE_MULTILIB=$1
 	;;
 
+    --pdf|--no-pdf)
+	DO_PDF=$1
+	;;
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -328,6 +338,7 @@ case ${opt} in
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
 	echo "                      [--enable-multilib | --disable-multilib]"
+	echo "                      [--pdf | --no-pdf]"
 	exit 1
 	;;
 
@@ -413,6 +424,7 @@ export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
 export DISABLE_MULTILIB
+export DO_PDF
 export PARALLEL
 
 # Change to the build directory
@@ -469,6 +481,9 @@ then
 	echo "ERROR: arc-elf32- tool chain build failed."
 	exit 1
     fi
+    # If we have built the PDF here, we don't want to do it again if we then
+    # build the uClibc tool chain, so override the DO_PDF setting.
+    DO_PDF="--no-pdf"
 fi
 
 # Optionally build the arc-linux-uclibc- tool chain
