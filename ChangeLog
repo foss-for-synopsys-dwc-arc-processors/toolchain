@@ -1,3 +1,10 @@
+2013-03-28  Simon Cook  <simon.cook@embecosm.com>
+
+	* build-all.sh: Replace --disable-multilib with --no-multilib and
+	--enable-multilib with --multilib. Change default parsing to
+	allow correct option to configure scripts.
+	Correct uClibc CROSS_COMPILER_PREFIX for correct endianness.
+
 2013-03-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* run-tests.sh, run-elf32-tests.sh, run-uclibc-tests.sh: Replace

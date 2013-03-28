@@ -34,7 +34,7 @@
 #                  [--datestamp-install]
 #                  [--comment-install <comment>] [--big-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
-#                  [--enable-multilib | --disable-multilib]
+#                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
@@ -157,7 +157,7 @@
 #     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
 #     whatever the load average.
 
-# --disable-multilib | --enable-multilib
+# --multilib | --no-multilib
 
 #     Use these to control whether mutlilibs should be built. If this argument
 #     is not used, then the value of the environment variable,
@@ -312,7 +312,7 @@ case ${opt} in
 	load=1000
 	;;
 
-    --disable-multilib|--enable-multilib)
+    --multilib|--no-multilib|--enable-multilib|--disable-multilib)
 	DISABLE_MULTILIB=$1
 	;;
 
@@ -337,7 +337,7 @@ case ${opt} in
 	echo "                      [--big-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
-	echo "                      [--enable-multilib | --disable-multilib]"
+	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
 	exit 1
 	;;
@@ -395,11 +395,12 @@ then
     ARC_ENDIAN="little"
 fi
 
-# Default multilib usage
-if [ "x${DISABLE_MULTILIB}" = "x" ]
-then
-    DISABLE_MULTILIB=--enable-multilib
-fi
+# Default multilib usage and conversion for toolchain building
+case "x${DISABLE_MULTILIB}" in
+    x--multilib) DISABLE_MULTILIB=--enable-multilib ;;
+    x--no-multilib) DISABLE_MULTILIB=--disable-multilib ;;
+    x) DISABLE_MULTILIB=--enable-multilib ;;
+esac
 
 # Default parallellism
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \

@@ -364,6 +364,15 @@ else
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
         -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
+        -i .config
+fi
+
+# Patch .config for big endian for use with correct flags
+if [ "x${arche}" == "xarceb" ]; then
+    sed -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
+        -e 's@ARCH_WANTS_LITTLE_ENDIAN=y@ARCH_WANTS_BIG_ENDIAN=y@' \
+        -e 's@# ARCH_WANTS_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
         -i .config
 fi
 
