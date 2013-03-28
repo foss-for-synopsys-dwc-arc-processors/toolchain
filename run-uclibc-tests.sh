@@ -53,9 +53,16 @@
 
 #     string "-j <jobs> -l <load>" to control parallel make.
 
-# ARC_TEST_TARGET
+# ARC_TEST_BOARD_UCLIBC
 
-#     The IP address for the target if required by the board.
+#     The Dejagnu board description for the target. This must be a standard
+#     DejaGnu baseboard, or in the dejagnu/baseboards directory of the
+#     toolchain repository.
+
+# ARC_TEST_ADDR_UCLIBC
+
+#     The IP address for the target if required by the board. Used by the
+#     underlying DejaGnu scripts.
 
 # Result is 0 if successful, 1 otherwise.
 
@@ -85,9 +92,6 @@ else
     target_dir=arceb-linux-uclibc
 fi
 
-# The target board to use
-board=arc-linux-aa4
-
 # Create a file of start up commands for GDB
 commfile="${ARC_GNU}/commfile"
 echo "set sysroot /opt/arc-4.4-gdb-7.5/arc-linux-uclibc" >${commfile}
@@ -95,30 +99,70 @@ export ARC_GDB_COMMFILE=${commfile}
 
 # Run tests
 status=0
-run_check ${bd_uclibc} binutils "${logfile_uclibc}" ${board} || status=1
-save_res  ${bd_uclibc} ${res_uclibc} binutils/binutils "${logfile_uclibc}" \
+run_check ${bd_uclibc} \
+    binutils \
+    "${logfile_uclibc}" \
+    ${ARC_TEST_BOARD_UCLIBC} \
     || status=1
-run_check ${bd_uclibc} gas "${logfile_uclibc}" ${board} || status=1
-save_res  ${bd_uclibc} ${res_uclibc} gas/testsuite/gas "${logfile_uclibc}" \
+save_res  ${bd_uclibc} \
+    ${res_uclibc} \
+    binutils/binutils \
+    "${logfile_uclibc}" \
     || status=1
-run_check ${bd_uclibc} ld "${logfile_uclibc}" ${board} || status=1
-save_res  ${bd_uclibc} ${res_uclibc} ld/ld "${logfile_uclibc}" \
+run_check ${bd_uclibc} \
+    gas "${logfile_uclibc}" \
+    ${ARC_TEST_BOARD_UCLIBC} \
     || status=1
-run_check ${bd_uclibc} gcc "${logfile_uclibc}" ${board} || status=1
-save_res  ${bd_uclibc} ${res_uclibc} gcc/testsuite/gcc/gcc "${logfile_uclibc}" \
+save_res  ${bd_uclibc} \
+    ${res_uclibc} \
+    gas/testsuite/gas \
+    "${logfile_uclibc}" \
+    || status=1
+run_check ${bd_uclibc} \
+    ld "${logfile_uclibc}" \
+    ${ARC_TEST_BOARD_UCLIBC} \
+    || status=1
+save_res  ${bd_uclibc} \
+    ${res_uclibc} \
+    ld/ld \
+    "${logfile_uclibc}" \
+    || status=1
+run_check ${bd_uclibc} \
+    gcc \
+    "${logfile_uclibc}" \
+    ${ARC_TEST_BOARD_UCLIBC} \
+    || status=1
+save_res  ${bd_uclibc} \
+    ${res_uclibc} \
+    gcc/testsuite/gcc/gcc \
+    "${logfile_uclibc}" \
     || status=1
 echo "Testing g++..."
-save_res  ${bd_uclibc} ${res_uclibc} gcc/testsuite/g++/g++ "${logfile_uclibc}" \
+save_res  ${bd_uclibc} \
+    ${res_uclibc} \
+    gcc/testsuite/g++/g++ \
+    "${logfile_uclibc}" \
     || status=1
 # libgcc tests are currently empty, so nothing to run or save.
 # run_check ${bd_uclibc} target-libgcc       "${logfile_uclibc}"
-run_check ${bd_uclibc} target-libstdc++-v3 "${logfile_uclibc}" ${board} \
+run_check ${bd_uclibc} \
+    target-libstdc++-v3 \
+    "${logfile_uclibc}" \
+    ${ARC_TEST_BOARD_UCLIBC} \
     || status=1
-save_res  ${bd_uclibc} ${res_uclibc} \
-    ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_uclibc}" \
+save_res  ${bd_uclibc} \
+    ${res_uclibc} \
+    ${target_dir}/libstdc++-v3/testsuite/libstdc++ \
+    "${logfile_uclibc}" \
     || status=1
-run_check ${bd_uclibc} gdb "${logfile_uclibc}" ${board} || status=1
-save_res  ${bd_uclibc} ${res_uclibc} gdb/testsuite/gdb "${logfile_uclibc}" \
+run_check ${bd_uclibc} \
+    gdb "${logfile_uclibc}" \
+    ${ARC_TEST_BOARD_UCLIBC} \
+    || status=1
+save_res  ${bd_uclibc} \
+    ${res_uclibc} \
+    gdb/testsuite/gdb \
+    "${logfile_uclibc}" \
     || status=1
 
 exit ${status}

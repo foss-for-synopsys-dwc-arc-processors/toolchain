@@ -43,10 +43,27 @@
 #     is also not set, the script will use the parent of the directory where
 #     this script is installed.
 
-# --target <address>
+# --elf32-target-board <board>
 
-#     The address of the target, either symbolic, or as an IP address. The
-#     default is aa4-32.
+#     The board description for the ELF32 target. This should either be a
+#     standard DejaGnu board, or a board in the dejagnu/baseboards directory
+#     of the toolchain repository. Default value arc-sim
+
+# --uclibc-target-board <board>
+
+#     The board description for the UCLIBC target. This should either be a
+#     standard DejaGnu board, or a board in the dejagnu/baseboards directory
+#     of the toolchain repository. Default value arc-linux-aa4
+
+# --elf32-target-addr <address>
+
+#     The address of the ELF32 target, either symbolic, or as an IP
+#     address. By default no value is set.
+
+# --uclibc-target-addr <address>
+
+#     The address of the UCLIBC target, either symbolic, or as an IP
+#     address. The default is aa4-32.
 
 # --jobs <count>
 
@@ -84,7 +101,10 @@
 
 # ------------------------------------------------------------------------------
 # Set default values for some options
-ARC_TEST_TARGET=aa4_32
+ARC_TEST_BOARD_ELF32=arc-sim
+ARC_TEST_BOARD_UCLIBC=arc-linux-aa4
+ARC_TEST_ADDR_ELF32=
+ARC_TEST_ADDR_UCLIBC=aa4_32
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
 jobs=${make_load}
@@ -101,9 +121,24 @@ case ${opt} in
 	ARC_GNU=`(cd "$1" && pwd)`
 	;;
 
-    --target)
+    --elf32-target-board)
 	shift
-	ARC_TEST_TARGET=$1
+	ARC_TEST_BOARD_ELF32=$1
+	;;
+
+    --uclibc-target-board)
+	shift
+	ARC_TEST_BOARD_UCLIBC=$1
+	;;
+
+    --elf32-target-addr)
+	shift
+	ARC_TEST_ADDR_ELF32=$1
+	;;
+
+    --uclibc-target-addr)
+	shift
+	ARC_TEST_ADDR_UCLIBC=$1
 	;;
 
     --jobs)
@@ -134,7 +169,10 @@ case ${opt} in
         ;;
     ?*)
 	echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
-        echo "                      [--target <address>]"
+        echo "                      [--elf32-target-board <board>]"
+        echo "                      [--uclibc-target-board <board>]"
+        echo "                      [--elf32-target-addr <address>]"
+        echo "                      [--uclibc-target-addr <address>]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
         echo "                      [--big-endian]"
@@ -172,10 +210,14 @@ PARALLEL="-j ${jobs} -l ${load}"
 . "${ARC_GNU}"/toolchain/define-release.sh
 
 # Export everything needed by sub-scripts
+export ARC_TEST_BOARD_ELF32
+export ARC_TEST_BOARD_UCLIBC
+export ARC_TEST_ADDR_ELF32
+export ARC_TEST_ADDR_UCLIBC
+
 export ARC_GNU
 export ARC_ENDIAN
 export PARALLEL
-export ARC_TEST_TARGET
 
 status=0
 
@@ -184,7 +226,7 @@ if [ "${elf32}" = "--elf32" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-elf32-tests.sh
     then
-        echo "ERROR: arc-elf32- tests failed to run."
+        echo "ERROR: arc-elf32- tests failed to run"
         status=1
     fi
 fi

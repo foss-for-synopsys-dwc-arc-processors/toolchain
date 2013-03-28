@@ -1,8 +1,15 @@
 2013-03-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
-	* build-all.sh: Invoke define-release.sh to set RELEASE, LOGDIR
-	and RESDIR environment variables and create $LOGDIR and $RESDIR
-	directories if necessary.
+	* run-tests.sh, run-elf32-tests.sh, run-uclibc-tests.sh: Replace
+	ARC_TEST_TARGET with ARC_TEST_ADDR_ELF32 and ARC_TEST_ADDR_UCLIBC
+	throughout. Add ARC_TEST_BOARD_ELF32 and ARC_TEST_BOARD_UCLIBC
+	environment variables.
+
+2013-03-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh, run-tests.sh: Invoke define-release.sh to set
+	RELEASE, LOGDIR and RESDIR environment variables and create
+	$LOGDIR and $RESDIR directories if necessary.
 	* build-elf32.sh, build-uclib.sh: Use RELEASE environment variable
 	for all release specific files/directories, use LOGDIR as directory
 	for log files. Correct operator in test for PDF generation.

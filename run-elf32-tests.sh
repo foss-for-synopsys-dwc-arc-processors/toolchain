@@ -53,9 +53,16 @@
 
 #     string "-j <jobs> -l <load>" to control parallel make.
 
-# ARC_TEST_TARGET
+# ARC_TEST_BOARD_ELF32
 
-#     The IP address for the target if required by the board.
+#     The Dejagnu board description for the target. This must be a standard
+#     DejaGnu baseboard, or in the dejagnu/baseboards directory of the
+#     toolchain repository.
+
+# ARC_TEST_ADDR_ELF32
+
+#     The IP address for the target if required by the board. Used by the
+#     underlying DejaGnu scripts.
 
 # Result is 0 if successful, 1 otherwise.
 
@@ -86,49 +93,94 @@ else
     bd_elf=${ARC_GNU}/bd-${RELEASE}-elf32eb
 fi
 
-# The target board to use
-board=arc-sim
-
 # Run the tests
 status=0
-run_check ${bd_elf}     binutils            "${logfile_elf}" ${board} \
+run_check ${bd_elf} \
+    binutils \
+    "${logfile_elf}" \
+    ${ARC_TEST_BOARD_ELF32} \
     || status=1
-save_res  ${bd_elf}     ${res_elf} binutils/binutils     "${logfile_elf}" \
+save_res ${bd_elf} \
+    ${res_elf} \
+    binutils/binutils \
+    "${logfile_elf}" \
     || status=1
-run_check ${bd_elf}     gas                 "${logfile_elf}" ${board} \
+run_check ${bd_elf} \
+    gas \
+    "${logfile_elf}" \
+    ${ARC_TEST_BOARD_ELF32} \
     || status=1
-save_res  ${bd_elf}     ${res_elf} gas/testsuite/gas     "${logfile_elf}" \
+save_res ${bd_elf} \
+    ${res_elf} \
+    gas/testsuite/gas \
+    "${logfile_elf}" \
     || status=1
-run_check ${bd_elf}     ld                  "${logfile_elf}" ${board} \
+run_check ${bd_elf} \
+    ld \
+    "${logfile_elf}" \
+    ${ARC_TEST_BOARD_ELF32} \
     || status=1
-save_res  ${bd_elf}     ${res_elf} ld/ld                 "${logfile_elf}" \
+save_res ${bd_elf} \
+    ${res_elf} ld/ld \
+    "${logfile_elf}" \
     || status=1
-run_check ${bd_elf}     gcc                 "${logfile_elf}" ${board} \
+run_check ${bd_elf} \
+    gcc \
+    "${logfile_elf}" \
+    ${ARC_TEST_BOARD_ELF32} \
     || status=1
-save_res  ${bd_elf}     ${res_elf} gcc/testsuite/gcc/gcc "${logfile_elf}" \
+save_res \
+    ${bd_elf} \
+    ${res_elf} \
+    gcc/testsuite/gcc/gcc \
+    "${logfile_elf}" \
     || status=1
 echo "Testing g++..."
-save_res  ${bd_elf}     ${res_elf} gcc/testsuite/g++/g++ "${logfile_elf}" \
+save_res ${bd_elf} \
+    ${res_elf} \
+    gcc/testsuite/g++/g++ \
+    "${logfile_elf}" \
     || status=1
 # libgcc and libgloss tests are currently empty, so nothing to run or save.
 # run_check ${bd_elf}     target-libgcc       "${logfile_elf}"
 # run_check ${bd_elf}     target-libgloss     "${logfile_elf}"
-run_check ${bd_elf}     target-newlib       "${logfile_elf}" ${board} \
+run_check ${bd_elf} \
+    target-newlib \
+    "${logfile_elf}" \
+    ${ARC_TEST_BOARD_ELF32} \
     || status=1
-save_res  ${bd_elf}     ${res_elf} ${target_dir}/newlib/testsuite/newlib \
-    "${logfile_elf}" || status=1
-run_check ${bd_elf}     target-libstdc++-v3 "${logfile_elf}" ${board} \
+save_res ${bd_elf} \
+    ${res_elf} \
+    ${target_dir}/newlib/testsuite/newlib \
+    "${logfile_elf}" \
     || status=1
-save_res  ${bd_elf}     ${res_elf} \
-    ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_elf}" \
+run_check ${bd_elf} \
+    target-libstdc++-v3 \
+    "${logfile_elf}" \
+    ${ARC_TEST_BOARD_ELF32} \
     || status=1
-run_check ${bd_elf} sim                 "${logfile_elf}" ${board} \
+save_res ${bd_elf} \
+    ${res_elf} \
+    ${target_dir}/libstdc++-v3/testsuite/libstdc++ \
+    "${logfile_elf}" \
     || status=1
-save_res  ${bd_elf} ${res_elf} sim/testsuite/sim     "${logfile_elf}" \
+run_check ${bd_elf} \
+    sim \
+    "${logfile_elf}" \
+    ${ARC_TEST_BOARD_ELF32} \
     || status=1
-run_check ${bd_elf} gdb                 "${logfile_elf}" ${board} \
+save_res ${bd_elf} \
+    ${res_elf} sim/testsuite/sim \
+    "${logfile_elf}" \
     || status=1
-save_res  ${bd_elf} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}" \
+run_check ${bd_elf} \
+    gdb \
+    "${logfile_elf}" \
+    ${ARC_TEST_BOARD_ELF32} \
+    || status=1
+save_res ${bd_elf} \
+    ${res_elf} gdb/testsuite/gdb \
+    "${logfile_elf}" \
     || status=1
 
 exit ${status}
