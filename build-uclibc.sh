@@ -36,6 +36,14 @@
 
 # All other parameters are set by environment variables.
 
+# RELEASE
+
+#     The number of the current ARC tool chain release.
+
+# LOGDIR
+
+#     Directory for all log files.
+
 # ARC_GNU
 
 #     The directory containing all the sources. If not set, this will default
@@ -136,10 +144,10 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arche=arceb
-    build_dir="$(echo "${PWD}")"/bd-4.8-uclibceb
+    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-uclibceb
 else
     arche=arc
-    build_dir="$(echo "${PWD}")"/bd-4.8-uclibc
+    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-uclibc
 fi
 
 arch=arc
@@ -172,8 +180,7 @@ do
 done
 
 # Set up a logfile
-mkdir -p ${PWD}/logs
-logfile="$(echo "${PWD}")/logs/uclibc-build-$(date -u +%F-%H%M).log"
+logfile="${LOGDIR}/uclibc-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" >> ${logfile}
@@ -524,7 +531,7 @@ else
 fi
 
 # Optionally build and install PDF documentation
-if [ "x${DO_PDF}" == "x--pdf" ]
+if [ "x${DO_PDF}" = "x--pdf" ]
 then
     echo "Building PDF documentation" >> "${logfile}"
     echo "==========================" >> "${logfile}"

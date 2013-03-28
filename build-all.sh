@@ -417,8 +417,16 @@ fi
 
 PARALLEL="-j ${jobs} -l ${load}"
 
+# Generic release set up, which we'll share with sub-scripts. This defines
+# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
+# and $RESDIR if they don't exist.
+. "${ARC_GNU}"/toolchain/define-release.sh
+
+# Release specific unified source directory
+UNISRC=unisrc-${RELEASE}
+
 # All the things we export to the scripts
-export UNISRC=unisrc-4.8
+export UNISRC
 export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
@@ -431,8 +439,7 @@ export PARALLEL
 cd ${builddir}
 
 # Set up a logfile
-mkdir -p ${PWD}/logs
-logfile="$(echo "${PWD}")/logs/all-build-$(date -u +%F-%H%M).log"
+logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 # Checkout the correct branch for each tool

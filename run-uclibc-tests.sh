@@ -26,17 +26,36 @@
 
 #   ./run-uclibc-tests.sh
 
-# Prerequisites (NOT tested for):
+# The following environment variables must be supplied
 
-#   ARC_GNU environment variable must be the absolute address of the default
-#   source directory.
+# RELEASE
 
-#   ${ARC_GNU}/logs must exist and be writable
+#     The number of the current ARC tool chain release.
 
-#   ${ARC_GNU}/results must exist and be writable
+# LOGDIR
 
-#   ARC_ENDIAN environment variable must be either "big" or "little" to
-#   identify which type of toolchain tool chain to test.
+#     Directory for all log files.
+
+# RESDIR
+
+#     Directory for all results directories.
+
+# ARC_GNU
+
+#     The directory containing all the sources. If not set, this will default
+#     to the directory containing this script.
+
+# ARC_ENDIAN
+
+#     "little" or "big"
+
+# PARALLEL
+
+#     string "-j <jobs> -l <load>" to control parallel make.
+
+# ARC_TEST_TARGET
+
+#     The IP address for the target if required by the board.
 
 # Result is 0 if successful, 1 otherwise.
 
@@ -44,29 +63,25 @@
 # Standard setup
 . "${ARC_GNU}"/toolchain/arc-init.sh
 
-# Set up logfile and results directories if either does not exist
-mkdir -p ${ARC_GNU}/logs
-mkdir -p ${ARC_GNU}/results
-
 # Run UCLIBC regression and gather results. Gathering results is a separate
 # function because of the variation in the location and number of results
 # files for each tool.
 export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running uClibc Linux tests"
 
-# Create the Uclibc log file and results directory
-logfile_uclibc="$(echo "${ARC_GNU}")/logs/uclibc-check-$(date -u +%F-%H%M).log"
+# Create the uClibc log file and results directory
+logfile_uclibc="${LOGDIR}/uclibc-check-$(date -u +%F-%H%M).log"
 rm -f "${logfile_uclibc}"
-res_uclibc="$(echo "${ARC_GNU}")/results/uclibc-results-$(date -u +%F-%H%M)"
+res_uclibc="${RESDIR}/uclibc-results-$(date -u +%F-%H%M)"
 mkdir ${res_uclibc}
 
 # Location of some files depends on endianess
 if [ "${ARC_ENDIAN}" = "little" ]
 then
-    bd_uclibc=${ARC_GNU}/bd-4.8-uclibc
+    bd_uclibc=${ARC_GNU}/bd-${RELEASE}-uclibc
     target_dir=arc-linux-uclibc
 else
-    bd_uclibc=${ARC_GNU}/bd-4.8-uclibceb
+    bd_uclibc=${ARC_GNU}/bd-${RELEASE}-uclibceb
     target_dir=arceb-linux-uclibc
 fi
 

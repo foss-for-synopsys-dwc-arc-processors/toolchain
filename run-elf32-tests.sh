@@ -26,24 +26,42 @@
 
 #   ./run-elf32-tests.sh
 
-# Prerequisites (NOT tested for):
+# The following environment variables must be supplied
 
-#   ARC_GNU environment variable must be the absolute address of the default
-#   source directory.
+# RELEASE
 
-#   ${ARC_GNU}/logs must exist and be writable
+#     The number of the current ARC tool chain release.
 
-#   ${ARC_GNU}/results must exist and be writable
+# LOGDIR
+
+#     Directory for all log files.
+
+# RESDIR
+
+#     Directory for all results directories.
+
+# ARC_GNU
+
+#     The directory containing all the sources. If not set, this will default
+#     to the directory containing this script.
+
+# ARC_ENDIAN
+
+#     "little" or "big"
+
+# PARALLEL
+
+#     string "-j <jobs> -l <load>" to control parallel make.
+
+# ARC_TEST_TARGET
+
+#     The IP address for the target if required by the board.
 
 # Result is 0 if successful, 1 otherwise.
 
 
 # Standard setup
 . "${ARC_GNU}"/toolchain/arc-init.sh
-
-# Set up logfile and results directories if either does not exist
-mkdir -p ${ARC_GNU}/logs
-mkdir -p ${ARC_GNU}/results
 
 # Run ELF32 regression and gather results. Gathering results is a separate
 # function because of the variation in the location and number of results
@@ -52,9 +70,9 @@ export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running elf32 tests"
 
 # Create the ELF log file and results directory
-logfile_elf="$(echo "${ARC_GNU}")/logs/elf32-check-$(date -u +%F-%H%M).log"
+logfile_elf="${LOGDIR}/elf32-check-$(date -u +%F-%H%M).log"
 rm -f "${logfile_elf}"
-res_elf="$(echo "${ARC_GNU}")/results/elf32-results-$(date -u +%F-%H%M)"
+res_elf="${RESDIR}/elf32-results-$(date -u +%F-%H%M)"
 mkdir ${res_elf}
 
 # Location of some files depends on endianess. For now with ELF this is
@@ -62,10 +80,10 @@ mkdir ${res_elf}
 if [ "${ARC_ENDIAN}" = "little" ]
 then
     target_dir=arc-elf32
-    bd_elf=${ARC_GNU}/bd-4.8-elf32
+    bd_elf=${ARC_GNU}/bd-${RELEASE}-elf32
 else
     target_dir=arceb-elf32
-    bd_elf=${ARC_GNU}/bd-4.8-elf32eb
+    bd_elf=${ARC_GNU}/bd-${RELEASE}-elf32eb
 fi
 
 # The target board to use

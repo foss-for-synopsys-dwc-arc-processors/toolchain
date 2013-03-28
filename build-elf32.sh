@@ -35,6 +35,14 @@
 
 # All other parameters are set by environment variables
 
+# RELEASE
+
+#     The number of the current ARC tool chain release.
+
+# LOGDIR
+
+#     Directory for all log files.
+
 # ARC_GNU
 
 #     The directory containing all the sources. If not set, this will default
@@ -75,8 +83,8 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-4.8-elf32) local to the directory in which it
-# is executed.
+# and uses a build directory (bd-${RELEASE}-elf32) local to the directory in
+# which it is executed.
 
 # The script generates a date and time stamped log file in the logs directory.
 
@@ -89,10 +97,10 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arch=arceb
-    build_dir="$(echo "${PWD}")"/bd-4.8-elf32eb
+    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-elf32eb
 else
     arch=arc
-    build_dir="$(echo "${PWD}")"/bd-4.8-elf32
+    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-elf32
 fi
 
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
@@ -115,8 +123,7 @@ do
 done
 
 # Set up a logfile
-mkdir -p ${PWD}/logs
-logfile="$(echo "${PWD}")/logs/elf32-build-$(date -u +%F-%H%M).log"
+logfile="${LOGDIR}/elf32-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 echo "START ELF32: $(date)" >> ${logfile}
@@ -202,7 +209,7 @@ else
 fi
 
 # Optionally build and install PDF documentation
-if [ "x${DO_PDF}" == "x--pdf" ]
+if [ "x${DO_PDF}" = "x--pdf" ]
 then
     echo "Building PDF documentation" >> "${log_path}"
     echo "==========================" >> "${log_path}"

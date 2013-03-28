@@ -1,3 +1,17 @@
+2013-03-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Invoke define-release.sh to set RELEASE, LOGDIR
+	and RESDIR environment variables and create $LOGDIR and $RESDIR
+	directories if necessary.
+	* build-elf32.sh, build-uclib.sh: Use RELEASE environment variable
+	for all release specific files/directories, use LOGDIR as directory
+	for log files. Correct operator in test for PDF generation.
+	* define-release.sh: New script.
+	* run-elf32-tests.sh, run-uclibc-tests.sh: Use RELEASE environment
+	variable for all release specific files/directories, use LOGDIR as
+	directory for log files, use RESDIR as directory for all results
+	sub-directories
+
 2013-03-27  Anton Kolesov <anton.kolesov@synopsys.com>
 
 	* build-uclibc.sh: Ignore error which happens when running 'make
