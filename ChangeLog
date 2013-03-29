@@ -1,3 +1,7 @@
+2013-03-29  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Bump binutils version to 2.23.2.
+
 2013-03-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-uclibc.sh: Additional sed edits for big-endian uClibc
