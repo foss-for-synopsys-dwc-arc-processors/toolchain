@@ -64,13 +64,13 @@ done
 # Specify the default versions to use as a string <tool>:<branch>. These are
 # the development versions for the ARC 4.4 tool chain release. Only actually
 # matters if --auto-checkout is set.
-cgen="cgen:arc_4_4-cgen-1_0-dev"
-binutils="binutils:arc_4_8-binutils-2_23_2-dev"
-gcc="gcc:arc_4_8-gcc-4_8-dev"
-gdb="gdb:arc_4_8-gdb-7_5_1-dev"
-newlib="newlib:arc_4_8-newlib-2_0-dev"
-uclibc="uClibc:arc_4_8-uclibc-mainline-dev"
-linux="linux:arc-3.8-ABI-v3"
+cgen="cgen:arc_4_8-evb1"
+binutils="binutils:arc_4_8-evb1"
+gcc="gcc:arc_4_8-evb1"
+gdb="gdb:arc_4_8-evb1"
+newlib="newlib:arc_4_8-evb1"
+uclibc="uClibc:arc_4_8-evb1"
+linux="linux:arc_4_8-evb1"
 
 for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
 do
@@ -101,7 +101,7 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-	if ! git pull
+	if ! true
 	then
 	    exit 1
 	fi
