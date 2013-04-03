@@ -93,9 +93,9 @@
 
 # --big-endian | --little-endian
 
-#     If specified, test the big-endian version of the tool chains
-#     (i.e. arceb-elf32- and arceb-linux-uclibc-), otherwise test the little
-#     endin versions.
+#     If --big-endian is specified, test the big-endian version of the tool
+#     chains (i.e. arceb-elf32- and arceb-linux-uclibc-), otherwise test the
+#     little endin versions.
 
 # --multilib-options <options>
 

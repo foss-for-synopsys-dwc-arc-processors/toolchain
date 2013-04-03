@@ -32,7 +32,8 @@
 #                  [--unisrc | --no-unisrc]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--datestamp-install]
-#                  [--comment-install <comment>] [--big-endian]
+#                  [--comment-install <comment>]
+#                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
@@ -134,11 +135,11 @@
 #     install directory name. This may prove useful if building variants of
 #     tool chains.
 
-# --big-endian
+# --big-endian | --little-endian
 
-#     If specified, build the big-endian version of the tool chains
-#     (i.e. arceb-elf32- and arceb-linux-uclibc-). At present this is only
-#     implemented for the Linux tool chain.
+#     If --big-endian is specified, test the big-endian version of the tool
+#     chains (i.e. arceb-elf32- and arceb-linux-uclibc-), otherwise test the
+#     little endin versions.
 
 # --jobs <count>
 
@@ -297,6 +298,10 @@ case ${opt} in
 	ARC_ENDIAN="big"
 	;;
 
+    --little-endian)
+	ARC_ENDIAN="little"
+	;;
+
     --jobs)
 	shift
 	jobs=$1
@@ -334,7 +339,7 @@ case ${opt} in
         echo "                      [--uclibc | --no-uclibc]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
-	echo "                      [--big-endian]"
+	echo "                      [--big-endian | --little-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
 	echo "                      [--multilib | --no-multilib]"

@@ -1,5 +1,10 @@
 2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-all.sh: Allow --little-endian as an option
+	* run-tests.sh: Tidy up commenting.
+
+2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* run-elf32-tests.sh, run-uclibc-tests.sh: Create README in the
 	results directory with details of the test run.
 	* dejagnu/baseboards/arc-linux-aa4.exp: Correct env variable
