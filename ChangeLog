@@ -1,5 +1,12 @@
 2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* run-elf32-tests.sh, run-uclibc-tests.sh: Create README in the
+	results directory with details of the test run.
+	* dejagnu/baseboards/arc-linux-aa4.exp: Correct env variable
+	specifying target IP address to ARC_TEST_ADDR_UCLIBC.
+
+2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* run-tests.sh: Add --multilib-options and --little-endian
 	* run-elf32-tests.sh, run-uclibc-tests.sh: Add comment regarding
 	the ARC_MULTILIB_OPTIONS environment variable.

@@ -86,6 +86,7 @@ logfile_uclibc="${LOGDIR}/uclibc-check-$(date -u +%F-%H%M).log"
 rm -f "${logfile_uclibc}"
 res_uclibc="${RESDIR}/uclibc-results-$(date -u +%F-%H%M)"
 mkdir ${res_uclibc}
+readme=${res_uclibc}/README
 
 # Location of some files depends on endianess
 if [ "${ARC_ENDIAN}" = "little" ]
@@ -101,6 +102,19 @@ fi
 commfile="${ARC_GNU}/commfile"
 echo "set sysroot /opt/arc-4.4-gdb-7.5/arc-linux-uclibc" >${commfile}
 export ARC_GDB_COMMFILE=${commfile}
+
+# Create a README with info about the test
+echo "Test of UCLIBC tool chain run" > ${readme}
+echo "=============================" >> ${readme}
+echo "" >> ${readme}
+echo "Start time:         $(date -u +%d\ %b\ %Y\ at\ %H:%M)" >> ${readme}
+echo "Tool chain release: ${RELEASE}"                        >> ${readme}
+echo "Endianness:         ${ARC_ENDIAN}"                     >> ${readme}
+echo "Test board:         ${ARC_TEST_BOARD_UCLIBC}"          >> ${readme}
+echo "Test IP address:    ${ARC_TEST_ADDR_UCLIBC}"           >> ${readme}
+echo "Multilib options:   ${ARC_MULTILIB_OPTIONS}"           >> ${readme}
+echo "Commfile contents:"                                    >> ${readme}
+sed < ${commfile} -e 's/^/    /'                             >> ${readme}
 
 # Run tests
 status=0

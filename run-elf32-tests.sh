@@ -86,6 +86,7 @@ logfile_elf="${LOGDIR}/elf32-check-$(date -u +%F-%H%M).log"
 rm -f "${logfile_elf}"
 res_elf="${RESDIR}/elf32-results-$(date -u +%F-%H%M)"
 mkdir ${res_elf}
+readme=${res_elf}/README
 
 # Location of some files depends on endianess. For now with ELF this is
 # ignored, but this code is a holding position.
@@ -97,6 +98,17 @@ else
     target_dir=arceb-elf32
     bd_elf=${ARC_GNU}/bd-${RELEASE}-elf32eb
 fi
+
+# Create a README with info about the test
+echo "Test of ELF32 tool chain run" > ${readme}
+echo "============================" >> ${readme}
+echo "" >> ${readme}
+echo "Start time:         $(date -u +%d\ %b\ %Y\ at\ %H:%M)" >> ${readme}
+echo "Tool chain release: ${RELEASE}"                        >> ${readme}
+echo "Endianness:         ${ARC_ENDIAN}"                     >> ${readme}
+echo "Test board:         ${ARC_TEST_BOARD_ELF32}"           >> ${readme}
+echo "Test IP address:    ${ARC_TEST_ADDR_ELF32}"            >> ${readme}
+echo "Multilib options:   ${ARC_MULTILIB_OPTIONS}"           >> ${readme}
 
 # Run the tests
 status=0
