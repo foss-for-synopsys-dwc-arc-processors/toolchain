@@ -31,7 +31,8 @@
 #     run-tests.sh [--source-dir <source_dir>]  [--target <address>]
 #                  [--jobs <count>] [--load <load>][--single-thread]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
-#                  [--big-endian]
+#                  [--big-endian | --little-endian]
+#                  [--multilib-options <options>]
 
 # --source-dir <source_dir>
 
@@ -90,11 +91,16 @@
 
 #     If specified, run the arc-uclibc-linux- tests (default is --uclibc).
 
-# --big-endian
+# --big-endian | --little-endian
 
 #     If specified, test the big-endian version of the tool chains
-#     (i.e. arceb-elf32- and arceb-linux-uclibc-). At present this is only
-#     implemented for the Linux tool chain.
+#     (i.e. arceb-elf32- and arceb-linux-uclibc-), otherwise test the little
+#     endin versions.
+
+# --multilib-options <options>
+
+#     Additional options for compiling to allow multilib variants to be
+#     tested.
 
 # This script exits with zero if every test has passed and with non-zero value
 # otherwise.
@@ -105,6 +111,7 @@ ARC_TEST_BOARD_ELF32=arc-sim
 ARC_TEST_BOARD_UCLIBC=arc-linux-aa4
 ARC_TEST_ADDR_ELF32=
 ARC_TEST_ADDR_UCLIBC=aa4_32
+ARC_MULTILIB_OPTIONS=""
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
 jobs=${make_load}
@@ -167,6 +174,16 @@ case ${opt} in
     --big-endian)
         ARC_ENDIAN=big
         ;;
+
+    --little-endian)
+        ARC_ENDIAN=little
+        ;;
+
+    --multilib-options)
+        shift
+        ARC_MULTILIB_OPTIONS="$1"
+	;;
+
     ?*)
 	echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
         echo "                      [--elf32-target-board <board>]"
@@ -175,7 +192,8 @@ case ${opt} in
         echo "                      [--uclibc-target-addr <address>]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
-        echo "                      [--big-endian]"
+        echo "                      [--big-endian | --little-endian]"
+        echo "                      [--multilib-options <options>]"
 	exit 1
 	;;
 
@@ -214,6 +232,7 @@ export ARC_TEST_BOARD_ELF32
 export ARC_TEST_BOARD_UCLIBC
 export ARC_TEST_ADDR_ELF32
 export ARC_TEST_ADDR_UCLIBC
+export ARC_MULTILIB_OPTIONS
 
 export ARC_GNU
 export ARC_ENDIAN

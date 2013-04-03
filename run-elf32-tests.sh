@@ -64,6 +64,11 @@
 #     The IP address for the target if required by the board. Used by the
 #     underlying DejaGnu scripts.
 
+# ARC_MULTILIB_OPTIONS
+
+#     May be used by the underlying DejaGnu scripts to specify options for
+#     multilib testing.
+
 # Result is 0 if successful, 1 otherwise.
 
 
