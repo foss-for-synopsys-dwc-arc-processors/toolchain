@@ -1,5 +1,13 @@
 2013-04-02  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* arc-sim-mdb.exp: Deleted.
+	* arc-sim-base.exp: Merged into arc-sim.exp
+	* arc-sim.exp: Incorporate arc-sim-base.exp, add correct licensing
+	header, allow multilib options to be specified by environment
+	variable.
+
+2013-04-02  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* arc-versions.sh: Bump uClibc version to arc_4_8-uclibc-mainline-dev.
 
 2013-03-29  Jeremy Bennett <jeremy.bennett@embecosm.com>
