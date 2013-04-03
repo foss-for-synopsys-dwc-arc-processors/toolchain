@@ -1,5 +1,9 @@
 2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* tag-release.sh: New script.
+
+2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Allow --little-endian as an option
 	* run-tests.sh: Tidy up commenting.
 
