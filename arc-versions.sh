@@ -70,7 +70,7 @@ gcc="gcc:arc_4_8-evb1"
 gdb="gdb:arc_4_8-evb1"
 newlib="newlib:arc_4_8-evb1"
 uclibc="uClibc:arc_4_8-evb1"
-linux="linux:arc_4_8-evb1"
+linux="linux:arc-3.8-ABI-v3"
 
 for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
 do
