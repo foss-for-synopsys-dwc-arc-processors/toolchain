@@ -1,5 +1,10 @@
 2013-04-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* diff-all-sh: New script.
+	* diff-tests.sh: Remove redundant code.
+
+2013-04-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* diff-tests.sh: New script.
 
 2013-03-27  Anton Kolesov <anton.kolesov@synopsys.com>
