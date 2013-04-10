@@ -1,3 +1,11 @@
+2013-04-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* diff-tests.sh: New script.
+
+2013-04-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* diff-tests.sh: New script.
+
 2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* tag-release.sh: New script.
