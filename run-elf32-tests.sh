@@ -69,6 +69,19 @@
 #     May be used by the underlying DejaGnu scripts to specify options for
 #     multilib testing.
 
+# DO_BINUTILS
+# DO_GAS
+# DO_LD
+# DO_GCC
+# DO_LIBGCC
+# DO_LIBGLOSS
+# DO_NEWLIB
+# DO_LIBSTDCPP
+# DO_SIM
+# DO_GDB
+
+#     Specify whether the corresponding test should be run.
+
 # Result is 0 if successful, 1 otherwise.
 
 
@@ -112,92 +125,149 @@ echo "Multilib options:   ${ARC_MULTILIB_OPTIONS}"           >> ${readme}
 
 # Run the tests
 status=0
-run_check ${bd_elf} \
-    binutils \
-    "${logfile_elf}" \
-    ${ARC_TEST_BOARD_ELF32} \
-    || status=1
-save_res ${bd_elf} \
-    ${res_elf} \
-    binutils/binutils \
-    "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf} \
-    gas \
-    "${logfile_elf}" \
-    ${ARC_TEST_BOARD_ELF32} \
-    || status=1
-save_res ${bd_elf} \
-    ${res_elf} \
-    gas/testsuite/gas \
-    "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf} \
-    ld \
-    "${logfile_elf}" \
-    ${ARC_TEST_BOARD_ELF32} \
-    || status=1
-save_res ${bd_elf} \
-    ${res_elf} ld/ld \
-    "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf} \
-    gcc \
-    "${logfile_elf}" \
-    ${ARC_TEST_BOARD_ELF32} \
-    || status=1
-save_res \
-    ${bd_elf} \
-    ${res_elf} \
-    gcc/testsuite/gcc/gcc \
-    "${logfile_elf}" \
-    || status=1
-echo "Testing g++..."
-save_res ${bd_elf} \
-    ${res_elf} \
-    gcc/testsuite/g++/g++ \
-    "${logfile_elf}" \
-    || status=1
-# libgcc and libgloss tests are currently empty, so nothing to run or save.
-# run_check ${bd_elf}     target-libgcc       "${logfile_elf}"
-# run_check ${bd_elf}     target-libgloss     "${logfile_elf}"
-run_check ${bd_elf} \
-    target-newlib \
-    "${logfile_elf}" \
-    ${ARC_TEST_BOARD_ELF32} \
-    || status=1
-save_res ${bd_elf} \
-    ${res_elf} \
-    ${target_dir}/newlib/testsuite/newlib \
-    "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf} \
-    target-libstdc++-v3 \
-    "${logfile_elf}" \
-    ${ARC_TEST_BOARD_ELF32} \
-    || status=1
-save_res ${bd_elf} \
-    ${res_elf} \
-    ${target_dir}/libstdc++-v3/testsuite/libstdc++ \
-    "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf} \
-    sim \
-    "${logfile_elf}" \
-    ${ARC_TEST_BOARD_ELF32} \
-    || status=1
-save_res ${bd_elf} \
-    ${res_elf} sim/testsuite/sim \
-    "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf} \
-    gdb \
-    "${logfile_elf}" \
-    ${ARC_TEST_BOARD_ELF32} \
-    || status=1
-save_res ${bd_elf} \
-    ${res_elf} gdb/testsuite/gdb \
-    "${logfile_elf}" \
-    || status=1
+# binutils
+if [ "x${DO_BINUTILS}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	binutils \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	binutils/binutils \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# gas
+if [ "x${DO_GAS}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	gas \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	gas/testsuite/gas \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# ld
+if [ "x${DO_LD}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	ld \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} ld/ld \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# gcc and g++
+if [ "x${DO_GCC}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	gcc \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res \
+	${bd_elf} \
+	${res_elf} \
+	gcc/testsuite/gcc/gcc \
+	"${logfile_elf}" \
+	|| status=1
+    echo "Testing g++..."
+    save_res ${bd_elf} \
+	${res_elf} \
+	gcc/testsuite/g++/g++ \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# libgcc
+if [ "x${DO_LIBGCC}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	target-libgcc \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	${target_dir}/libgcc/testsuite/libgcc \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# libgloss
+if [ "x${DO_LIBGLOSS}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	target-libgloss \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	${target_dir}/libgloss/testsuite/libgloss \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# newlib
+if [ "x${DO_NEWLIB}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	target-newlib \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	${target_dir}/newlib/testsuite/newlib \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# libstdc++
+if [ "x${DO_LIBSTDCPP}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	target-libstdc++-v3 \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	${target_dir}/libstdc++-v3/testsuite/libstdc++ \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# sim
+if [ "x${DO_SIM}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	sim \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} sim/testsuite/sim \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# gdb
+if [ "x${DO_GDB}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	gdb \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} gdb/testsuite/gdb \
+	"${logfile_elf}" \
+	|| status=1
+fi
 
 exit ${status}

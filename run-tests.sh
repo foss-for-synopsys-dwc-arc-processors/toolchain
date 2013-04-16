@@ -102,6 +102,20 @@
 #     Additional options for compiling to allow multilib variants to be
 #     tested.
 
+# --binutils | --no-binutils
+# --gas | --no-gas
+# --ld | --no-ld
+# --gcc | --no-gcc
+# --libgcc | --no-libgcc
+# --libgloss | --no-libgloss
+# --newlib | --no-newlibe
+# --libstdc++ | --no-libstdc++
+# --sim | --no-sim
+# --gdb | --no-gdb
+
+#     Specify which tests are to be run. By default all are enabled except
+#     libgcc, libgloss and sim, for which no tests currently exist.
+
 # This script exits with zero if every test has passed and with non-zero value
 # otherwise.
 
@@ -118,6 +132,16 @@ jobs=${make_load}
 load=${make_load}
 elf32="--elf32"
 uclibc="--uclibc"
+DO_BINUTILS="yes"
+DO_GAS="yes"
+DO_LD="yes"
+DO_GCC="yes"
+DO_LIBGCC="no"
+DO_LIBGLOSS="no"
+DO_NEWLIB="yes"
+DO_LIBSTDCPP="yes"
+DO_SIM="no"
+DO_GDB="yes"
 
 # Parse options
 until
@@ -184,6 +208,86 @@ case ${opt} in
         ARC_MULTILIB_OPTIONS="$1"
 	;;
 
+    --binutils)
+	DO_BINUTILS="yes"
+	;;
+
+    --no-binutils)
+	DO_BINUTILS="no"
+	;;
+
+    --gas)
+	DO_GAS="yes"
+	;;
+
+    --no-gas)
+	DO_GAS="no"
+	;;
+
+    --ld)
+	DO_LD="yes"
+	;;
+
+    --no-ld)
+	DO_LD="no"
+	;;
+
+    --gcc)
+	DO_GCC="yes"
+	;;
+
+    --no-gcc)
+	DO_GCC="no"
+	;;
+
+    --libgcc)
+	DO_LIBGCC="yes"
+	;;
+
+    --no-libgcc)
+	DO_LIBGCC="no"
+	;;
+
+    --libgloss)
+	DO_LIBGLOSS="yes"
+	;;
+
+    --no-libgloss)
+	DO_LIBGLOSS="no"
+	;;
+
+    --newlib)
+	DO_LIBGLOSS="yes"
+	;;
+
+    --no-newlib)
+	DO_NEWLIB="no"
+	;;
+
+    --libstdc++)
+	DO_LIBSTDCPP="yes"
+	;;
+
+    --no-libstdc++)
+	DO_LIBSTDCPP="no"
+	;;
+
+    --sim)
+	DO_SIM="yes"
+	;;
+
+    --no-sim)
+	DO_SIM="no"
+	;;
+
+    --gdb)
+	DO_GDB="yes"
+	;;
+
+    --no-gdb)
+	DO_GDB="no"
+	;;
+
     ?*)
 	echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
         echo "                      [--elf32-target-board <board>]"
@@ -194,6 +298,17 @@ case ${opt} in
         echo "                      [--uclibc | --no-uclibc]"
         echo "                      [--big-endian | --little-endian]"
         echo "                      [--multilib-options <options>]"
+        echo "                      [--binutils | --no-binutils]"
+        echo "                      [--gas | --no-gas]"
+        echo "                      [--ld | --no-ld]"
+        echo "                      [--gcc | --no-gcc]"
+        echo "                      [--libgcc | --no-libgcc]"
+        echo "                      [--libgloss | --no-libgloss]"
+        echo "                      [--newlib | --no-newlibe]"
+        echo "                      [--libstdc++ | --no-libstdc++]"
+        echo "                      [--sim | --no-sim]"
+        echo "                      [--gdb | --no-gdb]"
+
 	exit 1
 	;;
 
@@ -238,6 +353,17 @@ export ARC_GNU
 export ARC_ENDIAN
 export PARALLEL
 
+export DO_BINUTILS
+export DO_GAS
+export DO_LD
+export DO_GCC
+export DO_LIBGCC
+export DO_LIBGLOSS
+export DO_NEWLIB
+export DO_LIBSTDCPP
+export DO_SIM
+export DO_GDB
+
 status=0
 
 # Run the ELF32 tests
@@ -245,7 +371,7 @@ if [ "${elf32}" = "--elf32" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-elf32-tests.sh
     then
-        echo "ERROR: arc-elf32- tests failed to run"
+        echo "ERROR: arc-elf32- some tests failed."
         status=1
     fi
 fi
@@ -255,7 +381,7 @@ if [ "${uclibc}" = "--uclibc" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-uclibc-tests.sh
     then
-        echo "ERROR: arc-linux-uclibc- tests failed to run."
+        echo "ERROR: arc-linux-uclibc- some tests failed."
         status=1
     fi
 fi

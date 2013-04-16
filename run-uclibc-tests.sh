@@ -69,6 +69,19 @@
 #     May be used by the underlying DejaGnu scripts to specify options for
 #     multilib testing.
 
+# DO_BINUTILS
+# DO_GAS
+# DO_LD
+# DO_GCC
+# DO_LIBGCC
+# DO_LIBGLOSS
+# DO_NEWLIB
+# DO_LIBSTDCPP
+# DO_SIM
+# DO_GDB
+
+#     Specify whether the corresponding test should be run.
+
 # Result is 0 if successful, 1 otherwise.
 
 
@@ -118,70 +131,106 @@ sed < ${commfile} -e 's/^/    /'                             >> ${readme}
 
 # Run tests
 status=0
-run_check ${bd_uclibc} \
-    binutils \
-    "${logfile_uclibc}" \
-    ${ARC_TEST_BOARD_UCLIBC} \
-    || status=1
-save_res  ${bd_uclibc} \
-    ${res_uclibc} \
-    binutils/binutils \
-    "${logfile_uclibc}" \
-    || status=1
-run_check ${bd_uclibc} \
-    gas "${logfile_uclibc}" \
-    ${ARC_TEST_BOARD_UCLIBC} \
-    || status=1
-save_res  ${bd_uclibc} \
-    ${res_uclibc} \
-    gas/testsuite/gas \
-    "${logfile_uclibc}" \
-    || status=1
-run_check ${bd_uclibc} \
-    ld "${logfile_uclibc}" \
-    ${ARC_TEST_BOARD_UCLIBC} \
-    || status=1
-save_res  ${bd_uclibc} \
-    ${res_uclibc} \
-    ld/ld \
-    "${logfile_uclibc}" \
-    || status=1
-run_check ${bd_uclibc} \
-    gcc \
-    "${logfile_uclibc}" \
-    ${ARC_TEST_BOARD_UCLIBC} \
-    || status=1
-save_res  ${bd_uclibc} \
-    ${res_uclibc} \
-    gcc/testsuite/gcc/gcc \
-    "${logfile_uclibc}" \
-    || status=1
-echo "Testing g++..."
-save_res  ${bd_uclibc} \
-    ${res_uclibc} \
-    gcc/testsuite/g++/g++ \
-    "${logfile_uclibc}" \
-    || status=1
-# libgcc tests are currently empty, so nothing to run or save.
-# run_check ${bd_uclibc} target-libgcc       "${logfile_uclibc}"
-run_check ${bd_uclibc} \
-    target-libstdc++-v3 \
-    "${logfile_uclibc}" \
-    ${ARC_TEST_BOARD_UCLIBC} \
-    || status=1
-save_res  ${bd_uclibc} \
-    ${res_uclibc} \
-    ${target_dir}/libstdc++-v3/testsuite/libstdc++ \
-    "${logfile_uclibc}" \
-    || status=1
-run_check ${bd_uclibc} \
-    gdb "${logfile_uclibc}" \
-    ${ARC_TEST_BOARD_UCLIBC} \
-    || status=1
-save_res  ${bd_uclibc} \
-    ${res_uclibc} \
-    gdb/testsuite/gdb \
-    "${logfile_uclibc}" \
-    || status=1
+# binutils
+if [ "x${DO_BINUTILS}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	binutils \
+	"${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	binutils/binutils \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# gas
+if [ "x${DO_GAS}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	gas "${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	gas/testsuite/gas \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# ld
+if [ "x${DO_LD}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	ld "${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	ld/ld \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# gcc and g++
+if [ "x${DO_GCC}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	gcc \
+	"${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	gcc/testsuite/gcc/gcc \
+	"${logfile_uclibc}" \
+	|| status=1
+    echo "Testing g++..."
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	gcc/testsuite/g++/g++ \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# libgcc
+if [ "x${DO_LIBGCC}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	target-libgcc \
+	"${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res ${bd_uclibc} \
+	${res_uclibc} \
+	${target_dir}/libgcc/testsuite/libgcc \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# libstdc++
+if [ "x${DO_LIBSTDCPP}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	target-libstdc++-v3 \
+	"${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	${target_dir}/libstdc++-v3/testsuite/libstdc++ \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# gdb
+if [ "x${DO_GDB}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	gdb "${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	gdb/testsuite/gdb \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
 
 exit ${status}
