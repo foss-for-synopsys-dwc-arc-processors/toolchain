@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012 Synopsys Inc.
+# Copyright (C) 2012, 2013 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -30,11 +30,15 @@
 #                  [--auto-pull | --no-auto-pull]
 #                  [--auto-checkout | --no-auto-checkout]
 #                  [--unisrc | --no-unisrc]
-#                  [--elf32 | --no-elf32] [--linux | --no-linux]
+#                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--datestamp-install]
-#                  [--comment-install <comment>] [--big-endian]
+#                  [--comment-install <comment>]
+#                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
-#                  [--enable-multilib | --disable-multilib]
+#                  [--isa-v1 | --isa-v2]
+#                  [--config-extra <flags>]
+#                  [--multilib | --no-multilib]
+#                  [--pdf | --no-pdf]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -116,10 +120,10 @@
 
 #     If specified, build the arc-elf32- tool chain (default is --elf32).
 
-# --linux | --no-linux
+# --uclibc | --no-uclibc
 
 #     If specified, build the arc-uclibc-linux- tool chain (default is
-#     --linux).
+#     --uclibc).
 
 # --datestamp-install
 
@@ -133,11 +137,11 @@
 #     install directory name. This may prove useful if building variants of
 #     tool chains.
 
-# --big-endian
+# --big-endian | --little-endian
 
-#     If specified, build the big-endian version of the tool chains
-#     (i.e. arceb-elf32- and arceb-linux-uclibc-). At present this is only
-#     implemented for the Linux tool chain.
+#     If --big-endian is specified, test the big-endian version of the tool
+#     chains (i.e. arceb-elf32- and arceb-linux-uclibc-), otherwise test the
+#     little endin versions.
 
 # --jobs <count>
 
@@ -156,12 +160,28 @@
 #     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
 #     whatever the load average.
 
-# --disable-multilib | --enable-multilib
+# --isa-v1 | --isa-v2
+
+#     Specify whether the original ARCompact version 1 ISA should be used (the
+#     default) or the new version 2 ISA (for EM targets).
+
+# --config-extra <flags>
+
+#     Add <flags> to the configuration line for the tool chain. Note this does
+#     not include the configuration of gdbserver for the UCLIBC LINUX tool
+#     chain
+
+# --multilib | --no-multilib
 
 #     Use these to control whether mutlilibs should be built. If this argument
 #     is not used, then the value of the environment variable,
 #     DISABLE_MULTILIB, will be used if set. If it is not set, then the
 #     default is to enable multilibs.
+
+# --pdf | --no-pdf
+
+#     Use these to control whether PDF versions of user guides should be built
+#     and installed (default --pdf).
 
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
@@ -219,7 +239,10 @@ autocheckout="--auto-checkout"
 autopull="--auto-pull"
 do_unisrc="--unisrc"
 elf32="--elf32"
-linux="--linux"
+uclibc="--uclibc"
+ISA_CPU="arc700"
+CONFIG_EXTRA=""
+DO_PDF="--pdf"
 
 # Parse options
 until
@@ -273,8 +296,8 @@ case ${opt} in
 	elf32=$1
 	;;
 
-    --linux | --no-linux)
-	linux=$1
+    --uclibc | --no-uclibc)
+	uclibc=$1
 	;;
 
     --datestamp-install)
@@ -288,6 +311,10 @@ case ${opt} in
 
     --big-endian)
 	ARC_ENDIAN="big"
+	;;
+
+    --little-endian)
+	ARC_ENDIAN="little"
 	;;
 
     --jobs)
@@ -305,10 +332,26 @@ case ${opt} in
 	load=1000
 	;;
 
-    --disable-multilib|--enable-multilib)
+    --isa-v1)
+	ISA_CPU=arc700
+	;;
+
+    --isa-v2)
+	ISA_CPU=EM
+	;;
+
+    --config-extra)
+	shift
+	CONFIG_EXTRA="$1"
+	;;
+
+    --multilib|--no-multilib|--enable-multilib|--disable-multilib)
 	DISABLE_MULTILIB=$1
 	;;
 
+    --pdf|--no-pdf)
+	DO_PDF=$1
+	;;
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -321,13 +364,16 @@ case ${opt} in
         echo "                      [--auto-pull | --no-auto-pull]"
         echo "                      [--unisrc | --no-unisrc]"
         echo "                      [--elf32 | --no-elf32]"
-        echo "                      [--linux | --no-linux]"
+        echo "                      [--uclibc | --no-uclibc]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
-	echo "                      [--big-endian]"
+	echo "                      [--big-endian | --little-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
-	echo "                      [--enable-multilib | --disable-multilib]"
+        echo "                      [--isa-v1 | --isa-v2]"
+        echo "                      [--config-extra <flags>]"
+	echo "                      [--multilib | --no-multilib]"
+	echo "                      [--pdf | --no-pdf]"
 	exit 1
 	;;
 
@@ -384,11 +430,12 @@ then
     ARC_ENDIAN="little"
 fi
 
-# Default multilib usage
-if [ "x${DISABLE_MULTILIB}" = "x" ]
-then
-    DISABLE_MULTILIB=--enable-multilib
-fi
+# Default multilib usage and conversion for toolchain building
+case "x${DISABLE_MULTILIB}" in
+    x--multilib) DISABLE_MULTILIB=--enable-multilib ;;
+    x--no-multilib) DISABLE_MULTILIB=--disable-multilib ;;
+    x) DISABLE_MULTILIB=--enable-multilib ;;
+esac
 
 # Default parallellism
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
@@ -406,21 +453,31 @@ fi
 
 PARALLEL="-j ${jobs} -l ${load}"
 
+# Generic release set up, which we'll share with sub-scripts. This defines
+# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
+# and $RESDIR if they don't exist.
+. "${ARC_GNU}"/toolchain/define-release.sh
+
+# Release specific unified source directory
+UNISRC=unisrc-${RELEASE}
+
 # All the things we export to the scripts
-export UNISRC=unisrc-mainline
+export UNISRC
 export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
 export DISABLE_MULTILIB
+export ISA_CPU
+export CONFIG_EXTRA
+export DO_PDF
 export PARALLEL
 
 # Change to the build directory
 cd ${builddir}
 
 # Set up a logfile
-mkdir -p ${PWD}/logs
-logfile="$(echo "${PWD}")/logs/all-build-$(date -u +%F-%H%M).log"
+logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 # Checkout the correct branch for each tool
@@ -469,10 +526,13 @@ then
 	echo "ERROR: arc-elf32- tool chain build failed."
 	exit 1
     fi
+    # If we have built the PDF here, we don't want to do it again if we then
+    # build the uClibc tool chain, so override the DO_PDF setting.
+    DO_PDF="--no-pdf"
 fi
 
 # Optionally build the arc-linux-uclibc- tool chain
-if [ "x${linux}" = "x--linux" ]
+if [ "x${uclibc}" = "x--uclibc" ]
 then
     if ! "${ARC_GNU}"/toolchain/build-uclibc.sh --force
     then

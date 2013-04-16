@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2010-2012 Synopsys Inc.
+# Copyright (C) 2010-2013 Synopsys Inc.
 
 # Contributor Brendan Kehoe <brendan@zen.org>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
@@ -36,18 +36,26 @@
 
 # All other parameters are set by environment variables.
 
+# RELEASE
+
+#     The number of the current ARC tool chain release.
+
+# LOGDIR
+
+#     Directory for all log files.
+
 # ARC_GNU
 
 #     The directory containing all the sources. If not set, this will default
 #     to the directory containing this script.
 
-# LINUXDIR
-
-#     The directory containing the Linux source tree (needed for headers).
-
 # UNISRC
 
 #     The name of the unified source directory within the build directory
+
+# LINUXDIR
+
+#     The name of the Linux directory (absolute path)
 
 # INSTALLDIR
 
@@ -55,12 +63,30 @@
 
 # ARC_ENDIAN
 
-#     "big" or "little" to indicate the endianness to use.
+#     "little" or "big"
 
 # DISABLE_MULTILIB
 
 #     Either --enable-multilib or --disable-multilib to control the building
-#     of multilibs
+#     of multilibs.
+
+# ISA_CPU
+
+#     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
+#     EM. Currently ignored for LINUX UCLIBC tool chain.
+
+# CONFIG_FLAGS
+
+#     Additional flags for use with configuration.
+
+# DO_PDF
+
+#     Either --pdf or --no-pdf to control whether we build and install PDFs of
+#     the user guides.
+
+# PARALLEL
+
+#     string "-j <jobs> -l <load>" to control parallel make.
 
 # Unlike earlier versions of this script, we do not recognize the
 # ARC_GNU_ONLY_CONFIGURE and ARC_GNU_CONTINUE environment variables. If you
@@ -75,8 +101,8 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-mainline-uclibc) local to the directory in
-# which it is executed.
+# and uses a build directory (bd-4.8-uclibc) local to the directory in which
+# it is executed.
 
 # The script generates a date and time stamped log file in the logs directory.
 
@@ -127,10 +153,10 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arche=arceb
-    build_dir="$(echo "${PWD}")"/bd-mainline-uclibceb
+    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-uclibceb
 else
     arche=arc
-    build_dir="$(echo "${PWD}")"/bd-mainline-uclibc
+    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-uclibc
 fi
 
 arch=arc
@@ -163,8 +189,7 @@ do
 done
 
 # Set up a logfile
-mkdir -p ${PWD}/logs
-logfile="$(echo "${PWD}")/logs/uclibc-build-$(date -u +%F-%H%M).log"
+logfile="${LOGDIR}/uclibc-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" >> ${logfile}
@@ -246,15 +271,30 @@ then
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
         -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-        -e "s#%CROSS_COMPILER_PREFIX%##" \
+        -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
         < "${ARC_GNU}"/uClibc/arc_config > .config
 else
-    make ARCH=arc defconfig
+    make ARCH=arc defconfig >> "${logfile}" 2>&1
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
         -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+        -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
 	-i .config
 fi
+
+# Patch .config for big endian for use with correct flags
+if [ "${ARC_ENDIAN}" = "big" ]
+then
+    sed -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
+        -e 's@# ARCH_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
+        -i .config
+else
+    sed -e 's@ARCH_BIG_ENDIAN=y@# ARCH_BIG_ENDIAN is not set@' \
+        -e 's@# ARCH_LITTLE_ENDIAN is not set@ARCH_LITTLE_ENDIAN=y@' \
+        -i .config
+fi
+
+cp .config /tmp/.config
 
 if make ARCH=${arch} V=1 install_headers >> "${logfile}" 2>&1
 then
@@ -288,7 +328,7 @@ if "${config_path}"/configure --target=${arche}-linux-uclibc --with-cpu=arc700 \
         --enable-languages=c --prefix="${tmp_install_dir}" \
         --without-headers --enable-shared --disable-threads --disable-tls \
 	--disable-libssp --disable-libmudflap --without-newlib --disable-c99 \
-	--disable-libgomp >> "${logfile}" 2>&1
+	--disable-libgomp ${CONFIG_EXTRA} >> "${logfile}" 2>&1
 then
     echo "  finished configuring stage 1"
 else
@@ -344,10 +384,23 @@ then
         -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
         < "${ARC_GNU}"/uClibc/arc_config > .config
 else
-    make ARCH=arc defconfig
+    make ARCH=arc defconfig >> "${logfile}" 2>&1
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
         -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+        -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
+        -i .config
+fi
+
+# Patch .config for big endian for use with correct flags
+if [ "${ARC_ENDIAN}" = "big" ]
+then
+    sed -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
+        -e 's@# ARCH_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
+        -i .config
+else 
+   sed -e 's@ARCH_BIG_ENDIAN=y@# ARCH_BIG_ENDIAN is not set@' \
+        -e 's@# ARCH_LITTLE_ENDIAN is not set@ARCH_LITTLE_ENDIAN=y@' \
         -i .config
 fi
 
@@ -405,7 +458,7 @@ if "${config_path}"/configure --target=${arche}-linux-uclibc --with-cpu=arc700 \
         --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} \
         --with-headers=${tmp_install_dir}/${arche}-linux-uclibc/include \
         --enable-languages=c,c++ --prefix="${INSTALLDIR}" \
-        --enable-shared --without-newlib --disable-libgomp \
+        --enable-shared --without-newlib --disable-libgomp ${CONFIG_EXTRA} \
     >> "${logfile}" 2>&1
 then
     echo "  finished configuring stage 2 build"
@@ -494,7 +547,7 @@ fi
 
 export CC=${arche}-linux-uclibc-gcc
 if make ${PARALLEL} \
-    CFLAGS="${CFLAGS} -static -fcommon -mno-sdata -DARC_LEGACY_PTRACE_ABI" \
+    CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
     >> "${logfile}" 2>&1
 then
     echo "  finished building GDBSERVER to run on an arc"
@@ -512,6 +565,37 @@ else
     echo "ERROR: gdbserver install was not successful. Please see"
     echo "       \"${logfile}\" for details."
     exit 1
+fi
+
+# Optionally build and install PDF documentation
+if [ "x${DO_PDF}" = "x--pdf" ]
+then
+    echo "Building PDF documentation" >> "${logfile}"
+    echo "==========================" >> "${logfile}"
+
+    echo "Building PDFs ..."
+    cd "${build_dir}"
+    if make ${PARALLEL} pdf-binutils pdf-gas pdf-ld pdf-gcc \
+	pdf-gdb >> "${logfile}" 2>&1
+    then
+	echo "  finished building PDFs"
+    else
+	echo "ERROR: PDF build failed."
+	exit 1
+    fi
+
+    echo "Installing PDF documentation" >> "${logfile}"
+    echo "============================" >> "${logfile}"
+
+    echo "Installing PDFs ..."
+    if make install-pdf-binutils install-pdf-gas install-pdf-ld \
+	install-pdf-gcc install-pdf-gdb >> "${logfile}" 2>&1
+    then
+	echo "  finished installing PDFs"
+    else
+	echo "ERROR: PDF install failed."
+	exit 1
+    fi
 fi
 
 rm -rf "${tmp_install_dir}"

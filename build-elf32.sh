@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Copyright (C) 2009, 2011, 2012 Embecosm Limited
-# Copyright (C) 2012 Synopsys Inc.
+# Copyright (C) 2009, 2011, 2012, 2013 Embecosm Limited
+# Copyright (C) 2012, 2013 Synopsys Inc.
 
 # Contributor Joern Rennecke <joern.rennecke@embecosm.com>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
@@ -35,6 +35,14 @@
 
 # All other parameters are set by environment variables
 
+# RELEASE
+
+#     The number of the current ARC tool chain release.
+
+# LOGDIR
+
+#     Directory for all log files.
+
 # ARC_GNU
 
 #     The directory containing all the sources. If not set, this will default
@@ -44,21 +52,47 @@
 
 #     The name of the unified source directory within the build directory
 
+# LINUXDIR
+
+#     The name of the Linux directory (absolute path)
+
 # INSTALLDIR
 
 #     The directory where the tool chain should be installed
 
+# ARC_ENDIAN
+
+#     "little" or "big"
+
 # DISABLE_MULTILIB
 
 #     Either --enable-multilib or --disable-multilib to control the building
-#     of multilibs
+#     of multilibs.
+
+# ISA_CPU
+
+#     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
+#     EM.
+
+# CONFIG_FLAGS
+
+#     Additional flags for use with configuration.
+
+# DO_PDF
+
+#     Either --pdf or --no-pdf to control whether we build and install PDFs of
+#     the user guides.
+
+# PARALLEL
+
+#     string "-j <jobs> -l <load>" to control parallel make.
 
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-mainline-elf32) local to the directory in
+# and uses a build directory (bd-${RELEASE}-elf32) local to the directory in
 # which it is executed.
 
 # The script generates a date and time stamped log file in the logs directory.
@@ -72,10 +106,10 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arch=arceb
-    build_dir="$(echo "${PWD}")"/bd-mainline-elf32eb
+    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-elf32eb
 else
     arch=arc
-    build_dir="$(echo "${PWD}")"/bd-mainline-elf32
+    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-elf32
 fi
 
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
@@ -98,8 +132,7 @@ do
 done
 
 # Set up a logfile
-mkdir -p ${PWD}/logs
-logfile="$(echo "${PWD}")/logs/elf32-build-$(date -u +%F-%H%M).log"
+logfile="${LOGDIR}/elf32-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 echo "START ELF32: $(date)" >> ${logfile}
@@ -130,7 +163,7 @@ cd "${build_path}"
 # Configure the build.
 config_path=$(calcConfigPath "${unified_src_abs}")
 log_path=$(calcConfigPath "${logfile}")
-if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=arc700 \
+if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
         --disable-werror ${DISABLE_MULTILIB} \
         --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
         --with-bugurl="http://solvnet.synopsys.com" \
@@ -138,7 +171,7 @@ if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=arc700 \
         --with-endian=${ARC_ENDIAN} \
         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
         --with-headers="${config_path}"/newlib/libc/include \
-        --enable-sim-endian=no \
+        --enable-sim-endian=no ${CONFIG_EXTRA} \
     >> "${log_path}" 2>&1
 then
     echo "  finished configuring tools"
@@ -182,6 +215,43 @@ then
 else
     echo "ERROR: tools install failed."
     exit 1
+fi
+
+# Optionally build and install PDF documentation
+if [ "x${DO_PDF}" = "x--pdf" ]
+then
+    echo "Building PDF documentation" >> "${log_path}"
+    echo "==========================" >> "${log_path}"
+
+    echo "Building PDFs ..."
+    build_path=$(calcConfigPath "${build_dir}")
+    cd "${build_path}"
+    log_path=$(calcConfigPath "${logfile}")
+    if make ${PARALLEL} pdf-binutils pdf-gas pdf-ld pdf-gcc \
+	pdf-target-newlib pdf-gdb >> "${log_path}" 2>&1
+    then
+	echo "  finished building PDFs"
+    else
+	echo "ERROR: PDF build failed."
+	exit 1
+    fi
+
+    echo "Installing PDF documentation" >> "${log_path}"
+    echo "============================" >> "${log_path}"
+
+    echo "Installing PDFs ..."
+    build_path=$(calcConfigPath "${build_dir}")
+    cd "${build_path}"
+    log_path=$(calcConfigPath "${logfile}")
+    if make install-pdf-binutils install-pdf-gas install-pdf-ld \
+	install-pdf-gcc install-pdf-target-newlib install-pdf-gdb \
+	>> "${log_path}" 2>&1
+    then
+	echo "  finished installing PDFs"
+    else
+	echo "ERROR: PDF install failed."
+	exit 1
+    fi
 fi
 
 echo "DONE  ELF32: $(date)" >> "${log_path}"
