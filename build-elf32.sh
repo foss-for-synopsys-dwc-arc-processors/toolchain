@@ -69,6 +69,15 @@
 #     Either --enable-multilib or --disable-multilib to control the building
 #     of multilibs.
 
+# ISA_CPU
+
+#     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
+#     EM.
+
+# CONFIG_FLAGS
+
+#     Additional flags for use with configuration.
+
 # DO_PDF
 
 #     Either --pdf or --no-pdf to control whether we build and install PDFs of
@@ -154,7 +163,7 @@ cd "${build_path}"
 # Configure the build.
 config_path=$(calcConfigPath "${unified_src_abs}")
 log_path=$(calcConfigPath "${logfile}")
-if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=arc700 \
+if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
         --disable-werror ${DISABLE_MULTILIB} \
         --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
         --with-bugurl="http://solvnet.synopsys.com" \
@@ -162,7 +171,7 @@ if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=arc700 \
         --with-endian=${ARC_ENDIAN} \
         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
         --with-headers="${config_path}"/newlib/libc/include \
-        --enable-sim-endian=no \
+        --enable-sim-endian=no ${CONFIG_EXTRA} \
     >> "${log_path}" 2>&1
 then
     echo "  finished configuring tools"

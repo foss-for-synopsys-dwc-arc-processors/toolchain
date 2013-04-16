@@ -47,10 +47,13 @@
 # Useful constants. Some day these will be set from args
 TOOLDIR=/opt/arc-4.8
 # LINUX_DEFCONFIG=4.10_defconfig
-LINUX_DEFCONFIG=fpga_defconfig_patched_no_sasid
+# LINUX_DEFCONFIG=fpga_defconfig_patched_no_sasid
+LINUX_DEFCONFIG=
 LINUX_TREE=linux
 # ARC_INITRAMFS=arc_initramfs_10_2012_dyn_dev.tgz
-ARC_INITRAMFS=arc_initramfs_08_2012_gnu_4_4_ABI_v2.tgz
+# ARC_INITRAMFS=arc_initramfs_08_2012_gnu_4_4_ABI_v2.tgz
+ARC_INITRAMFS=ramfs-abi-v3-gcc-4.4.tar.gz
+ARC_UNPACKED_NAME=arc_initramfs_22_abi-v3-0.9.34
 
 # Ensure we have the right tool chain on the path!
 PATH=${TOOLDIR}/bin:${PATH}
@@ -64,9 +67,16 @@ echo "Create initramfs"
 echo "Create initramfs" >> $logfile 2>&1
 echo "================" >> $logfile 2>&1
 cd ..
-sudo rm -rf arc_initramfs
-sudo tar zxpf arc_initramfs_archives/${ARC_INITRAMFS}
-sudo chown -hR `id -u`:`id -g` arc_initramfs
+if [ "x${ARC_INITRAMFS}" != "x" ]
+then
+    sudo rm -rf arc_initramfs
+    sudo tar zxpf arc_initramfs_archives/${ARC_INITRAMFS}
+    if [ "x${ARC_UNPACKED_NAME}" != "x" ]
+    then
+	mv ${ARC_UNPACKED_NAME} arc_initramfs
+    fi
+    sudo chown -hR `id -u`:`id -g` arc_initramfs
+fi
 
 # Blow away all existing libraries and copy in all the shared libraries and
 # one static library that is referred to. Edit libc.so to use the new
@@ -129,5 +139,11 @@ echo "==============" >> $logfile 2>&1
 
 cd ../${LINUX_TREE}
 make ARCH=arc distclean                                     >> $logfile 2>&1
-make ARCH=arc KBUILD_DEFCONFIG=${LINUX_DEFCONFIG} defconfig >> $logfile 2>&1
+
+if [ "x${LINUX_DEFCONFIG}" != "x" ]
+then
+    make ARCH=arc KBUILD_DEFCONFIG=${LINUX_DEFCONFIG} defconfig >> $logfile 2>&1
+else
+    make ARCH=arc defconfig >> $logfile 2>&1
+fi
 make ARCH=arc                                               >> $logfile 2>&1

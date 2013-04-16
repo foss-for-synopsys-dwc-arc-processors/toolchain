@@ -35,6 +35,8 @@
 #                  [--comment-install <comment>]
 #                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
+#                  [--isa-v1 | --isa-v2]
+#                  [--config-extra <flags>]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
 
@@ -158,6 +160,17 @@
 #     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
 #     whatever the load average.
 
+# --isa-v1 | --isa-v2
+
+#     Specify whether the original ARCompact version 1 ISA should be used (the
+#     default) or the new version 2 ISA (for EM targets).
+
+# --config-extra <flags>
+
+#     Add <flags> to the configuration line for the tool chain. Note this does
+#     not include the configuration of gdbserver for the UCLIBC LINUX tool
+#     chain
+
 # --multilib | --no-multilib
 
 #     Use these to control whether mutlilibs should be built. If this argument
@@ -227,6 +240,8 @@ autopull="--auto-pull"
 do_unisrc="--unisrc"
 elf32="--elf32"
 uclibc="--uclibc"
+ISA_CPU="arc700"
+CONFIG_EXTRA=""
 DO_PDF="--pdf"
 
 # Parse options
@@ -317,6 +332,19 @@ case ${opt} in
 	load=1000
 	;;
 
+    --isa-v1)
+	ISA_CPU=arc700
+	;;
+
+    --isa-v2)
+	ISA_CPU=EM
+	;;
+
+    --config-extra)
+	shift
+	CONFIG_EXTRA="$1"
+	;;
+
     --multilib|--no-multilib|--enable-multilib|--disable-multilib)
 	DISABLE_MULTILIB=$1
 	;;
@@ -342,6 +370,8 @@ case ${opt} in
 	echo "                      [--big-endian | --little-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
+        echo "                      [--isa-v1 | --isa-v2]"
+        echo "                      [--config-extra <flags>]"
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
 	exit 1
@@ -438,6 +468,8 @@ export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
 export DISABLE_MULTILIB
+export ISA_CPU
+export CONFIG_EXTRA
 export DO_PDF
 export PARALLEL
 

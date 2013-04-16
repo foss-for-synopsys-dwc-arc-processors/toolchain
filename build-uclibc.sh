@@ -70,6 +70,15 @@
 #     Either --enable-multilib or --disable-multilib to control the building
 #     of multilibs.
 
+# ISA_CPU
+
+#     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
+#     EM. Currently ignored for LINUX UCLIBC tool chain.
+
+# CONFIG_FLAGS
+
+#     Additional flags for use with configuration.
+
 # DO_PDF
 
 #     Either --pdf or --no-pdf to control whether we build and install PDFs of
@@ -319,7 +328,7 @@ if "${config_path}"/configure --target=${arche}-linux-uclibc --with-cpu=arc700 \
         --enable-languages=c --prefix="${tmp_install_dir}" \
         --without-headers --enable-shared --disable-threads --disable-tls \
 	--disable-libssp --disable-libmudflap --without-newlib --disable-c99 \
-	--disable-libgomp >> "${logfile}" 2>&1
+	--disable-libgomp ${CONFIG_EXTRA} >> "${logfile}" 2>&1
 then
     echo "  finished configuring stage 1"
 else
@@ -449,7 +458,7 @@ if "${config_path}"/configure --target=${arche}-linux-uclibc --with-cpu=arc700 \
         --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} \
         --with-headers=${tmp_install_dir}/${arche}-linux-uclibc/include \
         --enable-languages=c,c++ --prefix="${INSTALLDIR}" \
-        --enable-shared --without-newlib --disable-libgomp \
+        --enable-shared --without-newlib --disable-libgomp ${CONFIG_EXTRA} \
     >> "${logfile}" 2>&1
 then
     echo "  finished configuring stage 2 build"
