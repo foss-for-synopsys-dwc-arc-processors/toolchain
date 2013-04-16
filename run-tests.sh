@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012 Synopsys Inc.
+# Copyright (C) 2012,2013 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -31,7 +31,8 @@
 #     run-tests.sh [--source-dir <source_dir>]  [--target <address>]
 #                  [--jobs <count>] [--load <load>][--single-thread]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
-#                  [--big-endian]
+#                  [--big-endian | --little-endian]
+#                  [--multilib-options <options>]
 
 # --source-dir <source_dir>
 
@@ -43,10 +44,27 @@
 #     is also not set, the script will use the parent of the directory where
 #     this script is installed.
 
-# --target <address>
+# --elf32-target-board <board>
 
-#     The address of the target, either symbolic, or as an IP address. The
-#     default is aa4-32.
+#     The board description for the ELF32 target. This should either be a
+#     standard DejaGnu board, or a board in the dejagnu/baseboards directory
+#     of the toolchain repository. Default value arc-sim
+
+# --uclibc-target-board <board>
+
+#     The board description for the UCLIBC target. This should either be a
+#     standard DejaGnu board, or a board in the dejagnu/baseboards directory
+#     of the toolchain repository. Default value arc-linux-aa4
+
+# --elf32-target-addr <address>
+
+#     The address of the ELF32 target, either symbolic, or as an IP
+#     address. By default no value is set.
+
+# --uclibc-target-addr <address>
+
+#     The address of the UCLIBC target, either symbolic, or as an IP
+#     address. The default is aa4-32.
 
 # --jobs <count>
 
@@ -73,24 +91,57 @@
 
 #     If specified, run the arc-uclibc-linux- tests (default is --uclibc).
 
-# --big-endian
+# --big-endian | --little-endian
 
-#     If specified, test the big-endian version of the tool chains
-#     (i.e. arceb-elf32- and arceb-linux-uclibc-). At present this is only
-#     implemented for the Linux tool chain.
+#     If --big-endian is specified, test the big-endian version of the tool
+#     chains (i.e. arceb-elf32- and arceb-linux-uclibc-), otherwise test the
+#     little endin versions.
+
+# --multilib-options <options>
+
+#     Additional options for compiling to allow multilib variants to be
+#     tested.
+
+# --binutils | --no-binutils
+# --gas | --no-gas
+# --ld | --no-ld
+# --gcc | --no-gcc
+# --libgcc | --no-libgcc
+# --libgloss | --no-libgloss
+# --newlib | --no-newlibe
+# --libstdc++ | --no-libstdc++
+# --sim | --no-sim
+# --gdb | --no-gdb
+
+#     Specify which tests are to be run. By default all are enabled except
+#     libgcc, libgloss and sim, for which no tests currently exist.
 
 # This script exits with zero if every test has passed and with non-zero value
 # otherwise.
 
 # ------------------------------------------------------------------------------
 # Set default values for some options
-ARC_TEST_TARGET=aa4_32
+ARC_TEST_BOARD_ELF32=arc-sim
+ARC_TEST_BOARD_UCLIBC=arc-linux-aa4
+ARC_TEST_ADDR_ELF32=
+ARC_TEST_ADDR_UCLIBC=aa4_32
+ARC_MULTILIB_OPTIONS=""
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
 jobs=${make_load}
 load=${make_load}
 elf32="--elf32"
 uclibc="--uclibc"
+DO_BINUTILS="yes"
+DO_GAS="yes"
+DO_LD="yes"
+DO_GCC="yes"
+DO_LIBGCC="no"
+DO_LIBGLOSS="no"
+DO_NEWLIB="yes"
+DO_LIBSTDCPP="yes"
+DO_SIM="no"
+DO_GDB="yes"
 
 # Parse options
 until
@@ -101,9 +152,24 @@ case ${opt} in
 	ARC_GNU=`(cd "$1" && pwd)`
 	;;
 
-    --target)
+    --elf32-target-board)
 	shift
-	ARC_TEST_TARGET=$1
+	ARC_TEST_BOARD_ELF32=$1
+	;;
+
+    --uclibc-target-board)
+	shift
+	ARC_TEST_BOARD_UCLIBC=$1
+	;;
+
+    --elf32-target-addr)
+	shift
+	ARC_TEST_ADDR_ELF32=$1
+	;;
+
+    --uclibc-target-addr)
+	shift
+	ARC_TEST_ADDR_UCLIBC=$1
 	;;
 
     --jobs)
@@ -132,12 +198,117 @@ case ${opt} in
     --big-endian)
         ARC_ENDIAN=big
         ;;
+
+    --little-endian)
+        ARC_ENDIAN=little
+        ;;
+
+    --multilib-options)
+        shift
+        ARC_MULTILIB_OPTIONS="$1"
+	;;
+
+    --binutils)
+	DO_BINUTILS="yes"
+	;;
+
+    --no-binutils)
+	DO_BINUTILS="no"
+	;;
+
+    --gas)
+	DO_GAS="yes"
+	;;
+
+    --no-gas)
+	DO_GAS="no"
+	;;
+
+    --ld)
+	DO_LD="yes"
+	;;
+
+    --no-ld)
+	DO_LD="no"
+	;;
+
+    --gcc)
+	DO_GCC="yes"
+	;;
+
+    --no-gcc)
+	DO_GCC="no"
+	;;
+
+    --libgcc)
+	DO_LIBGCC="yes"
+	;;
+
+    --no-libgcc)
+	DO_LIBGCC="no"
+	;;
+
+    --libgloss)
+	DO_LIBGLOSS="yes"
+	;;
+
+    --no-libgloss)
+	DO_LIBGLOSS="no"
+	;;
+
+    --newlib)
+	DO_LIBGLOSS="yes"
+	;;
+
+    --no-newlib)
+	DO_NEWLIB="no"
+	;;
+
+    --libstdc++)
+	DO_LIBSTDCPP="yes"
+	;;
+
+    --no-libstdc++)
+	DO_LIBSTDCPP="no"
+	;;
+
+    --sim)
+	DO_SIM="yes"
+	;;
+
+    --no-sim)
+	DO_SIM="no"
+	;;
+
+    --gdb)
+	DO_GDB="yes"
+	;;
+
+    --no-gdb)
+	DO_GDB="no"
+	;;
+
     ?*)
 	echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
-        echo "                      [--target <address>]"
+        echo "                      [--elf32-target-board <board>]"
+        echo "                      [--uclibc-target-board <board>]"
+        echo "                      [--elf32-target-addr <address>]"
+        echo "                      [--uclibc-target-addr <address>]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
-        echo "                      [--big-endian]"
+        echo "                      [--big-endian | --little-endian]"
+        echo "                      [--multilib-options <options>]"
+        echo "                      [--binutils | --no-binutils]"
+        echo "                      [--gas | --no-gas]"
+        echo "                      [--ld | --no-ld]"
+        echo "                      [--gcc | --no-gcc]"
+        echo "                      [--libgcc | --no-libgcc]"
+        echo "                      [--libgloss | --no-libgloss]"
+        echo "                      [--newlib | --no-newlibe]"
+        echo "                      [--libstdc++ | --no-libstdc++]"
+        echo "                      [--sim | --no-sim]"
+        echo "                      [--gdb | --no-gdb]"
+
 	exit 1
 	;;
 
@@ -163,18 +334,35 @@ then
     ARC_ENDIAN=little
 fi
 
-# Set up logfile and results directories if either does not exist
-mkdir -p ${ARC_GNU}/logs
-mkdir -p ${ARC_GNU}/results
-
 # Parallelism
 PARALLEL="-j ${jobs} -l ${load}"
 
+# Generic release set up, which we'll share with sub-scripts. This defines
+# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
+# and $RESDIR if they don't exist.
+. "${ARC_GNU}"/toolchain/define-release.sh
+
 # Export everything needed by sub-scripts
+export ARC_TEST_BOARD_ELF32
+export ARC_TEST_BOARD_UCLIBC
+export ARC_TEST_ADDR_ELF32
+export ARC_TEST_ADDR_UCLIBC
+export ARC_MULTILIB_OPTIONS
+
 export ARC_GNU
 export ARC_ENDIAN
 export PARALLEL
-export ARC_TEST_TARGET
+
+export DO_BINUTILS
+export DO_GAS
+export DO_LD
+export DO_GCC
+export DO_LIBGCC
+export DO_LIBGLOSS
+export DO_NEWLIB
+export DO_LIBSTDCPP
+export DO_SIM
+export DO_GDB
 
 status=0
 
@@ -183,7 +371,7 @@ if [ "${elf32}" = "--elf32" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-elf32-tests.sh
     then
-        echo "ERROR: arc-elf32- tests failed to run."
+        echo "ERROR: arc-elf32- some tests failed."
         status=1
     fi
 fi
@@ -193,7 +381,7 @@ if [ "${uclibc}" = "--uclibc" ]
 then
     if ! "${ARC_GNU}"/toolchain/run-uclibc-tests.sh
     then
-        echo "ERROR: arc-linux-uclibc- tests failed to run."
+        echo "ERROR: arc-linux-uclibc- some tests failed."
         status=1
     fi
 fi

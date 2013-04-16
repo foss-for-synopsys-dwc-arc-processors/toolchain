@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012 Synopsys Inc.
+# Copyright (C) 2012, 2013 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -26,24 +26,67 @@
 
 #   ./run-elf32-tests.sh
 
-# Prerequisites (NOT tested for):
+# The following environment variables must be supplied
 
-#   ARC_GNU environment variable must be the absolute address of the default
-#   source directory.
+# RELEASE
 
-#   ${ARC_GNU}/logs must exist and be writable
+#     The number of the current ARC tool chain release.
 
-#   ${ARC_GNU}/results must exist and be writable
+# LOGDIR
+
+#     Directory for all log files.
+
+# RESDIR
+
+#     Directory for all results directories.
+
+# ARC_GNU
+
+#     The directory containing all the sources. If not set, this will default
+#     to the directory containing this script.
+
+# ARC_ENDIAN
+
+#     "little" or "big"
+
+# PARALLEL
+
+#     string "-j <jobs> -l <load>" to control parallel make.
+
+# ARC_TEST_BOARD_ELF32
+
+#     The Dejagnu board description for the target. This must be a standard
+#     DejaGnu baseboard, or in the dejagnu/baseboards directory of the
+#     toolchain repository.
+
+# ARC_TEST_ADDR_ELF32
+
+#     The IP address for the target if required by the board. Used by the
+#     underlying DejaGnu scripts.
+
+# ARC_MULTILIB_OPTIONS
+
+#     May be used by the underlying DejaGnu scripts to specify options for
+#     multilib testing.
+
+# DO_BINUTILS
+# DO_GAS
+# DO_LD
+# DO_GCC
+# DO_LIBGCC
+# DO_LIBGLOSS
+# DO_NEWLIB
+# DO_LIBSTDCPP
+# DO_SIM
+# DO_GDB
+
+#     Specify whether the corresponding test should be run.
 
 # Result is 0 if successful, 1 otherwise.
 
 
 # Standard setup
 . "${ARC_GNU}"/toolchain/arc-init.sh
-
-# Set up logfile and results directories if either does not exist
-mkdir -p ${ARC_GNU}/logs
-mkdir -p ${ARC_GNU}/results
 
 # Run ELF32 regression and gather results. Gathering results is a separate
 # function because of the variation in the location and number of results
@@ -52,65 +95,179 @@ export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running elf32 tests"
 
 # Create the ELF log file and results directory
-logfile_elf="$(echo "${ARC_GNU}")/logs/elf32-check-$(date -u +%F-%H%M).log"
+logfile_elf="${LOGDIR}/elf32-check-$(date -u +%F-%H%M).log"
 rm -f "${logfile_elf}"
-res_elf="$(echo "${ARC_GNU}")/results/elf32-results-$(date -u +%F-%H%M)"
+res_elf="${RESDIR}/elf32-results-$(date -u +%F-%H%M)"
 mkdir ${res_elf}
+readme=${res_elf}/README
 
 # Location of some files depends on endianess. For now with ELF this is
 # ignored, but this code is a holding position.
 if [ "${ARC_ENDIAN}" = "little" ]
 then
     target_dir=arc-elf32
-    bd_elf=${ARC_GNU}/bd-mainline-elf32
+    bd_elf=${ARC_GNU}/bd-${RELEASE}-elf32
 else
     target_dir=arceb-elf32
-    bd_elf=${ARC_GNU}/bd-mainline-elf32eb
+    bd_elf=${ARC_GNU}/bd-${RELEASE}-elf32eb
 fi
 
-# The target board to use
-board=arc-sim
+# Create a README with info about the test
+echo "Test of ELF32 tool chain run" > ${readme}
+echo "============================" >> ${readme}
+echo "" >> ${readme}
+echo "Start time:         $(date -u +%d\ %b\ %Y\ at\ %H:%M)" >> ${readme}
+echo "Tool chain release: ${RELEASE}"                        >> ${readme}
+echo "Endianness:         ${ARC_ENDIAN}"                     >> ${readme}
+echo "Test board:         ${ARC_TEST_BOARD_ELF32}"           >> ${readme}
+echo "Test IP address:    ${ARC_TEST_ADDR_ELF32}"            >> ${readme}
+echo "Multilib options:   ${ARC_MULTILIB_OPTIONS}"           >> ${readme}
 
 # Run the tests
 status=0
-run_check ${bd_elf}     binutils            "${logfile_elf}" ${board} \
-    || status=1
-save_res  ${bd_elf}     ${res_elf} binutils/binutils     "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf}     gas                 "${logfile_elf}" ${board} \
-    || status=1
-save_res  ${bd_elf}     ${res_elf} gas/testsuite/gas     "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf}     ld                  "${logfile_elf}" ${board} \
-    || status=1
-save_res  ${bd_elf}     ${res_elf} ld/ld                 "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf}     gcc                 "${logfile_elf}" ${board} \
-    || status=1
-save_res  ${bd_elf}     ${res_elf} gcc/testsuite/gcc/gcc "${logfile_elf}" \
-    || status=1
-echo "Testing g++..."
-save_res  ${bd_elf}     ${res_elf} gcc/testsuite/g++/g++ "${logfile_elf}" \
-    || status=1
-# libgcc and libgloss tests are currently empty, so nothing to run or save.
-# run_check ${bd_elf}     target-libgcc       "${logfile_elf}"
-# run_check ${bd_elf}     target-libgloss     "${logfile_elf}"
-run_check ${bd_elf}     target-newlib       "${logfile_elf}" ${board} \
-    || status=1
-save_res  ${bd_elf}     ${res_elf} ${target_dir}/newlib/testsuite/newlib \
-    "${logfile_elf}" || status=1
-run_check ${bd_elf}     target-libstdc++-v3 "${logfile_elf}" ${board} \
-    || status=1
-save_res  ${bd_elf}     ${res_elf} \
-    ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf} sim                 "${logfile_elf}" ${board} \
-    || status=1
-save_res  ${bd_elf} ${res_elf} sim/testsuite/sim     "${logfile_elf}" \
-    || status=1
-run_check ${bd_elf} gdb                 "${logfile_elf}" ${board} \
-    || status=1
-save_res  ${bd_elf} ${res_elf} gdb/testsuite/gdb     "${logfile_elf}" \
-    || status=1
+# binutils
+if [ "x${DO_BINUTILS}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	binutils \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	binutils/binutils \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# gas
+if [ "x${DO_GAS}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	gas \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	gas/testsuite/gas \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# ld
+if [ "x${DO_LD}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	ld \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} ld/ld \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# gcc and g++
+if [ "x${DO_GCC}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	gcc \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res \
+	${bd_elf} \
+	${res_elf} \
+	gcc/testsuite/gcc/gcc \
+	"${logfile_elf}" \
+	|| status=1
+    echo "Testing g++..."
+    save_res ${bd_elf} \
+	${res_elf} \
+	gcc/testsuite/g++/g++ \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# libgcc
+if [ "x${DO_LIBGCC}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	target-libgcc \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	${target_dir}/libgcc/testsuite/libgcc \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# libgloss
+if [ "x${DO_LIBGLOSS}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	target-libgloss \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	${target_dir}/libgloss/testsuite/libgloss \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# newlib
+if [ "x${DO_NEWLIB}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	target-newlib \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	${target_dir}/newlib/testsuite/newlib \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# libstdc++
+if [ "x${DO_LIBSTDCPP}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	target-libstdc++-v3 \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} \
+	${target_dir}/libstdc++-v3/testsuite/libstdc++ \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# sim
+if [ "x${DO_SIM}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	sim \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} sim/testsuite/sim \
+	"${logfile_elf}" \
+	|| status=1
+fi
+# gdb
+if [ "x${DO_GDB}" = "xyes" ]
+then
+    run_check ${bd_elf} \
+	gdb \
+	"${logfile_elf}" \
+	${ARC_TEST_BOARD_ELF32} \
+	|| status=1
+    save_res ${bd_elf} \
+	${res_elf} gdb/testsuite/gdb \
+	"${logfile_elf}" \
+	|| status=1
+fi
 
 exit ${status}

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012 Synopsys Inc.
+# Copyright (C) 2012, 2013 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -26,17 +26,61 @@
 
 #   ./run-uclibc-tests.sh
 
-# Prerequisites (NOT tested for):
+# The following environment variables must be supplied
 
-#   ARC_GNU environment variable must be the absolute address of the default
-#   source directory.
+# RELEASE
 
-#   ${ARC_GNU}/logs must exist and be writable
+#     The number of the current ARC tool chain release.
 
-#   ${ARC_GNU}/results must exist and be writable
+# LOGDIR
 
-#   ARC_ENDIAN environment variable must be either "big" or "little" to
-#   identify which type of toolchain tool chain to test.
+#     Directory for all log files.
+
+# RESDIR
+
+#     Directory for all results directories.
+
+# ARC_GNU
+
+#     The directory containing all the sources. If not set, this will default
+#     to the directory containing this script.
+
+# ARC_ENDIAN
+
+#     "little" or "big"
+
+# PARALLEL
+
+#     string "-j <jobs> -l <load>" to control parallel make.
+
+# ARC_TEST_BOARD_UCLIBC
+
+#     The Dejagnu board description for the target. This must be a standard
+#     DejaGnu baseboard, or in the dejagnu/baseboards directory of the
+#     toolchain repository.
+
+# ARC_TEST_ADDR_UCLIBC
+
+#     The IP address for the target if required by the board. Used by the
+#     underlying DejaGnu scripts.
+
+# ARC_MULTILIB_OPTIONS
+
+#     May be used by the underlying DejaGnu scripts to specify options for
+#     multilib testing.
+
+# DO_BINUTILS
+# DO_GAS
+# DO_LD
+# DO_GCC
+# DO_LIBGCC
+# DO_LIBGLOSS
+# DO_NEWLIB
+# DO_LIBSTDCPP
+# DO_SIM
+# DO_GDB
+
+#     Specify whether the corresponding test should be run.
 
 # Result is 0 if successful, 1 otherwise.
 
@@ -44,66 +88,149 @@
 # Standard setup
 . "${ARC_GNU}"/toolchain/arc-init.sh
 
-# Set up logfile and results directories if either does not exist
-mkdir -p ${ARC_GNU}/logs
-mkdir -p ${ARC_GNU}/results
-
 # Run UCLIBC regression and gather results. Gathering results is a separate
 # function because of the variation in the location and number of results
 # files for each tool.
 export DEJAGNU=${ARC_GNU}/toolchain/site.exp
 echo "Running uClibc Linux tests"
 
-# Create the Linux log file and results directory
-logfile_linux="$(echo "${ARC_GNU}")/logs/linux-check-$(date -u +%F-%H%M).log"
-rm -f "${logfile_linux}"
-res_linux="$(echo "${ARC_GNU}")/results/linux-results-$(date -u +%F-%H%M)"
-mkdir ${res_linux}
+# Create the uClibc log file and results directory
+logfile_uclibc="${LOGDIR}/uclibc-check-$(date -u +%F-%H%M).log"
+rm -f "${logfile_uclibc}"
+res_uclibc="${RESDIR}/uclibc-results-$(date -u +%F-%H%M)"
+mkdir ${res_uclibc}
+readme=${res_uclibc}/README
 
 # Location of some files depends on endianess
 if [ "${ARC_ENDIAN}" = "little" ]
 then
-    bd_linux=${ARC_GNU}/bd-mainline-uclibc
+    bd_uclibc=${ARC_GNU}/bd-${RELEASE}-uclibc
     target_dir=arc-linux-uclibc
 else
-    bd_linux=${ARC_GNU}/bd-mainline-uclibceb
+    bd_uclibc=${ARC_GNU}/bd-${RELEASE}-uclibceb
     target_dir=arceb-linux-uclibc
 fi
-
-# The target board to use
-board=arc-linux-aa4
 
 # Create a file of start up commands for GDB
 commfile="${ARC_GNU}/commfile"
 echo "set sysroot /opt/arc-4.4-gdb-7.5/arc-linux-uclibc" >${commfile}
 export ARC_GDB_COMMFILE=${commfile}
 
+# Create a README with info about the test
+echo "Test of UCLIBC tool chain run" > ${readme}
+echo "=============================" >> ${readme}
+echo "" >> ${readme}
+echo "Start time:         $(date -u +%d\ %b\ %Y\ at\ %H:%M)" >> ${readme}
+echo "Tool chain release: ${RELEASE}"                        >> ${readme}
+echo "Endianness:         ${ARC_ENDIAN}"                     >> ${readme}
+echo "Test board:         ${ARC_TEST_BOARD_UCLIBC}"          >> ${readme}
+echo "Test IP address:    ${ARC_TEST_ADDR_UCLIBC}"           >> ${readme}
+echo "Multilib options:   ${ARC_MULTILIB_OPTIONS}"           >> ${readme}
+echo "Commfile contents:"                                    >> ${readme}
+sed < ${commfile} -e 's/^/    /'                             >> ${readme}
+
 # Run tests
 status=0
-run_check ${bd_linux} binutils "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} binutils/binutils "${logfile_linux}" \
-    || status=1
-run_check ${bd_linux} gas "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} gas/testsuite/gas "${logfile_linux}" \
-    || status=1
-run_check ${bd_linux} ld "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} ld/ld "${logfile_linux}" \
-    || status=1
-run_check ${bd_linux} gcc "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} gcc/testsuite/gcc/gcc "${logfile_linux}" \
-    || status=1
-echo "Testing g++..."
-save_res  ${bd_linux} ${res_linux} gcc/testsuite/g++/g++ "${logfile_linux}" \
-    || status=1
-# libgcc tests are currently empty, so nothing to run or save.
-# run_check ${bd_linux} target-libgcc       "${logfile_linux}"
-run_check ${bd_linux} target-libstdc++-v3 "${logfile_linux}" ${board} \
-    || status=1
-save_res  ${bd_linux} ${res_linux} \
-    ${target_dir}/libstdc++-v3/testsuite/libstdc++ "${logfile_linux}" \
-    || status=1
-run_check ${bd_linux} gdb "${logfile_linux}" ${board} || status=1
-save_res  ${bd_linux} ${res_linux} gdb/testsuite/gdb "${logfile_linux}" \
-    || status=1
+# binutils
+if [ "x${DO_BINUTILS}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	binutils \
+	"${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	binutils/binutils \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# gas
+if [ "x${DO_GAS}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	gas "${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	gas/testsuite/gas \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# ld
+if [ "x${DO_LD}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	ld "${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	ld/ld \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# gcc and g++
+if [ "x${DO_GCC}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	gcc \
+	"${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	gcc/testsuite/gcc/gcc \
+	"${logfile_uclibc}" \
+	|| status=1
+    echo "Testing g++..."
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	gcc/testsuite/g++/g++ \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# libgcc
+if [ "x${DO_LIBGCC}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	target-libgcc \
+	"${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res ${bd_uclibc} \
+	${res_uclibc} \
+	${target_dir}/libgcc/testsuite/libgcc \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# libstdc++
+if [ "x${DO_LIBSTDCPP}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	target-libstdc++-v3 \
+	"${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	${target_dir}/libstdc++-v3/testsuite/libstdc++ \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
+# gdb
+if [ "x${DO_GDB}" = "xyes" ]
+then
+    run_check ${bd_uclibc} \
+	gdb "${logfile_uclibc}" \
+	${ARC_TEST_BOARD_UCLIBC} \
+	|| status=1
+    save_res  ${bd_uclibc} \
+	${res_uclibc} \
+	gdb/testsuite/gdb \
+	"${logfile_uclibc}" \
+	|| status=1
+fi
 
 exit ${status}

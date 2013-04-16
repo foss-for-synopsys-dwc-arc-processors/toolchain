@@ -1,5 +1,12 @@
 2013-04-16  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* run-tests.sh: Add options to select and de-select individual
+	tools to test and set corresponding environment variables.
+	* run-elf32-tests.sh, run-uclibc-tests.sh: Use environment
+	variables to control which tests are run.
+
+2013-04-16  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Add --isa-v1, --isa-v2 and --config-extra options
 	to set ISA_CPU and CONFIG_EXTRA environment variables.
 	* build-elf32.sh, build-uclibc.sh: Make use of ISA_CPU and
