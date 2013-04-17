@@ -294,8 +294,6 @@ else
         -i .config
 fi
 
-cp .config /tmp/.config
-
 if make ARCH=${arch} V=1 install_headers >> "${logfile}" 2>&1
 then
     echo "  finished installing UCLIBC headers"

@@ -1,3 +1,7 @@
+2013-04-17  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-uclibc.sh: Delete spurious debugging line.
+
 2013-04-16  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* run-tests.sh: Add options to select and de-select individual
