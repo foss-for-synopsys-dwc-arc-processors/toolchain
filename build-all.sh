@@ -500,8 +500,7 @@ then
     echo "====================" >> "${logfile}"
 
     echo "Linking unified tree ..."
-    component_dirs="gdb newlib gcc binutils"
-    # component_dirs="gdb newlib binutils gcc"
+    component_dirs="gdb newlib binutils gcc"
     rm -rf ${UNISRC}
 
     if ! mkdir -p ${UNISRC}
