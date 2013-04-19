@@ -1,3 +1,7 @@
+2013-04-19  Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>
+
+	* build-all.sh: Reorder component dirs, so GCC is last.
+
 2013-04-17  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-uclibc.sh: Delete spurious debugging line.
