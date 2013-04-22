@@ -1,3 +1,8 @@
+2013-04-22  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: Put log in logs-4.8 directory and rename as
+	kernel-build...
+
 2013-04-19  Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>
 
 	* build-all.sh: Reorder component dirs, so GCC is last.
