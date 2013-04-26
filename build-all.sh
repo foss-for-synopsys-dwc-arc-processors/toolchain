@@ -36,6 +36,7 @@
 #                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
 #                  [--isa-v1 | --isa-v2]
+#                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
@@ -165,6 +166,12 @@
 #     Specify whether the original ARCompact version 1 ISA should be used (the
 #     default) or the new version 2 ISA (for EM targets).
 
+# --sim | --no-sim
+
+#     Specify whether the CGEN simulator should be built for the ELF tool
+#     chain. Default --sim unless 'uname -o' reports as 'Msys' (i.e running
+#     under MinGW).
+
 # --config-extra <flags>
 
 #     Add <flags> to the configuration line for the tool chain. Note this does
@@ -243,6 +250,13 @@ uclibc="--uclibc"
 ISA_CPU="arc700"
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
+
+if [ x`uname -o` == "xMsys" ]
+then
+    DO_SIM="--no-sim"
+else
+    DO_SIM="--sim"
+fi
 
 # Parse options
 until
@@ -340,6 +354,10 @@ case ${opt} in
 	ISA_CPU=EM
 	;;
 
+    --sim|--no-sim)
+	DO_SIM=$1
+	;;
+
     --config-extra)
 	shift
 	CONFIG_EXTRA="$1"
@@ -371,6 +389,7 @@ case ${opt} in
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
         echo "                      [--isa-v1 | --isa-v2]"
+        echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
@@ -469,6 +488,7 @@ export INSTALLDIR
 export ARC_ENDIAN
 export DISABLE_MULTILIB
 export ISA_CPU
+export DO_SIM
 export CONFIG_EXTRA
 export DO_PDF
 export PARALLEL

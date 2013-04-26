@@ -74,6 +74,11 @@
 #     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
 #     EM.
 
+# DO_SIM
+
+#     Either --sim or --no-sim to control whether we build and install the
+#     CGEN simulator.
+
 # CONFIG_FLAGS
 
 #     Additional flags for use with configuration.
@@ -141,6 +146,24 @@ echo "START ELF32: $(date)"
 # ARC initialization (Note. source, not exec)
 . "${ARC_GNU}"/toolchain/arc-init.sh
 
+# variables to control whether the simulator is build. Note that we actively
+# edit in the requirement for a simulator library in case it has been left
+# commented out from a previous part-completed run of this script.
+if [ "x${DO_SIM}" == "--sim" ]
+then
+    sim_config="--enable-sim --enable-sim-endian=no"
+    sim_build=all-sim
+    sim_install=install-sim
+    sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+	-e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
+else
+    sim_config=--disable-sim
+    sim_build=
+    sim_install=
+    sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+	-e 's!gdb_sim=../sim/arc/libsim.a!# gdb_sim=../sim/arc/libsim.a!'
+fi
+
 # Note stuff for the log
 log_path=$(calcConfigPath "${logfile}")
 
@@ -171,7 +194,7 @@ if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
         --with-endian=${ARC_ENDIAN} \
         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
         --with-headers="${config_path}"/newlib/libc/include \
-        --enable-sim-endian=no ${CONFIG_EXTRA} \
+        ${sim_config} ${CONFIG_EXTRA} \
     >> "${log_path}" 2>&1
 then
     echo "  finished configuring tools"
@@ -190,7 +213,7 @@ cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
 if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
         all-target-libgcc all-target-libgloss all-target-newlib \
-        all-target-libstdc++-v3 all-sim all-gdb >> "${log_path}" 2>&1
+        all-target-libstdc++-v3 ${sim_build} all-gdb >> "${log_path}" 2>&1
 then
     echo "  finished building tools"
 else
@@ -208,7 +231,7 @@ cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
 if make install-binutils install-gas install-ld install-gcc \
         install-target-libgcc install-target-libgloss install-target-newlib \
-        install-target-libstdc++-v3 install-sim install-gdb \
+        install-target-libstdc++-v3 ${sim_install} install-gdb \
     >> "${log_path}" 2>&1
 then
     echo "  finished installing tools"
@@ -216,6 +239,10 @@ else
     echo "ERROR: tools install failed."
     exit 1
 fi
+
+# Restore GDB config for simulator (does nothing if the change was not made).
+sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+    -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
 
 # Optionally build and install PDF documentation
 if [ "x${DO_PDF}" = "x--pdf" ]

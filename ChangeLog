@@ -1,3 +1,14 @@
+2013-04-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Add --sim/--no-sim
+	* build-elf32.sh: Optionally build the simulator, depending on
+	DO_SIM environment variable.
+
+2013-04-22  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: Put log in logs-4.8 directory and rename as
+	kernel-build...
+
 2013-04-19  Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>
 
 	* build-all.sh: Reorder component dirs, so GCC is last.
@@ -30,10 +41,133 @@
 
 	* diff-tests.sh: New script.
 
+2013-04-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* diff-tests.sh: New script.
+
+2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* tag-release.sh: New script.
+
+2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Allow --little-endian as an option
+	* run-tests.sh: Tidy up commenting.
+
+2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* run-elf32-tests.sh, run-uclibc-tests.sh: Create README in the
+	results directory with details of the test run.
+	* dejagnu/baseboards/arc-linux-aa4.exp: Correct env variable
+	specifying target IP address to ARC_TEST_ADDR_UCLIBC.
+
+2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* run-tests.sh: Add --multilib-options and --little-endian
+	* run-elf32-tests.sh, run-uclibc-tests.sh: Add comment regarding
+	the ARC_MULTILIB_OPTIONS environment variable.
+
+2013-04-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-sim-mdb.exp: Deleted.
+	* arc-sim-base.exp: Merged into arc-sim.exp
+	* arc-sim.exp: Incorporate arc-sim-base.exp, add correct licensing
+	header, allow multilib options to be specified by environment
+	variable.
+
+2013-04-02  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Bump uClibc version to arc_4_8-uclibc-mainline-dev.
+
+2013-03-29  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Bump binutils version to 2.23.2.
+
+2013-03-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-uclibc.sh: Additional sed edits for big-endian uClibc
+	configuration.
+
+2013-03-28  Simon Cook  <simon.cook@embecosm.com>
+
+	* build-all.sh: Replace --disable-multilib with --no-multilib and
+	--enable-multilib with --multilib. Change default parsing to
+	allow correct option to configure scripts.
+	Correct uClibc CROSS_COMPILER_PREFIX for correct endianness.
+
+2013-03-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* run-tests.sh, run-elf32-tests.sh, run-uclibc-tests.sh: Replace
+	ARC_TEST_TARGET with ARC_TEST_ADDR_ELF32 and ARC_TEST_ADDR_UCLIBC
+	throughout. Add ARC_TEST_BOARD_ELF32 and ARC_TEST_BOARD_UCLIBC
+	environment variables.
+
+2013-03-28  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh, run-tests.sh: Invoke define-release.sh to set
+	RELEASE, LOGDIR and RESDIR environment variables and create
+	$LOGDIR and $RESDIR directories if necessary.
+	* build-elf32.sh, build-uclib.sh: Use RELEASE environment variable
+	for all release specific files/directories, use LOGDIR as directory
+	for log files. Correct operator in test for PDF generation.
+	* define-release.sh: New script.
+	* run-elf32-tests.sh, run-uclibc-tests.sh: Use RELEASE environment
+	variable for all release specific files/directories, use LOGDIR as
+	directory for log files, use RESDIR as directory for all results
+	sub-directories
+
 2013-03-27  Anton Kolesov <anton.kolesov@synopsys.com>
 
 	* build-uclibc.sh: Ignore error which happens when running 'make
 	distclean' on uClibc.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Add option to generate PDF manuals.
+	* build-elf32.sh, build-uclibc.sh: Optionaly build PDF
+	manuals. Tidy up commenting.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* README.md: Updated for 4.8 dev release.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-init.sh, arc-versions.sh, build-all.sh: Update copyright.
+	* build-cleanup.sh, build-elf32.sh, build-elf32.sh: Likewise.
+	* build-uclibc.sh, run-elf32-tests.sh, run-tests.sh: Likewise.
+	* run-uclibc-tests.sh: Likewise.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* check-results.sh: New script.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Renamed options --linux to --uclibc and --no-linux
+	to --no-uclibc and changed associated variable from linux to
+	uclibc throughout.
+	* run-uclibc-tests.sh: Renamed bd_linux as bd_uclibc,
+	logfile_linux as logfile_uclibc and res_linux as res_uclibc
+	throughout. Use uclibc instead of linux in logfile and results
+	file names.
+	* symlink-trunks.sh: Deleted.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: Renamed from build-linux.sh to avoid confusion.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-uclibc.sh: enable building gdbserver.
+
+2013-03-27  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Updated for arc-uclibc-mainline branch of
+	uClibc and arc-3.8-ABI-v3 for Linux.
+	* build-uclibc.sh: No need for -DARC_LEGACY_PTRACE_ABI with
+	gdbserver. Temporarily disable building gdbserver while fixing
+	header problems.
 
 2013-03-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
