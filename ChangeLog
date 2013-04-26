@@ -1,5 +1,9 @@
 2013-04-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* build-kernel.sh: Some improvements for Linux 3.8.
+
+2013-04-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* dejagnu/baseboards/arc-sim.ex: Remove redundant use of
 	arc-sim-base.
 	* dejagnu/baseboards/arc-nsim.exp: New file.

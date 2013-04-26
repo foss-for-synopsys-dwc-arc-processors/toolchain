@@ -92,6 +92,13 @@ cp -df ${TOOLDIR}/arc-linux-uclibc/lib/*.so* \
 cp -df ${TOOLDIR}/arc-linux-uclibc/lib/uclibc_nonshared.a \
       arc_initramfs/lib >> $logfile 2>&1
 sed -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
+# Remove C++, because it makes everything too big!
+rm -f arc_initramfs/lib/libstdc++*
+
+# As a sanity check remove the busybox images from initramfs. This means a
+# failed install of busybox will show up!
+rm -f arc_initramfs/bin/busybox*
+rm -f arc_initramfs/lib/busybox*
 
 # Build busybox.
 echo "Building busybox..."
@@ -102,7 +109,13 @@ cd busybox
 OLDPATH=${PATH}
 PATH=${TOOLDIR}/bin:${PATH}
 make clean >> $logfile 2>&1
-make >> $logfile 2>&1
+if make >> $logfile 2>&1
+then
+    echo "Busybox build succeeded"
+else
+    echo "Busybox build failed"
+    exit 1
+fi
 
 echo "Installing busybox..."
 echo "Installing busybox" >> $logfile 2>&1
@@ -146,4 +159,15 @@ then
 else
     make ARCH=arc defconfig >> $logfile 2>&1
 fi
-make ARCH=arc                                               >> $logfile 2>&1
+# Temporary patch to deal with compiler issue!
+echo "Patching LINUX .config"
+sed -i .config -e 's/COMPILE="arc-elf32-"/COMPILE="arc-linux-uclibc-"/'
+
+if make ARCH=arc >> $logfile 2>&1
+then
+    echo "Linux built successfully"
+    exit 0
+else
+    echo "Linux build failed"
+    exit 1
+fi
