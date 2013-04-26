@@ -20,37 +20,39 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#		ARC Bare Metal DejaGnu CGEN Simulator Support
+#		ARC Bare Metal DejaGnu nSim Simulator Support
 #		=============================================
 
-# This board specification is for use with the ARC CGEN simulator
+# This board specification is for use with the ARC nSim simulator.
 
 # This is a list of toolchains that are supported on this board.
 set_board_info target_install ${target_triplet}
 
 # Load the generic configuration for this board. This will define a basic set
-# of routines needed by the tool to communicate with the board.
-load_generic_config "sim"
-
-# basic-sim.exp is a basic description for the standard Cygnus simulator.
-load_base_board_description "basic-sim"
-
-# "arc" is the name of the sim subdir.
-setup_sim arc
+# of routines needed by the tool to communicate with the board. Depends on the
+# tool.
+load_generic_config "gdb-comm"
 
 # Any multilib options are set in an environment variable.
 process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
-
-# Extra link flags specific to ARC
-set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 set_board_info compiler  "[find_gcc]"
 set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
-set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+set_board_info ldflags   "[libgloss_link_flags] [newlib_link_flags]"
+
 # No linker script needed.
 set_board_info ldscript ""
+
+# Use port 51000 as the default to communicate on
+set_board_info netport :51000
+
+# GDB protocol to be used
+set_board_info gdb_protocol "remote"
+
+# Use 'continue' instead of 'run' when executing a test
+set_board_info gdb_run_command "continue"
 
 # The simulator doesn't return exit statuses and we need to indicate this;
 # the standard GCC wrapper will work with this target.
