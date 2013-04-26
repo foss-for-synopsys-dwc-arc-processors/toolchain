@@ -1,3 +1,14 @@
+2013-04-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Add --sim/--no-sim
+	* build-elf32.sh: Optionally build the simulator, depending on
+	DO_SIM environment variable.
+
+2013-04-22  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: Patch Linux config to use arc-linux-uclibc
+	compiler. Put out success/fail message on completion.
+
 2013-04-22  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-kernel.sh: Put log in logs-4.8 directory and rename as
