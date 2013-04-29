@@ -149,7 +149,7 @@ echo "START ELF32: $(date)"
 # variables to control whether the simulator is build. Note that we actively
 # edit in the requirement for a simulator library in case it has been left
 # commented out from a previous part-completed run of this script.
-if [ "x${DO_SIM}" == "--sim" ]
+if [ "x${DO_SIM}" == "x--sim" ]
 then
     sim_config="--enable-sim --enable-sim-endian=no"
     sim_build=all-sim
