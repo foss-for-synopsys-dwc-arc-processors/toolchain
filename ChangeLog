@@ -1,3 +1,7 @@
+2013-04-29  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-elf32.sh: Fix typo in test of DO_SIM.
+
 2013-04-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Add --sim/--no-sim
