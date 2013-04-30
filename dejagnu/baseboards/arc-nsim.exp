@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Copyright (C) 2010, 2011, 2012, 2013 Embecosm Limited
+
+# Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Joern Rennecke <joern.rennecke@embecosm.com>
+
+# This file is additional DejaGnu procs to support telnet based testing.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#		ARC Bare Metal DejaGnu nSim Simulator Support
+#		=============================================
+
+# This board specification is for use with the ARC nSim simulator.
+
+# This is a list of toolchains that are supported on this board.
+set_board_info target_install ${target_triplet}
+
+# Some extra procs for testing with nSim
+search_and_load_file "library file" "nsim-extra.exp" ${boards_dir}
+
+# Load the generic configuration for this board. This will define a basic set
+# of routines needed by the tool to communicate with the board. Depends on the
+# tool.
+load_generic_config "gdb-comm"
+
+# Any multilib options are set in an environment variable.
+process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
+
+# We only support newlib on this target. We assume that all multilib
+# options have been specified before we get here.
+set_board_info compiler  "[find_gcc]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info ldflags   "[libgloss_link_flags] [newlib_link_flags]"
+
+# No linker script needed.
+set_board_info ldscript ""
+
+# Use port 51000 as the default to communicate on. This will set the netport
+# (used by gdb-comm) as well as setting up nSim specific data.
+nsim_open 51000
+
+# GDB protocol to be used
+set_board_info gdb_protocol "remote"
+
+# Use 'continue' instead of 'run' when executing a test
+set_board_info gdb_run_command "continue"
+
+# The simulator doesn't return exit statuses and we need to indicate this;
+# the standard GCC wrapper will work with this target.
+set_board_info needs_status_wrapper  1
+# Doesn't pass arguments or signals, can't return results, and doesn't
+# do inferiorio.
+set_board_info noargs 1
+set_board_info gdb,nosignals 1
+set_board_info gdb,noresults 1
+set_board_info gdb,noinferiorio 1
