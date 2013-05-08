@@ -363,7 +363,11 @@ case ${opt} in
 	CONFIG_EXTRA="$1"
 	;;
 
-    --multilib|--no-multilib|--enable-multilib|--disable-multilib)
+    --multilib|--enable-multilib)
+	DISABLE_MULTILIB=
+	;;
+
+    --no-multilib|--disable-multilib)
 	DISABLE_MULTILIB=$1
 	;;
 
@@ -451,9 +455,9 @@ fi
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
-    x--multilib) DISABLE_MULTILIB=--enable-multilib ;;
+    x--multilib) DISABLE_MULTILIB= ;;
     x--no-multilib) DISABLE_MULTILIB=--disable-multilib ;;
-    x) DISABLE_MULTILIB=--enable-multilib ;;
+    x) DISABLE_MULTILIB= ;;
 esac
 
 # Default parallellism

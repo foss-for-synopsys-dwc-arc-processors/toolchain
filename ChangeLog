@@ -1,3 +1,9 @@
+2013-05-08  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Do not explicitly use --enable-multilib when
+	configuring, since it is the default and being explicit triggers
+	PR45174.
+
 2013-04-30  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* dejagnu/baseboards/arc-nsim.exp: Load nsim-extra.exp, initialize
