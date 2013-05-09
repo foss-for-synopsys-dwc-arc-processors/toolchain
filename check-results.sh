@@ -60,7 +60,7 @@ done
 # Get the individual results if we have any. Note that we don't check for the
 # strings at start of line, since they may have FTP prompts showing. Don't
 # print out lines which have no tests at all.
-echo "                           PASS  FAIL XPASS XFAIL KFAIL UNRES UNSUP UNTES TOTAL"
+echo "                          PASS  FAIL XPASS XFAIL KFAIL UNRES UNSUP UNTES  TOTAL"
 
 if ls $* > /dev/null 2>&1
 then
@@ -87,7 +87,7 @@ then
 
 	if [ "${showall}" == "true" -o "x${tot}" != "x0" ]
 	then
-	    printf "%-25s %5d %5d %5d %5d %5d %5d %5d %5d %5d\n" \
+	    printf "%-23s %6d %5d %5d %5d %5d %5d %5d %5d %6d\n" \
   		${tname} ${p} ${f} ${xp} ${xf} ${kf} ${ur} ${us} ${ut} ${tot} | \
 		tee -a ${tmpf}
 	fi
@@ -97,15 +97,15 @@ fi
 # Total each column, if we have any results
 if ls $* > /dev/null 2>&1
 then
-    pt=`cut -c 27-31 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
-    ft=`cut -c 33-37 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
-    xpt=`cut -c 39-43 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
-    xft=`cut -c 45-49 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
-    kft=`cut -c 51-55 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
-    urt=`cut -c 57-61 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
-    ust=`cut -c 63-67 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
-    utt=`cut -c 69-73 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
-    tott=`cut -c75-79 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    pt=`cut -c 25-30 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    ft=`cut -c 32-36 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    xpt=`cut -c 38-42 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    xft=`cut -c 44-48 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    kft=`cut -c 50-54 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    urt=`cut -c 56-60 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    ust=`cut -c 62-66 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    utt=`cut -c 68-72 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
+    tott=`cut -c 74-79 ${tmpf} | sed -e '2,$s/$/ +/' -e '$s/$/ p/' | dc`
 else
     pt=0
     ft=0
@@ -120,7 +120,7 @@ fi
 
 rm -f ${tmpf}
 
-echo "-----                     ----- ----- ----- ----- ----- ----- ----- ----- -----"
-printf "TOTAL                     %5d %5d %5d %5d %5d %5d %5d %5d %5d\n" \
+echo "-----                   ------ ----- ----- ----- ----- ----- ----- ----- ------"
+printf "TOTAL                   %6d %5d %5d %5d %5d %5d %5d %5d %6d\n" \
     ${pt} ${ft} ${xpt} ${xft} ${kft} ${urt} ${ust} ${utt} ${tott}
 
