@@ -1,3 +1,8 @@
+2013-05-09  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: No need to delete C++ libraries.
+	* check-results.sh: Better alignment for 6 digit totals.
+
 2013-05-08  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Do not explicitly use --enable-multilib when

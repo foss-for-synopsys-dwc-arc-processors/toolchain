@@ -92,8 +92,6 @@ cp -df ${TOOLDIR}/arc-linux-uclibc/lib/*.so* \
 cp -df ${TOOLDIR}/arc-linux-uclibc/lib/uclibc_nonshared.a \
       arc_initramfs/lib >> $logfile 2>&1
 sed -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
-# Remove C++, because it makes everything too big!
-rm -f arc_initramfs/lib/libstdc++*
 
 # As a sanity check remove the busybox images from initramfs. This means a
 # failed install of busybox will show up!
@@ -136,14 +134,6 @@ echo "Copy custom binaries..."
 echo "Copy custom binaries" >> $logfile 2>&1
 echo "====================" >> $logfile 2>&1
 cp -d ${TOOLDIR}/target-bin/* ../arc_initramfs/bin >> $logfile 2>&1
-
-# Deal with development versions anomalies
-echo "Fixing dev version specials..."
-echo "Fixing dev version specials" >> $logfile 2>&1
-echo "===========================" >> $logfile 2>&1
-sed -i ../arc_initramfs/etc/init.d/rcS \
-    -e 's# ; mount -t nfs -o nolock 10.0.0.2:/home/vineetg /mnt##' \
-    -e 's#IST-4:30DST#Europe/London#'
 
 # Build Linux
 echo "Building linux..."
