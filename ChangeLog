@@ -1,5 +1,10 @@
 2013-05-14  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* arc-versions.sh: Modified to work if we are currently in
+	detached HEAD state.
+
+2013-05-14  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* arc-versions.sh: Explicitly choose /bin/sh.
 	* build-all.sh: Change == to = in tests throughout.
 	* build-elf32.sh: Change == to = in tests throughout.
