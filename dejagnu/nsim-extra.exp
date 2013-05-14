@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Copyright (C) 2013 Synopsys Inc.
+
+# This file is additional DejaGnu procs to support nSim based testing.
+
+# This file is a board description for testing OpenRISC with uClibc and
+# Or1ksim running Linux.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+
+
+# -----------------------------------------------------------------------------
+# For nSim we need to provide some extra features to allow the nSim instance
+# to be started and rebooted.
+
+
+# Close the connection to nsim_gdb, which should then die.
+proc nsim_close {} {
+    global board_info board
+    global errorInfo
+
+    verbose "nsim_close" 3
+
+    # Close nSim if it is running
+    if [board_info $board exists nsim_id] {
+	set nsim_id [board_info $board nsim_id]
+	if [catch {close -i $nsim_id}] {
+	    verbose "nsim_close: failed to close $nsim_id: $errorInfo"
+	}
+
+	if [catch {wait -i $nsim_id}] {
+	    verbose "nsim_close: failed to wait for $nsim_id: $errorInfo"
+	}
+
+	unset_board_info nsim_id
+    }
+}
+
+
+# Open a connection to nsim_gdb on a given port. Kills off any pre-existing
+# nSim. Sets the netport for the board to the supplied value.
+
+# @param[in] portnum The port number to use
+proc nsim_open { portnum } {
+    global board_info board
+    verbose "nsim_open $portnum" 3
+
+    # Close any existing nSim, then spawn a new one, saving its spawn_id and
+    # portnum and setting the netport.
+    nsim_close
+    spawn nsim_gdb $portnum
+    unset_board_info nsim_id
+    set_board_info nsim_id $spawn_id
+    unset_board_info nsim_port
+    set_board_info nsim_port $portnum
+    unset_board_info netport
+    set_board_info netport ":$portnum"
+}
+
+
+# Reboot nSim.
+
+# Close nSim and reopen with one larger port number. Naming of this proc is
+# dictated by the debug infrastructure.
+
+# This can be called very early on, before the board has been set up. We cheat
+# and set it up if it doesn't exist.
+
+# @param[in] connhost  The connected host (always arc-nsim here)
+# @param[in] args      Any remaining args (unused here)
+proc arc-nsim_reboot { connhost args } {
+    global board_info board
+    verbose "arc-nsim_reboot $connhost $args" 3
+
+    # Do we have board?
+    if {! [info exists board]} {
+	set board $connhost
+    }
+
+    # Arbitrary default port number
+    set portnum 51000
+    if [board_info $board exists nsim_port] {
+	set portnum [board_info $board nsim_port]
+	set portnum [expr { (${portnum} + 1) % 65536 } ]
+    }
+    nsim_open $portnum
+}
