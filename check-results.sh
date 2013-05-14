@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Copyright (C) 2010-2013 Embecosm Limited
 
@@ -52,7 +52,7 @@ case $1
 	complete="true"
 	;;
 esac;
-[ "true" == "${complete}" ]
+[ "true" = "${complete}" ]
 do
     continue
 done
@@ -66,7 +66,7 @@ if ls $* > /dev/null 2>&1
 then
     for logfile in $*
     do
-	if [ "${usedir}" == "true" ]
+	if [ "${usedir}" = "true" ]
 	then
 	    dir=`dirname ${logfile}`
 	    tname=`basename ${dir}`
@@ -85,7 +85,7 @@ then
 	ut=`grep 'UNTESTED:' ${logfile} | wc -l`
 	tot=`echo "${p} ${f} + ${xp} + ${xf} + ${ur} + ${us} + ${ut} + p" | dc`
 
-	if [ "${showall}" == "true" -o "x${tot}" != "x0" ]
+	if [ "${showall}" = "true" -o "x${tot}" != "x0" ]
 	then
 	    printf "%-23s %6d %5d %5d %5d %5d %5d %5d %5d %6d\n" \
   		${tname} ${p} ${f} ${xp} ${xf} ${kf} ${ur} ${us} ${ut} ${tot} | \

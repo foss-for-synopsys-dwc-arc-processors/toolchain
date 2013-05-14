@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Script to specify versions of tools to use.
 
 # Copyright (C) 2012 Synopsys Inc.

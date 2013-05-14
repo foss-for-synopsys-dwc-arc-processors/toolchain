@@ -251,7 +251,7 @@ ISA_CPU="arc700"
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
 
-if [ x`uname -o` == "xMsys" ]
+if [ x`uname -o` = "xMsys" ]
 then
     DO_SIM="--no-sim"
 else
