@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Copyright (C) 2010 Embecosm Limited
 
@@ -50,14 +50,14 @@ arg2=$2
     ip=`head -1 ${ipfile}`
 
     # Optionally move it to the bottom of the IP file or delete it
-    if [ "x--rotate" == "x${arg1}" ]
+    if [ "x--rotate" = "x${arg1}" ]
     then
 	tail -n +2 ${ipfile} > ${tmp}
 	echo ${ip} >> ${tmp}
 	mv ${tmp} ${ipfile}
     fi
 
-    if [ "x--delete" == "x${arg1}" ]
+    if [ "x--delete" = "x${arg1}" ]
     then
 	sed -i ${ipfile} -e "/${arg2}/d"
     fi

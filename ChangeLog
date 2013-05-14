@@ -1,3 +1,15 @@
+2013-05-14  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Explicitly choose /bin/sh.
+	* build-all.sh: Change == to = in tests throughout.
+	* build-elf32.sh: Change == to = in tests throughout.
+	* check-results.sh: Change == to = in tests throughout, use
+	/bin/sh, not /bin/bash.
+	* diff-all.sh: Use /bin/sh, not /bin/bash.
+	* diff-tests.sh: Likewise
+	* get-ip.sh: Change == to = in tests throughout, use
+	/bin/sh, not /bin/bash.
+
 2013-05-09  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-kernel.sh: No need to delete C++ libraries.
