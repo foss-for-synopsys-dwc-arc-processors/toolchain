@@ -1,5 +1,9 @@
 2013-05-15  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* README.md: Correct to match new ARC Linux repo.
+
+2013-05-15  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* arc-clone-all.sh: Change back to ARC Linux repo.
 	* arc-versions.sh: Use ARC Linux repo branch.
 

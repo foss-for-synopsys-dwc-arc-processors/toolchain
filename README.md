@@ -37,7 +37,7 @@ components.
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
-    git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux
+    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
     cd toolchain
 
