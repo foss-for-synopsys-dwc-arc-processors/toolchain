@@ -121,6 +121,11 @@
 
 2013-05-15  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* tag-release.sh: Correct editing of arc-versions.sh
+	* arc-clone-all.sh: Really add the file.
+
+2013-05-15  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* tag-release.sh: Correct typo.
 
 2013-05-15  Jeremy Bennett <jeremy.bennett@embecosm.com>
