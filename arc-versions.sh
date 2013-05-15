@@ -72,7 +72,7 @@ gcc="gcc:arc_4_8-gcc-4_8-dev"
 gdb="gdb:arc_4_8-gdb-7_5_1-dev"
 newlib="newlib:arc_4_8-newlib-2_0-dev"
 uclibc="uClibc:arc_4_8-uclibc-mainline-dev"
-linux="linux:linux-3.9.y"
+linux="linux:arc-3.9"
 
 # We have to deal with some awkward cases here, because we have to deal with
 # the possibility that we may currently be on a detached HEAD (so cannot

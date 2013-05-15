@@ -37,14 +37,14 @@ clone_tool () {
 }
 
 # Clone all the ARC tools and the toolchain scripts
-clone_tool arc    cgen git://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
-clone_tool arc    binutils git://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
-clone_tool arc    gcc git://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
-clone_tool arc    gdb git://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
-clone_tool arc    newlib git://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
-clone_tool arc    uClibc git://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
-clone_tool stable linux git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux
-clone_tool arc    toolchain git://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
+clone_tool arc cgen git://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
+clone_tool arc binutils  git://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
+clone_tool arc gcc       git://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
+clone_tool arc gdb       git://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
+clone_tool arc newlib    git://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
+clone_tool arc uClibc    git://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+clone_tool arc linux     git://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
+clone_tool arc toolchain git://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
 
 # We perhaps ought to allow an option to check out specific versions. For now
 # just messages.
