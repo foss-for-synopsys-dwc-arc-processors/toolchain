@@ -121,6 +121,11 @@
 
 2013-05-15  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* arc-clone-all.sh: Change back to ARC Linux repo.
+	* arc-versions.sh: Use ARC Linux repo branch.
+
+2013-05-15  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* tag-release.sh: Correct editing of arc-versions.sh
 	* arc-clone-all.sh: Really add the file.
 
