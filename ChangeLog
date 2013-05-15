@@ -1,5 +1,15 @@
 2013-05-14  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* arc-clone-all.sh: New file.
+	* arc-versions.sh: Modified to use the upstream stable Linux repo
+	and branch.
+	* README.md: Modified to refer to the upstream stable Linux repo
+	and to refer to arc-clone-all.sh.
+	* tag-release.sh: No need to modify arc-versions.sh not to pull,
+	explicitly use /bin/sh.
+
+2013-05-14  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* arc-versions.sh: Modified to work if we are currently in
 	detached HEAD state.
 

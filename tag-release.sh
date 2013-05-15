@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Script to specify versions of tools to use.
 
 # Copyright (C) 2012, 2013 Synopsys Inc.
@@ -117,9 +119,7 @@ remote=`git config branch.${branch}.remote`
 git checkout `git log -1 --pretty=format:%H`
 
 # Edit arc-versions.sh and commit it (still detached)
- # This version checks out the tags, but NEVER pulls.
-if ! sed -i -e "s/\(^[[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/" \
-    -e "s/git pull/true/" arc-versions.sh
+if ! sed -i -e "s/\(^[[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/"
 then
     echo "ERROR: Failed to edit arc-versions.sh"
     exit 1

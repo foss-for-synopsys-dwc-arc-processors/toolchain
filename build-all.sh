@@ -513,6 +513,7 @@ if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
       >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
+    echo "- see ${logfile}"
     exit 1
 fi
 
@@ -530,6 +531,7 @@ then
     if ! mkdir -p ${UNISRC}
     then
 	echo "ERROR: Failed to create ${UNISRC}"
+	echo "- see ${logfile}"
 	exit 1
     fi
 
