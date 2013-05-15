@@ -118,8 +118,8 @@ remote=`git config branch.${branch}.remote`
 # Go into detached head mode for the toolchain repo.
 git checkout `git log -1 --pretty=format:%H`
 
-# Edit arc-versions.sh and commit it (still detached)
-if ! sed -i -e "s/\(^[[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/" \
+# Edit arc-versions.sh (not linux) and commit it (still detached)
+if ! sed -i -e "s/\(^[bcgnu][[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/" \
     arc-versions.sh
 then
     echo "ERROR: Failed to edit arc-versions.sh"
