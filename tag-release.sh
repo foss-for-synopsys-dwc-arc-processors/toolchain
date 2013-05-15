@@ -119,7 +119,8 @@ remote=`git config branch.${branch}.remote`
 git checkout `git log -1 --pretty=format:%H`
 
 # Edit arc-versions.sh and commit it (still detached)
-if ! sed -i -e "s/\(^[[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/"
+if ! sed -i -e "s/\(^[[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/" \
+    arc-versions.sh
 then
     echo "ERROR: Failed to edit arc-versions.sh"
     exit 1
