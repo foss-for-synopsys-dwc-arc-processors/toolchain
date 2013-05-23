@@ -1,3 +1,11 @@
+2013-05-23	Anton Kolesov <anton.kolesov@synopsys.com>
+
+	* dejagnu/nsim-extra.exp, dejagnu/baseboards/arc-nsim.exp: Change
+	functions where watchdog breakpoints are set from 'abort' and '_exit' to
+	'exit' and '_exit_r', use NSIM_HOME environment variable to start nsim_gdb
+	instance, use option -reconnect of nsim_gdb, use only a limited range of
+	TCP ports for GDB communication.
+
 2013-05-14  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-versions.sh: Explicitly choose /bin/sh.
