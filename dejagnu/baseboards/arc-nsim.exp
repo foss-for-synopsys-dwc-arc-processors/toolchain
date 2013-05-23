@@ -28,29 +28,34 @@
 # This is a list of toolchains that are supported on this board.
 set_board_info target_install ${target_triplet}
 
-# Some extra procs for testing with nSim
-search_and_load_file "library file" "nsim-extra.exp" ${boards_dir}
-
 # Load the generic configuration for this board. This will define a basic set
 # of routines needed by the tool to communicate with the board. Depends on the
 # tool.
 load_generic_config "gdb-comm"
 
+# Some extra procs for testing with nSim. This must go after gdb-comm, as it
+# overrides one of the function in gdb-comm.
+search_and_load_file "library file" "nsim-extra.exp" ${boards_dir}
+
 # Any multilib options are set in an environment variable.
 process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
+
+set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 set_board_info compiler  "[find_gcc]"
 set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
-set_board_info ldflags   "[libgloss_link_flags] [newlib_link_flags]"
+set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 
 # No linker script needed.
 set_board_info ldscript ""
 
 # Use port 51000 as the default to communicate on. This will set the netport
 # (used by gdb-comm) as well as setting up nSim specific data.
-nsim_open 51000
+#set port [exec [file dirname $env(DEJAGNU)]/get-ip.sh --rotate]
+set port 51000
+nsim_open $port
 
 # GDB protocol to be used
 set_board_info gdb_protocol "remote"
@@ -58,9 +63,6 @@ set_board_info gdb_protocol "remote"
 # Use 'continue' instead of 'run' when executing a test
 set_board_info gdb_run_command "continue"
 
-# The simulator doesn't return exit statuses and we need to indicate this;
-# the standard GCC wrapper will work with this target.
-set_board_info needs_status_wrapper  1
 # Doesn't pass arguments or signals, can't return results, and doesn't
 # do inferiorio.
 set_board_info noargs 1
