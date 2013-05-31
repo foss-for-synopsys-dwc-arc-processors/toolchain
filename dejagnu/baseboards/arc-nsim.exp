@@ -51,10 +51,16 @@ set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 # No linker script needed.
 set_board_info ldscript ""
 
-# Use port 51000 as the default to communicate on. This will set the netport
-# (used by gdb-comm) as well as setting up nSim specific data.
-#set port [exec [file dirname $env(DEJAGNU)]/get-ip.sh --rotate]
-set port 51000
+# nSIM is an exclusive resource -- only one client can connect at a time. For
+# this we cannot use get-ip.sh from arc-linux-nsim.exp, as it doesn't treat
+# target as an exclusive resource. Using script that generates random port
+# allows to leave management of nSIM instances to dejagnu -- it will start,
+# reboot and kill them as needed. get-random-port.sh verifies that generated
+# is free, there is still probability of collision due to race conditions, but
+# it is much less than in other situations.
+# Call to nsim_open will set the netport (used by gdb-comm) as well as setting
+# up nSim specific data.
+set port [exec [file dirname $env(DEJAGNU)]/get-random-port.sh]
 nsim_open $port
 
 # GDB protocol to be used
@@ -62,6 +68,12 @@ set_board_info gdb_protocol "remote"
 
 # Use 'continue' instead of 'run' when executing a test
 set_board_info gdb_run_command "continue"
+
+# On occations GDB cannot connect to nSIM and reboots it. By default amount of
+# reboots is limited to 15, after that all execution tests will be reported as
+# UNTESTED. We need to set an effectively infinite number of reboots so that
+# all execute tests will finish.
+set_board_info max_reload_reboots 1500000
 
 # Doesn't pass arguments or signals, can't return results, and doesn't
 # do inferiorio.
