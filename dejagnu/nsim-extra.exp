@@ -54,8 +54,7 @@ proc nsim_close {} {
 
 # @param[in] portnum The port number to use
 proc nsim_open { portnum } {
-    global board_info board
-    global env env
+    global board_info board env
     verbose "nsim_open $portnum" 3
 
     # Close any existing nSim, then spawn a new one, saving its spawn_id and
@@ -82,7 +81,7 @@ proc nsim_open { portnum } {
 # @param[in] connhost  The connected host (always arc-nsim here)
 # @param[in] args      Any remaining args (unused here)
 proc arc-nsim_reboot { connhost args } {
-    global board_info board
+    global board_info board env
     verbose "arc-nsim_reboot $connhost $args" 3
 
     # Do we have board?
@@ -90,12 +89,8 @@ proc arc-nsim_reboot { connhost args } {
 	set board $connhost
     }
 
-    # Arbitrary default port number
-    set portnum 51000
-    if [board_info $board exists nsim_port] {
-	set portnum [board_info $board nsim_port]
-	set portnum [expr { (${portnum} + 1) % 4000 + 51000 } ]
-    }
+    # Generate random port number.
+    set portnum [exec [file dirname $env(DEJANGU)]/get-random-port.sh]
     nsim_open $portnum
 }
 
