@@ -90,7 +90,7 @@ proc arc-nsim_reboot { connhost args } {
     }
 
     # Generate random port number.
-    set portnum [exec [file dirname $env(DEJANGU)]/get-random-port.sh]
+    set portnum [exec [file dirname $env(DEJAGNU)]/get-random-port.sh]
     nsim_open $portnum
 }
 
