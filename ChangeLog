@@ -1,3 +1,7 @@
+2013-06-03  Anton Kolesov <anton.kolesov@synopsys.com>
+
+	* dejagnu/nsim-extra.exp: Correct typo.
+
 2013-05-31  Anton Kolesov <anton.kolesov@synopsys.com>
 
 	* get-random-port.sh: Script that returns random port number that is free.
