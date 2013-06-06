@@ -38,6 +38,7 @@
 #                  [--isa-v1 | --isa-v2]
 #                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
+#                  [--compact-libraries | --fast-libraries]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
 
@@ -178,6 +179,12 @@
 #     not include the configuration of gdbserver for the UCLIBC LINUX tool
 #     chain
 
+# --compact-libraries | --fast-libraries
+
+#     With --compact-libraries, the target libraries are built using -Os,
+#     making for smaller code. With --fast-libraries (the default), the target
+#     libraries are built using -O2.
+
 # --multilib | --no-multilib
 
 #     Use these to control whether mutlilibs should be built. If this argument
@@ -250,6 +257,7 @@ uclibc="--uclibc"
 ISA_CPU="arc700"
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
+TARGET_CFLAGS="-g -O2"
 
 if [ x`uname -o` = "xMsys" ]
 then
@@ -363,6 +371,14 @@ case ${opt} in
 	CONFIG_EXTRA="$1"
 	;;
 
+    --compact-libraries)
+	TARGET_CFLAGS="-g -Os"
+	;;
+
+    --fast-libraries)
+	TARGET_CFLAGS="-g -O2"
+	;;
+
     --multilib|--enable-multilib)
 	DISABLE_MULTILIB=
 	;;
@@ -395,6 +411,7 @@ case ${opt} in
         echo "                      [--isa-v1 | --isa-v2]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
+	echo "                      [--compact-libraries | --fast-libraries]"
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
 	exit 1
@@ -496,6 +513,7 @@ export DO_SIM
 export CONFIG_EXTRA
 export DO_PDF
 export PARALLEL
+export TARGET_CFLAGS
 
 # Change to the build directory
 cd ${builddir}

@@ -1,3 +1,10 @@
+2013-06-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Add --compact-libraries and --fast-libraries as
+	options to set TARGET_CFLAGS.
+	* build-elf32.sh: Use TARGET_CLAGS when configuring.
+	* build-uclibc.sh: Likewise.
+
 2013-06-03  Anton Kolesov <anton.kolesov@synopsys.com>
 
 	* dejagnu/nsim-extra.exp: Correct typo.
