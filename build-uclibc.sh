@@ -73,7 +73,7 @@
 # ISA_CPU
 
 #     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
-#     EM. Currently ignored for LINUX UCLIBC tool chain.
+#     EM.
 
 # CONFIG_FLAGS
 
@@ -269,6 +269,13 @@ fi
 # make will fail if there is yet no .config file, but we can ignore this error.
 make distclean >> "${logfile}" 2>&1 || true 
 
+if [ "xEM" = "x${ISA_CPU}" ]
+then
+    DEFCFG=arcv2_defconfig
+else
+    DEFCFG=defconfig
+fi
+
 # Patch the temporary install directories used into the uClibc config.
 # uClibc 0.9.34 onwards use defconfig
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
@@ -279,7 +286,7 @@ then
         -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
         < "${ARC_GNU}"/uClibc/arc_config > .config
 else
-    make ARCH=arc defconfig >> "${logfile}" 2>&1
+    make ARCH=arc ${DEFCFG} >> "${logfile}" 2>&1
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
         -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
@@ -325,7 +332,8 @@ cd "${build_dir}"
 # library and don't bother with multilib for stage 1. Note: with gcc 4.4.x, we
 # also disable building libgomp
 config_path=$(calcConfigPath "${unified_src_abs}")
-if "${config_path}"/configure --target=${arche}-linux-uclibc --with-cpu=arc700 \
+if "${config_path}"/configure --target=${arche}-linux-uclibc \
+        --with-cpu=${ISA_CPU} \
         --disable-fast-install --with-endian=${ARC_ENDIAN} \
         CFLAGS_FOR_TARGET="${TARGET_CFLAGS}" \
         --disable-werror --disable-multilib \
@@ -388,7 +396,7 @@ then
         -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
         < "${ARC_GNU}"/uClibc/arc_config > .config
 else
-    make ARCH=arc defconfig >> "${logfile}" 2>&1
+    make ARCH=arc ${DEFCFG} >> "${logfile}" 2>&1
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
         -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
@@ -455,7 +463,8 @@ cd "${build_dir}"
 # Configure the build. This time we allow things, and use the headers from the
 # stage 1 build. We still have to disable libgomp
 config_path=$(calcConfigPath "${unified_src_abs}")
-if "${config_path}"/configure --target=${arche}-linux-uclibc --with-cpu=arc700 \
+if "${config_path}"/configure --target=${arche}-linux-uclibc \
+        --with-cpu=${ISA_CPU} \
         --disable-werror ${DISABLE_MULTILIB} \
         CFLAGS_FOR_TARGET="${TARGET_CFLAGS}" \
         --with-pkgversion="${version_str}"\

@@ -1,3 +1,7 @@
+2013-06-06  Vineet Gupta <vgupta@synopsys.com>
+
+	* build-uclibc.sh: Enable building for EM
+
 2013-06-06  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Add --compact-libraries and --fast-libraries as
