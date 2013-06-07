@@ -1,3 +1,11 @@
+2013-06-07  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Replace --compact-libraries and --fast-libraries
+	with --target-cflags and use to set environment variable
+	CFLAGS_FOR_TARGET.
+	* build-elf32.sh: Don't use TARGET_CFLAGS.
+	* build-uclibc.sh: Likewise.
+
 2013-06-06  Vineet Gupta <vgupta@synopsys.com>
 
 	* build-uclibc.sh: Enable building for EM

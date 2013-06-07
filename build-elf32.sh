@@ -83,10 +83,10 @@
 
 #     Additional flags for use with configuration.
 
-# TARGET_CFLAGS
+# CFLAGS_FOR_TARGET
 
 #     Additional flags used when building the target libraries (e.g. for
-#     compact libraries).
+#     compact libraries) picked up automatically by make.
 
 # DO_PDF
 
@@ -193,7 +193,6 @@ config_path=$(calcConfigPath "${unified_src_abs}")
 log_path=$(calcConfigPath "${logfile}")
 if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
         --disable-werror ${DISABLE_MULTILIB} \
-        CFLAGS_FOR_TARGET="${TARGET_CFLAGS}" \
         --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
         --with-bugurl="http://solvnet.synopsys.com" \
         --enable-fast-install=N/A \

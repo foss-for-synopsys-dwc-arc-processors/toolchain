@@ -38,7 +38,7 @@
 #                  [--isa-v1 | --isa-v2]
 #                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
-#                  [--compact-libraries | --fast-libraries]
+#                  [--target-cflags <flags>]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
 
@@ -179,11 +179,11 @@
 #     not include the configuration of gdbserver for the UCLIBC LINUX tool
 #     chain
 
-# --compact-libraries | --fast-libraries
+# --target-cflags <flags>
 
-#     With --compact-libraries, the target libraries are built using -Os,
-#     making for smaller code. With --fast-libraries (the default), the target
-#     libraries are built using -O2.
+#     Use <flags> as the value of CFLAGS_FOR_TARGET when configuring. This can
+#     be used for example to make more compact libraries, by specifying "-Os
+#     -g".
 
 # --multilib | --no-multilib
 
@@ -257,7 +257,7 @@ uclibc="--uclibc"
 ISA_CPU="arc700"
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
-TARGET_CFLAGS="-g -O2"
+CFLAGS_FOR_TARGET=""
 
 if [ x`uname -o` = "xMsys" ]
 then
@@ -371,12 +371,9 @@ case ${opt} in
 	CONFIG_EXTRA="$1"
 	;;
 
-    --compact-libraries)
-	TARGET_CFLAGS="-g -Os"
-	;;
-
-    --fast-libraries)
-	TARGET_CFLAGS="-g -O2"
+    --target-cflags)
+	shift
+	CFLAGS_FOR_TARGET="$1"
 	;;
 
     --multilib|--enable-multilib)
@@ -411,7 +408,7 @@ case ${opt} in
         echo "                      [--isa-v1 | --isa-v2]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
-	echo "                      [--compact-libraries | --fast-libraries]"
+        echo "                      [--target-cflags <flags>]"
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
 	exit 1
@@ -513,7 +510,10 @@ export DO_SIM
 export CONFIG_EXTRA
 export DO_PDF
 export PARALLEL
-export TARGET_CFLAGS
+if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
+then
+    export CFLAGS_FOR_TARGET
+fi
 
 # Change to the build directory
 cd ${builddir}

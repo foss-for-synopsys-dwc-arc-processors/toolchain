@@ -79,10 +79,10 @@
 
 #     Additional flags for use with configuration.
 
-# TARGET_CFLAGS
+# CFLAGS_FOR_TARGET
 
 #     Additional flags used when building the target libraries (e.g. for
-#     compact libraries).
+#     compact libraries) picked up automatically by make.
 
 # DO_PDF
 
@@ -335,7 +335,6 @@ config_path=$(calcConfigPath "${unified_src_abs}")
 if "${config_path}"/configure --target=${arche}-linux-uclibc \
         --with-cpu=${ISA_CPU} \
         --disable-fast-install --with-endian=${ARC_ENDIAN} \
-        CFLAGS_FOR_TARGET="${TARGET_CFLAGS}" \
         --disable-werror --disable-multilib \
         --enable-languages=c --prefix="${tmp_install_dir}" \
         --without-headers --enable-shared --disable-threads --disable-tls \
@@ -466,7 +465,6 @@ config_path=$(calcConfigPath "${unified_src_abs}")
 if "${config_path}"/configure --target=${arche}-linux-uclibc \
         --with-cpu=${ISA_CPU} \
         --disable-werror ${DISABLE_MULTILIB} \
-        CFLAGS_FOR_TARGET="${TARGET_CFLAGS}" \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}" \
         --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} \
