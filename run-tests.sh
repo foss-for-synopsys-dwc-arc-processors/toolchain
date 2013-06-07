@@ -66,6 +66,14 @@
 #     The address of the UCLIBC target, either symbolic, or as an IP
 #     address. The default is aa4-32.
 
+# --elf32-nsim-props <path/to/nsim/props/file>
+
+#    Path to file with nSIM properties. Examples can be found in
+#    $NSIM_HOME/systemc/configs. The default value is
+#    $NSIM_HOME/systemc/configs/nsim_a700.props. Make sure that props files
+#    matches multilib and endian options. This option makes sense only when
+#    target board is arc-nsim.
+
 # --jobs <count>
 
 #     Specify that parallel make should run at most <count> jobs. The default
@@ -126,6 +134,7 @@ ARC_TEST_BOARD_UCLIBC=arc-linux-aa4
 ARC_TEST_ADDR_ELF32=
 ARC_TEST_ADDR_UCLIBC=aa4_32
 ARC_MULTILIB_OPTIONS=""
+ARC_NSIM_PROPS="${NSIM_HOME}/systemc/configs/nsim_a700.props"
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
 jobs=${make_load}
@@ -171,6 +180,11 @@ case ${opt} in
 	shift
 	ARC_TEST_ADDR_UCLIBC=$1
 	;;
+
+    --elf32-nsim-props)
+    shift
+    ARC_NSIM_PROPS=$1
+    ;;
 
     --jobs)
 	shift
@@ -294,6 +308,7 @@ case ${opt} in
         echo "                      [--uclibc-target-board <board>]"
         echo "                      [--elf32-target-addr <address>]"
         echo "                      [--uclibc-target-addr <address>]"
+        echo "                      [--elf32-nsim-props <path>]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
         echo "                      [--big-endian | --little-endian]"
@@ -348,6 +363,7 @@ export ARC_TEST_BOARD_UCLIBC
 export ARC_TEST_ADDR_ELF32
 export ARC_TEST_ADDR_UCLIBC
 export ARC_MULTILIB_OPTIONS
+export ARC_NSIM_PROPS
 
 export ARC_GNU
 export ARC_ENDIAN
