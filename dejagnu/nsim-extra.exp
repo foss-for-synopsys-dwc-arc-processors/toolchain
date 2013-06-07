@@ -60,7 +60,7 @@ proc nsim_open { portnum } {
     # Close any existing nSim, then spawn a new one, saving its spawn_id and
     # portnum and setting the netport.
     nsim_close
-    spawn "$env(NSIM_HOME)/bin/nsim_gdb" :$portnum "-DLL=$env(NSIM_HOME)/lib/libsim.so" "-props=$env(NSIM_ARCH_PROPS)" -reconnect
+    spawn "$env(NSIM_HOME)/bin/nsim_gdb" :$portnum "-DLL=$env(NSIM_HOME)/lib/libsim.so" "-props=$env(ARC_NSIM_PROPS)" -reconnect
     unset_board_info nsim_id
     set_board_info nsim_id $spawn_id
     unset_board_info nsim_port
