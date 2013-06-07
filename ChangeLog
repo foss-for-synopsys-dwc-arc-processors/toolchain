@@ -1,3 +1,10 @@
+2013-06-07	Anton Kolesov <anton.kolesov@synopsys.com>
+
+	* run-tests.sh: Add --elf32-nsim-props option to specify nSIM properties
+	file.
+	* dejagnu/nsim-extra.exp: Use conventional environment variable name for
+	nSIM properties file path.
+
 2013-06-03  Anton Kolesov <anton.kolesov@synopsys.com>
 
 	* dejagnu/nsim-extra.exp: Correct typo.
