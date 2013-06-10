@@ -122,6 +122,12 @@ do
 	then
 	    exit 1
 	fi
+	# Fetch any new tags
+	echo "  fetching tags"
+	if ! git fetch --tags
+	then
+	    exit 1
+	fi
     fi
 
     if [ "x${autocheckout}" = "x--auto-checkout" ]

@@ -1,4 +1,9 @@
-2013-06-07	Anton Kolesov <anton.kolesov@synopsys.com>
+2013-06-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Also fetch tags.
+	* tag-release.sh: Make sure tool chain repo is up to date.
+
+2013-06-07  Anton Kolesov <anton.kolesov@synopsys.com>
 
 	* run-tests.sh: Add --elf32-nsim-props option to specify nSIM properties
 	file.

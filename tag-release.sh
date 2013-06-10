@@ -62,6 +62,11 @@ else
     tagname=$1
 fi
 
+# Make sure we are up to date. It is possible we are detached, so pull will
+# fail, but that doesn't matter.
+echo "Pulling toolchain repo"
+git pull > /dev/null 2>&1 || true
+
 # Check out heads of component trees
 echo "Checking out all repos"
 if ! ./arc-versions.sh
