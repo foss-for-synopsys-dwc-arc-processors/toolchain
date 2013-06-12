@@ -1,3 +1,8 @@
+2013-06-12  Mischa Jonker <mjonker@synopsys.com>
+
+	* dejagnu/telnet-extra.exp: Make new line handling consistent
+	with rsh_exec.
+
 2013-06-10  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-versions.sh: Also fetch tags.
