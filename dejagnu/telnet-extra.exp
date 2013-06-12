@@ -261,7 +261,8 @@ proc telnet_exec {boardname program args} {
     verbose "telnet_exec: command expect_out(buffer): \"$expect_out(buffer)\""
     regsub -all $cmdpargs "$expect_out(buffer)" {} output
     regsub "$shell_prompt" $output {} output
-    regsub -all "\[\r\n\]" $output {} output
+    # Delete one trailing \n because that is what exec will do
+    regsub "\n$" $output {} output
 
     if {$output == ""} {
 	set output "(no output)"
