@@ -1,3 +1,7 @@
+2013-06-12  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Use LINUXDIR environment variable.
+
 2013-06-12  Mischa Jonker <mjonker@synopsys.com>
 
 	* dejagnu/telnet-extra.exp: Make new line handling consistent
