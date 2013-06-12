@@ -30,6 +30,9 @@
 # The environment variable ${ARC_GNU} should point to the directory within
 # which the GIT trees live.
 
+# The environment variable ${LINUXDIR} should point to the Linux root
+# directory.
+
 # We checkout the desired branch for each tool. Note that these must exist or
 # we fail.
 
@@ -102,7 +105,13 @@ do
 
     echo "Checking out branch/tag ${branch} of ${tool}"
 
-    cd ${ARC_GNU}/${tool}
+    # Kludge, because Linux has its own environment variable
+    if [ tool = "linux" ]
+    then
+	cd ${LINUXDIR}
+    else
+	cd ${ARC_GNU}/${tool}
+    fi
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
