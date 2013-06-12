@@ -106,7 +106,7 @@ do
     echo "Checking out branch/tag ${branch} of ${tool}"
 
     # Kludge, because Linux has its own environment variable
-    if [ tool = "linux" ]
+    if [ "${tool}" = "linux" ]
     then
 	cd ${LINUXDIR}
     else
