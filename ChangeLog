@@ -1,7 +1,16 @@
-2013-06-17	Anton Kolesov <anton.kolesov@synopsys.com>
+2013-06-17  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
-	* README.md: Provide more detailed instructions on installing prequisites
-	and building toolchain.
+	* build-all.sh: Provide separate environment variables for ELF32
+	and UCLIBC multilibs. Disable multilib by default with uClibc.
+	* build-elf32.sh: Use ELF32_DISABLE_MULTILIB instead of
+	DISABLE_MULTILIB.
+	* build-uclibc.sh: Use UCLIBC_DISABLE_MULTILIB instead of
+	DISABLE_MULTILIB.
+
+2013-06-17  Anton Kolesov <anton.kolesov@synopsys.com>
+
+	* README.md: Provide more detailed instructions on installing
+	prequisites and building toolchain.
 
 2013-06-12  Jeremy Bennett <jeremy.bennett@embecosm.com>
 

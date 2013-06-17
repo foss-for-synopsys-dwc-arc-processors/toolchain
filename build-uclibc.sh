@@ -65,7 +65,7 @@
 
 #     "little" or "big"
 
-# DISABLE_MULTILIB
+# UCLIBC_DISABLE_MULTILIB
 
 #     Either --enable-multilib or --disable-multilib to control the building
 #     of multilibs.
@@ -464,7 +464,7 @@ cd "${build_dir}"
 config_path=$(calcConfigPath "${unified_src_abs}")
 if "${config_path}"/configure --target=${arche}-linux-uclibc \
         --with-cpu=${ISA_CPU} \
-        --disable-werror ${DISABLE_MULTILIB} \
+        --disable-werror ${UCLIBC_DISABLE_MULTILIB} \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}" \
         --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} \

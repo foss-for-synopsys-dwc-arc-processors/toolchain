@@ -190,7 +190,8 @@
 #     Use these to control whether mutlilibs should be built. If this argument
 #     is not used, then the value of the environment variable,
 #     DISABLE_MULTILIB, will be used if set. If it is not set, then the
-#     default is to enable multilibs.
+#     default is to enable multilibs for the ELF32 tool chain and disable for
+#     the UCLIBC LINUX tool chain.
 
 # --pdf | --no-pdf
 
@@ -258,6 +259,25 @@ ISA_CPU="arc700"
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
 CFLAGS_FOR_TARGET=""
+
+# Default multilib usage and conversion for toolchain building
+case "x${DISABLE_MULTILIB}" in
+    x--multilib | x-enable-multilib)
+	ELF32_DISABLE_MULTILIB=
+	UCLIBC_DISABLE_MULTILIB=
+	;;
+
+    x--no-multilib | x--disable-multilib)
+	ELF32_DISABLE_MULTILIB=--disable-multilib
+	UCLIBC_DISABLE_MULTILIB=--disable-multilib
+	;;
+
+    x*)
+	ELF32_DISABLE_MULTILIB=
+	UCLIBC_DISABLE_MULTILIB=--disable-multilib
+	;;
+esac
+
 
 if [ x`uname -o` = "xMsys" ]
 then
@@ -376,12 +396,14 @@ case ${opt} in
 	CFLAGS_FOR_TARGET="$1"
 	;;
 
-    --multilib|--enable-multilib)
-	DISABLE_MULTILIB=
+    --multilib | --enable-multilib)
+	ELF32_DISABLE_MULTILIB=
+	UCLIBC_DISABLE_MULTILIB=
 	;;
 
-    --no-multilib|--disable-multilib)
-	DISABLE_MULTILIB=$1
+    --no-multilib | --disable-multilib)
+	ELF32_DISABLE_MULTILIB=--disable-multilib
+	UCLIBC_DISABLE_MULTILIB=--disable-multilib
 	;;
 
     --pdf|--no-pdf)
@@ -467,13 +489,6 @@ then
     ARC_ENDIAN="little"
 fi
 
-# Default multilib usage and conversion for toolchain building
-case "x${DISABLE_MULTILIB}" in
-    x--multilib) DISABLE_MULTILIB= ;;
-    x--no-multilib) DISABLE_MULTILIB=--disable-multilib ;;
-    x) DISABLE_MULTILIB= ;;
-esac
-
 # Default parallellism
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
@@ -504,7 +519,8 @@ export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
-export DISABLE_MULTILIB
+export ELF32_DISABLE_MULTILIB
+export UCLIBC_DISABLE_MULTILIB
 export ISA_CPU
 export DO_SIM
 export CONFIG_EXTRA
@@ -521,6 +537,11 @@ cd ${builddir}
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
+
+# Log the environment
+echo "Build environment" >> "${logfile}"
+echo "=================" >> "${logfile}"
+env >> "${logfile}" 2>&1
 
 # Checkout the correct branch for each tool
 echo "Checking out GIT trees" >> "${logfile}"
