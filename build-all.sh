@@ -38,6 +38,7 @@
 #                  [--isa-v1 | --isa-v2]
 #                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
+#                  [--target-cflags <flags>]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
 
@@ -178,12 +179,19 @@
 #     not include the configuration of gdbserver for the UCLIBC LINUX tool
 #     chain
 
+# --target-cflags <flags>
+
+#     Use <flags> as the value of CFLAGS_FOR_TARGET when configuring. This can
+#     be used for example to make more compact libraries, by specifying "-Os
+#     -g".
+
 # --multilib | --no-multilib
 
 #     Use these to control whether mutlilibs should be built. If this argument
 #     is not used, then the value of the environment variable,
 #     DISABLE_MULTILIB, will be used if set. If it is not set, then the
-#     default is to enable multilibs.
+#     default is to enable multilibs for the ELF32 tool chain and disable for
+#     the UCLIBC LINUX tool chain.
 
 # --pdf | --no-pdf
 
@@ -250,6 +258,26 @@ uclibc="--uclibc"
 ISA_CPU="arc700"
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
+CFLAGS_FOR_TARGET=""
+
+# Default multilib usage and conversion for toolchain building
+case "x${DISABLE_MULTILIB}" in
+    x--multilib | x-enable-multilib)
+	ELF32_DISABLE_MULTILIB=
+	UCLIBC_DISABLE_MULTILIB=
+	;;
+
+    x--no-multilib | x--disable-multilib)
+	ELF32_DISABLE_MULTILIB=--disable-multilib
+	UCLIBC_DISABLE_MULTILIB=--disable-multilib
+	;;
+
+    x*)
+	ELF32_DISABLE_MULTILIB=
+	UCLIBC_DISABLE_MULTILIB=--disable-multilib
+	;;
+esac
+
 
 if [ x`uname -o` = "xMsys" ]
 then
@@ -363,12 +391,19 @@ case ${opt} in
 	CONFIG_EXTRA="$1"
 	;;
 
-    --multilib|--enable-multilib)
-	DISABLE_MULTILIB=
+    --target-cflags)
+	shift
+	CFLAGS_FOR_TARGET="$1"
 	;;
 
-    --no-multilib|--disable-multilib)
-	DISABLE_MULTILIB=$1
+    --multilib | --enable-multilib)
+	ELF32_DISABLE_MULTILIB=
+	UCLIBC_DISABLE_MULTILIB=
+	;;
+
+    --no-multilib | --disable-multilib)
+	ELF32_DISABLE_MULTILIB=--disable-multilib
+	UCLIBC_DISABLE_MULTILIB=--disable-multilib
 	;;
 
     --pdf|--no-pdf)
@@ -395,6 +430,7 @@ case ${opt} in
         echo "                      [--isa-v1 | --isa-v2]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
+        echo "                      [--target-cflags <flags>]"
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
 	exit 1
@@ -453,13 +489,6 @@ then
     ARC_ENDIAN="little"
 fi
 
-# Default multilib usage and conversion for toolchain building
-case "x${DISABLE_MULTILIB}" in
-    x--multilib) DISABLE_MULTILIB= ;;
-    x--no-multilib) DISABLE_MULTILIB=--disable-multilib ;;
-    x) DISABLE_MULTILIB= ;;
-esac
-
 # Default parallellism
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
@@ -490,12 +519,17 @@ export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
-export DISABLE_MULTILIB
+export ELF32_DISABLE_MULTILIB
+export UCLIBC_DISABLE_MULTILIB
 export ISA_CPU
 export DO_SIM
 export CONFIG_EXTRA
 export DO_PDF
 export PARALLEL
+if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
+then
+    export CFLAGS_FOR_TARGET
+fi
 
 # Change to the build directory
 cd ${builddir}
@@ -503,6 +537,11 @@ cd ${builddir}
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
+
+# Log the environment
+echo "Build environment" >> "${logfile}"
+echo "=================" >> "${logfile}"
+env >> "${logfile}" 2>&1
 
 # Checkout the correct branch for each tool
 echo "Checking out GIT trees" >> "${logfile}"
@@ -513,6 +552,7 @@ if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
       >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
+    echo "- see ${logfile}"
     exit 1
 fi
 
@@ -530,6 +570,7 @@ then
     if ! mkdir -p ${UNISRC}
     then
 	echo "ERROR: Failed to create ${UNISRC}"
+	echo "- see ${logfile}"
 	exit 1
     fi
 
