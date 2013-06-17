@@ -1,3 +1,8 @@
+2013-06-17  Anton Kolesov <anton.kolesov@synopsys.com>
+
+	* README.md: Provide more detailed instructions on installing prequisites
+	and building toolchain.
+
 2013-06-12  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-versions.sh: Correct test for use LINUXDIR environment variable.
