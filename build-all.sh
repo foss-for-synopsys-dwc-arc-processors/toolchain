@@ -41,6 +41,7 @@
 #                  [--target-cflags <flags>]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
+#                  [--rel-rpaths | --no-rel-rpaths]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -198,6 +199,12 @@
 #     Use these to control whether PDF versions of user guides should be built
 #     and installed (default --pdf).
 
+# --rel-rpaths | --no-rel-rpaths
+
+#     Use these to control whether once tools have been built, the tools RPATHs
+#     are set so they are relative to the INSTALL directory and thus become
+#     portable (default --rel-rpaths).
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -258,6 +265,7 @@ uclibc="--uclibc"
 ISA_CPU="arc700"
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
+rel_rpaths="--rel-rpaths"
 CFLAGS_FOR_TARGET=""
 
 # Default multilib usage and conversion for toolchain building
@@ -409,6 +417,10 @@ case ${opt} in
     --pdf|--no-pdf)
 	DO_PDF=$1
 	;;
+
+    --rel-rpaths|--no-rel-rpaths)
+	rel_rpaths=$1
+	;;
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -433,6 +445,7 @@ case ${opt} in
         echo "                      [--target-cflags <flags>]"
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
+	echo "                      [--rel-rpaths | --no-rel-rpaths]"
 	exit 1
 	;;
 
@@ -611,4 +624,14 @@ if [ "x${SYMLINKDIR}" != "x" ]
 then
     rm -f ${SYMLINKDIR}
     ln -s ${INSTALLDIR} ${SYMLINKDIR}
+fi
+
+# Patch RPATHs so they are relative
+if [ "x${rel_rpaths}" = "x--rel-rpaths" ]
+then
+    if ! "${ARC_GNU}"/toolchain/rel-rpaths.sh >> "${logfile}" 2>&1
+    then
+	echo "ERROR: Unable to make RPATHs relative. Is patchelf installed?"
+	exit 1
+    fi
 fi

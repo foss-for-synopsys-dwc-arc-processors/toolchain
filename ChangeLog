@@ -1,3 +1,10 @@
+2013-06-18  Simon Cook  <simon.cook@embecosm.com>
+
+	* rel-rpaths.sh: Added script to replace hard-coded RPATHs in
+	the compiled toolchain with those relative to INSTALL.
+	* build-all.sh: Added option to enable/disable setting of relative
+	RPATHs. This is enabled by default.
+
 2013-06-17  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Provide separate environment variables for ELF32
