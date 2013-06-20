@@ -265,7 +265,7 @@ uclibc="--uclibc"
 ISA_CPU="arc700"
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
-rel_rpaths="--rel-rpaths"
+rel_rpaths="--no-rel-rpaths"
 CFLAGS_FOR_TARGET=""
 
 # Default multilib usage and conversion for toolchain building
