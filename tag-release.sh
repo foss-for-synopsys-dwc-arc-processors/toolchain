@@ -62,6 +62,25 @@ else
     tagname=$1
 fi
 
+# Default source directory if not already set
+if [ "x${ARC_GNU}" = "x" ]
+then
+    d=`dirname "$0"`
+    ARC_GNU=`(cd "$d/.." && pwd)`
+fi
+
+# Default Linux directory if not already set.
+if [ "x${LINUXDIR}" = "x" ]
+then
+    if [ -d "${ARC_GNU}"/linux ]
+    then
+	export LINUXDIR="${ARC_GNU}"/linux
+    else
+	echo "ERROR: Cannot find Linux sources."
+	exit 1
+    fi
+fi
+
 # Make sure we are up to date. It is possible we are detached, so pull will
 # fail, but that doesn't matter.
 echo "Pulling toolchain repo"
