@@ -36,6 +36,7 @@
 #                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
 #                  [--isa-v1 | --isa-v2]
+#                  [--uclibc-defconfig <defconfig>]
 #                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
 #                  [--target-cflags <flags>]
@@ -168,6 +169,12 @@
 #     Specify whether the original ARCompact version 1 ISA should be used (the
 #     default) or the new version 2 ISA (for EM targets).
 
+# --uclibc-defconfig <defconfig>
+
+#     If specified, the defconfig used to build uClibc will be
+#     <defconfig>. The default is defconfig for v1 ISA and arcv2_defconfig for
+#     v2 ISA.
+
 # --sim | --no-sim
 
 #     Specify whether the CGEN simulator should be built for the ELF tool
@@ -263,6 +270,7 @@ do_unisrc="--unisrc"
 elf32="--elf32"
 uclibc="--uclibc"
 ISA_CPU="arc700"
+UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
 rel_rpaths="--no-rel-rpaths"
@@ -348,6 +356,11 @@ case ${opt} in
 
     --uclibc | --no-uclibc)
 	uclibc=$1
+	;;
+
+    --uclibc-defconfig)
+	shift
+	UCLIBC_DEFCFG=$1
 	;;
 
     --datestamp-install)
@@ -440,6 +453,7 @@ case ${opt} in
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
         echo "                      [--isa-v1 | --isa-v2]"
+	echo "                      [--uclibc-defconfig <defconfig>]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
         echo "                      [--target-cflags <flags>]"
@@ -502,6 +516,17 @@ then
     ARC_ENDIAN="little"
 fi
 
+# Default defconfig for uClibc, only if it has not already been set
+if [ "x${UCLIBC_DEFCFG}" = "x" ]
+then
+    if [ "xEM" = "x${ISA_CPU}" ]
+    then
+        UCLIBC_DEFCFG=arcv2_defconfig
+    else
+        UCLIBC_DEFCFG=defconfig
+    fi
+fi
+
 # Default parallellism
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
@@ -539,6 +564,7 @@ export DO_SIM
 export CONFIG_EXTRA
 export DO_PDF
 export PARALLEL
+export UCLIBC_DEFCFG
 if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
 then
     export CFLAGS_FOR_TARGET
