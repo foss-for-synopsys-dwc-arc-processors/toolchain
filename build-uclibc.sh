@@ -70,6 +70,10 @@
 #     Either --enable-multilib or --disable-multilib to control the building
 #     of multilibs.
 
+# UCLIBC_DEFCFG
+
+#     The defconfig to be used when building uClibc.
+
 # ISA_CPU
 
 #     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
@@ -269,13 +273,6 @@ fi
 # make will fail if there is yet no .config file, but we can ignore this error.
 make distclean >> "${logfile}" 2>&1 || true 
 
-if [ "xEM" = "x${ISA_CPU}" ]
-then
-    DEFCFG=arcv2_defconfig
-else
-    DEFCFG=defconfig
-fi
-
 # Patch the temporary install directories used into the uClibc config.
 # uClibc 0.9.34 onwards use defconfig
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
@@ -286,7 +283,7 @@ then
         -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
         < "${ARC_GNU}"/uClibc/arc_config > .config
 else
-    make ARCH=arc ${DEFCFG} >> "${logfile}" 2>&1
+    make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
         -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
@@ -395,7 +392,7 @@ then
         -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
         < "${ARC_GNU}"/uClibc/arc_config > .config
 else
-    make ARCH=arc ${DEFCFG} >> "${logfile}" 2>&1
+    make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
     sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
         -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
         -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
