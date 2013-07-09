@@ -4,13 +4,21 @@ ARC GNU Tool Chain
 This is the main git repository for the ARC GNU tool chain. It contains just
 the scripts required to build the entire tool chain.
 
-This is the version for the 4.4 tool chain release development branches. It
-contains various patches applied since the official tool chain release. The
-tool chain should still be reliable, but has not been through full release
-testing.
+This is the version corresponding to the repository branch name. I.e. the
+mainline branch is mainline development, the 4_8-toolchain-stable branch is
+the stable 4.8 release and so on.
 
-The build script will check out the development branches from the 4.4 tool
-chain component repositories.
+Stable branches (i.e. with the suffix "-stable") have been through full
+release testing, and known issues documented in a Synopsys release
+note. Development braches (i.e. with the suffix "-dev") contain various
+patches applied since the official tool chain release and should still be
+reliable, but has not been through full release testing. The mainline branch
+is where the latest development work is carried out and are not necessarily
+stable. Where appropriate, patches are back-ported to development branches of
+releases.
+
+The build script will check out the corresponding branches from the tool chain
+component repositories.
 
 Prequisites
 -----------
@@ -33,10 +41,9 @@ On Fedora 17 you can install those with following command (as root):
     yum install gmp-devel mpfr-devel texinfo-tex byacc flex ncurses-devel \
     zlib-devel expat-devel libX11-devel libmpc-devel
 
-On RedHat/CentOS 6.3 systems there is no official MPC package. On those systems
-you have to download and build MPC from source tarball, or you can use
-[rpmfind](http://www.rpmfind.net/linux/rpm2html/search.php?query=libmpc&submit=Search+...)
-to find prebuilt one. Otherwise it is the same as Fedora.
+On RedHat/CentOS 6.3 systems there is no official MPC package. On those
+systems you have to download the MPC source tarball, and unpack it into the
+top level of the gcc repository.
 
 
 Getting sources
@@ -61,18 +68,22 @@ components.
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/arc_initramfs_archives.git
     git clone git://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
 
-Checkout `toolchain` repository to the desired branch, for example:
+For convenience, the script `arc-clone-all.sh` in this repository will clone
+all the repositories for you.
+
+Checkout `toolchain` repository to the desired branch, for example to get the
+4.8 release development branch use:
 
     cd toolchain
-    git checkout arc-toolchain-mainline
+    git checkout arc_4_8-toolchain-dev
 
 Building the tool chain
 -----------------------
 
-The script `build-all.sh` will build and install both *arc-elf32-* and
-*arc-linux-uclibc-* tool chains. The comments at the head of this script
+The script `build-all.sh` will build and install both *arc*-elf32-* and
+*arc*-linux-uclibc-* tool chains. The comments at the head of this script
 explain how it works and the parameters to use. It uses script
-`symlink-trunks.sh` to build a unified source directory.
+`symlink-all.sh` to build a unified source directory.
 
 The script `arc-versions.sh` specifies the branches to use in each component
 git repository. It should be edited to change the default branches if
@@ -80,7 +91,7 @@ required.
 
 Having built a unified source directory and checked out the correct branches,
 `build-all.sh` in turn uses `build-elf32.sh` and `build-uclibc.sh`. These
-build respectively the *arc-elf32* and *arc-linux-uclibc* tool chains. Details
+build respectively the *arc*-elf32* and *arc*-linux-uclibc* tool chains. Details
 of the operation are provided as comments in each script file. Both these
 scripts use a common initialization script, `arc-init.sh`.
 

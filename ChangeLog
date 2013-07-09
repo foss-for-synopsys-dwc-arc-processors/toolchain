@@ -1,5 +1,9 @@
 2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* README.md: Updated for mainline branch.
+
+2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* build-kernel.sh: Use define-release.sh and associated
 	environment variables.
 
