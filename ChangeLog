@@ -1,5 +1,9 @@
 2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* build-elf32.sh: Add comment regarding CFLAGS_FOR_TARGET.
+
+2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* ChangeLog: Correct errors from cherry-picking copyright updates.
 
 2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
