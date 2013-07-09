@@ -1,3 +1,8 @@
+2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: Use define-release.sh and associated
+	environment variables.
+
 2013-07-03  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	Based on an idea from Christian Ruppert
