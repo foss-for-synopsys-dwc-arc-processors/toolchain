@@ -38,7 +38,7 @@
 
 
 # The Synopsys release number
-RELEASE=4.8
+RELEASE=mainline
 
 # Create a common log directory for all logs in this and sub-scripts
 LOGDIR=${ARC_GNU}/logs-${RELEASE}
