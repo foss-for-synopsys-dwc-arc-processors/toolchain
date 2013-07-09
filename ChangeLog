@@ -204,6 +204,12 @@
 
 2013-04-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* dejagnu/baseboards/arc-sim.ex: Remove redundant use of
+	arc-sim-base.
+	* dejagnu/baseboards/arc-nsim.exp: New file.
+
+2013-04-26  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Add --sim/--no-sim
 	* build-elf32.sh: Optionally build the simulator, depending on
 	DO_SIM environment variable.

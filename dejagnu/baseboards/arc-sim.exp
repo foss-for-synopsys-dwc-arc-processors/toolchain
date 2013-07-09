@@ -20,8 +20,8 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#		  ARC Bare Metal DejaGnu Simulator Support
-#		  ========================================
+#		ARC Bare Metal DejaGnu CGEN Simulator Support
+#		=============================================
 
 # This board specification is for use with the ARC CGEN simulator
 
