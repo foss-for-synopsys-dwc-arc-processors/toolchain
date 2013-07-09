@@ -1,5 +1,10 @@
 2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* build-kernel.sh: Use define-release.sh and associated
+	environment variables.
+
+2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* define-release.sh: Change release to mainline.
 
 2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
