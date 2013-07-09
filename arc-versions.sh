@@ -67,15 +67,17 @@ do
 done
 
 # Specify the default versions to use as a string <tool>:<branch>. These are
-# the development versions for the ARC 4.4 tool chain release. Only actually
-# matters if --auto-checkout is set.
+# the versions for the ARC tool chain release corresponding to this branch of
+# the toolchain repository. Only actually matters if --auto-checkout is set.
+
+# TODO: At present only binutils has been migrated to mainline.
 cgen="cgen:arc_4_4-cgen-1_0-dev"
 binutils="binutils:arc-binutils-mainline"
-gcc="gcc:arc-gcc-mainline"
-gdb="gdb:arc-gdb-mainline"
-newlib="newlib:arc-newlib-mainline"
-uclibc="uClibc:arc_4_8-uClibc-0_9_30-dev"
-linux="linux:stable-arc-3.2"
+gcc="gcc:arc_4_8-gcc-4_8-dev"
+gdb="gdb:arc_4_8-gdb-7_5_1-dev"
+newlib="newlib:arc_4_8-newlib-2_0-dev"
+uclibc="uClibc:arc_4_8-uclibc-mainline-dev"
+linux="linux:arc-3.9"
 
 # We have to deal with some awkward cases here, because we have to deal with
 # the possibility that we may currently be on a detached HEAD (so cannot

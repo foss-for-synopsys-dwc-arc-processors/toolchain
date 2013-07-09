@@ -1,3 +1,8 @@
+2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* avr-versions.sh: Use mainline version for binutils and 4.8
+	versions for all else, during migration.
+
 2013-07-03  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	Based on an idea from Christian Ruppert
