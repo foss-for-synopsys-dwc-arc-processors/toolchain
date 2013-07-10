@@ -1,3 +1,8 @@
+2013-07-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-elf32.sh: Remove --disable-werror from configuration.
+	* build-uclibc.sh: Likewise.
+
 2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* build-kernel.sh: Use define-release.sh and associated
