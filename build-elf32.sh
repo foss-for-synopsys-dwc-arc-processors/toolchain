@@ -192,7 +192,7 @@ cd "${build_path}"
 config_path=$(calcConfigPath "${unified_src_abs}")
 log_path=$(calcConfigPath "${logfile}")
 if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
-        --disable-werror ${ELF32_DISABLE_MULTILIB} \
+        ${ELF32_DISABLE_MULTILIB} \
         --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
         --with-bugurl="http://solvnet.synopsys.com" \
         --enable-fast-install=N/A \
