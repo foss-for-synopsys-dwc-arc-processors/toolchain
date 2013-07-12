@@ -1,3 +1,8 @@
+2013-07-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Don't symlink-all newlib, instead just symlink the
+	top level directories.
+
 2013-07-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* build-elf32.sh: Remove --disable-werror from configuration.

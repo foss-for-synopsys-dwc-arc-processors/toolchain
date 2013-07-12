@@ -570,9 +570,6 @@ then
     export CFLAGS_FOR_TARGET
 fi
 
-# Change to the build directory
-cd ${builddir}
-
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
@@ -595,6 +592,9 @@ then
     exit 1
 fi
 
+# Change to the build directory
+cd ${builddir}
+
 # Make a unified source tree in the build directory. Note that later versions
 # override earlier versions with the current symlinking version.
 if [ "x${do_unisrc}" = "x--unisrc" ]
@@ -603,7 +603,7 @@ then
     echo "====================" >> "${logfile}"
 
     echo "Linking unified tree ..."
-    component_dirs="gdb newlib binutils gcc"
+    component_dirs="gdb binutils gcc"
     rm -rf ${UNISRC}
 
     if ! mkdir -p ${UNISRC}
@@ -619,6 +619,27 @@ then
 	echo "ERROR: Failed to symlink ${UNISRC}"
 	exit 1
     fi
+
+    # Link in the top of the newlib and libgloss trees. We can't use
+    # symlink-all.sh on these, or we'll get symlinks to the source tree in the
+    # installation.
+    cd ${UNISRC}
+
+    if ! ln -s ${ARC_GNU}/newlib/libgloss . >> "${logfile}" 2>&1
+    then
+	echo "ERROR: Failed to symlink libgloss"
+	exit 1
+    fi
+
+    if ! ln -s ${ARC_GNU}/newlib/newlib . >> "${logfile}" 2>&1
+    then
+	echo "ERROR: Failed to symlink newlib"
+	exit 1
+    fi
+
+    # Revert back to the build directory
+    cd ${builddir}
+
 fi
 
 # Optionally build the arc-elf32- tool chain
