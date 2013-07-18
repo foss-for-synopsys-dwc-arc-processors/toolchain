@@ -100,7 +100,7 @@ The most important options if `build-all.sh` are:
  * `--no-multilib` - do not build multilib standard libraries. Use it when you
    are going to work exclusively with baremetal applications for ARC700. This
    option doesn't affect uClibc tool chain.
- * `--isa-v2` - build tool chain for ARC ISA v2 cores (EM and HS) instead ARC
+ * `--isa-v2` - build tool chain for ARC ISA v2 cores (EM) instead ARC
    ISA v1 cores (ARC600, ARC700).
 
 Please consult `./build-all.sh --help` to get a full list of supported options.
