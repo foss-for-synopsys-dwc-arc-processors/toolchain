@@ -43,6 +43,7 @@
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
 #                  [--rel-rpaths | --no-rel-rpaths]
+#                  [--disable-werror | --no-disable-werror]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -212,6 +213,11 @@
 #     are set so they are relative to the INSTALL directory and thus become
 #     portable (default --rel-rpaths).
 
+# --disable-werror | --no-disable-werror
+
+#     Use these to control whether the tools are built with --disable-werror
+#     (default --disable-werror).
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -236,6 +242,7 @@ unset datestamp
 unset commentstamp
 unset jobs
 unset load
+unset DISABLEWERROR
 
 # In bash we typically write function blah_blah () { }. However Ubuntu default
 # /bin/sh -> dash doesn't recognize the "function" keyword. Its exclusion
@@ -274,6 +281,7 @@ UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
 rel_rpaths="--no-rel-rpaths"
+DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
 
 # Default multilib usage and conversion for toolchain building
@@ -434,6 +442,15 @@ case ${opt} in
     --rel-rpaths|--no-rel-rpaths)
 	rel_rpaths=$1
 	;;
+
+    --disable-werror)
+	DISABLEWERROR=$1
+	;;
+
+    --no-disable-werror)
+	DISABLEWERROR=
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -460,6 +477,7 @@ case ${opt} in
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
 	echo "                      [--rel-rpaths | --no-rel-rpaths]"
+	echo "                      [--disable-werror | --no-disable-werror]"
 	exit 1
 	;;
 
@@ -565,6 +583,7 @@ export CONFIG_EXTRA
 export DO_PDF
 export PARALLEL
 export UCLIBC_DEFCFG
+export DISABLEWERROR
 if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
 then
     export CFLAGS_FOR_TARGET

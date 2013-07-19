@@ -331,7 +331,7 @@ cd "${build_dir}"
 config_path=$(calcConfigPath "${unified_src_abs}")
 if "${config_path}"/configure --target=${arche}-linux-uclibc \
         --with-cpu=${ISA_CPU} \
-        --disable-fast-install --with-endian=${ARC_ENDIAN} \
+        --disable-fast-install --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
         --disable-multilib \
         --enable-languages=c --prefix="${tmp_install_dir}" \
         --without-headers --enable-shared --disable-threads --disable-tls \
@@ -464,7 +464,7 @@ if "${config_path}"/configure --target=${arche}-linux-uclibc \
         ${UCLIBC_DISABLE_MULTILIB} \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}" \
-        --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} \
+        --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
         --with-headers=${tmp_install_dir}/${arche}-linux-uclibc/include \
         --enable-languages=c,c++ --prefix="${INSTALLDIR}" \
         --enable-shared --without-newlib --disable-libgomp ${CONFIG_EXTRA} \
