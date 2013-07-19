@@ -196,7 +196,7 @@ if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
         --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
         --with-bugurl="http://solvnet.synopsys.com" \
         --enable-fast-install=N/A \
-        --with-endian=${ARC_ENDIAN} \
+        --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
         --with-headers="${config_path}"/newlib/libc/include \
         ${sim_config} ${CONFIG_EXTRA} \
