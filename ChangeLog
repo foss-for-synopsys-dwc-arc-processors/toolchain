@@ -1,3 +1,8 @@
+2013-07-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* arc-clone-all.sh: More comprehensive version of the script.
+	* README.md: Use HTTPS versions of repository URLs.
+
 2013-07-17  Simon Cook  <simon.cook@embecosm.com>
 
 	* build-all.sh: Add --disable-werror and --no-disable-werror options.
