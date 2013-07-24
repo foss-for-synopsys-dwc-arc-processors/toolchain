@@ -45,24 +45,30 @@ Getting sources
 You need to check out the repositories for each of the tool chain
 components (its not all one big repository), including the linux repository
 for building the tool chain. These should be peers of this toolchain
-directory. If you have yet to check any repository out, then the following
-should be appropriate for creating a new directory, `arc` with all the
-components.
+directory.
 
-    mkdir arc
-    cd arc
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/arc_initramfs_archives.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
+If you have just checked this repository (toolchain) out, then the following
+commands will clone all the remaining components into the right place.
 
-For convenience, the script `arc-clone-all.sh` in this repository will clone
-all the repositories for you.
+    cd toolchain
+    ./arc-clone-all.sh [-f | --force] [-d | --dev]
+
+Option --force or -f will replace any existing cloned version of the
+components (use with care). Option --dev or -d will attempt to clone writable
+clones using the SSH version of the remote URL, suitable for developers
+contributing back to this repository.
+
+Alternatively you can manually clone the remaining repositories using the
+following:
+
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
 
 Checkout `toolchain` repository to the desired branch, for example:
 
