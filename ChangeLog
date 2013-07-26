@@ -1,5 +1,10 @@
 2013-07-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* arc-versions.sh: Switch to use arc-gdb-mainline for GDB
+	development.
+
+2013-07-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* arc-clone-all.sh: More comprehensive version of the script.
 	* README.md: Use HTTPS versions of repository URLs.
 
