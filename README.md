@@ -4,13 +4,10 @@ ARC GNU Tool Chain
 This is the main git repository for the ARC GNU tool chain. It contains just
 the scripts required to build the entire tool chain.
 
-This is the version for the 4.8 tool chain release development branches. It
-contains various patches applied since the official tool chain release. The
-tool chain should still be reliable, but has not been through full release
-testing.
+This is the released version for the 4.8 tool chain release.
 
-The build script will check out the development branches from the 4.8 tool
-chain component repositories.
+The build script will check out the 4.8 version from all tool chain
+repositories and build the tool chain from them.
 
 Prequisites
 -----------
@@ -67,7 +64,7 @@ all the repositories for you.
 Checkout `toolchain` repository to the desired branch, for example:
 
     cd toolchain
-    git checkout arc_4_8-toolchain-dev
+    git checkout arc_4_8-toolchain-stable
 
 Building the tool chain
 -----------------------
