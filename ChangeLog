@@ -1,3 +1,10 @@
+2013-08-12	Anton Kolesov	<akolesov@synopsys.com>
+
+	* build-all.sh: Unset environment variable CROSS_COMPILE. Tools makefiles
+	recognize this variable, so we need to unset it, otherwise standard
+	libraries will be be built with toolchain pointed by CROSS_COMPILE, which
+	is undesirable.
+
 2013-07-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* arc-versions.sh: Switch to use arc-gdb-mainline for GDB
