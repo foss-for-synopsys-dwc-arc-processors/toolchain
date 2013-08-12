@@ -243,6 +243,9 @@ unset commentstamp
 unset jobs
 unset load
 unset DISABLEWERROR
+# Tools makefiles recognize this variable, so we need to unset it, otherwise
+# standard libraries will be be built with toolchain pointed by CROSS_COMPILE.
+unset CROSS_COMPILE
 
 # In bash we typically write function blah_blah () { }. However Ubuntu default
 # /bin/sh -> dash doesn't recognize the "function" keyword. Its exclusion
