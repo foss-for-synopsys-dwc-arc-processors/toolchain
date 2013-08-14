@@ -1,3 +1,11 @@
+2013-08-14 Anton Kolesov   <akolesov@synopsys.com>
+
+	* build-all.sh: Unset some environment variables for example CROSS_COMPILE
+	and ARCH. Tools makefiles recognize these variable and might use them in
+	an undesirable way. For example CROSS_COMPILE has a predence over
+	toolchain we are building and this for example might cause a big endian
+	toolchain to have little endian standard libraries.
+
 2013-07-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* arc-versions.sh: Switch to use arc-gdb-mainline for GDB
