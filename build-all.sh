@@ -593,6 +593,20 @@ fi
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
+# Some commonly used variables might cause invalid results when inherited from environment so we need to unset them.
+arc_unset_vars=
+for var_name in CROSS_COMPILE ARCH BUILD_CFLAGS BUILD_LDFLAGS PREFIX RUNTIME_PREFIX DEVEL_PREFIX MULTILIB_DIR UCLIBC_EXTRA_CFLAGS UCLIBC_EXTRA_CPPFLAGS CC CFLAGS LDFLAGS LIBS CPPFLAGS CXX CXXFLAGS build_configargs host_configargs target_configargs AR AS DLLTOOL LD LIPO NM RANLIB STRIP WINDRES WINDMC OBJCOPY OBJDUMP READELF CC_FOR_TARGTE CXX_FOR_TARGET GCC_FOR_TARGET AR_FOR_TARGET AS_FOR_TARGET DLLTOOL_FOR_TARGET LD_FOR_TARGET LIPO_FOR_TARGET NM_FOR_TARGET OBJDUMP_FOR_TARGET RUNLIB_FOR_TARGET READELF_FOR_TARGET STRIP_FOR_TARGET WINDRES_FOR_TARGET WINDMC_FOR_TARGET ; do
+    if [ "${!var_name:-__ARC_UNSET__}" != "__ARC_UNSET__" ]
+    then
+        arc_unset_vars="${arc_unset_vars} ${var_name}"
+        unset ${var_name}
+    fi
+done
+if [ "${arc_unset_vars}" ]
+then
+    echo "WARNING: Your environment has some variables that might affect build in a undesirable way. These variables will be unset: \`${arc_unset_vars}'." | tee -a "${logfile}"
+fi
+
 # Log the environment
 echo "Build environment" >> "${logfile}"
 echo "=================" >> "${logfile}"
