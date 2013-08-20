@@ -71,11 +71,11 @@ done
 # the toolchain repository. Only actually matters if --auto-checkout is set.
 
 # TODO: At present only binutils has been migrated to mainline.
-cgen="cgen:arc_4_4-cgen-1_0-dev"
-binutils="binutils:arc-binutils-mainline"
-gcc="gcc:arc_4_8-gcc-4_8-dev"
-gdb="gdb:arc-gdb-mainline"
-newlib="newlib:arc_4_8-newlib-2_0-dev"
+cgen="cgen:arc-1.0-dev"
+binutils="binutils:arc-mainline-dev"
+gcc="gcc:arc-4.8-dev"
+gdb="gdb:arc-mainline-dev"
+newlib="newlib:arc-2.0-dev"
 uclibc="uClibc:arc_4_8-uclibc-mainline-dev"
 linux="linux:arc-3.9"
 
