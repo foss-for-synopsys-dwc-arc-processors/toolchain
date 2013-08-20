@@ -1,3 +1,7 @@
+2013-08-20  Simon Cook  <simon.cook@embecosm.com>
+
+	* arc-versions.sh: Update branch names to new naming convention.
+
 2013-08-14 Anton Kolesov   <akolesov@synopsys.com>
 
 	* build-all.sh: Unset some environment variables for example CROSS_COMPILE
