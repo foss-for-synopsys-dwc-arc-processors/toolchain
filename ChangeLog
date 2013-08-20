@@ -1,3 +1,7 @@
+2013-08-20  Simon Cook  <simon.cook@embecosm.com>
+
+	* arc-versions.sh: Update branch names to new naming convention.
+
 2013-08-09  Simon Cook  <simon.cook@embecosm.com>
 
 	* README.md: Update description of stable branches.
