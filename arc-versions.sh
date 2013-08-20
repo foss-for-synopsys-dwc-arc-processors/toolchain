@@ -32,11 +32,11 @@
 
 # Specify the versions to use as a string <tool>:<branch>. These are the
 # stable versions for the ARC 4.4 tool chain release.
-cgen="cgen:arc_4_4-cgen-1_0-stable"
-binutils="binutils:arc_4_4-binutils-2_19-stable"
-gcc="gcc:arc_4_4-gcc-4_4-stable"
-gdb="gdb:arc_4_4-gdb-6_8-stable"
-newlib="newlib:arc_4_4-newlib-1_17-stable"
+cgen="cgen:arc-1.0-stable"
+binutils="binutils:arc-2.19-stable"
+gcc="gcc:arc-4.4-stable"
+gdb="gdb:arc-6.8-stable"
+newlib="newlib:arc-1.17-stable"
 uclibc="uClibc:arc_4_4-uClibc-0_9_30-stable"
 linux="linux:arc-2.6.35"
 
