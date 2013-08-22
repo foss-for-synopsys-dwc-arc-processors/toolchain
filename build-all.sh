@@ -3,6 +3,7 @@
 # Copyright (C) 2012, 2013 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Anton Kolesov <akolesov@synopsys.com>
 
 # This file is a master script for building ARC tool chains.
 
@@ -29,6 +30,7 @@
 #                  [--symlink-dir <symlink_dir>]
 #                  [--auto-pull | --no-auto-pull]
 #                  [--auto-checkout | --no-auto-checkout]
+#                  [--auto-download | --no-auto-download]
 #                  [--unisrc | --no-unisrc]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--datestamp-install]
@@ -115,6 +117,15 @@
 
 #     If specified, a "git pull" will be done in each component repository
 #     after checkout to ensure the latest code is in use. Default is to pull.
+
+# --auto-download | --no-auto-download
+
+#     If specified, then GMP, MPFR and MPC libraries will be downloaded as
+#     source tarballs, unpacked and placed inside GCC source directory. GCC
+#     makefiles will recognize those directories properly and will use them
+#     instead of system libraries. Some systems (RHEL, CentOS) doesn't have all
+#     of the required dependencies in official repositaries. This is done right
+#     after checkout and before unisrc is created. Default is to download.
 
 # --unisrc | --no-unisrc
 
@@ -238,6 +249,7 @@ unset ARC_ENDIAN
 unset PARALLEL
 unset autocheckout
 unset autopull
+unset autodownload
 unset datestamp
 unset commentstamp
 unset jobs
@@ -273,6 +285,7 @@ build_pathnm ()
 # Set defaults for some options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
+autodownload="--auto-download"
 do_unisrc="--unisrc"
 elf32="--elf32"
 uclibc="--uclibc"
@@ -353,6 +366,10 @@ case ${opt} in
     --auto-pull | --no-auto-pull)
 	autopull=$1
 	;;
+
+    --auto-download | --no-auto-download)
+    autodownload=$1
+    ;;
 
     --unisrc | --no-unisrc)
 	do_unisrc=$1
@@ -460,6 +477,7 @@ case ${opt} in
         echo "                      [--install-dir <install_dir>]"
 	echo "                      [--symlink-dir <symlink_dir>]"
 	echo "                      [--auto-checkout | --no-auto-checkout]"
+        echo "                      [--auto-download | --no-auto-download]"
         echo "                      [--auto-pull | --no-auto-pull]"
         echo "                      [--unisrc | --no-unisrc]"
         echo "                      [--elf32 | --no-elf32]"
@@ -629,7 +647,7 @@ echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
 if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
-      >> ${logfile} 2>&1
+    ${autodownload} >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
     echo "- see ${logfile}"
