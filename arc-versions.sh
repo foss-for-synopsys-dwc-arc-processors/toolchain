@@ -5,6 +5,7 @@
 # Copyright (C) 2012, 2013 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Anton Kolesov <akolesov@synopsys.com>
 
 # This script is sourced to specify the versions of tools to be built.
 
@@ -26,6 +27,7 @@
 
 #     arc-versions.sh [--auto-checkout | --no-auto-checkout]
 #                     [--auto-pull | --no-auto-pull]
+#                     [--auto-download | --no-auto-download]
 
 # The environment variable ${ARC_GNU} should point to the directory within
 # which the GIT trees live.
@@ -39,6 +41,7 @@
 # Default options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
+autodownload="--auto-download"
 
 # Parse options
 until
@@ -52,9 +55,14 @@ case ${opt} in
 	autopull=$1
 	;;
 
+    --auto-download | --no-auto-download)
+    autodownload=$1
+    ;;
+
     ?*)
 	echo "Usage: arc-versions.sh  [--auto-checkout | --no-auto-checkout]"
         echo "                        [--auto-pull | --no-auto-pull]"
+        echo "                        [--auto-download | --no-auto-download]"
 	exit 1
 	;;
 
@@ -163,3 +171,46 @@ do
 	fi
     fi
 done
+
+# Download dependencies if we have been asked to
+if [ "x${autodownload}" = "x--auto-download" ]
+then
+
+    echo "Downloading dependencies..."
+    cd ${ARC_GNU}/gcc
+
+    # GMP 4.3.2
+    if [ ! -d gmp ]; then
+        echo "Getting GMP 4.3.2"
+        gmp_tar=gmp-4.3.2.tar.bz2
+        if [ ! -f $gmp_tar ]; then
+            wget -nv ftp://ftp.gmplib.org/pub/gmp/$gmp_tar
+            tar xjf $gmp_tar
+        fi
+        mv gmp-4.3.2 gmp
+    fi
+    
+    # MPFR 2.4.2
+    if [ ! -d mpfr ]; then
+        echo "Getting MPFR 2.4.2"
+        mpfr_tar=mpfr-2.4.2.tar.bz2
+        if [ ! -f $mpfr_tar ]; then
+            wget -nv http://www.mpfr.org/mpfr-2.4.2/$mpfr_tar
+        fi
+        tar xjf $mpfr_tar
+        mv mpfr-2.4.2 mpfr
+    fi
+    
+    # MPC 1.0.1
+    if [ ! -d mpc ]; then
+        echo "Getting MPC 1.0.1"
+        mpc_tar=mpc-1.0.1.tar.gz
+        if [ ! -f $mpc_tar ]; then
+            wget -nv http://www.multiprecision.org/mpc/download/$mpc_tar
+        fi
+        tar xzf $mpc_tar
+        mv mpc-1.0.1 mpc
+    fi
+
+fi
+
