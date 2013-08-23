@@ -45,7 +45,6 @@
 # ------------------------------------------------------------------------------
 
 # Useful constants. Some day these will be set from args
-TOOLDIR=/opt/arc-${RELEASE}
 # LINUX_DEFCONFIG=4.10_defconfig
 # LINUX_DEFCONFIG=fpga_defconfig_patched_no_sasid
 LINUX_DEFCONFIG=
@@ -55,13 +54,16 @@ LINUX_TREE=linux
 ARC_INITRAMFS=ramfs-abi-v3-gcc-4.4.tar.gz
 ARC_UNPACKED_NAME=arc_initramfs_22_abi-v3-0.9.34
 
-# Ensure we have the right tool chain on the path!
-PATH=${TOOLDIR}/bin:${PATH}
-
 # Generic release set up, which we'll share with sub-scripts. This defines
 # (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
 # and $RESDIR if they don't exist.
+d=`dirname "$0"`
+ARC_GNU=`(cd "$d/.." && pwd)`
 . "${ARC_GNU}"/toolchain/define-release.sh
+
+TOOLDIR=/opt/arc-${RELEASE}
+# Ensure we have the right tool chain on the path!
+PATH=${TOOLDIR}/bin:${PATH}
 
 logfile="${LOGDIR}/kernel-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
