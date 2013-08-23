@@ -1,3 +1,8 @@
+2013-08-23  Simon Cook  <simon.cook@embecosm.com>
+
+	* build-kernel.sh: Move use of all relevant env variables to after
+	define-release.sh.
+
 2013-08-20  Simon Cook  <simon.cook@embecosm.com>
 
 	* arc-versions.sh: Update branch names to new naming convention.
