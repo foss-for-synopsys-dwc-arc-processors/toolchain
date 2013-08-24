@@ -1,4 +1,9 @@
-2013-08-23  Simon Cook  <simon.cook@embecosm.com>
+2013-08-24  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Eliminate dependency on bash extensions when
+	testing for pre-set environment variables.
+
+2013-08-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-kernel.sh: Move use of all relevant env variables to after
 	define-release.sh.
