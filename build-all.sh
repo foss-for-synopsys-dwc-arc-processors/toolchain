@@ -605,7 +605,7 @@ for var_name in CROSS_COMPILE ARCH BUILD_CFLAGS BUILD_LDFLAGS PREFIX \
     DLLTOOL_FOR_TARGET LD_FOR_TARGET LIPO_FOR_TARGET NM_FOR_TARGET \
     OBJDUMP_FOR_TARGET RUNLIB_FOR_TARGET READELF_FOR_TARGET STRIP_FOR_TARGET \
     WINDRES_FOR_TARGET WINDMC_FOR_TARGET ; do
-    if [ "${!var_name:-__ARC_UNSET__}" != "__ARC_UNSET__" ]
+    if env | grep ^${var_name}= > /dev/null 2>&1
     then
         arc_unset_vars="${arc_unset_vars} ${var_name}"
         unset ${var_name}
