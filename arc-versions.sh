@@ -69,7 +69,7 @@ binutils="binutils:arc-2.19-dev"
 gcc="gcc:arc-4.4-dev"
 gdb="gdb:arc-6.8-dev"
 newlib="newlib:arc-1.17-dev"
-uclibc="uClibc:arc_4_4-uClibc-0_9_30-dev"
+uclibc="uClibc:arc-0.9.30.3-dev"
 linux="linux:stable-arc-3.2"
 
 for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
