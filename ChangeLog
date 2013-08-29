@@ -1,3 +1,7 @@
+2013-08-29  Vineet Gupta <vgupta@synopsys.com>
+
+	* arc-versions.sh: Update uClibc branch name to new naming convention.
+
 2013-08-24  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* build-all.sh: Eliminate dependency on bash extensions when
