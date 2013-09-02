@@ -47,6 +47,11 @@
 	* build-all.sh: Only check for Linux directory with if uClibc is
 	being built.
 
+2012-09-02  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* dejagnu/baseboards/arc-sim.exp: Comment out inapplicable settings:
+	needs_status_wrapper, noargs, noresults, noinferiorio
+
 2013-08-29  Vineet Gupta <vgupta@synopsys.com>
 
 	* arc-versions.sh: Update uClibc branch name to new naming convention.
