@@ -496,8 +496,9 @@ then
     ARC_GNU=`(cd "$d/.." && pwd)`
 fi
 
-# Default Linux directory if not already set.
-if [ "x${LINUXDIR}" = "x" ]
+# Default Linux directory if not already set. Only matters if we are building
+# the uClibc tool chain.
+if [ "x${uclibc}" = "x--uclibc" -a "x${LINUXDIR}" = "x" ]
 then
     if [ -d "${ARC_GNU}"/linux ]
     then
