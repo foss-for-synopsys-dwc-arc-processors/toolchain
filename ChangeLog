@@ -1,3 +1,8 @@
+2013-09-04	Anton Kolesov <akolesov@synopsys.com>
+
+	* arc-external.sh: New file to download external dependencies.
+	* build-all.sh: New option --[no-]external-download.
+
 2013-09-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
 	* arc-versions.sh: Only use Linux if --uclibc is set (new
