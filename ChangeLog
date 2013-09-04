@@ -1,5 +1,11 @@
 2013-09-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+	* arc-versions.sh: Only use Linux if --uclibc is set (new
+	argument)
+	* build-all.sh: Pass uclibc argument to arc-versions.sh
+
+2013-09-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
 	* build-all.sh: Only check for Linux directory with if uClibc is
 	being built.
 
