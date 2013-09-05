@@ -26,12 +26,13 @@
 
 #     arc-versions.sh [--auto-checkout | --no-auto-checkout]
 #                     [--auto-pull | --no-auto-pull]
+#                     [--uclibc | --no-uclibc]
 
 # The environment variable ${ARC_GNU} should point to the directory within
 # which the GIT trees live.
 
 # The environment variable ${LINUXDIR} should point to the Linux root
-# directory.
+# directory (only used if --uclibc is set).
 
 # We checkout the desired branch for each tool. Note that these must exist or
 # we fail.
@@ -39,6 +40,7 @@
 # Default options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
+uclibc="--uclibc"
 
 # Parse options
 until
@@ -52,9 +54,14 @@ case ${opt} in
 	autopull=$1
 	;;
 
+    --uclibc | --no-uclibc)
+	uclibc=$1
+	;;
+
     ?*)
 	echo "Usage: arc-versions.sh  [--auto-checkout | --no-auto-checkout]"
         echo "                        [--auto-pull | --no-auto-pull]"
+        echo "                        [--uclibc | --no-uclibc]"
 	exit 1
 	;;
 
@@ -75,7 +82,13 @@ gcc="gcc:arc-4.8-dev"
 gdb="gdb:arc-7.5-dev"
 newlib="newlib:arc-2.0-dev"
 uclibc="uClibc:arc-mainline-dev"
-linux="linux:arc-3.9"
+
+if [ "x${uclibc}" = "x--uclibc" ]
+then
+    linux="linux:arc-3.9"
+else
+    linux=""
+fi
 
 # We have to deal with some awkward cases here, because we have to deal with
 # the possibility that we may currently be on a detached HEAD (so cannot
@@ -105,7 +118,8 @@ do
 
     echo "Checking out branch/tag ${branch} of ${tool}"
 
-    # Kludge, because Linux has its own environment variable
+    # Kludge, because Linux has its own environment variable. Note that the
+    # tool can only "linux" if --uclibc is set above.
     if [ "${tool}" = "linux" ]
     then
 	cd ${LINUXDIR}

@@ -29,6 +29,7 @@
 #                  [--symlink-dir <symlink_dir>]
 #                  [--auto-pull | --no-auto-pull]
 #                  [--auto-checkout | --no-auto-checkout]
+#                  [--external-download | --no-external-download]
 #                  [--unisrc | --no-unisrc]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--datestamp-install]
@@ -115,6 +116,15 @@
 
 #     If specified, a "git pull" will be done in each component repository
 #     after checkout to ensure the latest code is in use. Default is to pull.
+
+# --external-download | --no-external-download
+
+#     If specified, then GMP, MPFR and MPC libraries will be downloaded as
+#     source tarballs, unpacked and placed inside GCC source directory. GCC
+#     makefiles will recognize those directories properly and will use them
+#     instead of system libraries. Some systems (RHEL, CentOS) doesn't have all
+#     of the required dependencies in official repositories. This is done right
+#     after checkout and before unisrc is created. Default is to download.
 
 # --unisrc | --no-unisrc
 
@@ -238,6 +248,7 @@ unset ARC_ENDIAN
 unset PARALLEL
 unset autocheckout
 unset autopull
+unset external_download
 unset datestamp
 unset commentstamp
 unset jobs
@@ -273,6 +284,7 @@ build_pathnm ()
 # Set defaults for some options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
+external_download="--external-download"
 do_unisrc="--unisrc"
 elf32="--elf32"
 uclibc="--uclibc"
@@ -352,6 +364,10 @@ case ${opt} in
 
     --auto-pull | --no-auto-pull)
 	autopull=$1
+	;;
+
+	--external-download | --no-external-download)
+	external_download=$1
 	;;
 
     --unisrc | --no-unisrc)
@@ -461,6 +477,7 @@ case ${opt} in
 	echo "                      [--symlink-dir <symlink_dir>]"
 	echo "                      [--auto-checkout | --no-auto-checkout]"
         echo "                      [--auto-pull | --no-auto-pull]"
+	echo "                      [--external-download | --no-external-download]"
         echo "                      [--unisrc | --no-unisrc]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
@@ -496,8 +513,9 @@ then
     ARC_GNU=`(cd "$d/.." && pwd)`
 fi
 
-# Default Linux directory if not already set.
-if [ "x${LINUXDIR}" = "x" ]
+# Default Linux directory if not already set. Only matters if we are building
+# the uClibc tool chain.
+if [ "x${uclibc}" = "x--uclibc" -a "x${LINUXDIR}" = "x" ]
 then
     if [ -d "${ARC_GNU}"/linux ]
     then
@@ -629,11 +647,26 @@ echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
 if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
-      >> ${logfile} 2>&1
+    ${uclibc} >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
     echo "- see ${logfile}"
     exit 1
+fi
+
+# Downloading external dependencies
+if [ "x${external_download}" = "x--external-download" ]; then
+    echo "Downloading external dependencies" >> "${logfile}"
+    echo "====================================" >> "${logfile}"
+
+    echo "Downloading external dependencies..."
+	cd ${ARC_GNU}/gcc
+    if ! ${ARC_GNU}/toolchain/arc-external.sh >> ${logfile} 2>&1
+    then
+        echo "WARNING: Failed to download external dependencies. Build will be continued but it can fail."
+    fi
+else
+    echo "Will not download external dependencies" | tee -a "${logfile}"
 fi
 
 # Change to the build directory

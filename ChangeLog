@@ -1,3 +1,19 @@
+2013-09-04	Anton Kolesov <akolesov@synopsys.com>
+
+	* arc-external.sh: New file to download external dependencies.
+	* build-all.sh: New option --[no-]external-download.
+
+2013-09-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Only use Linux if --uclibc is set (new
+	argument)
+	* build-all.sh: Pass uclibc argument to arc-versions.sh
+
+2013-09-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Only check for Linux directory with if uClibc is
+	being built.
+
 2012-09-02  Joern Rennecke  <joern.rennecke@embecosm.com>
 
 	* dejagnu/baseboards/arc-sim.exp: Comment out inapplicable settings:
