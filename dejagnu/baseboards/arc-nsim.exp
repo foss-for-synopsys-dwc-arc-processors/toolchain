@@ -42,11 +42,23 @@ process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
 
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
 
+# Why we need use --gc-sections and -ffunction-sections? ARC newlib doesn't have
+# function _exit, however testglue is intended to wrap around it. This function
+# gets created even though it is never called. When performing execution tests
+# Dejagnu sets breakpoints at "exit" functions: abort() and _exit(), if it
+# couldn't set at _exit() then at exit(). That latter case should be applied to
+# ARC, but instead we get breakpoint at function created by testglue which is
+# never called. To resolve this without altering generic code following is done:
+# first we compile wrapper with -ffunction-sections so that each function is
+# compiled into it's own section, then we link with --gc-section, so that
+# unneeded sections will be excluded from final application. Thus application will not
+# include stale _exit() function that will confuse Dejagnu.
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 set_board_info compiler  "[find_gcc]"
 set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
-set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags] -Wl,--gc-sections"
+set_board_info wrap_compile_flags "-ffunction-sections -fdata-sections"
 
 # No linker script needed.
 set_board_info ldscript ""

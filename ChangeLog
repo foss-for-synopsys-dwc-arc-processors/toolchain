@@ -1,3 +1,13 @@
+2013-09-06	Anton Kolesov <akolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-nsim.exp: Ensure that Dejagnu testglue will not
+	create _exit() function in test application. This function while never
+	called confuses Dejagnu.
+	* dejagnu/nsim-extra.exp: Remove function gdb_comm_load functions. It was
+	used as workaround for bug with function _exit() being created by
+	testglue. Now this problem is resolved by setting compiler options in
+	arc-nsim.exp.
+
 2013-09-04	Anton Kolesov <akolesov@synopsys.com>
 
 	* arc-external.sh: New file to download external dependencies.
