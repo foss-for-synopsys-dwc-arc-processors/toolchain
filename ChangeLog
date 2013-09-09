@@ -1,3 +1,8 @@
+2013-09-09	Anton Kolesov <akolesov@synopsys.com>
+
+	* README.md: Mention that Git tags should be used to obtain stable
+	releases.
+
 2013-09-04	Anton Kolesov <akolesov@synopsys.com>
 
 	* arc-external.sh: New file to download external dependencies.
