@@ -4,13 +4,34 @@ ARC GNU Tool Chain
 This is the main git repository for the ARC GNU tool chain. It contains just
 the scripts required to build the entire tool chain.
 
-This is the released version for the 4.8 tool chain release.
+The branch name corresponds to the development for the various ARC releases.
+* `arc-mainline-dev` is the mainline development branch
+* `arc-4.8-dev` is the development branch for the 4.8 tool chain release
+* `arc-4.4-dev` is the development branch for the 4.4 tool chain release
 
-The build script will check out the 4.8 version from all tool chain
-repositories and build the tool chain from them.
+These branches are under active development, and while the top of each branch
+should build and run reliably, they have not necessarily been through full
+release testing.
 
-Prequisites
------------
+Within each branch there are points where the whole development has been put
+through comprehensive release testing. These are marked using git *tags*. For
+example tag `arc_4_8-R1` means that this is the first release of the Synopsys
+DesignWare ARC 4.8 tool chain, while tag `arc_4_8-R1.2` means this is the
+second minor patch set to the first release of the ARC 4.8 tool chain.
+
+These tagged stable releases have been through full release testing, and known
+issues are documented in a Synopsys release notes.
+
+In general the tool chain release numbering corresponds to the version of GCC
+within that tool chain release. Active development is generally carried out on
+the mainline branch, with changes back-ported to earlier release branches if
+appropriate.
+
+The build script will check out the corresponding branches from the tool chain
+component repositories.
+
+Prerequisites
+-------------
 
 You will need a Linux like environment (Cygwin and MinGW environments under
 Windows should work as well).
@@ -42,35 +63,48 @@ Getting sources
 You need to check out the repositories for each of the tool chain
 components (its not all one big repository), including the linux repository
 for building the tool chain. These should be peers of this toolchain
-directory. If you have yet to check any repository out, then the following
-should be appropriate for creating a new directory, `arc` with all the
-components.
+directory.
 
-    mkdir arc
-    cd arc
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/arc_initramfs_archives.git
-    git clone git://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
+	mkdir arc_gnu
+	cd arc_gnu
+	git clone https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
 
-For convenience, the script `arc-clone-all.sh` in this repository will clone
-all the repositories for you.
-
-Checkout `toolchain` repository to the desired branch, for example:
+After you have just checked this repository (toolchain) out, then the following
+commands will clone all the remaining components into the right place.
 
     cd toolchain
-    git checkout arc_4_8-toolchain-stable
+    ./arc-clone-all.sh [-f | --force] [-d | --dev]
+
+Option --force or -f will replace any existing cloned version of the
+components (use with care). Option --dev or -d will attempt to clone writable
+clones using the SSH version of the remote URL, suitable for developers
+contributing back to this repository.
+
+Alternatively you can manually clone the remaining repositories using the
+following:
+
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
+
+Checkout `toolchain` repository to the desired branch, for example to get the
+mainline development branch use:
+
+    git checkout arc-mainline-dev
+
+while to get the 4.8 version 1 stable release use:
+
+    git checkout arc_4_8-R1.2
 
 Building the tool chain
 -----------------------
 
-The script `build-all.sh` will build and install both *arc*-elf32-* and
-*arc*-linux-uclibc-* tool chains. The comments at the head of this script
+The script `build-all.sh` will build and install both _arc*-elf32-_ and
+_arc*-linux-uclibc-_ tool chains. The comments at the head of this script
 explain how it works and the parameters to use. It uses script
 `symlink-all.sh` to build a unified source directory.
 
@@ -80,7 +114,7 @@ required.
 
 Having built a unified source directory and checked out the correct branches,
 `build-all.sh` in turn uses `build-elf32.sh` and `build-uclibc.sh`. These
-build respectively the *arc*-elf32* and *arc*-linux-uclibc* tool chains. Details
+build respectively the _arc*-elf32_ and _arc*-linux-uclibc_ tool chains. Details
 of the operation are provided as comments in each script file. Both these
 scripts use a common initialization script, `arc-init.sh`.
 

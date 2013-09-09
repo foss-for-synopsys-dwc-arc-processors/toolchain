@@ -1,3 +1,8 @@
+2013-09-09	Anton Kolesov <akolesov@synopsys.com>
+
+	* README.md: Mention that Git tags should be used to obtain stable
+	releases.
+
 2013-09-03  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* arc-versions.sh: Correct uClibc version.
