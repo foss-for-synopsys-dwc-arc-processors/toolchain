@@ -1,3 +1,9 @@
+2013-09-10  Anton Kolesov <akolesov@synopsys.com>
+
+	* dejagnu/baseboard/arc-nsim.exp: Do not use status wrapper (testglue) for
+	Dejagnu tests.
+	* dejagnu/nsim-extra.exp: Remove custom copy of gdb_comm_load() function.
+
 2013-09-09	Anton Kolesov <akolesov@synopsys.com>
 
 	* README.md: Mention that Git tags should be used to obtain stable
