@@ -1,3 +1,8 @@
+2013-09-11  Anton Kolesov <akolesov@synopsys.com>
+
+	* dejagnu/baseboard/arc-nsim.exp: Correct configuration for GDB testsuite
+	on nSIM.
+
 2013-09-10  Anton Kolesov <akolesov@synopsys.com>
 
 	* dejagnu/baseboard/arc-nsim.exp: Do not use status wrapper (testglue) for
