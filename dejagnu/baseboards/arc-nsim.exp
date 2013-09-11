@@ -37,6 +37,12 @@ load_generic_config "gdb-comm"
 # overrides one of the function in gdb-comm.
 search_and_load_file "library file" "nsim-extra.exp" ${boards_dir}
 
+# GDB tests require special treatment, they ignore "gdb-comm" configuration
+# unless "monitor" GDB test suite configuration is loaded.
+if { $tool == "gdb" } {
+	load_lib "../config/monitor.exp"
+}
+
 # Any multilib options are set in an environment variable.
 process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
 
@@ -82,3 +88,11 @@ set_board_info gdb,nosignals 1
 set_board_info gdb,noresults 1
 set_board_info gdb,noinferiorio 1
 set_board_info needs_status_wrapper ""
+
+if { $tool == "gdb" } {
+	# We use gdbserver to run applications
+	set_board_info use_gdb_stub 1
+	# GDB jumps to start_symbols after loading. Default value is `start'.
+	set_board_info gdb,start_symbol "__start"
+}
+
