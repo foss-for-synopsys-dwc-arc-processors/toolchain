@@ -1,3 +1,10 @@
+2013-09-16  Anton Kolesov <akolesov@synopsys.com>
+
+	* build-all.sh: Add option --[no-]strip to strip host binaries from symbols.
+	* build-elf32.sh: Use HOST_INSTALL env variable to define which target to
+	use to install on host. Should be either `install' or `install-strip'.
+	* build-uclibc.sh: Likewise.
+
 2013-09-11  Anton Kolesov <akolesov@synopsys.com>
 
 	* dejagnu/baseboard/arc-nsim.exp: Correct configuration for GDB testsuite

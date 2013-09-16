@@ -45,6 +45,7 @@
 #                  [--pdf | --no-pdf]
 #                  [--rel-rpaths | --no-rel-rpaths]
 #                  [--disable-werror | --no-disable-werror]
+#                  [--strip | --no-strip]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -228,6 +229,11 @@
 #     Use these to control whether the tools are built with --disable-werror
 #     (default --disable-werror).
 
+# --strip | --no-strip
+
+#     Install stripped host binaries. Target libraries are not affected.
+#     Default is --no-strip.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -254,6 +260,7 @@ unset commentstamp
 unset jobs
 unset load
 unset DISABLEWERROR
+unset HOST_INSTALL
 
 # In bash we typically write function blah_blah () { }. However Ubuntu default
 # /bin/sh -> dash doesn't recognize the "function" keyword. Its exclusion
@@ -295,6 +302,7 @@ DO_PDF="--pdf"
 rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
+HOST_INSTALL=install
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -467,6 +475,14 @@ case ${opt} in
 	DISABLEWERROR=
 	;;
 
+    --strip)
+        HOST_INSTALL=install-strip
+        ;;
+
+    --no-strip)
+        HOST_INSTALL=install
+        ;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -495,6 +511,7 @@ case ${opt} in
 	echo "                      [--pdf | --no-pdf]"
 	echo "                      [--rel-rpaths | --no-rel-rpaths]"
 	echo "                      [--disable-werror | --no-disable-werror]"
+	echo "                      [--strip | --no-strip]"
 	exit 1
 	;;
 
@@ -602,6 +619,7 @@ export DO_PDF
 export PARALLEL
 export UCLIBC_DEFCFG
 export DISABLEWERROR
+export HOST_INSTALL
 if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
 then
     export CFLAGS_FOR_TARGET

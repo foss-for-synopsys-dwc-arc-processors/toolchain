@@ -97,6 +97,11 @@
 
 #     string "-j <jobs> -l <load>" to control parallel make.
 
+# HOST_INSTALL
+
+#     Make target prefix to install host application. Should be either
+#     "install" or "install-strip".
+
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
@@ -158,6 +163,7 @@ if [ "x${DO_SIM}" = "x--sim" ]
 then
     sim_config="--enable-sim --enable-sim-endian=no"
     sim_build=all-sim
+    # CGEN doesn't have install-strip target.
     sim_install=install-sim
     sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 	-e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
@@ -234,9 +240,10 @@ echo "Installing tools ..."
 build_path=$(calcConfigPath "${build_dir}")
 cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
-if make install-binutils install-gas install-ld install-gcc \
-        install-target-libgcc install-target-libgloss install-target-newlib \
-        install-target-libstdc++-v3 ${sim_install} install-gdb \
+if make ${HOST_INSTALL}-binutils ${HOST_INSTALL}-gas ${HOST_INSTALL}-ld \
+    ${HOST_INSTALL}-gcc ${sim_install} install-gdb \
+    install-target-libgloss install-target-newlib install-target-libgcc \
+    install-target-libstdc++-v3 \
     >> "${log_path}" 2>&1
 then
     echo "  finished installing tools"
