@@ -97,6 +97,11 @@
 
 #     string "-j <jobs> -l <load>" to control parallel make.
 
+# HOST_INSTALL
+
+#     Make target prefix to install host application. Should be either
+#     "install" or "install-strip".
+
 # Unlike earlier versions of this script, we do not recognize the
 # ARC_GNU_ONLY_CONFIGURE and ARC_GNU_CONTINUE environment variables. If you
 # are using this script, you need to run the whole thing. If you want to redo
@@ -488,8 +493,9 @@ else
     exit 1
 fi
 
-if make install-binutils install-gas install-ld install-gcc \
-        install-target-libgcc install-target-libstdc++-v3 >> "${logfile}" 2>&1
+if make ${HOST_INSTALL}-binutils ${HOST_INSTALL}-gas ${HOST_INSTALL}-ld \
+    ${HOST_INSTALL}-gcc install-target-libgcc install-target-libstdc++-v3 \
+	>> "${logfile}" 2>&1
 then
     echo "  finished installing stage 2 tool chain"
 else
