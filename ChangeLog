@@ -1,3 +1,8 @@
+2013-09-26  Anton Kolesov <akolesov@synopsys.com>
+
+	* arc-versions.sh: Fix double usage of same variable name for different
+	purposes, leading to incorrect behaviour.
+
 2013-09-16  Anton Kolesov <akolesov@synopsys.com>
 
 	* build-all.sh: Add option --[no-]strip to strip host binaries from symbols.
