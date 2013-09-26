@@ -40,7 +40,7 @@
 # Default options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
-uclibc="--uclibc"
+uclibc_arg="--uclibc"
 
 # Parse options
 until
@@ -55,7 +55,7 @@ case ${opt} in
 	;;
 
     --uclibc | --no-uclibc)
-	uclibc=$1
+	uclibc_arg=$1
 	;;
 
     ?*)
@@ -83,7 +83,7 @@ gdb="gdb:arc-7.5-dev"
 newlib="newlib:arc-2.0-dev"
 uclibc="uClibc:arc-mainline-dev"
 
-if [ "x${uclibc}" = "x--uclibc" ]
+if [ "x${uclibc_arg}" = "x--uclibc" ]
 then
     linux="linux:arc-3.9"
 else
