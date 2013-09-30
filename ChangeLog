@@ -1,3 +1,8 @@
+2013-09-30  Anton Kolesov <akolesov@synopsys.com>
+
+	* rel-rpaths.sh: Check that uClibc libc.so file exists before trying to
+	update it. Otherwise script fails for elf32-only toolchain build.
+
 2013-09-26  Anton Kolesov <akolesov@synopsys.com>
 
 	* arc-versions.sh: Fix double usage of same variable name for different
