@@ -25,7 +25,7 @@ REPLACEDIR=${INSTALLDIR}
 cd ${REPLACEDIR}
 
 if ! [ -d bin ]; then
-    echo "Should run $0 in INSTALL directory"
+    echo "\`$INSTALLDIR' is not a toolchain installation directory."
     exit 1
 fi
 
@@ -63,8 +63,12 @@ then
 else
     arch=arc
 fi
-sed -e "s#${REPLACEDIR}/${arch}-linux-uclibc/lib/##g" < \
-    ${arch}-linux-uclibc/lib/libc.so > _libc.so
-mv _libc.so ${arch}-linux-uclibc/lib/libc.so
+uclibc_libc_path=${arch}-linux-uclibc/lib/libc.so
+if [ -f $uclibc_libc_path ]; then
+    sed -e "s#${REPLACEDIR}/${arch}-linux-uclibc/lib/##g" < \
+        $uclibc_libc_path > _libc.so
+    mv _libc.so $uclibc_libc_path
+fi
 
+# vi: set expandtab:
 
