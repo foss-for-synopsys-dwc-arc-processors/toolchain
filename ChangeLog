@@ -1,3 +1,13 @@
+2013-10-03  Simon Cook  <simon.cook@embecosm.com>
+
+	* windows-installer/buildall.sh: Add top level build all script.
+	* windows-installer/EnvVarUpdate.nsh: Add PATH modifying support script.
+	* windows-installer/arc_setup_base.nsi: Add installer base script.
+	* windows-installer/arc_all.nsi: Add install script.
+	* windows-installer/arc_all-openjdk.nsi: Add install script.
+	* windows-installer/winbuild: Add NSIS installer script builder.
+	* windows-installer/README.md: Add README.
+
 2013-09-30  Anton Kolesov <akolesov@synopsys.com>
 
 	* rel-rpaths.sh: Check that uClibc libc.so file exists before trying to
