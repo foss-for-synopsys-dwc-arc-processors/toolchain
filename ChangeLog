@@ -1,5 +1,10 @@
 2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
 
+	* arc-versions.sh: Support Git 1.8 which have different output from
+	previous versions.
+
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
 	* dejagnu/nsim-extra.exp: Fix long-standing issue of constant nsim_gdb
 	reboots. It was caused because output buffer of nsim_gdb created by Expect
 	was overflown and nsim_gdb couldn't write anything to eat, thus it was
