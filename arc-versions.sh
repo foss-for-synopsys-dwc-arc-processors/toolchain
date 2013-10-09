@@ -129,7 +129,8 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-	if git branch | grep '\* (no branch)' > /dev/null 2>&1
+    # See note below why two expressions are requied.
+	if git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
 	then
 	    # Detached head. Checkout an arbitrary branch
 	    arb_br=`git branch | grep -v '^\*' | head -1`
@@ -164,14 +165,20 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-	if ! git branch | grep '\* (no branch)' >> /dev/null 2>&1
-	then
-	    # Only update to latest if we are not in detached HEAD mode.
-	    echo "  pulling latest version"
-	    if ! git pull
-	    then
-		exit 1
-	    fi
-	fi
+        # Only update to latest if we are not in detached HEAD mode.
+        # If tree is in detahed state, output differs between Git versions:
+        # Git 1.8 prints: * (detached from <tag_name>>)
+        # Git <1.8 prints: * (no branch)
+        if ! git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
+        then
+            echo "  pulling latest version"
+            if ! git pull
+            then
+                exit 1
+            fi
+        fi
     fi
 done
+
+# vi: set expandtab:
+
