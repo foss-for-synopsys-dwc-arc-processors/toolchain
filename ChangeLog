@@ -1,3 +1,9 @@
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-nsim.exp, arc-sim.exp: Update baremetal board
+	definitions: disable HW watchpoints, on nSIM reload image each time before
+	running.
+
 2013-09-30  Anton Kolesov <akolesov@synopsys.com>
 
 	* rel-rpaths.sh: Check that uClibc libc.so file exists before trying to
