@@ -1,3 +1,28 @@
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* arc-versions.sh: Support Git 1.8 which have different output from
+	previous versions.
+
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/nsim-extra.exp: Fix long-standing issue of constant nsim_gdb
+	reboots. It was caused because output buffer of nsim_gdb created by Expect
+	was overflown and nsim_gdb couldn't write anything to eat, thus it was
+	stuck in some "print" operation. I am not completely aware of mechanics of
+	those buffers it seems that overflow was happening way after Expect
+	maximum buffer length exceed, so if this observation is right, then Expect
+	at first was dropping nsim_gdb output to maintain buffer size, but then it
+	was stopping doing this, thus causing an overflow. We do not care about
+	nsim_gdb output so we can safely redirect it to /dev/null. Has to use
+	shell for this, because Expect's spawn doesn't know about stream
+	redirection.
+
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-nsim.exp, arc-sim.exp: Update baremetal board
+	definitions: disable HW watchpoints, on nSIM reload image each time before
+	running.
+
 2013-09-30  Anton Kolesov <akolesov@synopsys.com>
 
 	* rel-rpaths.sh: Check that uClibc libc.so file exists before trying to
@@ -46,6 +71,11 @@
 
 	* build-all.sh: Only check for Linux directory with if uClibc is
 	being built.
+
+2012-09-02  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* dejagnu/baseboards/arc-sim.exp: Comment out inapplicable settings:
+	needs_status_wrapper, noargs, noresults, noinferiorio
 
 2013-08-29  Vineet Gupta <vgupta@synopsys.com>
 
