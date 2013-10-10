@@ -1,5 +1,10 @@
 2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
 
+	* dejagnu/nsim-extra.exp: Fix constant nsim_gdb	reboots. It was caused by
+	output buffer becoming full and not cleared by expect.
+
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
 	* dejagnu/baseboards/arc-nsim.exp, arc-sim.exp: Update baremetal board
 	definitions: disable HW watchpoints, on nSIM reload image each time before
 	running.
