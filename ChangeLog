@@ -1,3 +1,7 @@
+2013-10-10  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* README.md: Update examples, add examples for uClibc and EM Starter Kit.
+
 2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 	* arc-versions.sh: Support Git 1.8 which have different output from

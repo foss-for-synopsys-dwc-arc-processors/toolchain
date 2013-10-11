@@ -131,7 +131,7 @@ The most important options if `build-all.sh` are:
  * `--no-multilib` - do not build multilib standard libraries. Use it when you
    are going to work exclusively with baremetal applications for ARC700. This
    option doesn't affect uClibc tool chain.
- * `--isa-v2` - build tool chain for ARC ISA v2 cores (EM and HS) instead ARC
+ * `--isa-v2` - build tool chain for ARC ISA v2 core (ARC EM) instead of ARC
    ISA v1 cores (ARC600, ARC700).
 
 Please consult `./build-all.sh --help` to get a full list of supported options.
@@ -150,39 +150,113 @@ Build tool chain for baremetal applications for ARC ISA v1 cores (ARC600, ARC700
 
     ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT
 
+
 Usage examples
 --------------
 
-Add tool chain to PATH:
+In all cases it is expected that you have added tool chain to PATH:
 
-    export PATH=$INSTALL_ROOT/bin:$PATH
+    $ export PATH=$INSTALL_ROOT/bin:$PATH
 
-Build single source application:
 
-    arc-elf32-gcc hello_world.c -mARC700
+### ARC 700 application running on CGEN simulator
+
+Build application:
+
+    $ arc-elf32-gcc hello_world.c -mARC700
 
 Run it on CGEN-based simulator:
 
-    arc-elf32-gdb -q a.out
+    $ arc-elf32-run a.out
+    hello world
+
+Or debug it in GDB using simulator (GDB output omitted):
+
+    $ arc-elf32-gdb --quiet a.out
     (gdb) target sim
     (gdb) load
-    (gdb) run
+    (gdb) start
+    (gdb) l
+    (gdb) continue
+    hello world
+    (gdb) q
 
-Example of running target application on gdbserver-based setup like nsim_gdb,
-OpenOCD, Ashling gdbserver, etc, using nsim_gdb as an example:
 
-    $NSIM_HOME/bin/nsim_gdb :51000 -DLL=$NSIM_HOME/lib/libsim.so \
-    -props=$NSIM_HOME/systemc/configs/arc700.props
+### ARC EM application using nSIM simulator
 
-And in another console:
+Before starting nsim_gdb you need to update properties file for nSIM, in
+$NSIM_HOME/systemc/configs find a file for your core and add to it:
 
-    arc-elf32-gdb -q a.out
+    nsim_emt=1
+
+This will enable input-output operations. Use nSIM User Guide to learn about
+other nSIM properties. Then start nsim_gdb (ARC EM is used as an example):
+
+    $ $NSIM_HOME/bin/nsim_gdb :51000 -DLL=$NSIM_HOME/lib/libsim.so \
+    -props=$NSIM_HOME/systemc/configs/nsim_av2em11.props
+
+And in another console (GDB output is omitted):
+
+    $ arc-elf32-gcc -mEM -g hello_world.c
+    $ arc-elf32-gdb --quiet a.out
     (gdb) target remote :51000
     (gdb) load
+    (gdb) break main
+    (gdb) break exit
     (gdb) continue
+    (gdb) continue
+    (gdb) q
 
 Please note that in case of gdbserver-based usage all execution, input and
-output happens on the side of host that runs gdbserver.
+output happens on the side of host that runs gdbserver, so "hello world" string
+will be printed on the server side.
+
+
+### ARC EM application running on EM Starter Kit
+
+Download and build OpenOCD port for ARC as described here:
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.7.0-dev-00222/doc/README.ARC
+
+Run OpenOCD:
+
+    $ openocd -f /usr/local/share/openocd/scripts/target/snps_starter_kit_arc-em.cfg \
+        -c init -c halt -c 'reset halt'
+
+Compile and run:
+
+    $ arc-elf32-gcc -mEM -g simple.c
+    $ arc-elf32-gdb --quiet simple.elf
+    (gdb) target remote :3333
+    (gdb) set remotetimeout 15
+    (gdb) load
+    (gdb) break main
+    (gdb) continue
+    (gdb) step
+    (gdb) next
+    (gdb) break exit
+    (gdb) continue
+
+### Application running on Linux on ARC 700
+
+Compile application:
+
+    $ arc-linux-gcc -g -o hello_world hello_world.c
+
+Copy it to the NFS share, or place it in RAMFS, or make it available to target
+system in any way other way. Start gdbserver on target system:
+
+    [ARCLinux] $ gdbserver :51000 hello_world
+
+Start GDB on host:
+
+    $ arc-linux-gdb --quiet hello_world
+    (gdb) set sysroot <buildroot/output/target>
+    (gdb) target remote 192.168.0.2:51000
+    (gdb) break main
+    (gdb) continue
+    (gdb) continue
+    (gdb) quit
+
 
 Testing the tool chain
 ----------------------
