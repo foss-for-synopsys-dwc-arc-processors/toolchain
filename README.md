@@ -213,7 +213,11 @@ will be printed on the server side.
 
 ### ARC EM application running on EM Starter Kit
 
-Download and build OpenOCD port for ARC as described here:
+> A custom linker script is required to link applications for EM Starter Kit.
+> Refer to the section "Building application" of our EM Starter Kit Wiki page:
+> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+
+Download and build the OpenOCD port for ARC as described here:
 https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.7.0-dev-00222/doc/README.ARC
 
 Run OpenOCD:
@@ -224,7 +228,7 @@ Run OpenOCD:
 Compile and run:
 
     $ arc-elf32-gcc -mEM -g simple.c
-    $ arc-elf32-gdb --quiet simple.elf
+    $ arc-elf32-gdb --quiet a.out
     (gdb) target remote :3333
     (gdb) set remotetimeout 15
     (gdb) load
@@ -234,6 +238,56 @@ Compile and run:
     (gdb) next
     (gdb) break exit
     (gdb) continue
+
+
+### Debugging applications using Ashling Opella-XD debug probe
+
+> A custom linker script is required to link applications for EM Starter Kit.
+> Refer to the section "Building application" of our EM Starter Kit Wiki page:
+> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+> For different hardware configurations other changes might be required.
+
+> The Ashling Opella-XD debug probe and it's drivers are not part of the GNU
+> tools distribution and should be obtained separately.
+
+The Ashling Opella-XD drivers distribution contain gdbserver for GNU Tools. Start
+it with following command:
+
+    $ ./ash-arc-gdb-server --jtag-frequency 8mhz --device arc \
+        --arc-reg-file <core.xml>
+
+Where <core.xml> is a path to XML file describing AUX registers of target core.
+The Ashling drivers distribution contain files for ARC 600 (arc600-core.xml)
+and ARC 700 (arc700-core.xml). For EM an additional download is required.
+Download arc-opella-em.xml from here:
+https://gist.github.com/anthony-kolesov/7193146.
+
+The Ashling gdbserver might emit error messages like "Error: Core is running".
+Those messages are harmless and do not affect the debugging experience.
+
+Then start GDB. *Before* connecting to an Opella-XD target it is essential to specify the architecture of the target. For EM type in GDB:
+
+    (gdb) set arc opella-target arcem
+
+(other possibilites are arc600 and arc700).
+
+Then connect to the target as with the OpenOCD/Linux gdbserver. For example a full session with an Opella-XD controlling an ARC EM target could start as follows:
+
+    $ arc-elf32-gcc -mEM -g simple.c
+    $ arc-elf32-gdb --quiet a.out
+    (gdb) set arc opella-target arcem
+    (gdb) set target remote :2331
+    (gdb) load
+    (gdb) break main
+    (gdb) continue
+    (gdb) break exit
+    (gdb) continue
+
+Available Opella targets are: *arc600*, *arc700* and *arcem*. The same target
+is used for both EM4 and EM6, so registers that are not present en EM4 template
+(for example IC_CTRL) still will be presented by GDB. Their values will be
+shown as zeros and setting them will not affect core, nor will cause any error.
+
 
 ### Application running on Linux on ARC 700
 
