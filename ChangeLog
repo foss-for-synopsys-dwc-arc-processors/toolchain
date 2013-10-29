@@ -1,3 +1,7 @@
+2013-10-29  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* README.md: Add example of usage with Opella-XD debug probe.
+
 2013-10-10  Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 	* README.md: Update examples, add examples for uClibc and EM Starter Kit.
