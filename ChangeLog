@@ -1,3 +1,16 @@
+2013-10-30  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Decide default value for auto-pull/checkout based on
+	whether toolchain directory is a Git repository or not. Checkout and
+	pull if it is a repository and do nothing if it is a directory from
+	source tarball.
+
+2013-10-30  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Give more detailed error message if Linux sources are
+	mussing.
+	* README.md: Add details on getting Linux sources.
+
 2013-10-29  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* README.md: Add example of usage with Opella-XD debug probe.
