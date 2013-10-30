@@ -111,12 +111,16 @@
 # --auto-checkout | --no-auto-checkout
 
 #     If specified, a "git checkout" will be done in each component repository
-#     to ensure the correct branch is checked out. Default is to checkout.
+#     to ensure the correct branch is checked out. If tool chain is built from
+#     a source tarball then default is to not make a checkout. If tool chain is
+#     built from a Git repository then default is to make a checkout.
 
 # --auto-pull | --no-auto-pull
 
 #     If specified, a "git pull" will be done in each component repository
 #     after checkout to ensure the latest code is in use. Default is to pull.
+#     If tool chain is built from a source tarball then default is to not pull.
+#     If tool chain is built from a Git repository then default is to pull.
 
 # --external-download | --no-external-download
 
@@ -289,8 +293,8 @@ build_pathnm ()
 }
 
 # Set defaults for some options
-autocheckout="--auto-checkout"
-autopull="--auto-pull"
+autocheckout=""
+autopull=""
 external_download="--external-download"
 do_unisrc="--unisrc"
 elf32="--elf32"
@@ -528,6 +532,25 @@ if [ "x${ARC_GNU}" = "x" ]
 then
     d=`dirname "$0"`
     ARC_GNU=`(cd "$d/.." && pwd)`
+fi
+
+# Now we can decide if do auto pull and auto checkout
+if [ -d "$ARC_GNU/toolchain/.git" ]
+then
+    git_auto="--auto"
+else
+    git_auto="--no-auto"
+fi
+echo "$git_auto"
+
+if [ "x${autopull}" = "x" ]
+then
+    autopull="${git_auto}-pull"
+fi
+
+if [ "x${autocheckout}" = "x" ]
+then
+    autocheckout="${git_auto}-checkout"
 fi
 
 # Default Linux directory if not already set. Only matters if we are building
