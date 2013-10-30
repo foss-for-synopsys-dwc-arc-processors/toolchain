@@ -538,8 +538,12 @@ then
     then
 	LINUXDIR="${ARC_GNU}"/linux
     else
-	echo "ERROR: Cannot find Linux sources."
-	exit 1
+        echo "ERROR: Cannot find Linux sources. You can download latest"\
+             "stable release from http://kernel.org and untar it as a"\
+             "sibling of this \`toolchain' directory. Directory name must"\
+             "be \`linux'. For more details read README.md file, section"\
+             "\"Obtaining sources/Using source tarball\"."
+	     exit 1
     fi
 fi
 

@@ -59,6 +59,23 @@ top level of the gcc repository.
 Getting sources
 ---------------
 
+###  Using source tarball
+
+If you use source tarball then it already contains all of the necessary sources
+except for Linux which is a separate product. Linux sources are required only
+for linux-uclibc tool chain, they are not required for baremetal elf32 tool
+chain.  Latest stable release from https://kernel.org/ is recommended, only
+versions >= 3.9 are supported. Untar linux tarball to the directory named
+\`linux' that is the sibling of this \`toolchain' directory. For example,
+assuming your current directory is \`toolchain\':
+
+    $ cd ..
+    $ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.11.6.tar.xz
+    $ tar xaf linux-3.11.6.tar.xz --transform=s/linux-3.11.6/linux/
+    $ cd toolchain
+
+### Using Git repositories
+
 You need to check out the repositories for each of the tool chain
 components (its not all one big repository), including the linux repository
 for building the tool chain. These should be peers of this toolchain
