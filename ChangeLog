@@ -1,3 +1,8 @@
+2013-11-12  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Fix reference to section from readme, invalid name has
+	been used. Also remove debug echo left from development.
+
 2013-10-30  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* build-all.sh: Decide default value for auto-pull/checkout based on
