@@ -1,3 +1,8 @@
+2013-11-20  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* extras/opella-xd/arcem-cpu.xml: New file. Contains AUX registers
+	description for the Ashling gdbserver for the Opella-XD probe.
+
 2013-11-18  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* build-elf32.sh, build-uclibc.sh: If PDF docs build failed, suggest
