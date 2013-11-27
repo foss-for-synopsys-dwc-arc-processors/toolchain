@@ -30,3 +30,24 @@ The scripts in this folder build installers using the following components:
 * openocd - Windows build of ARC OpenOCD
 * eclipse - Windows Eclipse C++ Environment with ARC Plugins
 * openjdk - JRE for Eclipse
+
+Notes cross-compiling for Windows
+---------------------------------
+
+When cross-compiling for Windows from Linux, a couple of changes need to be
+made to the `build-elf32.sh` script. Note that a native (Linux) build of the
+toolchain needs to be in a user's PATH to build newlib/libgcc/libstdc++-v3.
+
+The first is that `--host=i486-mingw32` needs to be added to the configure
+command. This sets the use of a Windows toolchain (i486-mingw32-gcc, etc.)
+to be used to build the toolchain.
+
+The second is that `gcc/auto-build.h` needs to be copied into the build
+directory after configuring but before building (as it is does not generate
+itself). This is the same file as `gcc/auto-host.h` created when building a
+native toolchain; this file can be copied and renamed. The build should
+then continue as normal.
+
+Note that cross-compiling only works for the ELF32 toolchain, so `--no-uclibc`
+should be passed as an option to `build-all.sh`.
+
