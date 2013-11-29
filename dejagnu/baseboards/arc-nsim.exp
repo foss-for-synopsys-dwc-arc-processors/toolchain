@@ -94,5 +94,10 @@ if { $tool == "gdb" } {
 	set_board_info use_gdb_stub 1
 	# GDB jumps to start_symbols after loading. Default value is `start'.
 	set_board_info gdb,start_symbol "__start"
+	set_board_info gdb,do_reload_on_run 1
+	set_board_info gdb,no_hardware_watchpoints 1
+	# This duplicates the one without 'gdb,'
+	set_board_info gdb,noargs 1
+	set_board_info gdb,nofileio 1
 }
 

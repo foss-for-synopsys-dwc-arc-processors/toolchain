@@ -596,6 +596,11 @@ then
 	echo "  finished building PDFs"
     else
 	echo "ERROR: PDF build failed."
+	echo "Advice: Use option --no-pdf if you don't need PDF documentation."
+	if ! which texi2pdf >/dev/null 2>/dev/null ; then
+	    echo "Is TeX installed? See section Prerequisites of " \
+	         "GCC Getting Started for a list of required system packages."
+	fi
 	exit 1
     fi
 

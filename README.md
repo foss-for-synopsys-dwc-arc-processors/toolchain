@@ -60,6 +60,23 @@ to find prebuilt one. Otherwise it is the same as Fedora.
 Getting sources
 ---------------
 
+###  Using source tarball
+
+If you use source tarball then it already contains all of the necessary sources
+except for Linux which is a separate product. Linux sources are required only
+for linux-uclibc tool chain, they are not required for baremetal elf32 tool
+chain.  Latest stable release from https://kernel.org/ is recommended, only
+versions >= 3.9 are supported. Untar linux tarball to the directory named
+\`linux' that is the sibling of this \`toolchain' directory. For example,
+assuming your current directory is \`toolchain\':
+
+    $ cd ..
+    $ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.11.6.tar.xz
+    $ tar xaf linux-3.11.6.tar.xz --transform=s/linux-3.11.6/linux/
+    $ cd toolchain
+
+### Using Git repositories
+
 You need to check out the repositories for each of the tool chain
 components (its not all one big repository), including the linux repository
 for building the tool chain. These should be peers of this toolchain
@@ -131,7 +148,7 @@ The most important options if `build-all.sh` are:
  * `--no-multilib` - do not build multilib standard libraries. Use it when you
    are going to work exclusively with baremetal applications for ARC700. This
    option doesn't affect uClibc tool chain.
- * `--isa-v2` - build tool chain for ARC ISA v2 cores (EM and HS) instead ARC
+ * `--isa-v2` - build tool chain for ARC ISA v2 core (ARC EM) instead of ARC
    ISA v1 cores (ARC600, ARC700).
 
 Please consult `./build-all.sh --help` to get a full list of supported options.
@@ -150,39 +167,167 @@ Build tool chain for baremetal applications for ARC ISA v1 cores (ARC600, ARC700
 
     ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT
 
+
 Usage examples
 --------------
 
-Add tool chain to PATH:
+In all cases it is expected that you have added tool chain to PATH:
 
-    export PATH=$INSTALL_ROOT/bin:$PATH
+    $ export PATH=$INSTALL_ROOT/bin:$PATH
 
-Build single source application:
 
-    arc-elf32-gcc hello_world.c -mARC700
+### ARC 700 application running on CGEN simulator
+
+Build application:
+
+    $ arc-elf32-gcc hello_world.c -mARC700
 
 Run it on CGEN-based simulator:
 
-    arc-elf32-gdb -q a.out
+    $ arc-elf32-run a.out
+    hello world
+
+Or debug it in GDB using simulator (GDB output omitted):
+
+    $ arc-elf32-gdb --quiet a.out
     (gdb) target sim
     (gdb) load
-    (gdb) run
+    (gdb) start
+    (gdb) l
+    (gdb) continue
+    hello world
+    (gdb) q
 
-Example of running target application on gdbserver-based setup like nsim_gdb,
-OpenOCD, Ashling gdbserver, etc, using nsim_gdb as an example:
 
-    $NSIM_HOME/bin/nsim_gdb :51000 -DLL=$NSIM_HOME/lib/libsim.so \
-    -props=$NSIM_HOME/systemc/configs/arc700.props
+### ARC EM application using nSIM simulator
 
-And in another console:
+Before starting nsim_gdb you need to update properties file for nSIM, in
+$NSIM_HOME/systemc/configs find a file for your core and add to it:
 
-    arc-elf32-gdb -q a.out
+    nsim_emt=1
+
+This will enable input-output operations. Use nSIM User Guide to learn about
+other nSIM properties. Then start nsim_gdb (ARC EM is used as an example):
+
+    $ $NSIM_HOME/bin/nsim_gdb :51000 -DLL=$NSIM_HOME/lib/libsim.so \
+    -props=$NSIM_HOME/systemc/configs/nsim_av2em11.props
+
+And in another console (GDB output is omitted):
+
+    $ arc-elf32-gcc -mEM -g hello_world.c
+    $ arc-elf32-gdb --quiet a.out
     (gdb) target remote :51000
     (gdb) load
+    (gdb) break main
+    (gdb) break exit
     (gdb) continue
+    (gdb) continue
+    (gdb) q
 
 Please note that in case of gdbserver-based usage all execution, input and
-output happens on the side of host that runs gdbserver.
+output happens on the side of host that runs gdbserver, so "hello world" string
+will be printed on the server side.
+
+
+### ARC EM application running on EM Starter Kit
+
+> A custom linker script is required to link applications for EM Starter Kit.
+> Refer to the section "Building application" of our EM Starter Kit Wiki page:
+> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+
+Download and build the OpenOCD port for ARC as described here:
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.7.0-dev-00222/doc/README.ARC
+
+Run OpenOCD:
+
+    $ openocd -f /usr/local/share/openocd/scripts/target/snps_starter_kit_arc-em.cfg \
+        -c init -c halt -c 'reset halt'
+
+Compile and run:
+
+    $ arc-elf32-gcc -mEM -g simple.c
+    $ arc-elf32-gdb --quiet a.out
+    (gdb) target remote :3333
+    (gdb) set remotetimeout 15
+    (gdb) load
+    (gdb) break main
+    (gdb) continue
+    (gdb) step
+    (gdb) next
+    (gdb) break exit
+    (gdb) continue
+
+
+### Debugging applications using Ashling Opella-XD debug probe
+
+> A custom linker script is required to link applications for EM Starter Kit.
+> Refer to the section "Building application" of our EM Starter Kit Wiki page:
+> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+> For different hardware configurations other changes might be required.
+
+> The Ashling Opella-XD debug probe and it's drivers are not part of the GNU
+> tools distribution and should be obtained separately.
+
+The Ashling Opella-XD drivers distribution contain gdbserver for GNU Tools. Start
+it with following command:
+
+    $ ./ash-arc-gdb-server --jtag-frequency 8mhz --device arc \
+        --arc-reg-file <core.xml>
+
+Where <core.xml> is a path to XML file describing AUX registers of target core.
+The Ashling drivers distribution contain files for ARC 600 (arc600-core.xml)
+and ARC 700 (arc700-core.xml). For EM an additional download is required.
+Download arc-opella-em.xml from here:
+https://gist.github.com/anthony-kolesov/7193146.
+
+The Ashling gdbserver might emit error messages like "Error: Core is running".
+Those messages are harmless and do not affect the debugging experience.
+
+Then start GDB. *Before* connecting to an Opella-XD target it is essential to specify the architecture of the target. For EM type in GDB:
+
+    (gdb) set arc opella-target arcem
+
+(other possibilites are arc600 and arc700).
+
+Then connect to the target as with the OpenOCD/Linux gdbserver. For example a full session with an Opella-XD controlling an ARC EM target could start as follows:
+
+    $ arc-elf32-gcc -mEM -g simple.c
+    $ arc-elf32-gdb --quiet a.out
+    (gdb) set arc opella-target arcem
+    (gdb) set target remote :2331
+    (gdb) load
+    (gdb) break main
+    (gdb) continue
+    (gdb) break exit
+    (gdb) continue
+
+Available Opella targets are: *arc600*, *arc700* and *arcem*. The same target
+is used for both EM4 and EM6, so registers that are not present en EM4 template
+(for example IC_CTRL) still will be presented by GDB. Their values will be
+shown as zeros and setting them will not affect core, nor will cause any error.
+
+
+### Application running on Linux on ARC 700
+
+Compile application:
+
+    $ arc-linux-gcc -g -o hello_world hello_world.c
+
+Copy it to the NFS share, or place it in RAMFS, or make it available to target
+system in any way other way. Start gdbserver on target system:
+
+    [ARCLinux] $ gdbserver :51000 hello_world
+
+Start GDB on host:
+
+    $ arc-linux-gdb --quiet hello_world
+    (gdb) set sysroot <buildroot/output/target>
+    (gdb) target remote 192.168.0.2:51000
+    (gdb) break main
+    (gdb) continue
+    (gdb) continue
+    (gdb) quit
+
 
 Testing the tool chain
 ----------------------
