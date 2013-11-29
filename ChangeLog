@@ -1,3 +1,8 @@
+2013-11-29  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* symlink-dirs.sh: New script.
+	* symlink-all.sh: Use it.
+
 2013-09-16  Anton Kolesov <akolesov@synopsys.com>
 
 	* build-all.sh: Add option --[no-]strip to strip host binaries from symbols.
