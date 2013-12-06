@@ -74,6 +74,10 @@
 #    matches multilib and endian options. This option makes sense only when
 #    target board is arc-nsim.
 
+# --elf32-hostlink-library <path/to/hostlink/library>
+
+#    Path to hostlink library archive. Required for test runs with Metaware.
+
 # --jobs <count>
 
 #     Specify that parallel make should run at most <count> jobs. The default
@@ -135,6 +139,7 @@ ARC_TEST_ADDR_ELF32=
 ARC_TEST_ADDR_UCLIBC=aa4_32
 ARC_MULTILIB_OPTIONS=""
 ARC_NSIM_PROPS="${NSIM_HOME}/systemc/configs/nsim_a700.props"
+ARC_HOSTLINK_LIBRARY=
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
 jobs=${make_load}
@@ -185,6 +190,11 @@ case ${opt} in
     shift
     ARC_NSIM_PROPS=$1
     ;;
+
+    --elf32-hostlink-library)
+	shift
+	ARC_HOSTLINK_LIBRARY=$1
+	;;
 
     --jobs)
 	shift
@@ -310,6 +320,7 @@ case ${opt} in
         echo "                      [--elf32-target-addr <address>]"
         echo "                      [--uclibc-target-addr <address>]"
         echo "                      [--elf32-nsim-props <path>]"
+        echo "                      [--elf32-hostlink-library <path>]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
         echo "                      [--big-endian | --little-endian]"
@@ -380,6 +391,11 @@ export DO_NEWLIB
 export DO_LIBSTDCPP
 export DO_SIM
 export DO_GDB
+
+if [ "x${ARC_HOSTLINK_LIBRARY}" != x ]
+then
+    export ARC_HOSTLINK_LIBRARY
+fi
 
 status=0
 
