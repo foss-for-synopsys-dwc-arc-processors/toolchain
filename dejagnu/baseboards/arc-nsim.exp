@@ -46,7 +46,7 @@ if { $tool == "gdb" } {
 # Any multilib options are set in an environment variable.
 process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
 
-set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
+set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
