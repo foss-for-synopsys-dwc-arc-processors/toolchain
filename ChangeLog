@@ -1,5 +1,10 @@
 2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
 
+	* run-tests.sh: Make error message more clear when invalid command
+	line argument is specified.
+
+2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
+
 	* dejagnu/baseboards/arc-nsim.exp: Use bigger stack section.
 
 2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
