@@ -1,7 +1,13 @@
+2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* symlink-dirs.sh: Remove faulty script.
+	* symlink-all.sh: Revert previous commit.
+
 2013-11-29  Joern Rennecke  <joern.rennecke@embecosm.com>
 
 	* symlink-dirs.sh: New script.
 	* symlink-all.sh: Use it.
+
 2013-11-27  Simon Cook  <simon.cook@embecosm.com>
 
 	* windows-installer/ChangeLog: Describe steps to cross-compile ELF32
