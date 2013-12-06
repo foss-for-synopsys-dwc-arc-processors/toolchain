@@ -1,3 +1,7 @@
+2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-nsim.exp: Use bigger stack section.
+
 2013-11-20  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* extras/opella-xd/arcem-cpu.xml: New file. Contains AUX registers
