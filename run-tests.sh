@@ -303,7 +303,8 @@ case ${opt} in
 	;;
 
     ?*)
-	echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
+        echo "Unknown option \`$opt' specified."
+        echo "Usage: ./run-tests.sh [--source-dir <source_dir>]"
         echo "                      [--elf32-target-board <board>]"
         echo "                      [--uclibc-target-board <board>]"
         echo "                      [--elf32-target-addr <address>]"
