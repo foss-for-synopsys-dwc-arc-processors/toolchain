@@ -1,3 +1,10 @@
+2013-12-24  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* run-tests.sh: Add hostlink library option.
+	* dejagnu/mdbsim.sh: New file, shell wrapper around mdb.
+	* dejagnu/baseboards/arc-sim-mdb.exp: New file, board definition to
+	use Metaware Debugger as an interface to nSIM.
+
 2013-12-20  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* arc-init.sh: Remove extra bashbang.
