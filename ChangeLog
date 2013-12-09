@@ -1,3 +1,8 @@
+2013-12-09  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* dejagnu/nsim-extra.exp: Switch to new nsimdrv application instead of
+	obsolete nsim_gdb.
+
 2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* run-tests.sh: Make error message more clear when invalid command
