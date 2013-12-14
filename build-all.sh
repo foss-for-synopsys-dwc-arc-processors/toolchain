@@ -247,6 +247,8 @@
 # you want to redo bits, use the underlying scripts, or go into the relevant
 # directories and do it by hand!
 
+#Source to specify the custom tools depending on the OS
+. settings.sh
 
 # ------------------------------------------------------------------------------
 # Unset variables, which if inherited as environment variables from the caller
@@ -327,7 +329,7 @@ case "x${DISABLE_MULTILIB}" in
 esac
 
 
-if [ x`uname -o` = "xMsys" ]
+if [ x`${UNAME} -o` = "xMsys" ]
 then
     DO_SIM="--no-sim"
 else

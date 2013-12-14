@@ -127,7 +127,7 @@ echo "Test board:         ${ARC_TEST_BOARD_UCLIBC}"          >> ${readme}
 echo "Test IP address:    ${ARC_TEST_ADDR_UCLIBC}"           >> ${readme}
 echo "Multilib options:   ${ARC_MULTILIB_OPTIONS}"           >> ${readme}
 echo "Commfile contents:"                                    >> ${readme}
-sed < ${commfile} -e 's/^/    /'                             >> ${readme}
+${SED} < ${commfile} -e 's/^/    /'                             >> ${readme}
 
 # Run tests
 status=0

@@ -60,6 +60,7 @@ ARC_UNPACKED_NAME=arc_initramfs_22_abi-v3-0.9.34
 d=`dirname "$0"`
 ARC_GNU=`(cd "$d/.." && pwd)`
 . "${ARC_GNU}"/toolchain/define-release.sh
+. "${ARC_GNU}"/toolchain/settings.sh
 
 TOOLDIR=/opt/arc-${RELEASE}
 # Ensure we have the right tool chain on the path!
@@ -97,7 +98,7 @@ cp -df ${TOOLDIR}/arc-linux-uclibc/lib/*.so* \
       arc_initramfs/lib >> $logfile 2>&1
 cp -df ${TOOLDIR}/arc-linux-uclibc/lib/uclibc_nonshared.a \
       arc_initramfs/lib >> $logfile 2>&1
-sed -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
+${SED} -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
 
 # As a sanity check remove the busybox images from initramfs. This means a
 # failed install of busybox will show up!
@@ -157,7 +158,7 @@ else
 fi
 # Temporary patch to deal with compiler issue!
 echo "Patching LINUX .config"
-sed -i .config -e 's/COMPILE="arc-elf32-"/COMPILE="arc-linux-uclibc-"/'
+${SED} -i .config -e 's/COMPILE="arc-elf32-"/COMPILE="arc-linux-uclibc-"/'
 
 if make ARCH=arc >> $logfile 2>&1
 then

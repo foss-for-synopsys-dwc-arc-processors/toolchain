@@ -85,6 +85,9 @@
 # $1 - build directory
 # $2 - tool to test (e.g. "binutils" will run "check-binutils"
 # $3 - log file
+
+. ${ARC_GNU}/toolchain/settings.sh
+
 run_check () {
     bd=$1
     tool=$2
@@ -136,7 +139,7 @@ save_res () {
 
         # Report the summary to the user
 	echo
-	sed -n -e '/Summary/,$p' < ${rd}/${resbase}.sum | grep '^#' || true
+	${SED} -n -e '/Summary/,$p' < ${rd}/${resbase}.sum | grep '^#' || true
 	echo
     else
 	# Silent failure
