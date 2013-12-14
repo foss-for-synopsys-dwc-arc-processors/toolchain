@@ -39,7 +39,7 @@ fi
 # Get list of x86/x86_64 executables
 files=$(find -type f -exec file {} \; | \
     grep 'ELF 32-bit LSB executable, Intel 80386\|ELF 64-bit LSB executable, x86-64' | \
-    sed -e 's/:.*$//')
+    ${SED} -e 's/:.*$//')
 
 for f in $files; do
     echo $f
@@ -52,7 +52,7 @@ for f in $files; do
     RELDIR=${f:2}
     RELDIR=$(echo ${RELDIR//[^\/]})
     RELDIR=$(echo ${RELDIR//\//\/..})
-    RPATH=$(echo "${RPATH}" | sed "s#.*\[${REPLACEDIR}\(.*\)\]#\$ORIGIN${RELDIR}\1#")
+    RPATH=$(echo "${RPATH}" | ${SED} "s#.*\[${REPLACEDIR}\(.*\)\]#\$ORIGIN${RELDIR}\1#")
     patchelf --set-rpath "${RPATH}" ${f}
 done
 
@@ -65,7 +65,7 @@ else
 fi
 uclibc_libc_path=${arch}-linux-uclibc/lib/libc.so
 if [ -f $uclibc_libc_path ]; then
-    sed -e "s#${REPLACEDIR}/${arch}-linux-uclibc/lib/##g" < \
+    ${SED} -e "s#${REPLACEDIR}/${arch}-linux-uclibc/lib/##g" < \
         $uclibc_libc_path > _libc.so
     mv _libc.so $uclibc_libc_path
 fi
