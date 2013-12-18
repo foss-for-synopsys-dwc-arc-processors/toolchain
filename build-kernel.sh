@@ -60,7 +60,7 @@ ARC_UNPACKED_NAME=arc_initramfs_22_abi-v3-0.9.34
 d=`dirname "$0"`
 ARC_GNU=`(cd "$d/.." && pwd)`
 . "${ARC_GNU}"/toolchain/define-release.sh
-. "${ARC_GNU}"/toolchain/settings.sh
+. "${ARC_GNU}"/toolchain/arc-init.sh
 
 TOOLDIR=/opt/arc-${RELEASE}
 # Ensure we have the right tool chain on the path!

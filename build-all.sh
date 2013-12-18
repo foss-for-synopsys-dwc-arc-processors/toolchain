@@ -238,6 +238,10 @@
 #     Install stripped host binaries. Target libraries are not affected.
 #     Default is --no-strip.
 
+# --sed-tool
+
+#     Specify the path of the sed to use.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -246,9 +250,6 @@
 # script. If you are using this script, you need to run the whole thing. If
 # you want to redo bits, use the underlying scripts, or go into the relevant
 # directories and do it by hand!
-
-#Source to specify the custom tools depending on the OS
-. settings.sh
 
 # ------------------------------------------------------------------------------
 # Unset variables, which if inherited as environment variables from the caller
@@ -267,6 +268,7 @@ unset jobs
 unset load
 unset DISABLEWERROR
 unset HOST_INSTALL
+unset SED
 
 # In bash we typically write function blah_blah () { }. However Ubuntu default
 # /bin/sh -> dash doesn't recognize the "function" keyword. Its exclusion
@@ -328,14 +330,6 @@ case "x${DISABLE_MULTILIB}" in
 	;;
 esac
 
-
-if [ x`${UNAME} -o` = "xMsys" ]
-then
-    DO_SIM="--no-sim"
-else
-    DO_SIM="--sim"
-fi
-
 # Parse options
 until
 opt=$1
@@ -380,7 +374,7 @@ case ${opt} in
 	autopull=$1
 	;;
 
-	--external-download | --no-external-download)
+    --external-download | --no-external-download)
 	external_download=$1
 	;;
 
@@ -489,6 +483,11 @@ case ${opt} in
         HOST_INSTALL=install
         ;;
 
+    --sed-tool)
+	shift
+	SED=$1
+        ;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -518,6 +517,7 @@ case ${opt} in
 	echo "                      [--rel-rpaths | --no-rel-rpaths]"
 	echo "                      [--disable-werror | --no-disable-werror]"
 	echo "                      [--strip | --no-strip]"
+	echo "                      [--sed-tool <tool>"
 	exit 1
 	;;
 
@@ -528,6 +528,26 @@ esac
 do
     shift
 done
+
+SED=$SED
+if [ x`uname -s` = "xMsys" ]
+then
+    DO_SIM="--no-sim"
+elif [ x`uname -s` = "xDarwin" ]
+then
+    DO_SIM="--no-sim"
+    if [ "x${SED}" == "x" ] 
+    then
+      #You can install gsed with 'brew install gnu-sed'
+      SED=gsed
+    fi
+else
+    DO_SIM="--sim"
+    if [ "x${SED}" == "x" ] 
+    then
+      SED=sed
+    fi
+ fi
 
 # Default source directory if not already set
 if [ "x${ARC_GNU}" = "x" ]
@@ -652,6 +672,7 @@ if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
 then
     export CFLAGS_FOR_TARGET
 fi
+export SED
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
