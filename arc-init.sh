@@ -86,7 +86,23 @@
 # $2 - tool to test (e.g. "binutils" will run "check-binutils"
 # $3 - log file
 
-. ${ARC_GNU}/toolchain/settings.sh
+#!/bin/sh
+
+#Depending of the OS pick the right sed tool
+SED=$SED
+if [ "`uname -s`" == "Darwin" ]
+then
+  #gsed is included as part gnu-sed package, you can install it with homebrew
+  #brew install gnu-sed
+  if [ "x${SED}" == "x" ]; then
+    SED=gsed
+  fi
+else
+  if [ "x${SED}" == "x" ]; then
+    SED=sed
+  fi
+fi
+export SED
 
 run_check () {
     bd=$1
