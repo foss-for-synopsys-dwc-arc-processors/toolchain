@@ -165,13 +165,13 @@ then
     sim_build=all-sim
     # CGEN doesn't have install-strip target.
     sim_install=install-sim
-    sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
-	-e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
+    ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+	   -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
 else
     sim_config=--disable-sim
     sim_build=
     sim_install=
-    sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+    ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 	-e 's!gdb_sim=../sim/arc/libsim.a!# gdb_sim=../sim/arc/libsim.a!'
 fi
 
@@ -253,7 +253,7 @@ else
 fi
 
 # Restore GDB config for simulator (does nothing if the change was not made).
-sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
     -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
 
 # Optionally build and install PDF documentation

@@ -282,30 +282,30 @@ make distclean >> "${logfile}" 2>&1 || true
 # uClibc 0.9.34 onwards use defconfig
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
 then
-    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
-        -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-        -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-        -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
-        < "${ARC_GNU}"/uClibc/arc_config > .config
+    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
+           -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+           -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+           -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
+           < "${ARC_GNU}"/uClibc/arc_config > .config
 else
     make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
-    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
-        -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-        -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-        -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
-	-i .config
+    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
+           -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+           -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
+           -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
+	   -i .config
 fi
 
 # Patch .config for big endian for use with correct flags
 if [ "${ARC_ENDIAN}" = "big" ]
 then
-    sed -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
-        -e 's@# ARCH_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
-        -i .config
+    ${SED} -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
+           -e 's@# ARCH_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
+           -i .config
 else
-    sed -e 's@ARCH_BIG_ENDIAN=y@# ARCH_BIG_ENDIAN is not set@' \
-        -e 's@# ARCH_LITTLE_ENDIAN is not set@ARCH_LITTLE_ENDIAN=y@' \
-        -i .config
+    ${SED} -e 's@ARCH_BIG_ENDIAN=y@# ARCH_BIG_ENDIAN is not set@' \
+           -e 's@# ARCH_LITTLE_ENDIAN is not set@ARCH_LITTLE_ENDIAN=y@' \
+           -i .config
 fi
 
 if make ARCH=${arch} V=1 install_headers >> "${logfile}" 2>&1
@@ -391,30 +391,30 @@ cd ${uclibc_build_dir}
 # headers will have been moved by the previous header install.
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
 then
-    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
-        -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-        -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-        -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
-        < "${ARC_GNU}"/uClibc/arc_config > .config
+    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
+           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+           -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
+           < "${ARC_GNU}"/uClibc/arc_config > .config
 else
     make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
-    sed -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
-        -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-        -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-        -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
-        -i .config
+    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
+           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+           -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
+           -i .config
 fi
 
 # Patch .config for big endian for use with correct flags
 if [ "${ARC_ENDIAN}" = "big" ]
 then
-    sed -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
-        -e 's@# ARCH_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
-        -i .config
+    ${SED} -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
+           -e 's@# ARCH_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
+           -i .config
 else 
-   sed -e 's@ARCH_BIG_ENDIAN=y@# ARCH_BIG_ENDIAN is not set@' \
-        -e 's@# ARCH_LITTLE_ENDIAN is not set@ARCH_LITTLE_ENDIAN=y@' \
-        -i .config
+    ${SED} -e 's@ARCH_BIG_ENDIAN=y@# ARCH_BIG_ENDIAN is not set@' \
+           -e 's@# ARCH_LITTLE_ENDIAN is not set@ARCH_LITTLE_ENDIAN=y@' \
+           -i .config
 fi
 
 if make ARCH=${arch} clean >> "${logfile}" 2>&1
