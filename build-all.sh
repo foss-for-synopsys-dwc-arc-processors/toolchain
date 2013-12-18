@@ -311,6 +311,7 @@ rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
 HOST_INSTALL=install
+SED=sed
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -529,25 +530,17 @@ do
     shift
 done
 
-SED=$SED
 if [ x`uname -s` = "xMsys" ]
 then
     DO_SIM="--no-sim"
 elif [ x`uname -s` = "xDarwin" ]
 then
     DO_SIM="--no-sim"
-    if [ "x${SED}" == "x" ] 
-    then
-      #You can install gsed with 'brew install gnu-sed'
-      SED=gsed
-    fi
+    #You can install gsed with 'brew install gnu-sed'
+    SED=gsed
 else
     DO_SIM="--sim"
-    if [ "x${SED}" == "x" ] 
-    then
-      SED=sed
-    fi
- fi
+fi
 
 # Default source directory if not already set
 if [ "x${ARC_GNU}" = "x" ]
