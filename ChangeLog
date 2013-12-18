@@ -1,3 +1,13 @@
+2013-12-17  Fernando Ortiz <dev@nandub.info>
+
+	* arc-init.sh: Specify the sed tool depending on the OS
+	* build-all.sh: Add --sed-tool option.  Change sed to ${SED}, change
+	uname -o to uname -s, -s is more portable than -o 
+	* build-elf32.sh: Change sed to ${SED}
+	* build-uclibc.sh: Change sed to ${SED}
+	* rel-rpaths.sh: Change sed to ${SED}
+	* run-uclibc-tests.sh: Change sed to ${SED}
+
 2013-12-09  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* dejagnu/nsim-extra.exp: Switch to new nsimdrv application instead of
