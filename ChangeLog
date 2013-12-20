@@ -1,3 +1,8 @@
+2013-12-20  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* arc-init.sh: Remove extra bashbang.
+	* build-all.sh: Ensure that option --sed-tool will be used.
+
 2013-12-17  Fernando Ortiz <dev@nandub.info>
 
 	* arc-init.sh: Specify the sed tool depending on the OS
