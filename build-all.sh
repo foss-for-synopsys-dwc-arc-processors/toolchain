@@ -331,6 +331,19 @@ case "x${DISABLE_MULTILIB}" in
 	;;
 esac
 
+
+if [ x`uname -s` = "xMsys" ]
+then
+    DO_SIM="--no-sim"
+elif [ x`uname -s` = "xDarwin" ]
+then
+    DO_SIM="--no-sim"
+    #You can install gsed with 'brew install gnu-sed'
+    SED=gsed
+else
+    DO_SIM="--sim"
+fi
+
 # Parse options
 until
 opt=$1
@@ -518,7 +531,7 @@ case ${opt} in
 	echo "                      [--rel-rpaths | --no-rel-rpaths]"
 	echo "                      [--disable-werror | --no-disable-werror]"
 	echo "                      [--strip | --no-strip]"
-	echo "                      [--sed-tool <tool>"
+	echo "                      [--sed-tool <tool>]"
 	exit 1
 	;;
 
@@ -529,18 +542,6 @@ esac
 do
     shift
 done
-
-if [ x`uname -s` = "xMsys" ]
-then
-    DO_SIM="--no-sim"
-elif [ x`uname -s` = "xDarwin" ]
-then
-    DO_SIM="--no-sim"
-    #You can install gsed with 'brew install gnu-sed'
-    SED=gsed
-else
-    DO_SIM="--sim"
-fi
 
 # Default source directory if not already set
 if [ "x${ARC_GNU}" = "x" ]
