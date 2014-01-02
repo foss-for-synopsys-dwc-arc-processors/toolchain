@@ -43,7 +43,7 @@ files=$(find -type f -exec file {} \; | \
 
 for f in $files; do
     echo $f
-    RPATH=$(readelf -d "${f}" | grep 'Library rpath')
+    RPATH=$(readelf -d "${f}" | grep 'Library rpath\|Library runpath')
     # If no RPATH, continue
     if [ $? -gt 0 ]; then
 	continue
