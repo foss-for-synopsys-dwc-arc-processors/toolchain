@@ -49,7 +49,7 @@ for f in $files; do
 	continue
     fi
     # Build a relative directory
-    RELDIR=${f:2}
+    RELDIR=${f#./}
     RELDIR=$(echo ${RELDIR//[^\/]})
     RELDIR=$(echo ${RELDIR//\//\/..})
     RPATH=$(echo "${RPATH}" | ${SED} "s#.*\[${REPLACEDIR}\(.*\)\]#\$ORIGIN${RELDIR}\1#")

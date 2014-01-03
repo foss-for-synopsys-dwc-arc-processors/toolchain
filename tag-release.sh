@@ -49,9 +49,11 @@
 # ongoing development we'll need to checkout the dev branch.
 
 # We take a simplistic view of where ARC_GNU is
-pushd .. > /dev/null 2>&1
-export ARC_GNU=`pwd`
-popd > /dev/null 2>&1
+d=`pwd`
+cd .. > /dev/null 2>&1
+ARC_GNU=`pwd`
+export ARC_GNU
+cd ${d} > /dev/null 2>&1
 
 # Get the argument
 if [ $# != 1 ]
@@ -74,12 +76,13 @@ if [ "x${LINUXDIR}" = "x" ]
 then
     if [ -d "${ARC_GNU}"/linux ]
     then
-	export LINUXDIR="${ARC_GNU}"/linux
+	LINUXDIR="${ARC_GNU}"/linux
     else
 	echo "ERROR: Cannot find Linux sources."
 	exit 1
     fi
 fi
+export LINUXDIR
 
 # Make sure we are up to date. It is possible we are detached, so pull will
 # fail, but that doesn't matter.
@@ -98,7 +101,8 @@ echo "All repos checked out"
 # Sanity check that each branch has a remote
 for repo in cgen binutils gcc gdb newlib uClibc toolchain
 do
-    pushd ../${repo} > /dev/null 2>&1
+    d=`pwd`
+    cd ../${repo} > /dev/null 2>&1
     if ! branch=`git symbolic-ref -q HEAD --short`
     then
 	echo "ERROR: $repo is in detached head mode"
@@ -110,13 +114,14 @@ do
 	echo "ERROR: branch ${branch} of ${repo} has no uptream"
 	exit 1
     fi
-    popd > /dev/null 2>&1
+    cd ${d} > /dev/null 2>&1
 done
 
 # Tag and push the tags for each component (not Linux)
 for repo in cgen binutils gcc gdb newlib uClibc
 do
-    pushd ../${repo} > /dev/null 2>&1
+    d=`pwd`
+    cd ../${repo} > /dev/null 2>&1
     branch=`git symbolic-ref -q HEAD --short`
     remote=`git config branch.${branch}.remote`
 
@@ -132,7 +137,7 @@ do
 	exit 1
     fi
 
-    popd  > /dev/null 2>&1
+    cd ${d} > /dev/null 2>&1
 done
 
 # Get the remote for the current toolchain branch

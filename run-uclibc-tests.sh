@@ -91,7 +91,8 @@
 # Run UCLIBC regression and gather results. Gathering results is a separate
 # function because of the variation in the location and number of results
 # files for each tool.
-export DEJAGNU=${ARC_GNU}/toolchain/site.exp
+DEJAGNU=${ARC_GNU}/toolchain/site.exp
+export DEJAGNU
 echo "Running uClibc Linux tests"
 
 # Create the uClibc log file and results directory
@@ -114,7 +115,8 @@ fi
 # Create a file of start up commands for GDB
 commfile="${ARC_GNU}/commfile"
 echo "set sysroot /opt/arc-4.4-gdb-7.5/arc-linux-uclibc" >${commfile}
-export ARC_GDB_COMMFILE=${commfile}
+ARC_GDB_COMMFILE=${commfile}
+export ARC_GDB_COMMFILE
 
 # Create a README with info about the test
 echo "Test of UCLIBC tool chain run" > ${readme}

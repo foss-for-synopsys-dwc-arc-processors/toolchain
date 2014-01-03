@@ -180,7 +180,8 @@ fi
 # (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
 # and $RESDIR if they don't exist.
 d=`dirname "$0"`
-export ARC_GNU=`(cd "$d/.." && pwd)`
+ARC_GNU=`(cd "$d/.." && pwd)`
+export ARC_GNU
 . ${ARC_GNU}/toolchain/define-release.sh
 
 # Set up a logfile
