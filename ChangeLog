@@ -1,5 +1,14 @@
 2014-01-24  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* rel-rpaths.sh: Fixed remaining bash specific constructs which
+	upset dash.
+
+2014-01-03  Vineet Gupta <vgupta@synopsys.com>
+
+	* rel-paths.sh: Make rel-rpath.sh future safe (RPATH vs. RUNPATH).
+
+2014-01-03  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* arc-clone-all.sh: Remove bash specific constructs.
 	* arc-init.sh: Likewise.
 	* build-uclibc.sh: Likewise.

@@ -24,6 +24,15 @@
 REPLACEDIR=${INSTALLDIR}
 cd ${REPLACEDIR}
 
+# Get a suitable SED
+if [ x`uname -s` = "xDarwin" ]
+then
+    # You can install gsed with 'brew install gnu-sed'
+    SED=gsed
+else
+    SED=sed
+fi
+
 if ! [ -d bin ]; then
     echo "\`$INSTALLDIR' is not a toolchain installation directory."
     exit 1
@@ -49,9 +58,7 @@ for f in $files; do
 	continue
     fi
     # Build a relative directory
-    RELDIR=${f#./}
-    RELDIR=$(echo ${RELDIR//[^\/]})
-    RELDIR=$(echo ${RELDIR//\//\/..})
+    RELDIR=`echo ${f#./} | sed -e 's#[^/]##g' | ${SED} -e 's#/#/..#g'`
     RPATH=$(echo "${RPATH}" | ${SED} "s#.*\[${REPLACEDIR}\(.*\)\]#\$ORIGIN${RELDIR}\1#")
     patchelf --set-rpath "${RPATH}" ${f}
 done
