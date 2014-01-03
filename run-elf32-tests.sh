@@ -91,7 +91,8 @@
 # Run ELF32 regression and gather results. Gathering results is a separate
 # function because of the variation in the location and number of results
 # files for each tool.
-export DEJAGNU=${ARC_GNU}/toolchain/site.exp
+DEJAGNU=${ARC_GNU}/toolchain/site.exp
+export DEJAGNU
 echo "Running elf32 tests"
 
 # Create the ELF log file and results directory

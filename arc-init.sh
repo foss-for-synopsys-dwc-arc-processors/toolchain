@@ -190,10 +190,11 @@ fi
 bash_cmd=$(which bash)
 if [ "x${bash_cmd}" != "x" ]
 then
-    export SHELL=${bash_cmd}
+    SHELL=${bash_cmd}
 else
-    export SHELL=$(which sh)
+    SHELL=$(which sh)
 fi
+export SHELL
 
 # If using bash, if the user ran 'bash -x build-rel.sh' make it also use -x
 # for the scripts we invoke.

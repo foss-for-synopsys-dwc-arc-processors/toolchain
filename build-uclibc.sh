@@ -373,7 +373,8 @@ fi
 # Add the newly created stage 1 tool chain to the path for now, but remember
 # the old path for restoring later.
 oldpath=${PATH}
-export PATH=${tmp_install_dir}/bin:$PATH
+PATH=${tmp_install_dir}/bin:$PATH
+export PATH
 
 # -----------------------------------------------------------------------------
 # Build uClibc using the stage 1 compiler.
@@ -505,7 +506,8 @@ else
 fi
 
 # Add the newly created tool chain to the path
-export PATH=${INSTALLDIR}/bin:$PATH
+PATH=${INSTALLDIR}/bin:$PATH
+export PATH
 
 # -----------------------------------------------------------------------------
 # Build and install GDB
@@ -560,7 +562,8 @@ else
     exit 1
 fi
 
-export CC=${arche}-linux-uclibc-gcc
+CC=${arche}-linux-uclibc-gcc
+export CC
 if make ${PARALLEL} \
     CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
     >> "${logfile}" 2>&1
