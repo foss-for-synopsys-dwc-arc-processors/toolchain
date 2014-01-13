@@ -40,21 +40,31 @@ if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
    set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) -Wl,--no-whole-archive"
 }
 
+# Set common defaults
+set xarchflags "-on nsim_isa_spfp -on nsim_isa_dpfp"
+
+# Big-endian?
+if [ string match arceb-* $target_triplet ] {
+    set xarchflags "$xarchflags -on nsim_isa_big_endian"
+}
+
 # EM is default
-set xarchflags "-Xdpfp -Xspfp -Xlib"
 if { [string first ARC700 "$multilib_opts"] == 0 } {
-    set xarchflags "-a7 $xarchflags"
+    set xarchflags "$xarchflags -on nsim_isa_a700 -on nsim_isa_sat -on nsim_isa_mpy32"
 } elseif { [string first HS "$multilib_opts"] == 0 } {
-    set xarchflags "-av2hs $xarchflags"
+    set xarchflags "$xarchflags -on nsim_isa_av2hs10 -on nsim_isa_ll64_option -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
 } else {
-    set xarchflags "-av2em $xarchflags"
+    set xarchflags "$xarchflags -on nsim_isa_av2em11 -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
 }
 
 # Setup the MetaWare simulator.
-set SIM_PATH "[file dirname $env(DEJAGNU)]/dejagnu"
-set_board_info sim "${SIM_PATH}/mdbsim.sh ${xarchflags} "
+set_board_info sim "$::env(NSIM_HOME)/bin/nsimdrv ${xarchflags}"
 set_board_info sim_time_limit 120
 set_board_info is-simulator 1
+
+# nsimdrv doesn't return application's exit code as it's own exit code, thus it
+# is required to use status wrapper, that will print "***EXIT <number>" message.
+set_board_info needs_status_wrapper 1
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
