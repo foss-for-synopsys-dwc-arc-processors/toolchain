@@ -1,3 +1,11 @@
+2014-01-13  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* dejagnu/mdbsim.sh: Remove file, because it is useless now
+	* dejagnu/baseboards/arc-sim-mdb-.exp: Rename to...
+	* dejagnu/baseboards/arc-sim-nsimdrv.exp: ... this. Also invoke
+	nsimdrv application directly, instead of using custom wrapper script
+	and MDB.
+
 2014-01-05  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* arc-external.sh: Update versions: GMP 4.3.2 -> 5.1.3,
