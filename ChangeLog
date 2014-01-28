@@ -1,3 +1,9 @@
+2014-01-28  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Replace --isa-* options with --cpu option.
+	* build-uclibc.sh: Update commentary, only arc700 and HS are
+	supported.
+
 2014-01-13  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* dejagnu/mdbsim.sh: Remove file, because it is useless now
