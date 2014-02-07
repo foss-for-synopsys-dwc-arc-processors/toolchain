@@ -1,3 +1,8 @@
+2014-02-07  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-uclibc.sh: Build gdbserver with -O3 instead of -O0, use
+	CFLAGS_FOR_TARGET properly for gdbserver.
+
 2014-01-28  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* build-all.sh: Replace --isa-* options with --cpu option.
