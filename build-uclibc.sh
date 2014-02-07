@@ -565,7 +565,7 @@ fi
 CC=${arche}-linux-uclibc-gcc
 export CC
 if make ${PARALLEL} \
-    CFLAGS="${CFLAGS} -static -fcommon -mno-sdata" \
+    CFLAGS="-static -fcommon -mno-sdata -O3 ${CFLAGS_FOR_TARGET}" \
     >> "${logfile}" 2>&1
 then
     echo "  finished building GDBSERVER to run on an arc"
