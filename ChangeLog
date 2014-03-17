@@ -1,3 +1,7 @@
+2014-03-17  Anton Kolesov  <anton.kolesov@synposys.com>
+
+	* arc-versions.sh: Bump to Linux branch arc-3.13.
+
 2014-03-17  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* build-all.sh: Add option --release-name. Default to GCC Git revision.
