@@ -245,9 +245,9 @@
 
 # --release-name
 
-#     Name of this releases. Default value is "git describe --always" of the
-#     gcc repository. If build is done from the source tarball, then current
-#     date is used.
+#     Name of this releases. Default value is "git describe --tag --always" of
+#     the gcc repository. If build is done from the source tarball, then
+#     current date is used.
 
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
@@ -592,7 +592,7 @@ if [ "x$RELEASE_NAME" = "x" ]
 then
     if [ "x$is_tarball" = "xno" ]
     then
-	RELEASE_NAME="GCC $(git --git-dir=${ARC_GNU}/gcc/.git describe --always)"
+	RELEASE_NAME="GCC $(git --git-dir=${ARC_GNU}/gcc/.git describe --tag --always)"
     else
 	RELEASE_NAME="built on $(date +%Y%m%d)"
     fi
