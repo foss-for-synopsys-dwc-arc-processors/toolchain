@@ -46,6 +46,7 @@
 #                  [--rel-rpaths | --no-rel-rpaths]
 #                  [--disable-werror | --no-disable-werror]
 #                  [--strip | --no-strip]
+#                  [--release-name <release>]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -242,6 +243,12 @@
 
 #     Specify the path of the sed to use.
 
+# --release-name
+
+#     Name of this releases. Default value is "git describe --always" of the
+#     gcc repository. If build is done from the source tarball, then current
+#     date is used.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -312,6 +319,8 @@ DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
 HOST_INSTALL=install
 SED=sed
+RELEASE_NAME=
+is_tarball=
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -500,6 +509,11 @@ case ${opt} in
 	SED=$1
         ;;
 
+    --release-name)
+	shift
+	RELEASE_NAME="$1"
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -530,6 +544,7 @@ case ${opt} in
 	echo "                      [--disable-werror | --no-disable-werror]"
 	echo "                      [--strip | --no-strip]"
 	echo "                      [--sed-tool <tool>]"
+	echo "                      [--release-name <release>]"
 	exit 1
 	;;
 
@@ -551,6 +566,13 @@ fi
 # Now we can decide if do auto pull and auto checkout
 if [ -d "$ARC_GNU/toolchain/.git" ]
 then
+    is_tarball=no
+else
+    is_tarball=yes
+fi
+
+if [ "x$is_tarball" = "xno" ]
+then
     git_auto="--auto"
 else
     git_auto="--no-auto"
@@ -564,6 +586,16 @@ fi
 if [ "x${autocheckout}" = "x" ]
 then
     autocheckout="${git_auto}-checkout"
+fi
+
+if [ "x$RELEASE_NAME" = "x" ]
+then
+    if [ "x$is_tarball" = "xno" ]
+    then
+	RELEASE_NAME="GCC $(git --git-dir=${ARC_GNU}/gcc/.git describe --always)"
+    else
+	RELEASE_NAME="built on $(date +%Y%m%d)"
+    fi
 fi
 
 # Default Linux directory if not already set. Only matters if we are building
@@ -684,6 +716,7 @@ then
     export CFLAGS_FOR_TARGET
 fi
 export SED
+export RELEASE_NAME
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"

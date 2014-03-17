@@ -1,3 +1,10 @@
+2014-03-17  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Add option --release-name. Default to GCC Git revision.
+	* build-elf32.sh: Change compiler version string, use RELEASE_NAME
+	variable supplied from build-all.sh
+	* build-uclibc.sh: Likewise.
+
 2014-02-07  Anton Kolesov  <anton.kolesov@synopsys.com>
 
 	* build-uclibc.sh: Build gdbserver with -O3 instead of -O0, use
