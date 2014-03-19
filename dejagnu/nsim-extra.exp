@@ -67,7 +67,13 @@ proc nsim_open { portnum } {
     # it is blocked and it stops responding to TCP connection and Dejagnu is
     # forced to restart it. I don't know a way to redirect nsim_gdb output to
     # null from Expect, so we have to use a shell to help as here.
-    spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -propsfile $env(ARC_NSIM_PROPS) -reconnect >/dev/null 2>/dev/null"
+
+    # Use either TCF or props file. TCF has higher priority.
+    if [info exists env(ARC_NSIM_TCF)] {
+	spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -tcf $env(ARC_NSIM_TCF) -reconnect >/dev/null 2>/dev/null"
+    } else {
+	spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -propsfile $env(ARC_NSIM_PROPS) -reconnect >/dev/null 2>/dev/null"
+    }
     unset_board_info nsim_id
     set_board_info nsim_id $spawn_id
     unset_board_info nsim_port
