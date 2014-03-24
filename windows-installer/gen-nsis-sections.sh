@@ -1,6 +1,7 @@
 #!/bin/bash
-# Copyright (C) 2013 Synopsys Inc.
+# Copyright (C) 2013-2014 Synopsys Inc.
 # Contributor Simon Cook <simon.cook@embecosm.com>
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 # Script to generate the install and uninstall sections for a NSIS based
 # installer.
@@ -17,6 +18,9 @@
 
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# NB: `cd' is called with --, because some directories start with -, so by
+# default cd thiks those are options.
 
 copyDir() {
   dirname=$1
@@ -37,10 +41,10 @@ copyDir() {
       if [ -d "$f" ]; then
 	  if [ "${dirname}" == "" ]; then
 	      (echo "setOutPath \"\$INSTDIR\\$f\""
-	       cd "$f" && copyDir "$f" "  ")
+	       cd -- "$f" && copyDir "$f" "  ")
 	  else
 	      (echo "${space}setOutPath \"\$INSTDIR\\${dirname}\\$f"\"
-	       cd "$f" && copyDir "${dirname}\\$f" "  ${space}")
+	       cd -- "$f" && copyDir "${dirname}\\$f" "  ${space}")
 	  fi
       fi
   done
@@ -64,9 +68,9 @@ delDir() {
     for f in *; do
 	if [ -d "$f" ]; then
 	    if [ "${dirname}" == "" ]; then
-		(cd "$f" && delDir "$f")
+		(cd -- "$f" && delDir "$f")
 	    else
-		(cd "$f" && delDir "${dirname}\\$f")
+		(cd -- "$f" && delDir "${dirname}\\$f")
 	    fi
 	fi
     done
@@ -77,13 +81,14 @@ delDir() {
 }
 
 if [ "$1" == "" ]; then
-    PREFIX=instdir
+    PREFIX=in
 else
     PREFIX="$1"
 fi
 
-echo "Generating ${PREFIX}-install_files.nsi..."
-echo "setOutPath \"\$INSTDIR\"" > ../${PREFIX}-install_files.nsi
-copyDir "" "" >> ../${PREFIX}-install_files.nsi
-echo "Generating ${PREFIX}-uninstall_files.nsi..."
-delDir "" ""  > ../${PREFIX}-uninstall_files.nsi
+cd -- $PREFIX
+echo "Generating install_files.nsi..."
+echo "setOutPath \"\$INSTDIR\"" > ../install_files.nsi
+copyDir "" "" >> ../install_files.nsi
+echo "Generating uninstall_files.nsi..."
+delDir "" ""  > ../uninstall_files.nsi

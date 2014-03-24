@@ -26,21 +26,18 @@
 ; Settings
   
   # File and Installer Name
-  !define arcver "4.8"
-  !define reldate "DATEGOESHERE"
-  !define smalldate "SMALLDATEGOESHERE"
-  outfile "${prodname}${arcsuffix}setup-${smalldate}.exe"
-  Name "${arctitle} ${arcver} - ${reldate}"
+  outfile "${prodname}_${arcver}_win_install.exe"
+  Name "${arctitle} ${arcver}"
  
   # Default directory  
-  #installDir "$PROGRAMFILES32\${prodname}"
-  installDir "C:\${prodname}"
+  installDir "C:\${prodname}_${arcver}"
 
   # Enable CRC
   CRCCheck on
 
   # Compression
   SetCompress force
+  #SetCompressor zlib
   SetCompressor /FINAL lzma
 
   # Our registry key for uninstallation
@@ -74,11 +71,11 @@ FunctionEnd
 ; Default section - files to install
 
   section
-    !include "${arcprefix}-install_files.nsi"
+    !include "install_files.nsi"
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
     ; Write registry entries for uninstaller
-    WriteRegStr HKLM "${uninstreg}" "DisplayName" "${arctitle} ${arcver} - ${reldate}"
+    WriteRegStr HKLM "${uninstreg}" "DisplayName" "${arctitle} ${arcver}"
     WriteRegStr HKLM "${uninstreg}" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
     ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
     IntFmt $0 "0x%08X" $0
@@ -111,7 +108,7 @@ FunctionEnd
     Delete "$SMPROGRAMS\${arctitle}\Uninstall ${arctitle} ${arcver}.lnk"
     RmDir "$SMPROGRAMS\${arctitle}"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
-    !include "${arcprefix}-uninstall_files.nsi"
+    !include "uninstall_files.nsi"
     Delete "$INSTDIR\Uninstall.exe"
     DeleteRegKey HKLM "${uninstreg}"
     RMDir "$INSTDIR"

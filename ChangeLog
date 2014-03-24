@@ -1,3 +1,14 @@
+2014-03-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/README.md: Streamline instructions to create
+	installer.
+	* windows-installer/arc_all-openjdk.nsi: Rename to
+	installer-standard.nsi
+	* windows-installer/arc_all.nsi: Remove.
+	* windows-installer/arc_setup_base.nsi: Rename setup-base.nsi
+	* windows-installer/buildall.sh: Remove.
+	* windows-installer/winbuild: Rename to gen-nsis-sections.sh
+
 2014-03-17  Anton Kolesov  <anton.kolesov@synposys.com>
 
 	* arc-versions.sh: Bump to Linux branch arc-3.13.
