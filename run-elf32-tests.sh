@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # Copyright (C) 2012, 2013 Synopsys Inc.
 

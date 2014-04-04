@@ -114,7 +114,7 @@ run_check () {
     # Important note. Must use --target_board=${board}, *not* --target_board
     # ${board} or GNU will think this is not parallelizable (horrible kludgy
     # test in the makefile).
-    make ${PARALLEL} "check-${tool}" RUNTESTFLAGS="--target_board=${board}" \
+    make ${PARALLEL} check-parallel-g++_1 RUNTESTFLAGS="--target_board=${board}" \
 	>> "${logfile}" 2>&1 || test_result=1
     echo
     cd - > /dev/null 2>&1

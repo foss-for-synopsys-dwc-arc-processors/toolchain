@@ -67,6 +67,7 @@ set_board_info ldscript ""
 # Call to nsim_open will set the netport (used by gdb-comm) as well as setting
 # up nSim specific data.
 set port [exec [file dirname $env(DEJAGNU)]/get-random-port.sh]
+set port 49101
 nsim_open $port
 
 # GDB protocol to be used

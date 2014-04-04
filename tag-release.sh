@@ -168,10 +168,10 @@ then
     exit 1
 fi
 
-if ! git push ${remote} ${tagname}
-then
-    echo "ERROR: Failed to push tag for toolchain"
-    exit 1
-fi
+#if ! git push ${remote} ${tagname}
+#then
+#    echo "ERROR: Failed to push tag for toolchain"
+#    exit 1
+#fi
 
 echo "All repositories tagged as ${tagname}"
