@@ -1,0 +1,40 @@
+diff --git a/build-elf32.sh b/build-elf32.sh
+index 3f5faab..f4a20b9 100755
+--- a/build-elf32.sh
++++ b/build-elf32.sh
+@@ -205,6 +205,7 @@ if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
+         --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
+         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
+         --with-headers="${config_path}"/newlib/libc/include \
++	--host=i686-w64-mingw32 --build=x86_64-linux-gnu \
+         ${sim_config} ${CONFIG_EXTRA} \
+     >> "${log_path}" 2>&1
+ then
+@@ -220,9 +221,26 @@ echo "==============" >> "${log_path}"
+ 
+ echo "Building tools ..."
+ build_path=$(calcConfigPath "${build_dir}")
++
++mkdir -p ${build_path}/gcc
++cp ${ARC_GNU}/toolchain/windows-installer/auto-build.h ${build_path}/gcc
++
+ cd "${build_path}"
+ log_path=$(calcConfigPath "${logfile}")
+-if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
++
++if make ${PARALLEL} all-binutils all-gas all-ld >> "${log_path}" 2>&1
++then
++    echo "  finished building tools"
++else
++    echo "ERROR: tools build failed."
++    exit 1
++fi
++
++make ${PARALLEL} all-gcc  >> "${log_path}" 2>&1
++
++sed -i -e '/define caddr_t char */ d' ${build_path}/gcc/auto-host.h
++
++if make ${PARALLEL} all-build all-gcc \
+         all-target-libgcc all-target-libgloss all-target-newlib \
+         all-target-libstdc++-v3 ${sim_build} all-gdb >> "${log_path}" 2>&1
+ then
