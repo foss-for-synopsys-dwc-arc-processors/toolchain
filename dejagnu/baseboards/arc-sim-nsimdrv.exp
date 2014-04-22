@@ -35,13 +35,16 @@ process_multilib_options "$multilib_opts"
 
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
-# Hostlink library support
-if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
-   set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) -Wl,--no-whole-archive"
-}
-
 # Set common defaults
 set xarchflags "-on nsim_isa_spfp -on nsim_isa_dpfp"
+
+# Hostlink library support
+if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
+    set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) -Wl,--no-whole-archive"
+} else {
+    # Use nSIM GNU IO hostlink, instead of MetaWare compatible one
+    set xarchflags "$xarchflags -on nsim_emt"
+}
 
 # Big-endian?
 if [ string match arceb-* $target_triplet ] {
