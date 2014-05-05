@@ -1,4 +1,8 @@
-2013-04-22  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+2014-05-02  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/setub-base.nsi: Rename to setup-base.nsi.
+
+2014-04-22  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* dejagnu/baseboards/arc-sim-nsimdrv.exp: Use nSIM GNU IO hostlink
 	if separate hostlink library is no specified explicitly.
