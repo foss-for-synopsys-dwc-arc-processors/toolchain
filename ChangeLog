@@ -1,3 +1,7 @@
+2014-05-06  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* README.md: Update prerequisites and unify formatting.
+
 2014-05-05  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* windows-installer/build-installer.sh: New file.

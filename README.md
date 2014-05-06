@@ -15,9 +15,8 @@ release testing.
 
 Within each branch there are points where the whole development has been put
 through comprehensive release testing. These are marked using git *tags*. For
-example tag `arc_4_8-R1` means that this is the first release of the Synopsys
-DesignWare ARC 4.8 tool chain, while tag `arc_4_8-R1.2` means this is the
-second minor patch set to the first release of the ARC 4.8 tool chain.
+example tag `arc-4.8-R3` means that this is the third release of the Synopsys
+DesignWare ARC 4.8 tool chain.
 
 These tagged stable releases have been through full release testing, and known
 issues are documented in a Synopsys release notes.
@@ -42,13 +41,14 @@ ARC GNU tool chain user guide or on the
 
 On Ubuntu 12.04 LTS you can install those with following command (as root):
 
-    apt-get install libgmp-dev libmpfr-dev texinfo byacc flex \
+    # apt-get install libgmp-dev libmpfr-dev texinfo byacc flex \
     libncurses5-dev zlib1g-dev libexpat1-dev libx11-dev libmpc-dev texlive \
     build-essential
 
 On Fedora 17 you can install those with following command (as root):
 
-    yum install gmp-devel mpfr-devel texinfo-tex byacc flex ncurses-devel \
+    # yum groupinstall "Development Tools"
+    # yum install gmp-devel mpfr-devel texinfo-tex byacc flex ncurses-devel \
     zlib-devel expat-devel libX11-devel libmpc-devel
 
 On RedHat/CentOS 6.3 systems there is no official MPC package. On those systems
@@ -67,12 +67,12 @@ except for Linux which is a separate product. Linux sources are required only
 for linux-uclibc tool chain, they are not required for baremetal elf32 tool
 chain.  Latest stable release from https://kernel.org/ is recommended, only
 versions >= 3.9 are supported. Untar linux tarball to the directory named
-\`linux' that is the sibling of this \`toolchain' directory. For example,
-assuming your current directory is \`toolchain\':
+`linux` that is the sibling of this `toolchain` directory. For example,
+assuming your current directory is `toolchain`:
 
     $ cd ..
-    $ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.11.6.tar.xz
-    $ tar xaf linux-3.11.6.tar.xz --transform=s/linux-3.11.6/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.14.2.tar.xz
+    $ tar xaf linux-3.14.2.tar.xz --transform=s/linux-3.14.2/linux/
     $ cd toolchain
 
 ### Using Git repositories
@@ -82,15 +82,15 @@ components (its not all one big repository), including the linux repository
 for building the tool chain. These should be peers of this toolchain
 directory.
 
-	mkdir arc_gnu
-	cd arc_gnu
-	git clone https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
+    $ mkdir arc_gnu
+    $ cd arc_gnu
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
 
 After you have just checked this repository (toolchain) out, then the following
 commands will clone all the remaining components into the right place.
 
-    cd toolchain
-    ./arc-clone-all.sh [-f | --force] [-d | --dev]
+    $ cd toolchain
+    $ ./arc-clone-all.sh [-f | --force] [-d | --dev]
 
 Option --force or -f will replace any existing cloned version of the
 components (use with care). Option --dev or -d will attempt to clone writable
@@ -100,22 +100,22 @@ contributing back to this repository.
 Alternatively you can manually clone the remaining repositories using the
 following:
 
-    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
-    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
-    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
-    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
-    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
-    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
-    git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
 
 Checkout `toolchain` repository to the desired branch, for example to get the
 mainline development branch use:
 
-    git checkout arc-mainline-dev
+    $ git checkout arc-mainline-dev
 
 while to get the 4.8 version 1 stable release use:
 
-    git checkout arc_4_8-R1.2
+    $ git checkout arc_4_8-R1.2
 
 Building the tool chain
 -----------------------
@@ -157,15 +157,15 @@ Please consult `./build-all.sh --help` to get a full list of supported options.
 
 Build tool chain for Linux development:
 
-    ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT
+    $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT
 
 Build tool chain for EM cores (for example for EM Starter Kit):
 
-    ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --isa-v2
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --isa-v2
 
 Build tool chain for baremetal applications for ARC ISA v1 cores (ARC600, ARC700):
 
-    ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT
 
 
 Usage examples
