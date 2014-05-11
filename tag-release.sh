@@ -125,13 +125,20 @@ do
     branch=`git symbolic-ref -q HEAD --short`
     remote=`git config branch.${branch}.remote`
 
-    if ! git tag ${tagname}
+    # Special case for GDB, since we can't have two identical tags in the
+    # binutils-gdb repo.
+    if [ "x${repo}" = "xgdb" ]
+    then
+	suffix="-gdb"
+    else
+	suffix=""
+    if ! git tag ${tagname}${suffix}
     then
 	echo "ERROR: Failed to tag ${repo}"
 	exit 1
     fi
 
-    if ! git push ${remote} ${tagname}
+    if ! git push ${remote} ${tagname}${suffix}
     then
 	echo "ERROR: Failed to push tag for ${repo}"
 	exit 1
@@ -152,6 +159,14 @@ if ! sed -i -e "s/\(^[bcgnu][[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/" \
     arc-versions.sh
 then
     echo "ERROR: Failed to edit arc-versions.sh"
+    exit 1
+fi
+
+# Additional edit for GDB
+if ! sed -i -e "s/\(^gdb=[^:]*:\).*/\1${tagname}-gdb\"/" \
+    arc-versions.sh
+then
+    echo "ERROR: Failed to edit arc-versions.sh for GDB"
     exit 1
 fi
 

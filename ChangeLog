@@ -20,6 +20,10 @@
 
 2014-05-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* tag-release.sh: Use a separate tagname for GDB.
+
+2014-05-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* README.md: Updated for unified binutils-gdb repository.
 	* arc-clone-all.sh: Likewise.
 	* symlink-all.sh: Avoid sim and gdb directories in binutils
