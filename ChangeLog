@@ -18,6 +18,13 @@
 	* rel-rpaths.sh: Do not patch libc.so, since there are no hardcoded
 	paths in it anymore.
 
+2014-05-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* README.md: Updated for unified binutils-gdb repository.
+	* arc-clone-all.sh: Likewise.
+	* symlink-all.sh: Avoid sim and gdb directories in binutils
+	trampling on gdb versions.
+
 2014-05-06  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* README.md: Update prerequisites and unify formatting.

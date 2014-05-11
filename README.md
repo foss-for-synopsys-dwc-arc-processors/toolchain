@@ -101,12 +101,17 @@ Alternatively you can manually clone the remaining repositories using the
 following:
 
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git binutils
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
+
+The binutils and gdb need separate working directories, but share a
+repository. An alternative approach would not clone the gdb directory, but
+copy the binutils directory, preserving permissions and links to the gdb
+directory.
 
 Checkout `toolchain` repository to the desired branch, for example to get the
 mainline development branch use:

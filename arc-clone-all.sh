@@ -1,5 +1,5 @@
 #!/bin/sh
- 
+
 # Copyright (C) 2013 Embecosm Limited.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
@@ -17,7 +17,7 @@
 # more details.
 
 # You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 # -----------------------------------------------------------------------------
@@ -98,14 +98,19 @@ parse_args () {
 # the tool will be from a remote called "arc", the upstream branches from a
 # remote called "upstream".
 
+# With the creation of the binutils-gdb combined repo, the name of the repo
+# and the name of the tool are no longer the same, so we need a third argument.
+
 # @param $1  Name of the tool
-# @param $2  (Optional) URL of upstream repo (minus tool name and .git)
+# @param $2  Name of the repo
+# @param $3  (Optional) URL of upstream repo (minus tool name and .git)
 # @return 0 on success, 1 on failure to clone or fetch
 clone_tool () {
     tool=$1
-    upstream=$2
-    ssh_repo="${ssh_prefix}${org}/${tool}.git"
-    http_repo="${http_prefix}${org}/${tool}.git"
+    repo=$2
+    upstream=$3
+    ssh_repo="${ssh_prefix}${org}/${repo}.git"
+    http_repo="${http_prefix}${org}/${repo}.git"
 
     echo "Cloning ${tool}..." | tee -a ${logfile}
 
@@ -124,9 +129,9 @@ clone_tool () {
 
     # Clone the ARC repo
     if [ ${is_dev} = "false" ] \
-	|| ! git clone -q -o arc ${ssh_repo} >> ${logfile} 2>&1
+	|| ! git clone -q -o arc ${ssh_repo} ${tool} >> ${logfile} 2>&1
     then
-	if ! git clone -q -o arc ${http_repo} >> ${logfile} 2>&1
+	if ! git clone -q -o arc ${http_repo} ${tool} >> ${logfile} 2>&1
 	then
 	    echo "Warning: Failed to clone ${http_repo}" | tee -a ${logfile}
 	    return 1
@@ -138,15 +143,15 @@ clone_tool () {
 	echo "- successfully cloned ARC ${tool} repository (dev)" \
 	    | tee -a ${logfile}
     fi
-    
+
     # Optionally add the upstream repository and fetch it
     if [ ${is_dev} = "true" -a "x${upstream}" != "x" ]
     then
 	cd ${tool}
 	# Add
-	if ! git remote add upstream ${upstream}${tool}.git
+	if ! git remote add upstream ${upstream}${repo}.git
 	then
-	    echo "Warning: failed to add ${upstream}${tool}.git as remote" \
+	    echo "Warning: failed to add ${upstream}${repo}.git as remote" \
 		| tee -a ${logfile}
 	    return 1
 	fi
@@ -202,15 +207,17 @@ else
     exit 1
 fi
 
-# Clone all the ARC tools and the toolchain scripts
+# Clone all the ARC tools and the toolchain scripts. We could optimize by just
+# coping the binutils directory to gdb, but this is something you only do
+# once, and this keeps it simpler.
 status="ok"
-clone_tool cgen      https://github.com/embecosm/ || status="failed"
-clone_tool binutils  git://sourceware.org/git/    || status="failed"
-clone_tool gcc       https://github.com/mirrors/  || status="failed"
-clone_tool gdb       git://sourceware.org/git/    || status="failed"
-clone_tool newlib    git://sourceware.org/git/    || status="failed"
-clone_tool uClibc    git://uclibc.org/            || status="failed"
-clone_tool linux     https://github.com/torvalds/ || status="failed"
+clone_tool cgen     cgen         https://github.com/embecosm/ || status="failed"
+clone_tool binutils binutils-gdb git://sourceware.org/git/    || status="failed"
+clone_tool gcc      gcc          https://github.com/mirrors/  || status="failed"
+clone_tool gdb      binutils-gdb git://sourceware.org/git/    || status="failed"
+clone_tool newlib   newlib       git://sourceware.org/git/    || status="failed"
+clone_tool uClibc   uClibc       git://uclibc.org/            || status="failed"
+clone_tool linux    linux        https://github.com/torvalds/ || status="failed"
 
 # All done
 if [ "${status}" = "ok" ]
