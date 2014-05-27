@@ -63,19 +63,5 @@ for f in $files; do
     patchelf --set-rpath "${RPATH}" ${f}
 done
 
-# We also need to patch libc.so because it is hardcoded
-if [ "${ARC_ENDIAN}" = "big" ]
-then
-    arch=arceb
-else
-    arch=arc
-fi
-uclibc_libc_path=${arch}-linux-uclibc/lib/libc.so
-if [ -f $uclibc_libc_path ]; then
-    ${SED} -e "s#${REPLACEDIR}/${arch}-linux-uclibc/lib/##g" < \
-        $uclibc_libc_path > _libc.so
-    mv _libc.so $uclibc_libc_path
-fi
-
 # vi: set expandtab:
 

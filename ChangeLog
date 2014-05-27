@@ -1,3 +1,10 @@
+2014-05-28  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Adjust build procedure to create toolchain that
+	can be used as an external toolchain in Buildroot.
+	* rel-rpaths.sh: Do not patch libc.so, since there are no hardcoded
+	paths in it anymore.
+
 2014-05-06  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* README.md: Update prerequisites and unify formatting.

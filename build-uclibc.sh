@@ -394,20 +394,24 @@ echo "Start building UCLIBC ..."
 cd ${uclibc_build_dir}
 
 # Patch the directories used into the uClibc config. Note that the kernel
-# headers will have been moved by the previous header install.
+# headers will have been moved by the previous header install. At this step we
+# also disable HARDWIRED_ABSPATH to avoid absolute path references to allow
+# relocatable toolchains.
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
 then
     ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
-           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/sysroot#" \
+           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr#" \
            -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
+           -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
            < "${ARC_GNU}"/uClibc/arc_config > .config
 else
     make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
     ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
-           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
-           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/#" \
+           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/sysroot#" \
+           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr#" \
            -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
+           -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
            -i .config
 fi
 
@@ -479,6 +483,7 @@ if "${config_path}"/configure --target=${arche}-linux-uclibc \
         --with-headers=${tmp_install_dir}/${arche}-linux-uclibc/include \
         --enable-languages=c,c++ --prefix="${INSTALLDIR}" \
         --enable-shared --without-newlib --disable-libgomp ${CONFIG_EXTRA} \
+        --with-sysroot=${INSTALLDIR}/${arche}-linux-uclibc/sysroot \
     >> "${logfile}" 2>&1
 then
     echo "  finished configuring stage 2 build"
@@ -509,6 +514,37 @@ else
     echo "       \""${logfile}"\" for details."
     exit 1
 fi
+
+# Install kernel headers to the sysroot directory. It looks like that this has
+# been happening automatically with the old (non-sysroot) build process, but
+# here we have to do that explicitly.
+cd "${linux_build_dir}"
+if make ARCH=${arch} INSTALL_HDR_PATH=${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr \
+    headers_install >> "${logfile}" 2>&1
+then
+    echo "  finished installing LINUX headers"
+else
+    echo "ERROR: LINUX header install to sysroot was not successful. Please see"
+    echo "       \"${logfile}\" for details."
+    exit 1
+fi
+
+# Despite "--with-sysroot" libgcc and libstdc++ will be installed to default
+# directory. Copy them manually. It also looks like that buildroot will work
+# properly even without this change and will copy libraries to the target
+# system appropriately in any way. However Buildroot does this step with its
+# internal toolchain and I'm mimicking this. Also this might help if one want
+# to have multiple sysroots. In that latter case I suppose that libraries
+# outside of sysroots should be removed to avoid unintentional mixing. Also my
+# experiments showed that G++ can't find libstdc++ headers in sysroot, they
+# should be where they've been installed, bu then its the headers, not objects
+# files, so that shouldn't be an issue.
+cp -dpf ${INSTALLDIR}/${arche}-linux-uclibc/lib/libgcc_s* \
+    ${INSTALLDIR}/${arche}-linux-uclibc/sysroot/lib/
+cp -dpf ${INSTALLDIR}/${arche}-linux-uclibc/lib/libstdc++*.so* \
+    ${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr/lib
+cp -dpf ${INSTALLDIR}/${arche}-linux-uclibc/lib/libstdc++*.a \
+    ${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr/lib
 
 # Add the newly created tool chain to the path
 PATH=${INSTALLDIR}/bin:$PATH
