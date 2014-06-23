@@ -83,6 +83,8 @@ FunctionEnd
     WriteRegDWORD HKLM "${uninstreg}" "NoModify" "1"
     WriteRegDWORD HKLM "${uninstreg}" "NoRepair" "1"
 
+    !define shelldir "${arctitle} ${arcver}"
+
     ; Add install directory to PATH and create shortcut to Eclipse
     ; See http://nsis.sourceforge.net/Environmental_Variables:_append,_prepend,_and_remove_entries
     ; NOTE THAT WE NEED A CUSTOM BUILD OF NSIS THAT SUPPORTS LONGER STRINGS TO SUPPORT THIS VERSION!!!
@@ -90,11 +92,12 @@ FunctionEnd
     ; http://nsis.sourceforge.net/Docs/AppendixG.html  (to build yourself)
     ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
     SetShellVarContext all
-    CreateDirectory "$SMPROGRAMS\${arctitle}"
-    CreateShortCut "$SMPROGRAMS\${arctitle}\${arctitle} ${arcver} Command Prompt.lnk" '%comspec%' '/k "$INSTDIR\arcshell.bat"'
+    CreateDirectory "$SMPROGRAMS\${shelldir}"
+    CreateShortCut "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Command Prompt.lnk" '%comspec%' '/k "$INSTDIR\arcshell.bat"'
     CreateShortCut "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
-    CreateShortCut "$SMPROGRAMS\${arctitle}\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
-    CreateShortCut "$SMPROGRAMS\${arctitle}\Uninstall ${arctitle} ${arcver}.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+    CreateShortCut "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
+    CreateShortCut "$SMPROGRAMS\${shelldir}\Uninstall ${arctitle} ${arcver}.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+    CreateShortCut "$SMPROGRAMS\${shelldir}\Documentation.lnk" "$INSTDIR\share\doc" 0
   sectionend
 
 ;=================================================
