@@ -175,6 +175,7 @@ fi
 
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
+triplet=${arche}-snps-linux-uclibc
 
 if [ $ISA_CPU = arc700 ]
 then
@@ -248,7 +249,7 @@ else
     echo "  LINUX already configured"
 fi
 
-if make ARCH=${arch} INSTALL_HDR_PATH=${tmp_install_dir}/${arche}-linux-uclibc \
+if make ARCH=${arch} INSTALL_HDR_PATH=${tmp_install_dir}/${triplet} \
     headers_install >> "${logfile}" 2>&1
 then
     echo "  finished installing LINUX headers"
@@ -288,16 +289,16 @@ make distclean >> "${logfile}" 2>&1 || true
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
 then
     ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
-           -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-           -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-           -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
+           -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${triplet}/#" \
+           -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${triplet}/#" \
+           -e "s#%CROSS_COMPILER_PREFIX%#${triplet}-#" \
            < "${ARC_GNU}"/uClibc/arc_config > .config
 else
     make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
     ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
-           -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-           -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${arche}-linux-uclibc/#" \
-           -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
+           -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${triplet}/#" \
+           -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${triplet}/#" \
+           -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
 	   -i .config
 fi
 
@@ -339,7 +340,7 @@ cd "${build_dir}"
 # library and don't bother with multilib for stage 1. Note: with gcc 4.4.x, we
 # also disable building libgomp
 config_path=$(calcConfigPath "${unified_src_abs}")
-if "${config_path}"/configure --target=${arche}-linux-uclibc \
+if "${config_path}"/configure --target=${triplet} \
         --with-cpu=${ISA_CPU} \
         --disable-fast-install --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
         --disable-multilib \
@@ -399,18 +400,18 @@ cd ${uclibc_build_dir}
 # relocatable toolchains.
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
 then
-    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
-           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/sysroot#" \
-           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr#" \
-           -e "s#%CROSS_COMPILER_PREFIX%#${arche}-linux-uclibc-#" \
+    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${triplet}/include#" \
+           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${triplet}/sysroot#" \
+           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${triplet}/sysroot/usr#" \
+           -e "s#%CROSS_COMPILER_PREFIX%#${triplet}-#" \
            -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
            < "${ARC_GNU}"/uClibc/arc_config > .config
 else
     make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
-    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${arche}-linux-uclibc/include#" \
-           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/sysroot#" \
-           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr#" \
-           -e "s#CROSS_COMPILER_PREFIX=\"arc-linux-uclibc-\"#CROSS_COMPILER_PREFIX=\"${arche}-linux-uclibc-\"#" \
+    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${triplet}/include#" \
+           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${triplet}/sysroot#" \
+           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${triplet}/sysroot/usr#" \
+           -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
            -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
            -i .config
 fi
@@ -474,16 +475,16 @@ cd "${build_dir}"
 # Configure the build. This time we allow things, and use the headers from the
 # stage 1 build. We still have to disable libgomp
 config_path=$(calcConfigPath "${unified_src_abs}")
-if "${config_path}"/configure --target=${arche}-linux-uclibc \
+if "${config_path}"/configure --target=${triplet} \
         --with-cpu=${ISA_CPU} \
         ${UCLIBC_DISABLE_MULTILIB} \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}" \
         --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
-        --with-headers=${tmp_install_dir}/${arche}-linux-uclibc/include \
+        --with-headers=${tmp_install_dir}/${triplet}/include \
         --enable-languages=c,c++ --prefix="${INSTALLDIR}" \
         --enable-shared --without-newlib --disable-libgomp ${CONFIG_EXTRA} \
-        --with-sysroot=${INSTALLDIR}/${arche}-linux-uclibc/sysroot \
+        --with-sysroot=${INSTALLDIR}/${triplet}/sysroot \
     >> "${logfile}" 2>&1
 then
     echo "  finished configuring stage 2 build"
@@ -519,7 +520,7 @@ fi
 # been happening automatically with the old (non-sysroot) build process, but
 # here we have to do that explicitly.
 cd "${linux_build_dir}"
-if make ARCH=${arch} INSTALL_HDR_PATH=${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr \
+if make ARCH=${arch} INSTALL_HDR_PATH=${INSTALLDIR}/${triplet}/sysroot/usr \
     headers_install >> "${logfile}" 2>&1
 then
     echo "  finished installing LINUX headers"
@@ -539,12 +540,12 @@ fi
 # experiments showed that G++ can't find libstdc++ headers in sysroot, they
 # should be where they've been installed, bu then its the headers, not objects
 # files, so that shouldn't be an issue.
-cp -dpf ${INSTALLDIR}/${arche}-linux-uclibc/lib/libgcc_s* \
-    ${INSTALLDIR}/${arche}-linux-uclibc/sysroot/lib/
-cp -dpf ${INSTALLDIR}/${arche}-linux-uclibc/lib/libstdc++*.so* \
-    ${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr/lib
-cp -dpf ${INSTALLDIR}/${arche}-linux-uclibc/lib/libstdc++*.a \
-    ${INSTALLDIR}/${arche}-linux-uclibc/sysroot/usr/lib
+cp -dpf ${INSTALLDIR}/${triplet}/lib/libgcc_s* \
+    ${INSTALLDIR}/${triplet}/sysroot/lib/
+cp -dpf ${INSTALLDIR}/${triplet}/lib/libstdc++*.so* \
+    ${INSTALLDIR}/${triplet}/sysroot/usr/lib
+cp -dpf ${INSTALLDIR}/${triplet}/lib/libstdc++*.a \
+    ${INSTALLDIR}/${triplet}/sysroot/usr/lib
 
 # Add the newly created tool chain to the path
 PATH=${INSTALLDIR}/bin:$PATH
@@ -579,6 +580,20 @@ else
 fi
 
 # -----------------------------------------------------------------------------
+# Create symlinks
+echo "Creating symlinks" >> "${logfile}"
+echo "=================" >> "${logfile}"
+
+cd ${INSTALLDIR}/bin
+for i in arc-snps-linux-uclibc-*
+do
+    ln -s $i $(echo $i | sed "s/${triplet}/${arche}-linux/")
+    ln -s $i $(echo $i | sed "s/${triplet}/${arche}-linux-uclibc/")
+done
+
+echo "  finished creating symlinks"
+
+# -----------------------------------------------------------------------------
 # gdbserver has to be built on its own.
 
 echo "Building gdbserver to run on an ARC" >> "${logfile}"
@@ -594,7 +609,7 @@ config_path=$(calcConfigPath "${unified_src_abs}")/gdb/gdbserver
 if "${config_path}"/configure \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}" \
-        --host=${arche}-linux-uclibc >> "${logfile}" 2>> "${logfile}"
+        --host=${triplet} >> "${logfile}" 2>> "${logfile}"
 then
     echo "  finished configuring gdbserver"
 else
@@ -603,7 +618,7 @@ else
     exit 1
 fi
 
-CC=${arche}-linux-uclibc-gcc
+CC=${triplet}-gcc
 export CC
 if make ${PARALLEL} \
     CFLAGS="-static -fcommon -mno-sdata -O3 ${CFLAGS_FOR_TARGET}" \

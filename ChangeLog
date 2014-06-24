@@ -1,3 +1,7 @@
+2014-06-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Switch to arc-snps-linux-uclibc target triplet.
+
 2014-06-23  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* windows-installer/setup-base.sh: Add link to documentation folder.
