@@ -98,6 +98,10 @@ FunctionEnd
     CreateShortCut "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
     CreateShortCut "$SMPROGRAMS\${shelldir}\Uninstall ${arctitle} ${arcver}.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
     CreateShortCut "$SMPROGRAMS\${shelldir}\Documentation.lnk" "$INSTDIR\share\doc" 0
+    CreateShortCut "$SMPROGRAMS\${shelldir}\IDE Wiki on GitHub.lnk" \
+      "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki" 0
+    CreateShortCut "$SMPROGRAMS\${shelldir}\IDE Releases on GitHub.lnk" \
+      "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/releases" 0
   sectionend
 
 ;=================================================

@@ -1,10 +1,15 @@
 2014-06-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* windows-installer/setup-base.nsi: Add web links to releases and
+	wiki.
+
+2014-06-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* build-uclibc.sh: Switch to arc-snps-linux-uclibc target triplet.
 
 2014-06-23  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
-	* windows-installer/setup-base.sh: Add link to documentation folder.
+	* windows-installer/setup-base.nsi: Add link to documentation folder.
 
 2014-05-28  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
