@@ -1,3 +1,7 @@
+2014-07-01  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* dejabase/baseboards/arc-sim-nsimdrv.exp: Add atomic options.
+
 2014-06-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* windows-installer/setup-base.nsi: Add web links to releases and

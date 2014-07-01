@@ -36,7 +36,7 @@ process_multilib_options "$multilib_opts"
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
 # Set common defaults
-set xarchflags "-on nsim_isa_spfp -on nsim_isa_dpfp"
+set xarchflags "-on nsim_isa_spfp -on nsim_isa_dpfp -on nsim_isa_atomic_option"
 
 # Hostlink library support
 if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
