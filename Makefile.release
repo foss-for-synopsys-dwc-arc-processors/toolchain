@@ -1,0 +1,150 @@
+# This is a script to create prebuilt packages of GNU Toolchain
+#
+# 1. Checkout toolchain directory to desired branch. Create tags if needed.
+#
+# 2. Run "make -f Makefile.release". If you do not want build-all.sh to
+# checkout directories, then do "touch ../release_output/.stamp_checked_out
+
+UNIFIED_SRC_DIR := unisrc-4.8
+BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
+--no-auto-checkout --no-unisrc --config-extra '--with-python=no LDFLAGS=-static'
+
+#
+# Output artifacts
+#
+O := ../release_output
+RELEASE := 4.8-R4
+OS_NAME := linux
+SOURCE_TARBALL_CONTENTS :=$(addprefix ../,binutils cgen gcc gdb newlib toolchain uClibc)
+SOURCE_TARBALL_TGZ := $O/arc_gnu_$(RELEASE)_sources.tar.gz
+# Baremetal toolchain
+ELF_LE_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_le_$(OS_NAME)_install
+ELF_BE_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_be_$(OS_NAME)_install
+ELF_LE_DIR := $O/arc-elf32
+ELF_BE_DIR := $O/arceb-elf32
+ELF_LE_TGZ := $O/$(ELF_LE_NAME).tar.gz
+ELF_BE_TGZ := $O/$(ELF_BE_NAME).tar.gz
+# Linux toolchain
+LINUX_LE_NAME := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_$(OS_NAME)_install
+LINUX_BE_NAME := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_$(OS_NAME)_install
+LINUX_LE_DIR := $O/arc-linux
+LINUX_BE_DIR := $O/arceb-linux
+LINUX_LE_TGZ := $O/$(LINUX_LE_NAME).tar.gz
+LINUX_BE_TGZ := $O/$(LINUX_BE_NAME).tar.gz
+# Baremetal for Windows
+WIN_ELF_LE_DIR := $O/arc-elf32_windows
+WIN_ELF_BE_DIR := $O/arceb-elf32_windows
+
+#
+# Human friendly aliases
+#
+.PHONY: checkout source-tarball unisrc elf-le-build elf-be-build elf-le elf-be all
+
+all: \
+    $O/.stamp_source_tarball \
+    $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
+    $O/.stamp_linux_le_tarball $O/.stamp_linux_be_tarball \
+    $O/.stamp_elf_le_windows_built $O/.stamp_elf_be_windows_built
+
+checkout: $O/.stamp_checked_out
+
+source-tarball: $O/.stamp_source_tarball
+
+unisrc: $O/.stamp_unisrc
+
+elf-le-build: $O/.stamp_elf_le_built
+
+elf-be-build: $O/.stamp_elf_be_built
+
+elf-le: $O/.stamp_elf_le_tarball
+
+elf-be: $O/.stamp_elf_be_tarball
+
+#
+# Real targets
+#
+$O:
+	mkdir -p $@
+
+# Checkout sources
+$O/.stamp_checked_out: | $O
+	./build-all.sh --auto-pull --auto-checkout --no-unisrc --no-elf32 --no-uclibc
+	touch $@
+
+# Create source tarball
+$O/.stamp_source_tarball: $O/.stamp_checked_out
+	tar --exclude-vcs -c -z -f $(SOURCE_TARBALL_TGZ) --exclude=$O --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(SOURCE_TARBALL_CONTENTS)
+	touch $@
+
+# Create unified source tree
+$O/.stamp_unisrc: $O/.stamp_checked_out
+	./build-all.sh --no-auto-pull --no-auto-checkout --unisrc --no-elf32 --no-uclibc
+	touch $@
+
+$O/.stamp_elf_le_built: $O/.stamp_unisrc
+	# We should readlin OUTPUT_DIR, because we are making `cd`.
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(ELF_LE_DIR)) \
+	    --no-uclibc
+	touch $@
+
+$O/.stamp_elf_be_built: $O/.stamp_unisrc
+	# We should readlin OUTPUT_DIR, because we are making `cd`.
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(ELF_BE_DIR)) \
+	    --no-uclibc --big-endian
+	touch $@
+
+$O/.stamp_elf_le_tarball: $O/.stamp_elf_le_built
+	tar czf $(ELF_LE_TGZ) --transform='s#$(ELF_LE_DIR)#$(ELF_LE_NAME)#' $(ELF_LE_DIR)/
+	touch $@
+
+$O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
+	tar czf $(ELF_BE_TGZ) --transform='s#$(ELF_BE_DIR)#$(ELF_BE_NAME)#' $(ELF_BE_DIR)/
+	touch $@
+
+$O/.stamp_linux_le_built: $O/.stamp_unisrc
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(LINUX_LE_DIR)) \
+	    --no-elf32
+	touch $@
+
+$O/.stamp_linux_be_built: $O/.stamp_unisrc
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(LINUX_BE_DIR)) \
+	    --no-elf32 --big-endian
+	touch $@
+
+$O/.stamp_linux_le_tarball: $O/.stamp_linux_le_built
+	tar czf $(LINUX_LE_TGZ) --transform='s#$(LINUX_LE_DIR)#$(LINUX_LE_NAME)#' $(LINUX_LE_DIR)/
+	touch $@
+
+$O/.stamp_linux_be_tarball: $O/.stamp_linux_be_built
+	tar czf $(LINUX_BE_TGZ) --transform='s#$(LINUX_BE_DIR)#$(LINUX_BE_NAME)#' $(LINUX_BE_DIR)/
+	touch $@
+
+#
+# Windows build
+#
+build-elf32-windows.sh: windows-installer/build-elf32_windows.patch build-elf32.sh
+	patch -p1 -o $@ < $<
+	chmod u+x $@
+
+build-all-windows.sh: build-all.sh | build-elf32-windows.sh
+	sed -e 's/build-elf32.sh/build-elf32-windows.sh/' <$< >$@
+	chmod +x $@
+
+$O/.stamp_elf_le_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_elf_le_built
+	PATH=$(shell readlink -e $(ELF_LE_DIR)/bin):$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
+	     --install-dir $(WIN_ELF_LE_DIR) --no-uclibc --no-sim
+	cp -rfdv /usr/i686-pc-mingw32/sys-root/mingw/bin/* $(WIN_ELF_LE_DIR)/bin
+	touch $@
+
+$O/.stamp_elf_be_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_elf_be_built
+	# We install toolchain in the same dir as little endian
+	PATH=$(shell readlink -e $(ELF_BE_DIR))/bin:$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
+	     --install-dir $(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim
+	touch $@
+
+#
+# Clean
+#
+.PHONY: clean
+clean:
+	-rm -rf $O

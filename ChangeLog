@@ -1,5 +1,9 @@
 2014-07-04  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* Makefile.release: New file.
+
+2014-07-04  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* build-all.sh: Rename all mentions of EM to arcem.
 	* build-elf32.sh: Likewise.
 	* build-uclibc.sh: Likewise.
