@@ -1,3 +1,7 @@
+2014-07-02  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Pass -f when creating symlinks.
+
 2014-07-01  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* dejabase/baseboards/arc-sim-nsimdrv.exp: Add atomic options.

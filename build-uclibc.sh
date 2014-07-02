@@ -587,8 +587,8 @@ echo "=================" >> "${logfile}"
 cd ${INSTALLDIR}/bin
 for i in arc-snps-linux-uclibc-*
 do
-    ln -s $i $(echo $i | sed "s/${triplet}/${arche}-linux/")
-    ln -s $i $(echo $i | sed "s/${triplet}/${arche}-linux-uclibc/")
+    ln -fs $i $(echo $i | sed "s/${triplet}/${arche}-linux/")
+    ln -fs $i $(echo $i | sed "s/${triplet}/${arche}-linux-uclibc/")
 done
 
 echo "  finished creating symlinks"
