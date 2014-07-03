@@ -1,3 +1,7 @@
+2014-07-03  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* arc-versions.sh: Bump Linux branch to arc-3.15.
+
 2014-07-02  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* build-uclibc.sh: Replace hardcoded triplet with variable.
