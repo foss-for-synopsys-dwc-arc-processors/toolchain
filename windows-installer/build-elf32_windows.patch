@@ -6,7 +6,7 @@ index 3f5faab..f4a20b9 100755
          --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
          --enable-languages=c,c++ --prefix=${INSTALLDIR} \
          --with-headers="${config_path}"/newlib/libc/include \
-+	--host=i686-w64-mingw32 --build=x86_64-linux-gnu \
++	--host=i686-pc-mingw32 --build=x86_64-linux-gnu \
          ${sim_config} ${CONFIG_EXTRA} \
      >> "${log_path}" 2>&1
  then
