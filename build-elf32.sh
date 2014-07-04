@@ -72,7 +72,7 @@
 # ISA_CPU
 
 #     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
-#     EM.
+#     arcem.
 
 # DO_SIM
 

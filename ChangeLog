@@ -1,3 +1,9 @@
+2014-07-04  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-all.sh: Rename all mentions of EM to arcem.
+	* build-elf32.sh: Likewise.
+	* build-uclibc.sh: Likewise.
+
 2014-07-03  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* windows-installer/build-elf32_windows.patch: Use i686-pc-mingw32 by
