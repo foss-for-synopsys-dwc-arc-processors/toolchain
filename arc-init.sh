@@ -85,6 +85,21 @@
 # $1 - build directory
 # $2 - tool to test (e.g. "binutils" will run "check-binutils"
 # $3 - log file
+
+#Depending of the OS pick the right sed tool
+if [ "x${SED}" = "x" ]
+then
+  if [ "`uname -s`" = "Darwin" ]
+  then
+    #gsed is included as part gnu-sed package, you can install it with homebrew
+    #brew install gnu-sed
+    SED=gsed
+  else
+    SED=sed
+  fi
+fi
+export SED
+
 run_check () {
     bd=$1
     tool=$2
@@ -136,7 +151,7 @@ save_res () {
 
         # Report the summary to the user
 	echo
-	sed -n -e '/Summary/,$p' < ${rd}/${resbase}.sum | grep '^#' || true
+	${SED} -n -e '/Summary/,$p' < ${rd}/${resbase}.sum | grep '^#' || true
 	echo
     else
 	# Silent failure
@@ -175,10 +190,11 @@ fi
 bash_cmd=$(which bash)
 if [ "x${bash_cmd}" != "x" ]
 then
-    export SHELL=${bash_cmd}
+    SHELL=${bash_cmd}
 else
-    export SHELL=$(which sh)
+    SHELL=$(which sh)
 fi
+export SHELL
 
 # If using bash, if the user ran 'bash -x build-rel.sh' make it also use -x
 # for the scripts we invoke.

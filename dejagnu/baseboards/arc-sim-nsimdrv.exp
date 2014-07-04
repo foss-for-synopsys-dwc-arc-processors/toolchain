@@ -1,0 +1,86 @@
+# Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free Software
+# Foundation, Inc.
+#
+# Copyright (C) 2013 Synopsys, Inc.
+#
+# Contributor: Anton Kolesov <anton.kolesov@synopsys.com>
+# Contributor: Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# This is a list of toolchains that are supported on this board.
+set_board_info target_install ${target_triplet}
+
+# Load the generic configuration for this board. This will define a basic set
+# of routines needed by the tool to communicate with the board.
+load_generic_config "sim"
+
+# basic-sim.exp is a basic description for the standard Cygnus simulator.
+load_base_board_description "basic-sim"
+
+# Any multilib options are set in an environment variable.
+set multilib_opts "$env(ARC_MULTILIB_OPTIONS)"
+process_multilib_options "$multilib_opts"
+
+set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
+
+# Set common defaults
+set xarchflags "-on nsim_isa_spfp -on nsim_isa_dpfp -on nsim_isa_atomic_option"
+
+# Hostlink library support
+if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
+    set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) -Wl,--no-whole-archive"
+} else {
+    # Use nSIM GNU IO hostlink, instead of MetaWare compatible one
+    set xarchflags "$xarchflags -on nsim_emt"
+}
+
+# Big-endian?
+if [ string match arceb-* $target_triplet ] {
+    set xarchflags "$xarchflags -on nsim_isa_big_endian"
+}
+
+# EM is default
+if { [string first ARC700 "$multilib_opts"] == 0 } {
+    set xarchflags "$xarchflags -on nsim_isa_a700 -on nsim_isa_sat -on nsim_isa_mpy32"
+} elseif { [string first HS "$multilib_opts"] == 0 } {
+    set xarchflags "$xarchflags -on nsim_isa_av2hs10 -on nsim_isa_ll64_option -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
+} else {
+    set xarchflags "$xarchflags -on nsim_isa_av2em11 -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
+}
+
+# Setup the MetaWare simulator.
+set_board_info sim "$::env(NSIM_HOME)/bin/nsimdrv ${xarchflags}"
+set_board_info sim_time_limit 120
+set_board_info is-simulator 1
+
+# nsimdrv doesn't return application's exit code as it's own exit code, thus it
+# is required to use status wrapper, that will print "***EXIT <number>" message.
+set_board_info needs_status_wrapper 1
+
+# We only support newlib on this target. We assume that all multilib
+# options have been specified before we get here.
+set_board_info compiler  "[find_gcc]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+
+# No linker script needed.
+set_board_info ldscript ""
+
+# Doesn't pass arguments or signals, can't return results, and doesn't
+# do inferiorio.
+set_board_info noargs 1
+set_board_info gdb,nosignals 1
+set_board_info gdb,noresults 1
+set_board_info gdb,noinferiorio 1

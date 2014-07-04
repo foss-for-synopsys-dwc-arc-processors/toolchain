@@ -97,6 +97,11 @@
 
 #     string "-j <jobs> -l <load>" to control parallel make.
 
+# HOST_INSTALL
+
+#     Make target prefix to install host application. Should be either
+#     "install" or "install-strip".
+
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
@@ -158,14 +163,15 @@ if [ "x${DO_SIM}" = "x--sim" ]
 then
     sim_config="--enable-sim --enable-sim-endian=no"
     sim_build=all-sim
+    # CGEN doesn't have install-strip target.
     sim_install=install-sim
-    sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
-	-e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
+    ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+	   -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
 else
     sim_config=--disable-sim
     sim_build=
     sim_install=
-    sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+    ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 	-e 's!gdb_sim=../sim/arc/libsim.a!# gdb_sim=../sim/arc/libsim.a!'
 fi
 
@@ -192,11 +198,11 @@ cd "${build_path}"
 config_path=$(calcConfigPath "${unified_src_abs}")
 log_path=$(calcConfigPath "${logfile}")
 if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
-        --disable-werror ${ELF32_DISABLE_MULTILIB} \
-        --with-pkgversion="ARCompact elf32 toolchain (built $(date +%Y%m%d))" \
+        ${ELF32_DISABLE_MULTILIB} \
+        --with-pkgversion="ARCompact/ARCv2 ISA elf32 toolchain ($RELEASE_NAME)" \
         --with-bugurl="http://solvnet.synopsys.com" \
         --enable-fast-install=N/A \
-        --with-endian=${ARC_ENDIAN} \
+        --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
         --enable-languages=c,c++ --prefix=${INSTALLDIR} \
         --with-headers="${config_path}"/newlib/libc/include \
         ${sim_config} ${CONFIG_EXTRA} \
@@ -234,9 +240,10 @@ echo "Installing tools ..."
 build_path=$(calcConfigPath "${build_dir}")
 cd "${build_path}"
 log_path=$(calcConfigPath "${logfile}")
-if make install-binutils install-gas install-ld install-gcc \
-        install-target-libgcc install-target-libgloss install-target-newlib \
-        install-target-libstdc++-v3 ${sim_install} install-gdb \
+if make ${HOST_INSTALL}-binutils ${HOST_INSTALL}-gas ${HOST_INSTALL}-ld \
+    ${HOST_INSTALL}-gcc ${sim_install} install-gdb \
+    install-target-libgloss install-target-newlib install-target-libgcc \
+    install-target-libstdc++-v3 \
     >> "${log_path}" 2>&1
 then
     echo "  finished installing tools"
@@ -246,7 +253,7 @@ else
 fi
 
 # Restore GDB config for simulator (does nothing if the change was not made).
-sed -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
+${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
     -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
 
 # Optionally build and install PDF documentation
@@ -265,6 +272,11 @@ then
 	echo "  finished building PDFs"
     else
 	echo "ERROR: PDF build failed."
+	echo "Advice: Use option --no-pdf if you don't need PDF documentation."
+	if ! which texi2pdf >/dev/null 2>/dev/null ; then
+	    echo "Is TeX installed? See section Prerequisites of " \
+	         "GCC Getting Started for a list of required system packages."
+	fi
 	exit 1
     fi
 

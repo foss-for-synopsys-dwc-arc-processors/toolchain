@@ -45,7 +45,6 @@
 # ------------------------------------------------------------------------------
 
 # Useful constants. Some day these will be set from args
-TOOLDIR=/opt/arc-4.8
 # LINUX_DEFCONFIG=4.10_defconfig
 # LINUX_DEFCONFIG=fpga_defconfig_patched_no_sasid
 LINUX_DEFCONFIG=
@@ -55,11 +54,19 @@ LINUX_TREE=linux
 ARC_INITRAMFS=ramfs-abi-v3-gcc-4.4.tar.gz
 ARC_UNPACKED_NAME=arc_initramfs_22_abi-v3-0.9.34
 
+# Generic release set up, which we'll share with sub-scripts. This defines
+# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
+# and $RESDIR if they don't exist.
+d=`dirname "$0"`
+ARC_GNU=`(cd "$d/.." && pwd)`
+. "${ARC_GNU}"/toolchain/define-release.sh
+. "${ARC_GNU}"/toolchain/arc-init.sh
+
+TOOLDIR=/opt/arc-${RELEASE}
 # Ensure we have the right tool chain on the path!
 PATH=${TOOLDIR}/bin:${PATH}
 
-mkdir -p ${PWD}/../logs-4.8
-logfile="$(echo "${PWD}")/../logs-4.8/kernel-build-$(date -u +%F-%H%M).log"
+logfile="${LOGDIR}/kernel-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
 # Create arc_initramfs. Need to patch the ownership.
@@ -91,7 +98,7 @@ cp -df ${TOOLDIR}/arc-linux-uclibc/lib/*.so* \
       arc_initramfs/lib >> $logfile 2>&1
 cp -df ${TOOLDIR}/arc-linux-uclibc/lib/uclibc_nonshared.a \
       arc_initramfs/lib >> $logfile 2>&1
-sed -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
+${SED} -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
 
 # As a sanity check remove the busybox images from initramfs. This means a
 # failed install of busybox will show up!
@@ -151,7 +158,7 @@ else
 fi
 # Temporary patch to deal with compiler issue!
 echo "Patching LINUX .config"
-sed -i .config -e 's/COMPILE="arc-elf32-"/COMPILE="arc-linux-uclibc-"/'
+${SED} -i .config -e 's/COMPILE="arc-elf32-"/COMPILE="arc-linux-uclibc-"/'
 
 if make ARCH=arc >> $logfile 2>&1
 then

@@ -1,5 +1,5 @@
 #!/bin/sh
- 
+
 # Copyright (C) 2013 Embecosm Limited.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
@@ -17,35 +17,216 @@
 # more details.
 
 # You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+# -----------------------------------------------------------------------------
 #		     CLONE ALL ARC TOOL CHAIN COMPONENTS
 #		     ===================================
 
-# Run this in the directory where you want to create all the repositories
+# Run this in the toolchain directory. You should have first cloned this
+# repository and then changed directory into it:
 
-# Function to clone a tool. First argument is the name to use for the remote,
-# second is the name of the tool, third the repository to clone from.
-clone_tool () {
-    remote=$1
-    tool=$2
-    repo=$3
+#   git clone https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
+#   cd toolchain
 
-    # Clear out anything pre-existing and clone the repo
-    rm -rf ${tool}
-    git clone -o ${remote} ${repo} ${tool}
+# If you are a developer you may be using SSH:
+
+#   git clone git@github.com:foss-for-synopsys-dwc-arc-processors/toolchain.git
+#   cd toolchain
+
+# Usage:
+
+#   arc-clone-all.sh [-f | --force] [-d | --dev]
+
+# The arguments have the following meanings
+
+# --force
+# -f
+
+#     Delete any existing clone of an ARC repository
+
+# -dev
+# -d
+
+#     Developer mode. Attempt to clone each ARC repository using SSH (allowing
+#     write as well as read access) and also fetch the upstream repository. If
+#     SSH clone fails silently use HTTPS.
+
+# The script tests that the parent directory (the one containing toolchain) is
+# writable, so it can be used for all the other repositories.
+
+
+# -----------------------------------------------------------------------------
+# Function to parse args
+parse_args () {
+    # Defaults
+    do_force="false"
+    is_dev="false"
+
+    # Get the arguments
+    until
+    opt=$1
+    case ${opt} in
+	--force | -f)
+	    do_force="true"
+	    ;;
+
+	--dev | -d)
+	    is_dev="true"
+	    ;;
+
+	?*)
+	    echo "Usage: arc-clone-all.sh [--force | -f] [--dev | -d]"
+	    return 1
+	    ;;
+
+	*)
+	    ;;
+    esac
+    [ "x${opt}" = "x" ]
+    do
+	shift
+    done
+
+    # Success
+    return 0
 }
 
-# Clone all the ARC tools and the toolchain scripts
-clone_tool arc cgen git://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
-clone_tool arc binutils  git://github.com/foss-for-synopsys-dwc-arc-processors/binutils.git
-clone_tool arc gcc       git://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
-clone_tool arc gdb       git://github.com/foss-for-synopsys-dwc-arc-processors/gdb.git
-clone_tool arc newlib    git://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
-clone_tool arc uClibc    git://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
-clone_tool arc linux     git://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
-clone_tool arc toolchain git://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
+# -----------------------------------------------------------------------------
+# Function to clone a tool and (optionally) its upstream. The ARC branches of
+# the tool will be from a remote called "arc", the upstream branches from a
+# remote called "upstream".
 
-# We perhaps ought to allow an option to check out specific versions. For now
-# just messages.
-echo "All repositories cloned"
+# With the creation of the binutils-gdb combined repo, the name of the repo
+# and the name of the tool are no longer the same, so we need a third argument.
+
+# @param $1  Name of the tool
+# @param $2  Name of the repo
+# @param $3  (Optional) URL of upstream repo (minus tool name and .git)
+# @return 0 on success, 1 on failure to clone or fetch
+clone_tool () {
+    tool=$1
+    repo=$2
+    upstream=$3
+    ssh_repo="${ssh_prefix}${org}/${repo}.git"
+    http_repo="${http_prefix}${org}/${repo}.git"
+
+    echo "Cloning ${tool}..." | tee -a ${logfile}
+
+    # Check there is nothing there or clear it out as appropriate.
+    cd ${ARC_GNU}
+    if [ ${do_force} = "true" ]
+    then
+	echo "- removing any existing clone" | tee -a ${logfile}
+	rm -rf ${tool}
+    elif [ -e ${tool} ]
+    then
+	echo "Warning: existing clone of ${tool} not replaced" \
+	    | tee -a ${logfile}
+	return 1
+    fi
+
+    # Clone the ARC repo
+    if [ ${is_dev} = "false" ] \
+	|| ! git clone -q -o arc ${ssh_repo} ${tool} >> ${logfile} 2>&1
+    then
+	if ! git clone -q -o arc ${http_repo} ${tool} >> ${logfile} 2>&1
+	then
+	    echo "Warning: Failed to clone ${http_repo}" | tee -a ${logfile}
+	    return 1
+	else
+	    echo "- successfully cloned ARC ${tool} repository" \
+		| tee -a ${logfile}
+	fi
+    else
+	echo "- successfully cloned ARC ${tool} repository (dev)" \
+	    | tee -a ${logfile}
+    fi
+
+    # Optionally add the upstream repository and fetch it
+    if [ ${is_dev} = "true" -a "x${upstream}" != "x" ]
+    then
+	cd ${tool}
+	# Add
+	if ! git remote add upstream ${upstream}${repo}.git
+	then
+	    echo "Warning: failed to add ${upstream}${repo}.git as remote" \
+		| tee -a ${logfile}
+	    return 1
+	fi
+	# Fetch
+	if git fetch -q upstream >> ${logfile} 2>&1
+	then
+	    echo "- successfully fetched upstream ${tool} repository" \
+		| tee -a ${logfile}
+	else
+	    echo "Warning: failed to fetch upstream ${tool} repository" \
+		| tee -a ${logfile}
+	    echo "- manually run 'git fetch upstream'" | tee -a ${logfile}
+	    return 1
+	fi
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# Main script
+http_prefix=https://github.com/
+ssh_prefix=git@github.com:
+org=foss-for-synopsys-dwc-arc-processors
+
+# Get the args
+if ! parse_args $*
+then
+    exit 1
+fi
+
+# Generic release set up, which we'll share with sub-scripts. This defines
+# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
+# and $RESDIR if they don't exist.
+d=`dirname "$0"`
+ARC_GNU=`(cd "$d/.." && pwd)`
+export ARC_GNU
+. ${ARC_GNU}/toolchain/define-release.sh
+
+# Set up a logfile
+logfile="${LOGDIR}/clone-all-$(date -u +%F-%H%M).log"
+rm -f "${logfile}"
+
+echo "Cloned directories will be created in ${ARC_GNU}" | tee -a ${logfile}
+
+# Can we create directories in the parent?
+echo "Checking we can write in ${ARC_GNU}" | tee -a ${logfile}
+td=${ARC_GNU}/clone-test-dir
+rm -rf ${td}
+if mkdir ${td} >> ${logfile} 2>&1
+then
+    rm -rf ${td}
+else
+    echo "ERROR: Cannot create repository directories" | tee -a ${logfile}
+    exit 1
+fi
+
+# Clone all the ARC tools and the toolchain scripts. We could optimize by just
+# coping the binutils directory to gdb, but this is something you only do
+# once, and this keeps it simpler.
+status="ok"
+clone_tool cgen     cgen         https://github.com/embecosm/ || status="failed"
+clone_tool binutils binutils-gdb git://sourceware.org/git/    || status="failed"
+clone_tool gcc      gcc          https://github.com/mirrors/  || status="failed"
+clone_tool gdb      binutils-gdb git://sourceware.org/git/    || status="failed"
+clone_tool newlib   newlib       git://sourceware.org/git/    || status="failed"
+clone_tool uClibc   uClibc       git://uclibc.org/            || status="failed"
+clone_tool linux    linux        https://github.com/torvalds/ || status="failed"
+
+# All done
+if [ "${status}" = "ok" ]
+then
+    echo "All repositories cloned" | tee -a ${logfile}
+    echo "- full logs in ${logfile}" | tee -a ${logfile}
+    exit 0
+else
+    echo "Some repositories cloned" | tee -a ${logfile}
+    echo "- full logs in ${logfile}" | tee -a ${logfile}
+    exit 1
+fi

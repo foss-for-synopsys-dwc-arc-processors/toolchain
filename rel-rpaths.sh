@@ -24,6 +24,15 @@
 REPLACEDIR=${INSTALLDIR}
 cd ${REPLACEDIR}
 
+# Get a suitable SED
+if [ x`uname -s` = "xDarwin" ]
+then
+    # You can install gsed with 'brew install gnu-sed'
+    SED=gsed
+else
+    SED=sed
+fi
+
 if ! [ -d bin ]; then
     echo "\`$INSTALLDIR' is not a toolchain installation directory."
     exit 1
@@ -39,36 +48,20 @@ fi
 # Get list of x86/x86_64 executables
 files=$(find -type f -exec file {} \; | \
     grep 'ELF 32-bit LSB executable, Intel 80386\|ELF 64-bit LSB executable, x86-64' | \
-    sed -e 's/:.*$//')
+    ${SED} -e 's/:.*$//')
 
 for f in $files; do
     echo $f
-    RPATH=$(readelf -d "${f}" | grep 'Library rpath')
+    RPATH=$(readelf -d "${f}" | grep 'Library rpath\|Library runpath')
     # If no RPATH, continue
     if [ $? -gt 0 ]; then
 	continue
     fi
     # Build a relative directory
-    RELDIR=${f:2}
-    RELDIR=$(echo ${RELDIR//[^\/]})
-    RELDIR=$(echo ${RELDIR//\//\/..})
-    RPATH=$(echo "${RPATH}" | sed "s#.*\[${REPLACEDIR}\(.*\)\]#\$ORIGIN${RELDIR}\1#")
+    RELDIR=`echo ${f#./} | sed -e 's#[^/]##g' | ${SED} -e 's#/#/..#g'`
+    RPATH=$(echo "${RPATH}" | ${SED} "s#.*\[${REPLACEDIR}\(.*\)\]#\$ORIGIN${RELDIR}\1#")
     patchelf --set-rpath "${RPATH}" ${f}
 done
-
-# We also need to patch libc.so because it is hardcoded
-if [ "${ARC_ENDIAN}" = "big" ]
-then
-    arch=arceb
-else
-    arch=arc
-fi
-uclibc_libc_path=${arch}-linux-uclibc/lib/libc.so
-if [ -f $uclibc_libc_path ]; then
-    sed -e "s#${REPLACEDIR}/${arch}-linux-uclibc/lib/##g" < \
-        $uclibc_libc_path > _libc.so
-    mv _libc.so $uclibc_libc_path
-fi
 
 # vi: set expandtab:
 

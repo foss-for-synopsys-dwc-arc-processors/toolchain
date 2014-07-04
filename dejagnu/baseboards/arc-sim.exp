@@ -54,10 +54,12 @@ set_board_info ldscript ""
 
 # The simulator doesn't return exit statuses and we need to indicate this;
 # the standard GCC wrapper will work with this target.
-set_board_info needs_status_wrapper  1
+#set_board_info needs_status_wrapper  1
 # Doesn't pass arguments or signals, can't return results, and doesn't
 # do inferiorio.
-set_board_info noargs 1
+#set_board_info noargs 1
 set_board_info gdb,nosignals 1
-set_board_info gdb,noresults 1
-set_board_info gdb,noinferiorio 1
+#set_board_info gdb,noresults 1
+#set_board_info gdb,noinferiorio 1
+# Doesn't use HW watchpoints.
+set_board_info gdb,no_hardware_watchpoints 1

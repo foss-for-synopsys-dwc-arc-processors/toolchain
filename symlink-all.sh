@@ -36,7 +36,11 @@
 
 # We assume that the global environment variable ${ARC_GNU} is set, and that
 # the component directories  direct subdirs of it. We also assume that the
-# symlink-tree script can be found in ${ARC_GNU}/gcc
+# symlink-tree script can be found in ${ARC_GNU}/gcc.
+
+# With a unified binutils-gdb repository, we need to make sure that we pull
+# the common components from the correct repository. We achieve this by
+# ignoring the gdb and sim directories when the component is binutils.
 
 
 # Change to the unisrc directory
@@ -49,7 +53,17 @@ echo "Symlink-all" ${unisrc}
 # Symlink each tree
 for component in $*
 do
-    if ! ${ARC_GNU}/gcc/symlink-tree ${ARC_GNU}/${component}
+    case $component in
+	binutils)
+	    ignore="gdb sim"
+	    ;;
+
+	*)
+	    ignore=""
+	    ;;
+    esac
+
+    if ! ${ARC_GNU}/gcc/symlink-tree ${ARC_GNU}/${component} "${ignore}"
     then
 	exit 1
     fi

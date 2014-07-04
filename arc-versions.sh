@@ -26,12 +26,13 @@
 
 #     arc-versions.sh [--auto-checkout | --no-auto-checkout]
 #                     [--auto-pull | --no-auto-pull]
+#                     [--uclibc | --no-uclibc]
 
 # The environment variable ${ARC_GNU} should point to the directory within
 # which the GIT trees live.
 
 # The environment variable ${LINUXDIR} should point to the Linux root
-# directory.
+# directory (only used if --uclibc is set).
 
 # We checkout the desired branch for each tool. Note that these must exist or
 # we fail.
@@ -39,6 +40,7 @@
 # Default options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
+uclibc_arg="--uclibc"
 
 # Parse options
 until
@@ -52,9 +54,14 @@ case ${opt} in
 	autopull=$1
 	;;
 
+    --uclibc | --no-uclibc)
+	uclibc_arg=$1
+	;;
+
     ?*)
 	echo "Usage: arc-versions.sh  [--auto-checkout | --no-auto-checkout]"
         echo "                        [--auto-pull | --no-auto-pull]"
+        echo "                        [--uclibc | --no-uclibc]"
 	exit 1
 	;;
 
@@ -67,15 +74,21 @@ do
 done
 
 # Specify the default versions to use as a string <tool>:<branch>. These are
-# the development versions for the ARC 4.4 tool chain release. Only actually
+# the development versions for the ARC 4.8 tool chain release. Only actually
 # matters if --auto-checkout is set.
-cgen="cgen:arc-1.0-stable"
-binutils="binutils:arc-2.23-stable"
-gcc="gcc:arc-4.8-stable"
-gdb="gdb:arc-7.5-stable"
-newlib="newlib:arc-2.0-stable"
+cgen="cgen:arc-1.0-dev"
+binutils="binutils:arc-2.23-dev"
+gcc="gcc:arc-4.8-dev"
+gdb="gdb:arc-7.5-dev"
+newlib="newlib:arc-2.0-dev"
 uclibc="uClibc:arc-mainline-dev"
-linux="linux:arc-3.9"
+
+if [ "x${uclibc_arg}" = "x--uclibc" ]
+then
+    linux="linux:arc-3.13"
+else
+    linux=""
+fi
 
 # We have to deal with some awkward cases here, because we have to deal with
 # the possibility that we may currently be on a detached HEAD (so cannot
@@ -105,7 +118,8 @@ do
 
     echo "Checking out branch/tag ${branch} of ${tool}"
 
-    # Kludge, because Linux has its own environment variable
+    # Kludge, because Linux has its own environment variable. Note that the
+    # tool can only "linux" if --uclibc is set above.
     if [ "${tool}" = "linux" ]
     then
 	cd ${LINUXDIR}
@@ -115,7 +129,8 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-	if git branch | grep '\* (no branch)' > /dev/null 2>&1
+    # See note below why two expressions are requied.
+	if git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
 	then
 	    # Detached head. Checkout an arbitrary branch
 	    arb_br=`git branch | grep -v '^\*' | head -1`
@@ -150,14 +165,20 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-	if ! git branch | grep '\* (no branch)' >> /dev/null 2>&1
-	then
-	    # Only update to latest if we are not in detached HEAD mode.
-	    echo "  pulling latest version"
-	    if ! git pull
-	    then
-		exit 1
-	    fi
-	fi
+        # Only update to latest if we are not in detached HEAD mode.
+        # If tree is in detahed state, output differs between Git versions:
+        # Git 1.8 prints: * (detached from <tag_name>>)
+        # Git <1.8 prints: * (no branch)
+        if ! git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
+        then
+            echo "  pulling latest version"
+            if ! git pull
+            then
+                exit 1
+            fi
+        fi
     fi
 done
+
+# vi: set expandtab:
+

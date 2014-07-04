@@ -1,7 +1,274 @@
+2014-07-02  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Replace hardcoded triplet with variable.
+
+2014-07-02  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Pass -f when creating symlinks.
+
+2014-07-01  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* dejabase/baseboards/arc-sim-nsimdrv.exp: Add atomic options.
+
+2014-06-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/setup-base.nsi: Add web links to releases and
+	wiki.
+
+2014-06-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Switch to arc-snps-linux-uclibc target triplet.
+
+2014-06-23  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/setup-base.nsi: Add link to documentation folder.
+
+2014-05-28  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Adjust build procedure to create toolchain that
+	can be used as an external toolchain in Buildroot.
+	* rel-rpaths.sh: Do not patch libc.so, since there are no hardcoded
+	paths in it anymore.
+
+2014-05-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* tag-release.sh: Use a separate tagname for GDB.
+
+2014-05-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* README.md: Updated for unified binutils-gdb repository.
+	* arc-clone-all.sh: Likewise.
+	* symlink-all.sh: Avoid sim and gdb directories in binutils
+	trampling on gdb versions.
+
+2014-05-06  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* README.md: Update prerequisites and unify formatting.
+
+2014-05-05  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/build-installer.sh: New file.
+
+2014-05-05  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/setub-base.nsi: Rename to setup-base.nsi.
+
+2014-04-22  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-sim-nsimdrv.exp: Use nSIM GNU IO hostlink
+	if separate hostlink library is no specified explicitly.
+
+2014-03-28  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/arcshell.bat: New file.
+
+2014-03-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/README.md: Streamline instructions to create
+	installer.
+	* windows-installer/arc_all-openjdk.nsi: Rename to
+	installer-standard.nsi
+	* windows-installer/arc_all.nsi: Remove.
+	* windows-installer/arc_setup_base.nsi: Rename setup-base.nsi
+	* windows-installer/buildall.sh: Remove.
+	* windows-installer/winbuild: Rename to gen-nsis-sections.sh
+
+2014-03-17  Anton Kolesov  <anton.kolesov@synposys.com>
+
+	* arc-versions.sh: Bump to Linux branch arc-3.13.
+
+2014-03-17  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Add option --release-name. Default to GCC Git revision.
+	* build-elf32.sh: Change compiler version string, use RELEASE_NAME
+	variable supplied from build-all.sh
+	* build-uclibc.sh: Likewise.
+
+2014-02-07  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-uclibc.sh: Build gdbserver with -O3 instead of -O0, use
+	CFLAGS_FOR_TARGET properly for gdbserver.
+
+2014-01-28  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Replace --isa-* options with --cpu option.
+	* build-uclibc.sh: Update commentary, only arc700 and HS are
+	supported.
+
+2014-01-13  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* dejagnu/mdbsim.sh: Remove file, because it is useless now
+	* dejagnu/baseboards/arc-sim-mdb-.exp: Rename to...
+	* dejagnu/baseboards/arc-sim-nsimdrv.exp: ... this. Also invoke
+	nsimdrv application directly, instead of using custom wrapper script
+	and MDB.
+
+2014-01-05  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* arc-external.sh: Update versions: GMP 4.3.2 -> 5.1.3,
+	MPFR 2.4.2 -> 3.1.2.
+
+2014-01-03  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* rel-rpaths.sh: Fixed remaining bash specific constructs which
+	upset dash.
+
+2014-01-03  Vineet Gupta <vgupta@synopsys.com>
+
+	* rel-paths.sh: Make rel-rpath.sh future safe (RPATH vs. RUNPATH).
+
+2014-01-03  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* arc-clone-all.sh: Remove bash specific constructs.
+	* arc-init.sh: Likewise.
+	* build-uclibc.sh: Likewise.
+	* get-random-port.sh: Likewise.
+	* rel-rpaths.sh: Likewise.
+	* run-elf32-tests.sh: Likewise.
+	* run-uclibc-tests.sh: Likewise.
+	* tag-release.sh: Likewise.
+
+2013-12-24  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* run-tests.sh: Add hostlink library option.
+	* dejagnu/mdbsim.sh: New file, shell wrapper around mdb.
+	* dejagnu/baseboards/arc-sim-mdb.exp: New file, board definition to
+	use Metaware Debugger as an interface to nSIM.
+
+2013-12-20  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* arc-init.sh: Remove extra bashbang.
+	* build-all.sh: Ensure that option --sed-tool will be used.
+
+2013-12-17  Fernando Ortiz <dev@nandub.info>
+
+	* arc-init.sh: Specify the sed tool depending on the OS
+	* build-all.sh: Add --sed-tool option.  Change sed to ${SED}, change
+	uname -o to uname -s, -s is more portable than -o 
+	* build-elf32.sh: Change sed to ${SED}
+	* build-uclibc.sh: Change sed to ${SED}
+	* rel-rpaths.sh: Change sed to ${SED}
+	* run-uclibc-tests.sh: Change sed to ${SED}
+
+2013-12-09  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* dejagnu/nsim-extra.exp: Switch to new nsimdrv application instead of
+	obsolete nsim_gdb.
+
+2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* run-tests.sh: Make error message more clear when invalid command
+	line argument is specified.
+
+2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-nsim.exp: Use bigger stack section.
+
+2013-12-06  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* symlink-dirs.sh: Remove faulty script.
+	* symlink-all.sh: Revert previous commit.
+
+2013-11-29  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* symlink-dirs.sh: New script.
+	* symlink-all.sh: Use it.
+
+2013-11-27  Simon Cook  <simon.cook@embecosm.com>
+
+	* windows-installer/ChangeLog: Describe steps to cross-compile ELF32
+	toolchain for Windows.
+
+2013-11-20  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* extras/opella-xd/arcem-cpu.xml: New file. Contains AUX registers
+	description for the Ashling gdbserver for the Opella-XD probe.
+
+2013-11-18  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-elf32.sh, build-uclibc.sh: If PDF docs build failed, suggest
+	user to read Prerequisites section of documentation or use option
+	--no-pdf.
+
+2013-11-12  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Fix reference to section from readme, invalid name has
+	been used. Also remove debug echo left from development.
+
+2013-10-30  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Decide default value for auto-pull/checkout based on
+	whether toolchain directory is a Git repository or not. Checkout and
+	pull if it is a repository and do nothing if it is a directory from
+	source tarball.
+
+2013-10-30  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* build-all.sh: Give more detailed error message if Linux sources are
+	mussing.
+	* README.md: Add details on getting Linux sources.
+
+2013-10-29  Anton Kolesov  <anton.kolesov@synopsys.com>
+
+	* README.md: Add example of usage with Opella-XD debug probe.
+
+2013-10-10  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* README.md: Update examples, add examples for uClibc and EM Starter Kit.
+
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* arc-versions.sh: Support Git 1.8 which have different output from
+	previous versions.
+
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/nsim-extra.exp: Fix constant nsim_gdb	reboots. It was caused by
+	output buffer becoming full and not cleared by expect.
+
+2013-10-09  Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-nsim.exp, arc-sim.exp: Update baremetal board
+	definitions: disable HW watchpoints, on nSIM reload image each time before
+	running.
+
+2013-10-03  Simon Cook  <simon.cook@embecosm.com>
+
+	* windows-installer/buildall.sh: Add top level build all script.
+	* windows-installer/EnvVarUpdate.nsh: Add PATH modifying support script.
+	* windows-installer/arc_setup_base.nsi: Add installer base script.
+	* windows-installer/arc_all.nsi: Add install script.
+	* windows-installer/arc_all-openjdk.nsi: Add install script.
+	* windows-installer/winbuild: Add NSIS installer script builder.
+	* windows-installer/README.md: Add README.
+
 2013-09-30  Anton Kolesov <akolesov@synopsys.com>
 
 	* rel-rpaths.sh: Check that uClibc libc.so file exists before trying to
 	update it. Otherwise script fails for elf32-only toolchain build.
+
+2013-09-26  Anton Kolesov <akolesov@synopsys.com>
+
+	* arc-versions.sh: Fix double usage of same variable name for different
+	purposes, leading to incorrect behaviour.
+
+2013-09-16  Anton Kolesov <akolesov@synopsys.com>
+
+	* build-all.sh: Add option --[no-]strip to strip host binaries from symbols.
+	* build-elf32.sh: Use HOST_INSTALL env variable to define which target to
+	use to install on host. Should be either `install' or `install-strip'.
+	* build-uclibc.sh: Likewise.
+
+2013-09-11  Anton Kolesov <akolesov@synopsys.com>
+
+	* dejagnu/baseboard/arc-nsim.exp: Correct configuration for GDB testsuite
+	on nSIM.
+
+2013-09-10  Anton Kolesov <akolesov@synopsys.com>
+
+	* dejagnu/baseboard/arc-nsim.exp: Do not use status wrapper (testglue) for
+	Dejagnu tests.
+	* dejagnu/nsim-extra.exp: Remove custom copy of gdb_comm_load() function.
 
 2013-09-09	Anton Kolesov <akolesov@synopsys.com>
 
@@ -12,6 +279,41 @@
 
 	* arc-versions.sh: Correct uClibc version.
 
+2013-09-04	Anton Kolesov <akolesov@synopsys.com>
+
+	* arc-external.sh: New file to download external dependencies.
+	* build-all.sh: New option --[no-]external-download.
+
+2013-09-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* arc-versions.sh: Only use Linux if --uclibc is set (new
+	argument)
+	* build-all.sh: Pass uclibc argument to arc-versions.sh
+
+2013-09-03  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Only check for Linux directory with if uClibc is
+	being built.
+
+2012-09-02  Joern Rennecke  <joern.rennecke@embecosm.com>
+
+	* dejagnu/baseboards/arc-sim.exp: Comment out inapplicable settings:
+	needs_status_wrapper, noargs, noresults, noinferiorio
+
+2013-08-29  Vineet Gupta <vgupta@synopsys.com>
+
+	* arc-versions.sh: Update uClibc branch name to new naming convention.
+
+2013-08-24  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Eliminate dependency on bash extensions when
+	testing for pre-set environment variables.
+
+2013-08-23  Jeremy Bennett <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: Move use of all relevant env variables to after
+	define-release.sh.
+
 2013-08-20  Simon Cook  <simon.cook@embecosm.com>
 
 	* arc-versions.sh: Update branch names to new naming convention.
@@ -19,6 +321,40 @@
 2013-08-09  Simon Cook  <simon.cook@embecosm.com>
 
 	* README.md: Update description of stable branches.
+
+2013-08-14 Anton Kolesov   <akolesov@synopsys.com>
+
+	* build-all.sh: Unset some environment variables for example CROSS_COMPILE
+	and ARCH. Tools makefiles recognize these variable and might use them in
+	an undesirable way. For example CROSS_COMPILE has a predence over
+	toolchain we are building and this for example might cause a big endian
+	toolchain to have little endian standard libraries.
+
+2013-07-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* arc-clone-all.sh: More comprehensive version of the script.
+	* README.md: Use HTTPS versions of repository URLs.
+
+2013-07-17  Simon Cook  <simon.cook@embecosm.com>
+
+	* build-all.sh: Add --disable-werror and --no-disable-werror options.
+	* build-elf32.sh: Add DISABLEWERROR to configure.
+	* build-uclibc.sh: Likewise.
+
+2013-07-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-all.sh: Don't symlink-all newlib, instead just symlink the
+	top level directories.
+
+2013-07-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-elf32.sh: Remove --disable-werror from configuration.
+	* build-uclibc.sh: Likewise.
+
+2013-07-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: Use define-release.sh and associated
+	environment variables.
 
 2013-07-03  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 

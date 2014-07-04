@@ -29,13 +29,14 @@
 #                  [--symlink-dir <symlink_dir>]
 #                  [--auto-pull | --no-auto-pull]
 #                  [--auto-checkout | --no-auto-checkout]
+#                  [--external-download | --no-external-download]
 #                  [--unisrc | --no-unisrc]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>]
 #                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
-#                  [--isa-v1 | --isa-v2]
+#                  [--cpu arc600 | arc700 | EM | HS]
 #                  [--uclibc-defconfig <defconfig>]
 #                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
@@ -43,6 +44,9 @@
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
 #                  [--rel-rpaths | --no-rel-rpaths]
+#                  [--disable-werror | --no-disable-werror]
+#                  [--strip | --no-strip]
+#                  [--release-name <release>]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -108,12 +112,25 @@
 # --auto-checkout | --no-auto-checkout
 
 #     If specified, a "git checkout" will be done in each component repository
-#     to ensure the correct branch is checked out. Default is to checkout.
+#     to ensure the correct branch is checked out. If tool chain is built from
+#     a source tarball then default is to not make a checkout. If tool chain is
+#     built from a Git repository then default is to make a checkout.
 
 # --auto-pull | --no-auto-pull
 
 #     If specified, a "git pull" will be done in each component repository
 #     after checkout to ensure the latest code is in use. Default is to pull.
+#     If tool chain is built from a source tarball then default is to not pull.
+#     If tool chain is built from a Git repository then default is to pull.
+
+# --external-download | --no-external-download
+
+#     If specified, then GMP, MPFR and MPC libraries will be downloaded as
+#     source tarballs, unpacked and placed inside GCC source directory. GCC
+#     makefiles will recognize those directories properly and will use them
+#     instead of system libraries. Some systems (RHEL, CentOS) doesn't have all
+#     of the required dependencies in official repositories. This is done right
+#     after checkout and before unisrc is created. Default is to download.
 
 # --unisrc | --no-unisrc
 
@@ -164,10 +181,16 @@
 #     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
 #     whatever the load average.
 
-# --isa-v1 | --isa-v2
+# --cpu arc600 | arc700 | EM | HS
 
-#     Specify whether the original ARCompact version 1 ISA should be used (the
-#     default) or the new version 2 ISA (for EM targets).
+#    Specify default family of CPU for tool chain. Possible values are: arc600,
+#    arc700, EM and HS. arc600 and EM cannot be used with uClibc tool chain.
+
+# --uclibc-defconfig <defconfig>
+
+#     If specified, the defconfig used to build uClibc will be
+#     <defconfig>. The default is defconfig for v1 ISA and arcv2_defconfig for
+#     v2 ISA.
 
 # --uclibc-defconfig <defconfig>
 
@@ -212,6 +235,26 @@
 #     are set so they are relative to the INSTALL directory and thus become
 #     portable (default --rel-rpaths).
 
+# --disable-werror | --no-disable-werror
+
+#     Use these to control whether the tools are built with --disable-werror
+#     (default --disable-werror).
+
+# --strip | --no-strip
+
+#     Install stripped host binaries. Target libraries are not affected.
+#     Default is --no-strip.
+
+# --sed-tool
+
+#     Specify the path of the sed to use.
+
+# --release-name
+
+#     Name of this releases. Default value is "git describe --tag --always" of
+#     the gcc repository. If build is done from the source tarball, then
+#     current date is used.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -220,7 +263,6 @@
 # script. If you are using this script, you need to run the whole thing. If
 # you want to redo bits, use the underlying scripts, or go into the relevant
 # directories and do it by hand!
-
 
 # ------------------------------------------------------------------------------
 # Unset variables, which if inherited as environment variables from the caller
@@ -232,10 +274,14 @@ unset ARC_ENDIAN
 unset PARALLEL
 unset autocheckout
 unset autopull
+unset external_download
 unset datestamp
 unset commentstamp
 unset jobs
 unset load
+unset DISABLEWERROR
+unset HOST_INSTALL
+unset SED
 
 # In bash we typically write function blah_blah () { }. However Ubuntu default
 # /bin/sh -> dash doesn't recognize the "function" keyword. Its exclusion
@@ -264,8 +310,9 @@ build_pathnm ()
 }
 
 # Set defaults for some options
-autocheckout="--auto-checkout"
-autopull="--auto-pull"
+autocheckout=""
+autopull=""
+external_download="--external-download"
 do_unisrc="--unisrc"
 elf32="--elf32"
 uclibc="--uclibc"
@@ -274,7 +321,12 @@ UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
 rel_rpaths="--no-rel-rpaths"
+DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
+HOST_INSTALL=install
+SED=sed
+RELEASE_NAME=
+is_tarball=
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -295,9 +347,14 @@ case "x${DISABLE_MULTILIB}" in
 esac
 
 
-if [ x`uname -o` = "xMsys" ]
+if [ x`uname -s` = "xMsys" ]
 then
     DO_SIM="--no-sim"
+elif [ x`uname -s` = "xDarwin" ]
+then
+    DO_SIM="--no-sim"
+    #You can install gsed with 'brew install gnu-sed'
+    SED=gsed
 else
     DO_SIM="--sim"
 fi
@@ -344,6 +401,10 @@ case ${opt} in
 
     --auto-pull | --no-auto-pull)
 	autopull=$1
+	;;
+
+    --external-download | --no-external-download)
+	external_download=$1
 	;;
 
     --unisrc | --no-unisrc)
@@ -395,12 +456,10 @@ case ${opt} in
 	load=1000
 	;;
 
-    --isa-v1)
-	ISA_CPU=arc700
-	;;
 
-    --isa-v2)
-	ISA_CPU=EM
+    --cpu)
+	shift
+	ISA_CPU=$1
 	;;
 
     --sim|--no-sim)
@@ -434,6 +493,33 @@ case ${opt} in
     --rel-rpaths|--no-rel-rpaths)
 	rel_rpaths=$1
 	;;
+
+    --disable-werror)
+	DISABLEWERROR=$1
+	;;
+
+    --no-disable-werror)
+	DISABLEWERROR=
+	;;
+
+    --strip)
+        HOST_INSTALL=install-strip
+        ;;
+
+    --no-strip)
+        HOST_INSTALL=install
+        ;;
+
+    --sed-tool)
+	shift
+	SED=$1
+        ;;
+
+    --release-name)
+	shift
+	RELEASE_NAME="$1"
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -444,6 +530,7 @@ case ${opt} in
 	echo "                      [--symlink-dir <symlink_dir>]"
 	echo "                      [--auto-checkout | --no-auto-checkout]"
         echo "                      [--auto-pull | --no-auto-pull]"
+	echo "                      [--external-download | --no-external-download]"
         echo "                      [--unisrc | --no-unisrc]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
@@ -452,7 +539,7 @@ case ${opt} in
 	echo "                      [--big-endian | --little-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
-        echo "                      [--isa-v1 | --isa-v2]"
+        echo "                      [--cpu arc600 | arc700 | EM | HS]"
 	echo "                      [--uclibc-defconfig <defconfig>]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
@@ -460,6 +547,10 @@ case ${opt} in
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
 	echo "                      [--rel-rpaths | --no-rel-rpaths]"
+	echo "                      [--disable-werror | --no-disable-werror]"
+	echo "                      [--strip | --no-strip]"
+	echo "                      [--sed-tool <tool>]"
+	echo "                      [--release-name <release>]"
 	exit 1
 	;;
 
@@ -478,15 +569,74 @@ then
     ARC_GNU=`(cd "$d/.." && pwd)`
 fi
 
-# Default Linux directory if not already set.
-if [ "x${LINUXDIR}" = "x" ]
+# Now we can decide if do auto pull and auto checkout
+if [ -d "$ARC_GNU/toolchain/.git" ]
+then
+    is_tarball=no
+else
+    is_tarball=yes
+fi
+
+if [ "x$is_tarball" = "xno" ]
+then
+    git_auto="--auto"
+else
+    git_auto="--no-auto"
+fi
+
+if [ "x${autopull}" = "x" ]
+then
+    autopull="${git_auto}-pull"
+fi
+
+if [ "x${autocheckout}" = "x" ]
+then
+    autocheckout="${git_auto}-checkout"
+fi
+
+if [ "x$RELEASE_NAME" = "x" ]
+then
+    if [ "x$is_tarball" = "xno" ]
+    then
+	RELEASE_NAME="GCC $(git --git-dir=${ARC_GNU}/gcc/.git describe --tag --always)"
+    else
+	RELEASE_NAME="built on $(date +%Y%m%d)"
+    fi
+fi
+
+# Default Linux directory if not already set. Only matters if we are building
+# the uClibc tool chain.
+if [ "x${uclibc}" = "x--uclibc" -a "x${LINUXDIR}" = "x" ]
 then
     if [ -d "${ARC_GNU}"/linux ]
     then
 	LINUXDIR="${ARC_GNU}"/linux
     else
-	echo "ERROR: Cannot find Linux sources."
-	exit 1
+        echo "ERROR: Cannot find Linux sources. You can download latest"\
+             "stable release from http://kernel.org and untar it as a"\
+             "sibling of this \`toolchain' directory. Directory name must"\
+             "be \`linux'. For more details read README.md file, section"\
+             "\"Getting sources/Using source tarball\"."
+	     exit 1
+    fi
+fi
+
+if [ "x${ISA_CPU}" != "xarc600" -a "x${ISA_CPU}" != "xarc700" -a \
+     "x${ISA_CPU}" != "xEM" -a "x${ISA_CPU}" != "xHS" ]
+then
+    echo "ERROR: Invalid CPU family specified. Only arc600, arc700, EM and HS"\
+         "are suported."
+    exit 1
+fi
+
+if [ "x${uclibc}" = "x--uclibc" ]
+then
+    if [ "x${ISA_CPU}" = "xarc600" -o "x${ISA_CPU}" = "xEM" ]
+    then
+        echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
+             "Choose either arc700 or HS CPU family or disable building of"\
+             "uClibc tool chain with option --no-uclibc."
+        exit 1
     fi
 fi
 
@@ -519,7 +669,7 @@ fi
 # Default defconfig for uClibc, only if it has not already been set
 if [ "x${UCLIBC_DEFCFG}" = "x" ]
 then
-    if [ "xEM" = "x${ISA_CPU}" ]
+    if [ "xHS" = "x${ISA_CPU}" ]
     then
         UCLIBC_DEFCFG=arcv2_defconfig
     else
@@ -565,17 +715,43 @@ export CONFIG_EXTRA
 export DO_PDF
 export PARALLEL
 export UCLIBC_DEFCFG
+export DISABLEWERROR
+export HOST_INSTALL
 if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
 then
     export CFLAGS_FOR_TARGET
 fi
-
-# Change to the build directory
-cd ${builddir}
+export SED
+export RELEASE_NAME
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
+
+# Some commonly used variables might cause invalid results when inherited from
+# environment so we need to unset them.
+arc_unset_vars=
+for var_name in CROSS_COMPILE ARCH BUILD_CFLAGS BUILD_LDFLAGS PREFIX \
+    RUNTIME_PREFIX DEVEL_PREFIX MULTILIB_DIR UCLIBC_EXTRA_CFLAGS \
+    UCLIBC_EXTRA_CPPFLAGS CC CFLAGS LDFLAGS LIBS CPPFLAGS CXX CXXFLAGS \
+    build_configargs host_configargs target_configargs AR AS DLLTOOL LD LIPO \
+    NM RANLIB STRIP WINDRES WINDMC OBJCOPY OBJDUMP READELF CC_FOR_TARGTE \
+    CXX_FOR_TARGET GCC_FOR_TARGET AR_FOR_TARGET AS_FOR_TARGET \
+    DLLTOOL_FOR_TARGET LD_FOR_TARGET LIPO_FOR_TARGET NM_FOR_TARGET \
+    OBJDUMP_FOR_TARGET RUNLIB_FOR_TARGET READELF_FOR_TARGET STRIP_FOR_TARGET \
+    WINDRES_FOR_TARGET WINDMC_FOR_TARGET ; do
+    if env | grep ^${var_name}= > /dev/null 2>&1
+    then
+        arc_unset_vars="${arc_unset_vars} ${var_name}"
+        unset ${var_name}
+    fi
+done
+if [ "${arc_unset_vars}" ]
+then
+    echo "WARNING: Your environment has some variables that might affect " \
+         "build in a undesirable way. These variables will be unset: " \
+         "\`${arc_unset_vars}'." | tee -a "${logfile}"
+fi
 
 # Log the environment
 echo "Build environment" >> "${logfile}"
@@ -588,12 +764,30 @@ echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
 if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
-      >> ${logfile} 2>&1
+    ${uclibc} >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
     echo "- see ${logfile}"
     exit 1
 fi
+
+# Downloading external dependencies
+if [ "x${external_download}" = "x--external-download" ]; then
+    echo "Downloading external dependencies" >> "${logfile}"
+    echo "====================================" >> "${logfile}"
+
+    echo "Downloading external dependencies..."
+	cd ${ARC_GNU}/gcc
+    if ! ${ARC_GNU}/toolchain/arc-external.sh >> ${logfile} 2>&1
+    then
+        echo "WARNING: Failed to download external dependencies. Build will be continued but it can fail."
+    fi
+else
+    echo "Will not download external dependencies" | tee -a "${logfile}"
+fi
+
+# Change to the build directory
+cd ${builddir}
 
 # Make a unified source tree in the build directory. Note that later versions
 # override earlier versions with the current symlinking version.
@@ -603,7 +797,7 @@ then
     echo "====================" >> "${logfile}"
 
     echo "Linking unified tree ..."
-    component_dirs="gdb newlib binutils gcc"
+    component_dirs="gdb binutils gcc"
     rm -rf ${UNISRC}
 
     if ! mkdir -p ${UNISRC}
@@ -619,6 +813,27 @@ then
 	echo "ERROR: Failed to symlink ${UNISRC}"
 	exit 1
     fi
+
+    # Link in the top of the newlib and libgloss trees. We can't use
+    # symlink-all.sh on these, or we'll get symlinks to the source tree in the
+    # installation.
+    cd ${UNISRC}
+
+    if ! ln -s ${ARC_GNU}/newlib/libgloss . >> "${logfile}" 2>&1
+    then
+	echo "ERROR: Failed to symlink libgloss"
+	exit 1
+    fi
+
+    if ! ln -s ${ARC_GNU}/newlib/newlib . >> "${logfile}" 2>&1
+    then
+	echo "ERROR: Failed to symlink newlib"
+	exit 1
+    fi
+
+    # Revert back to the build directory
+    cd ${builddir}
+
 fi
 
 # Optionally build the arc-elf32- tool chain
