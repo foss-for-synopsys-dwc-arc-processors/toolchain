@@ -1,5 +1,9 @@
 2014-07-04  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* README.md: Update to match current state.
+
+2014-07-04  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* Makefile.release: New file.
 
 2014-07-04  Anton Kolesov  <Anton.Kolesov@synopsys.com>
