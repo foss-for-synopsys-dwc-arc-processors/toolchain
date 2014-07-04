@@ -36,7 +36,7 @@
 #                  [--comment-install <comment>]
 #                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
-#                  [--cpu arc600 | arc700 | EM | HS]
+#                  [--cpu arc600 | arc700 | arcem | archs]
 #                  [--uclibc-defconfig <defconfig>]
 #                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
@@ -181,10 +181,10 @@
 #     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
 #     whatever the load average.
 
-# --cpu arc600 | arc700 | EM | HS
+# --cpu arc600 | arc700 | arcem | archs
 
 #    Specify default family of CPU for tool chain. Possible values are: arc600,
-#    arc700, EM and HS. arc600 and EM cannot be used with uClibc tool chain.
+#    arc700, arcem and archs.
 
 # --uclibc-defconfig <defconfig>
 
@@ -533,7 +533,7 @@ case ${opt} in
 	echo "                      [--big-endian | --little-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
-        echo "                      [--cpu arc600 | arc700 | EM | HS]"
+        echo "                      [--cpu arc600 | arc700 | arcem | archs]"
 	echo "                      [--uclibc-defconfig <defconfig>]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
@@ -616,19 +616,19 @@ then
 fi
 
 if [ "x${ISA_CPU}" != "xarc600" -a "x${ISA_CPU}" != "xarc700" -a \
-     "x${ISA_CPU}" != "xEM" -a "x${ISA_CPU}" != "xHS" ]
+     "x${ISA_CPU}" != "xarcem" -a "x${ISA_CPU}" != "xarchs" ]
 then
-    echo "ERROR: Invalid CPU family specified. Only arc600, arc700, EM and HS"\
+    echo "ERROR: Invalid CPU family specified. Only arc600, arc700, arcem and archs"\
          "are suported."
     exit 1
 fi
 
 if [ "x${uclibc}" = "x--uclibc" ]
 then
-    if [ "x${ISA_CPU}" = "xarc600" -o "x${ISA_CPU}" = "xEM" ]
+    if [ "x${ISA_CPU}" = "xarc600" -o "x${ISA_CPU}" = "xarcem" ]
     then
         echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
-             "Choose either arc700 or HS CPU family or disable building of"\
+             "Choose either arc700 or archs CPU family or disable building of"\
              "uClibc tool chain with option --no-uclibc."
         exit 1
     fi
@@ -663,7 +663,7 @@ fi
 # Default defconfig for uClibc, only if it has not already been set
 if [ "x${UCLIBC_DEFCFG}" = "x" ]
 then
-    if [ "xHS" = "x${ISA_CPU}" ]
+    if [ "xarchs" = "x${ISA_CPU}" ]
     then
         UCLIBC_DEFCFG=arcv2_defconfig
     else
