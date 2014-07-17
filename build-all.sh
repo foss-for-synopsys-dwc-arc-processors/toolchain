@@ -592,7 +592,7 @@ if [ "x$RELEASE_NAME" = "x" ]
 then
     if [ "x$is_tarball" = "xno" ]
     then
-	RELEASE_NAME="GCC $(git --git-dir=${ARC_GNU}/gcc/.git describe --tag --always)"
+	RELEASE_NAME="$(git --git-dir=${ARC_GNU}/gcc/.git describe --tag --always)"
     else
 	RELEASE_NAME="built on $(date +%Y%m%d)"
     fi

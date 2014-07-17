@@ -1,3 +1,9 @@
+2014-07-17  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-all.sh: Adjust toolchain version string.
+	* build-elf32.sh: Likewise.
+	* build-uclibc.sh: Likewise.
+
 2014-07-04  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* README.md: Update to match current state.
