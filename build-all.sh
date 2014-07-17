@@ -192,12 +192,6 @@
 #     <defconfig>. The default is defconfig for v1 ISA and arcv2_defconfig for
 #     v2 ISA.
 
-# --uclibc-defconfig <defconfig>
-
-#     If specified, the defconfig used to build uClibc will be
-#     <defconfig>. The default is defconfig for v1 ISA and arcv2_defconfig for
-#     v2 ISA.
-
 # --sim | --no-sim
 
 #     Specify whether the CGEN simulator should be built for the ELF tool
@@ -598,7 +592,7 @@ if [ "x$RELEASE_NAME" = "x" ]
 then
     if [ "x$is_tarball" = "xno" ]
     then
-	RELEASE_NAME="GCC $(git --git-dir=${ARC_GNU}/gcc/.git describe --tag --always)"
+	RELEASE_NAME="$(git --git-dir=${ARC_GNU}/gcc/.git describe --tag --always)"
     else
 	RELEASE_NAME="built on $(date +%Y%m%d)"
     fi

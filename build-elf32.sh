@@ -199,7 +199,7 @@ config_path=$(calcConfigPath "${unified_src_abs}")
 log_path=$(calcConfigPath "${logfile}")
 if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
         ${ELF32_DISABLE_MULTILIB} \
-        --with-pkgversion="ARCompact/ARCv2 ISA elf32 toolchain ($RELEASE_NAME)" \
+        --with-pkgversion="ARCompact/ARCv2 ISA elf32 toolchain $RELEASE_NAME" \
         --with-bugurl="http://solvnet.synopsys.com" \
         --enable-fast-install=N/A \
         --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \

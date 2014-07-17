@@ -179,9 +179,9 @@ triplet=${arche}-snps-linux-uclibc
 
 if [ $ISA_CPU = arc700 ]
 then
-    version_str="ARCompact ISA Linux uClibc toolchain ($RELEASE_NAME)"
+    version_str="ARCompact ISA Linux uClibc toolchain $RELEASE_NAME"
 else
-    version_str="ARCv2 ISA Linux uClibc toolchain ($RELEASE_NAME)"
+    version_str="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
 fi
 bugurl_str="http://solvnet.synopsys.com"
 
