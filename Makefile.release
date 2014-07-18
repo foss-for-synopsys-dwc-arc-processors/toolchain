@@ -2,8 +2,9 @@
 #
 # 1. Checkout toolchain directory to desired branch. Create tags if needed.
 #
-# 2. Run "make -f Makefile.release". If you do not want build-all.sh to
-# checkout directories, then do "touch ../release_output/.stamp_checked_out
+# 2. Run "make -f Makefile.release RELEASE=<release>". If you do not want
+# build-all.sh to checkout directories, then do "touch
+# ../release_output/.stamp_checked_out
 
 UNIFIED_SRC_DIR := unisrc-4.8
 BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
@@ -13,7 +14,6 @@ BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
 # Output artifacts
 #
 O := ../release_output
-RELEASE := 4.8-R4
 OS_NAME := linux
 SOURCE_TARBALL_CONTENTS :=$(addprefix ../,binutils cgen gcc gdb newlib toolchain uClibc)
 SOURCE_TARBALL_TGZ := $O/arc_gnu_$(RELEASE)_sources.tar.gz
@@ -34,6 +34,10 @@ LINUX_BE_TGZ := $O/$(LINUX_BE_NAME).tar.gz
 # Baremetal for Windows
 WIN_ELF_LE_DIR := $O/arc-elf32_windows
 WIN_ELF_BE_DIR := $O/arceb-elf32_windows
+
+ifeq ($(RELEASE),)
+$(error RELEASE variable can not be empty)
+endif
 
 #
 # Human friendly aliases
@@ -67,11 +71,13 @@ $O:
 	mkdir -p $@
 
 # Checkout sources
+.NOTPARALLEL: $O/.stamp_checked_out
 $O/.stamp_checked_out: | $O
 	./build-all.sh --auto-pull --auto-checkout --no-unisrc --no-elf32 --no-uclibc
 	touch $@
 
 # Create source tarball
+.NOTPARALLEL: $O/.stamp_source_tarball
 $O/.stamp_source_tarball: $O/.stamp_checked_out
 	tar --exclude-vcs -c -z -f $(SOURCE_TARBALL_TGZ) --exclude=$O --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(SOURCE_TARBALL_CONTENTS)
 	touch $@
@@ -84,13 +90,13 @@ $O/.stamp_unisrc: $O/.stamp_checked_out
 $O/.stamp_elf_le_built: $O/.stamp_unisrc
 	# We should readlin OUTPUT_DIR, because we are making `cd`.
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(ELF_LE_DIR)) \
-	    --no-uclibc
+	    --no-uclibc --release-name $(RELEASE)
 	touch $@
 
 $O/.stamp_elf_be_built: $O/.stamp_unisrc
 	# We should readlin OUTPUT_DIR, because we are making `cd`.
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(ELF_BE_DIR)) \
-	    --no-uclibc --big-endian
+	    --no-uclibc --release-name $(RELEASE) --big-endian
 	touch $@
 
 $O/.stamp_elf_le_tarball: $O/.stamp_elf_le_built
@@ -103,12 +109,12 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 
 $O/.stamp_linux_le_built: $O/.stamp_unisrc
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(LINUX_LE_DIR)) \
-	    --no-elf32
+	    --no-elf32 --release-name $(RELEASE)
 	touch $@
 
 $O/.stamp_linux_be_built: $O/.stamp_unisrc
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(LINUX_BE_DIR)) \
-	    --no-elf32 --big-endian
+	    --no-elf32 --release-name $(RELEASE) --big-endian
 	touch $@
 
 $O/.stamp_linux_le_tarball: $O/.stamp_linux_le_built
@@ -122,24 +128,24 @@ $O/.stamp_linux_be_tarball: $O/.stamp_linux_be_built
 #
 # Windows build
 #
-build-elf32-windows.sh: windows-installer/build-elf32_windows.patch build-elf32.sh
+build-elf32-windows.sh: windows-installer/build-elf32_windows.patch build-elf32.sh $O/.stamp_source_tarball
 	patch -p1 -o $@ < $<
 	chmod u+x $@
 
-build-all-windows.sh: build-all.sh | build-elf32-windows.sh
+build-all-windows.sh: build-all.sh | build-elf32-windows.sh $O/.stamp_source_tarball
 	sed -e 's/build-elf32.sh/build-elf32-windows.sh/' <$< >$@
 	chmod +x $@
 
 $O/.stamp_elf_le_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $(ELF_LE_DIR)/bin):$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
-	     --install-dir $(WIN_ELF_LE_DIR) --no-uclibc --no-sim
+	     --install-dir $(WIN_ELF_LE_DIR) --no-uclibc --no-sim --release-name $(RELEASE)
 	cp -rfdv /usr/i686-pc-mingw32/sys-root/mingw/bin/* $(WIN_ELF_LE_DIR)/bin
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_elf_be_built
 	# We install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $(ELF_BE_DIR))/bin:$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
-	     --install-dir $(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim
+	     --install-dir $(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim --release-name $(RELEASE)
 	touch $@
 
 #
