@@ -1,3 +1,7 @@
+2014-07-21  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* Makefile.release: Fix broken prebuilt tarballs.
+
 2014-07-18  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* Makefile.release: Proper release name handling.
