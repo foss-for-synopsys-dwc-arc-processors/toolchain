@@ -55,6 +55,15 @@ case "$target_triplet" in {
     }
 }
 
+# Some GCC tests requires HOST{CC,CFLAGS}, however those variables are not
+# defined by test_installed. Thus set them here.
+if ![ info exists HOSTCC ] {
+    set HOSTCC gcc
+}
+if ![ info exists HOSTCFLAGS ] {
+    set HOSTCFLAGS "-g -O2"
+}
+
 #    set TORTURE_OPTIONS [list \
 #        { -O0 -mARC700 -mdpfp } \
 #        { -O0 -mARC700 -mdpfp -mno-dpfp-lrsr } \
