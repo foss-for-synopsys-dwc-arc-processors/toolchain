@@ -38,12 +38,14 @@
 
 #  2. Tags and pushes the tag for all the component trees *except* toolchain.
 
-#  3. Goes into 'detached head' mode for the current head of the toolchain tree.
+#  3. Checks out -stable branch for the current -dev branch.
 
-#  4. Edits arc-versions.sh so it checks out the tagged versions of all
+#  4. Merges -stable with -dev.
+
+#  5. Edits arc-versions.sh so it checks out the tagged versions of all
 #     components.
 
-#  5. Commits this change, tags that commit and pushes that tag.
+#  6. Commits this change, tags that commit and pushes that tag.
 
 # At the end, the toolchain branch will be checked out on that tag. For
 # ongoing development we'll need to checkout the dev branch.
@@ -132,6 +134,8 @@ do
 	suffix="-gdb"
     else
 	suffix=""
+    fi
+
     if ! git tag ${tagname}${suffix}
     then
 	echo "ERROR: Failed to tag ${repo}"
@@ -151,10 +155,25 @@ done
 branch=`git symbolic-ref -q HEAD --short`
 remote=`git config branch.${branch}.remote`
 
-# Go into detached head mode for the toolchain repo.
-git checkout `git log -1 --pretty=format:%H`
+if [[ $branch != *-dev ]] ; then
+    echo 'Current branch is not a *-dev branch! Cannot create a tag from it'
+    exit 1
+fi
 
-# Edit arc-versions.sh (not linux) and commit it (still detached)
+# Merge with a stable branch
+stable_branch=$(sed -e s/-dev$/-stable/ <<< $branch)
+if ! git checkout $stable_branch ; then
+    echo "Failed to checkout branch $stable_branch"
+    exit 1
+fi
+
+if ! git merge $branch ; then
+    echo "Failed to merge $stable_branch with $branch"
+    exit 1
+fi
+
+
+# Edit arc-versions.sh but leave linux branch untouched.
 if ! sed -i -e "s/\(^[bcgnu][[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/" \
     arc-versions.sh
 then
@@ -183,7 +202,7 @@ then
     exit 1
 fi
 
-if ! git push ${remote} ${tagname}
+if ! git push ${remote} ${tagname} $stable_branch
 then
     echo "ERROR: Failed to push tag for toolchain"
     exit 1
