@@ -20,20 +20,21 @@ SOURCE_TARBALL_TGZ := $O/arc_gnu_$(RELEASE)_sources.tar.gz
 # Baremetal toolchain
 ELF_LE_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_le_$(OS_NAME)_install
 ELF_BE_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_be_$(OS_NAME)_install
-ELF_LE_DIR := $O/arc-elf32
-ELF_BE_DIR := $O/arceb-elf32
-ELF_LE_TGZ := $O/$(ELF_LE_NAME).tar.gz
-ELF_BE_TGZ := $O/$(ELF_BE_NAME).tar.gz
+ELF_LE_DIR := arc-elf32
+ELF_BE_DIR := arceb-elf32
+ELF_LE_TGZ := $(ELF_LE_NAME).tar.gz
+ELF_BE_TGZ := $(ELF_BE_NAME).tar.gz
 # Linux toolchain
 LINUX_LE_NAME := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_$(OS_NAME)_install
 LINUX_BE_NAME := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_$(OS_NAME)_install
-LINUX_LE_DIR := $O/arc-linux
-LINUX_BE_DIR := $O/arceb-linux
-LINUX_LE_TGZ := $O/$(LINUX_LE_NAME).tar.gz
-LINUX_BE_TGZ := $O/$(LINUX_BE_NAME).tar.gz
+LINUX_LE_DIR := arc-linux
+LINUX_BE_DIR := arceb-linux
+LINUX_LE_TGZ := $(LINUX_LE_NAME).tar.gz
+LINUX_BE_TGZ := $(LINUX_BE_NAME).tar.gz
 # Baremetal for Windows
-WIN_ELF_LE_DIR := $O/arc-elf32_windows
-WIN_ELF_BE_DIR := $O/arceb-elf32_windows
+WIN_ELF_LE_DIR := arc-elf32_windows
+# Big endian toolchain is installed to same directory as little endian
+#WIN_ELF_BE_DIR := $O/arceb-elf32_windows
 
 ifeq ($(RELEASE),)
 $(error RELEASE variable can not be empty)
@@ -88,41 +89,39 @@ $O/.stamp_unisrc: $O/.stamp_checked_out
 	touch $@
 
 $O/.stamp_elf_le_built: $O/.stamp_unisrc
-	# We should readlin OUTPUT_DIR, because we are making `cd`.
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(ELF_LE_DIR)) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(ELF_LE_DIR) \
 	    --no-uclibc --release-name $(RELEASE)
 	touch $@
 
 $O/.stamp_elf_be_built: $O/.stamp_unisrc
-	# We should readlin OUTPUT_DIR, because we are making `cd`.
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(ELF_BE_DIR)) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(ELF_BE_DIR) \
 	    --no-uclibc --release-name $(RELEASE) --big-endian
 	touch $@
 
 $O/.stamp_elf_le_tarball: $O/.stamp_elf_le_built
-	tar czf $(ELF_LE_TGZ) --transform='s#$(ELF_LE_DIR)#$(ELF_LE_NAME)#' $(ELF_LE_DIR)/
+	cd $O && tar czf $(ELF_LE_TGZ) --transform='s#$(ELF_LE_DIR)#$(ELF_LE_NAME)#' $(ELF_LE_DIR)/
 	touch $@
 
 $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
-	tar czf $(ELF_BE_TGZ) --transform='s#$(ELF_BE_DIR)#$(ELF_BE_NAME)#' $(ELF_BE_DIR)/
+	cd $O && tar czf $(ELF_BE_TGZ) --transform='s#$(ELF_BE_DIR)#$(ELF_BE_NAME)#' $(ELF_BE_DIR)/
 	touch $@
 
 $O/.stamp_linux_le_built: $O/.stamp_unisrc
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(LINUX_LE_DIR)) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_LE_DIR) \
 	    --no-elf32 --release-name $(RELEASE)
 	touch $@
 
 $O/.stamp_linux_be_built: $O/.stamp_unisrc
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $(shell readlink -m $(LINUX_BE_DIR)) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_BE_DIR) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian
 	touch $@
 
 $O/.stamp_linux_le_tarball: $O/.stamp_linux_le_built
-	tar czf $(LINUX_LE_TGZ) --transform='s#$(LINUX_LE_DIR)#$(LINUX_LE_NAME)#' $(LINUX_LE_DIR)/
+	cd $O && tar czf $(LINUX_LE_TGZ) --transform='s#$(LINUX_LE_DIR)#$(LINUX_LE_NAME)#' $(LINUX_LE_DIR)/
 	touch $@
 
 $O/.stamp_linux_be_tarball: $O/.stamp_linux_be_built
-	tar czf $(LINUX_BE_TGZ) --transform='s#$(LINUX_BE_DIR)#$(LINUX_BE_NAME)#' $(LINUX_BE_DIR)/
+	cd $O && tar czf $(LINUX_BE_TGZ) --transform='s#$(LINUX_BE_DIR)#$(LINUX_BE_NAME)#' $(LINUX_BE_DIR)/
 	touch $@
 
 #
@@ -137,15 +136,15 @@ build-all-windows.sh: build-all.sh | build-elf32-windows.sh $O/.stamp_source_tar
 	chmod +x $@
 
 $O/.stamp_elf_le_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_elf_le_built
-	PATH=$(shell readlink -e $(ELF_LE_DIR)/bin):$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
-	     --install-dir $(WIN_ELF_LE_DIR) --no-uclibc --no-sim --release-name $(RELEASE)
-	cp -rfdv /usr/i686-pc-mingw32/sys-root/mingw/bin/* $(WIN_ELF_LE_DIR)/bin
+	PATH=$(shell readlink -e $O/$(ELF_LE_DIR)/bin):$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
+	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --no-sim --release-name $(RELEASE)
+	cp -rfdv /usr/i686-pc-mingw32/sys-root/mingw/bin/* $O/$(WIN_ELF_LE_DIR)/bin
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_elf_be_built
 	# We install toolchain in the same dir as little endian
-	PATH=$(shell readlink -e $(ELF_BE_DIR))/bin:$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
-	     --install-dir $(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim --release-name $(RELEASE)
+	PATH=$(shell readlink -e $O/$(ELF_BE_DIR))/bin:$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
+	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim --release-name $(RELEASE)
 	touch $@
 
 #

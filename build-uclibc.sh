@@ -172,6 +172,7 @@ else
     arche=arc
     build_dir="$(echo "${PWD}")"/bd-${RELEASE}-uclibc
 fi
+build_dir_stage1=${build_dir}-stage1
 
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}
@@ -184,12 +185,6 @@ else
     version_str="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
 fi
 bugurl_str="http://solvnet.synopsys.com"
-
-
-# tmp_install_dir = Temporary install dir for stage 1 compiler
-tmp_install_dir="$(echo "${PWD}")/tmp-install-uclibc-$$"
-rm -rf ${tmp_install_dir}
-mkdir -p ${tmp_install_dir}
 
 # parse options
 until
@@ -225,6 +220,9 @@ linux_build_dir=${LINUXDIR}
 echo "Installing in ${INSTALLDIR}" >> ${logfile} 2>&1
 echo "Installing in ${INSTALLDIR}"
 
+# Setup vars
+SYSROOTDIR=${INSTALLDIR}/${triplet}/sysroot
+
 # -----------------------------------------------------------------------------
 # Install the Linux headers
 
@@ -249,7 +247,7 @@ else
     echo "  LINUX already configured"
 fi
 
-if make ARCH=${arch} INSTALL_HDR_PATH=${tmp_install_dir}/${triplet} \
+if make ARCH=${arch} INSTALL_HDR_PATH=${SYSROOTDIR}/usr \
     headers_install >> "${logfile}" 2>&1
 then
     echo "  finished installing LINUX headers"
@@ -288,16 +286,16 @@ make distclean >> "${logfile}" 2>&1 || true
 # uClibc 0.9.34 onwards use defconfig
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
 then
-    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
-           -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${triplet}/#" \
-           -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${triplet}/#" \
+    ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
+           -e "s#%RUNTIME_PREFIX%#/#" \
+           -e "s#%DEVEL_PREFIX%#$/usr/#" \
            -e "s#%CROSS_COMPILER_PREFIX%#${triplet}-#" \
            < "${ARC_GNU}"/uClibc/arc_config > .config
 else
     make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
-    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/include#" \
-           -e "s#%RUNTIME_PREFIX%#${tmp_install_dir}/${triplet}/#" \
-           -e "s#%DEVEL_PREFIX%#${tmp_install_dir}/${triplet}/#" \
+    ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
+           -e "s#%RUNTIME_PREFIX%#/#" \
+           -e "s#%DEVEL_PREFIX%#/usr/#" \
            -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
 	   -i .config
 fi
@@ -314,7 +312,8 @@ else
            -i .config
 fi
 
-if make ARCH=${arch} V=1 install_headers >> "${logfile}" 2>&1
+# PREFIX is an arg to Makefile, it is not set in .config.
+if make ARCH=${arch} V=1 PREFIX=${SYSROOTDIR} install_headers >> "${logfile}" 2>&1
 then
     echo "  finished installing UCLIBC headers"
 else
@@ -331,10 +330,10 @@ echo "====================" >> "${logfile}"
 
 echo "Start building GCC stage 1 ..."
 
-# Create the build dir
-rm -rf "${build_dir}"
-mkdir -p "${build_dir}"
-cd "${build_dir}"
+# Create the build dir for stage 1.
+rm -rf "${build_dir_stage1}"
+mkdir -p "${build_dir_stage1}"
+cd "${build_dir_stage1}"
 
 # Configure the build. Disable anything that might try to build a run-time
 # library and don't bother with multilib for stage 1. Note: with gcc 4.4.x, we
@@ -344,10 +343,12 @@ if "${config_path}"/configure --target=${triplet} \
         --with-cpu=${ISA_CPU} \
         --disable-fast-install --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
         --disable-multilib \
-        --enable-languages=c --prefix="${tmp_install_dir}" \
+        --enable-languages=c --prefix="${INSTALLDIR}" \
         --without-headers --enable-shared --disable-threads --disable-tls \
-	--disable-libssp --disable-libmudflap --without-newlib --disable-c99 \
-	--disable-libgomp ${CONFIG_EXTRA} >> "${logfile}" 2>&1
+        --disable-libssp --disable-libmudflap --without-newlib --disable-c99 \
+        --disable-libgomp ${CONFIG_EXTRA} \
+        --with-sysroot=${SYSROOTDIR} \
+	>> "${logfile}" 2>&1
 then
     echo "  finished configuring stage 1"
 else
@@ -379,7 +380,7 @@ fi
 # Add the newly created stage 1 tool chain to the path for now, but remember
 # the old path for restoring later.
 oldpath=${PATH}
-PATH=${tmp_install_dir}/bin:$PATH
+PATH=${INSTALLDIR}/bin:$PATH
 export PATH
 
 # -----------------------------------------------------------------------------
@@ -400,17 +401,17 @@ cd ${uclibc_build_dir}
 # relocatable toolchains.
 if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
 then
-    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${triplet}/include#" \
-           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${triplet}/sysroot#" \
-           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${triplet}/sysroot/usr#" \
+    ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
+           -e "s#%RUNTIME_PREFIX%#/#" \
+           -e "s#%DEVEL_PREFIX%#/usr/#" \
            -e "s#%CROSS_COMPILER_PREFIX%#${triplet}-#" \
            -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
            < "${ARC_GNU}"/uClibc/arc_config > .config
 else
     make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
-    ${SED} -e "s#%KERNEL_HEADERS%#${tmp_install_dir}/${triplet}/include#" \
-           -e "s#%RUNTIME_PREFIX%#${INSTALLDIR}/${triplet}/sysroot#" \
-           -e "s#%DEVEL_PREFIX%#${INSTALLDIR}/${triplet}/sysroot/usr#" \
+    ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
+           -e "s#%RUNTIME_PREFIX%#/#" \
+           -e "s#%DEVEL_PREFIX%#/usr/#" \
            -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
            -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
            -i .config
@@ -436,8 +437,9 @@ else
     echo "       \"${logfile}\" for details."
     exit 1
 fi
-  
-if make ARCH=${arch} V=2 >> "${logfile}" 2>&1
+
+# PREFIX is an arg to Makefile, it is not set in .config.
+if make ARCH=${arch} V=2 PREFIX=${SYSROOTDIR} >> "${logfile}" 2>&1
 then
     echo "  finished building UCLIBC"
 else
@@ -446,7 +448,7 @@ else
     exit 1
 fi
 
-if make ARCH=${arch} V=2 install >> "${logfile}" 2>&1
+if make ARCH=${arch} V=2 PREFIX=${SYSROOTDIR} install >> "${logfile}" 2>&1
 then
     echo "  finished installing UCLIBC"
 else
@@ -467,7 +469,7 @@ echo "===================================" >> "${logfile}"
 
 echo "Start building Stage 2 TOOL CHAIN ..."
 
-# Re Create the build dir
+# Recreate the build dir
 rm -rf "${build_dir}"
 mkdir -p "${build_dir}"
 cd "${build_dir}"
@@ -481,10 +483,9 @@ if "${config_path}"/configure --target=${triplet} \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}" \
         --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
-        --with-headers=${tmp_install_dir}/${triplet}/include \
         --enable-languages=c,c++ --prefix="${INSTALLDIR}" \
         --enable-shared --without-newlib --disable-libgomp ${CONFIG_EXTRA} \
-        --with-sysroot=${INSTALLDIR}/${triplet}/sysroot \
+        --with-sysroot=${SYSROOTDIR} \
     >> "${logfile}" 2>&1
 then
     echo "  finished configuring stage 2 build"
@@ -516,20 +517,6 @@ else
     exit 1
 fi
 
-# Install kernel headers to the sysroot directory. It looks like that this has
-# been happening automatically with the old (non-sysroot) build process, but
-# here we have to do that explicitly.
-cd "${linux_build_dir}"
-if make ARCH=${arch} INSTALL_HDR_PATH=${INSTALLDIR}/${triplet}/sysroot/usr \
-    headers_install >> "${logfile}" 2>&1
-then
-    echo "  finished installing LINUX headers"
-else
-    echo "ERROR: LINUX header install to sysroot was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
-
 # Despite "--with-sysroot" libgcc and libstdc++ will be installed to default
 # directory. Copy them manually. It also looks like that buildroot will work
 # properly even without this change and will copy libraries to the target
@@ -538,14 +525,10 @@ fi
 # to have multiple sysroots. In that latter case I suppose that libraries
 # outside of sysroots should be removed to avoid unintentional mixing. Also my
 # experiments showed that G++ can't find libstdc++ headers in sysroot, they
-# should be where they've been installed, bu then its the headers, not objects
-# files, so that shouldn't be an issue.
-cp -dpf ${INSTALLDIR}/${triplet}/lib/libgcc_s* \
-    ${INSTALLDIR}/${triplet}/sysroot/lib/
-cp -dpf ${INSTALLDIR}/${triplet}/lib/libstdc++*.so* \
-    ${INSTALLDIR}/${triplet}/sysroot/usr/lib
-cp -dpf ${INSTALLDIR}/${triplet}/lib/libstdc++*.a \
-    ${INSTALLDIR}/${triplet}/sysroot/usr/lib
+# should be where they've been installed.
+cp -dpf ${INSTALLDIR}/${triplet}/lib/libgcc_s* ${SYSROOTDIR}/lib/
+cp -dpf ${INSTALLDIR}/${triplet}/lib/libstdc++*.so* ${SYSROOTDIR}/usr/lib
+cp -dpf ${INSTALLDIR}/${triplet}/lib/libstdc++*.a ${SYSROOTDIR}/usr/lib
 
 # Add the newly created tool chain to the path
 PATH=${INSTALLDIR}/bin:$PATH
@@ -676,8 +659,6 @@ then
 	exit 1
     fi
 fi
-
-rm -rf "${tmp_install_dir}"
 
 echo "DONE  UCLIBC: $(date)" >> ${logfile}
 echo "DONE  UCLIBC: $(date)"

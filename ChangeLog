@@ -1,3 +1,20 @@
+2014-08-06  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* tag-release.sh: Use stable branches for tags, instead of detached
+	tags.
+
+2014-08-01  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* site.exp: Ensure that HOSTCC and HOSTCFLAGS are set.
+
+2014-07-24  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Do not use temporary dir for stage 1 toolchain.
+
+2014-07-21  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* Makefile.release: Fix broken prebuilt tarballs.
+
 2014-07-18  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* Makefile.release: Proper release name handling.
