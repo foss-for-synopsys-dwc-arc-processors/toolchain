@@ -2,9 +2,10 @@
 
 # Script to specify versions of tools to use.
 
-# Copyright (C) 2012, 2013 Synopsys Inc.
+# Copyright (C) 2012-2014 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 # This script is used to tag a particular release.
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2013 Embecosm Limited.
+# Copyright (C) 2013-2014 Embecosm Limited.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 

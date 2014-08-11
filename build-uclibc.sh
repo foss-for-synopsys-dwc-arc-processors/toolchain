@@ -1,9 +1,10 @@
 #!/bin/sh
 
-# Copyright (C) 2010-2013 Synopsys Inc.
+# Copyright (C) 2010-2014 Synopsys Inc.
 
 # Contributor Brendan Kehoe <brendan@zen.org>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 # This file is a master script for ARC tool chains.
 

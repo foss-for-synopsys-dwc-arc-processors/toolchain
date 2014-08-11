@@ -2,9 +2,10 @@
 
 # Script to set RPATHs to be relative in shared binaries
 
-# Copyright (C) 2012, 2013 Synopsys Inc.
+# Copyright (C) 2012-2014 Synopsys Inc.
 
 # Contributor Simon Cook <simon.cook@embecosm.com>
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free

@@ -1,6 +1,6 @@
 ; ARC 4.8 Installer Base Script
 
-; Copyright (C) 2013 Synopsys Inc.
+; Copyright (C) 2013-2014 Synopsys Inc.
 ; Contributor: Simon Cook <simon.cook@embecosm.com>
 
 ; This program is free software; you can redistribute it and/or modify it
