@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 # Copyright (C) 2012 Embecosm Limited
+# Copyright (C) 2013-2014 Synopsys Inc.
 #
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 #

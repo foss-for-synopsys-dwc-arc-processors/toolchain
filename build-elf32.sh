@@ -1,10 +1,11 @@
 #!/bin/sh
 
 # Copyright (C) 2009, 2011, 2012, 2013 Embecosm Limited
-# Copyright (C) 2012, 2013 Synopsys Inc.
+# Copyright (C) 2012-2014 Synopsys Inc.
 
 # Contributor Joern Rennecke <joern.rennecke@embecosm.com>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 # This script builds the ARC 32-bit ELF tool chain from a unified source tree.
 
