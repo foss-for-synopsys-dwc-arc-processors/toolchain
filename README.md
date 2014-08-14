@@ -5,6 +5,9 @@ This is the main git repository for the ARC GNU tool chain. It contains just
 the scripts required to build the entire tool chain.
 
 The branch name corresponds to the development for the various ARC releases.
+* `arc-releases` is the stable branch for the 4.8 tool chain release. Head of
+  this branch is either a latest stable release or latest release candidate for
+  the upcoming release.
 * `arc-4.8-dev` is the development branch for the 4.8 tool chain release
 * `arc-4.4-dev` is the development branch for the 4.4 tool chain release
 * `arc-mainline-dev` is the mainline development branch
