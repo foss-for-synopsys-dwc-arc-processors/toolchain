@@ -1,3 +1,8 @@
+2014-08-14  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/build-installer.sh: Copy Eclipse instead of
+	moving.
+
 2014-08-06  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* tag-release.sh: Use stable branches for tags, instead of detached
