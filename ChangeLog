@@ -1,3 +1,7 @@
+2014-08-15  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* Makefile.release: Calculate MD5 sums for release tarballs.
+
 2014-08-14  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* windows-installer/build-installer.sh: Copy Eclipse instead of
