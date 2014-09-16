@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# Copyright (C) 2012, 2013 Synopsys Inc.
+# Copyright (C) 2012, 2013, 2014 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
-# This file is a script for to build BusyBox and the Linux kernel for ARC700.
+# This file is a script to build BusyBox and the Linux kernel for ARC700.
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -17,7 +17,7 @@
 # more details.
 
 # You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #		 SCRIPT TO BUILD BUSYBOX and LINUX for ARC700
 #		 ============================================
@@ -26,145 +26,358 @@
 # from that into the initramfs , fixes libraries in the initramfs and then
 # builds the kernel.
 
-# Prerequisites:
+# This is not part of the official process (which uses buildroot), but is
+# convenient for developers who wish to build/rebuild a kernel quickly.  The
+# options to the script are documented in the comments.
 
-# Ensure arc_initramfs_archives is cloned from git and the desired version
-# unpacked into arc_initramfs as a peer of the linux tree.
-
-# Ensure Busybox is cloned as a peer of the linux tree.
-
-# Within Busybox run "make defconfig", then "make menuconfig" and change the
-# following (only needs to be done once):
-# - under "Busybox settings/Build options" set  "Busybox compiler prefix" to
-#   arc-linux-uclibc-
-# - under "Busybox settings/Installation options" set "Busybox installation
-#   prefix" to ../arc_initramfs
-
-# (One day we'll automate that as well).
-
+# There is an assumption that the layout of repositories is standard.
 # ------------------------------------------------------------------------------
 
-# Useful constants. Some day these will be set from args
-# LINUX_DEFCONFIG=4.10_defconfig
-# LINUX_DEFCONFIG=fpga_defconfig_patched_no_sasid
-LINUX_DEFCONFIG=
-LINUX_TREE=linux
-# ARC_INITRAMFS=arc_initramfs_10_2012_dyn_dev.tgz
-# ARC_INITRAMFS=arc_initramfs_08_2012_gnu_4_4_ABI_v2.tgz
-ARC_INITRAMFS=ramfs-abi-v3-gcc-4.4.tar.gz
-ARC_UNPACKED_NAME=arc_initramfs_22_abi-v3-0.9.34
+
+# ------------------------------------------------------------------------------
+#
+#			       Shell functions
+#
+# ------------------------------------------------------------------------------
+
+# Convenience function to copy a message to the log and terminal
+
+# @param[in] $1  The message to log
+logterm () {
+    echo $1 | tee -a ${logfile}
+}
+
+
+# Convenience function to copy a message to the log only
+
+# @param[in] $1  The message to log
+logonly () {
+    echo $1 >> ${logfile}
+}
+
+
+# Convenience function to exit with a suitable message.
+failedbuild () {
+  echo "Build failed. See ${logfile} for details."
+  exit 1
+}
+
+
+# ------------------------------------------------------------------------------
+#
+#				  Parse args
+#
+# ------------------------------------------------------------------------------
+
+# Default source directory is where we have this script.
+d=`dirname "$0"`
+ARC_GNU=`(cd "$d/.." && pwd)`
 
 # Generic release set up, which we'll share with sub-scripts. This defines
 # (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
 # and $RESDIR if they don't exist.
-d=`dirname "$0"`
-ARC_GNU=`(cd "$d/.." && pwd)`
 . "${ARC_GNU}"/toolchain/define-release.sh
-. "${ARC_GNU}"/toolchain/arc-init.sh
 
-TOOLDIR=/opt/arc-${RELEASE}
-# Ensure we have the right tool chain on the path!
-PATH=${TOOLDIR}/bin:${PATH}
-
+# Set up logging
 logfile="${LOGDIR}/kernel-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
+echo "Logging to ${logfile}"
 
-# Create arc_initramfs. Need to patch the ownership.
-echo "Create initramfs"
-echo "Create initramfs" >> $logfile 2>&1
-echo "================" >> $logfile 2>&1
-cd ..
-if [ "x${ARC_INITRAMFS}" != "x" ]
+# Set defaults for some options
+do_busybox="--busybox"
+busybox_version="1_22_1"
+linux_dir=linux
+linux_defconfig=nsimosci_defconfig
+linux_version="arc-3.13"
+arc_initramfs="ARC700/arc_initramfs_12_2013_gnu_4_8_ABI_v3.tgz"
+tooldir=/opt/arc-${RELEASE}
+
+# Parse options
+getopt_string=`getopt -n build-kernel.sh -o d:i:l:t:h -l linux-defconfig: \
+                   -l initramfs: -l linux-dir: -l tooldir -l help \
+                   -l busybox -l no-busybox \
+                   -l busybox-version: -l linux-version: \
+                   -s sh -- "$@"`
+eval set -- "$getopt_string"
+
+while true
+do
+    case $1 in
+
+	-d|--linux-defconfig)
+	    # If set, argument specifies the Linux defconfig to use, otherwise
+	    # no defconfig is run.
+	    shift
+	    linux_defconfig=$1
+	    ;;
+
+	-i|--initramfs)
+	    # Argument specifies the initramfs to use relative to the
+	    # arc_initramfs_archives directory.
+	    shift
+	    initramfs=$1
+	    ;;
+
+	-l|--linux-dir)
+	    # Argument specifies the name of the Linux directory.
+	    shift
+	    linux_dir=$1
+	    ;;
+
+	-t|--tooldir)
+	    # Argument specifies the name of the tool chain installation
+	    # directory.
+	    shift
+	    tooldir="$1"
+	    ;;
+
+	--busybox | --no-busybox)
+	    do_busybox="$1"
+	    ;;
+
+	--busybox-version)
+	    # Argument specifies the branch/tag of BusyBox to checkout. If set
+	    # to the emptry string, no checkout is done.
+	    shift
+	    busybox_version=$1
+	    ;;
+
+	--linux-version)
+	    # Argument specifies the branch/tag of Linux to checkout. If set
+	    # to the emptry string, no checkout is done.
+	    shift
+	    linux_version=$1
+	    ;;
+
+	-h|--help)
+	    echo "Usage: ./build-kernel.sh [-i|--initramfs <initramfs>]"
+            echo "                         [-d|--linux-defconfig <config>]"
+            echo "                         [-l|--linux-dir <dir>]"
+            echo "                         [-t|--tooldir <dir>]"
+            echo "                         [-h|--help]"
+
+	    exit 1
+	    ;;
+
+	--)
+	    shift
+	    break
+	    ;;
+
+	*)
+	    echo "Internal error!"
+	    echo $1
+	    exit 1
+	    ;;
+    esac
+    shift
+done
+
+# Silently ignore any other arguments
+
+# Ensure we have the right tool chain on the path!
+PATH=${tooldir}/bin:${PATH}
+export PATH
+
+
+# ------------------------------------------------------------------------------
+#
+#			       Set up initramfs
+#
+# ------------------------------------------------------------------------------
+
+# Create arc_initramfs if specified. Need to patch the ownership.
+logterm "Creating initramfs..."
+
+# Work from top level directory so arc_initramfs is created in the correct
+# directory.
+if ! cd ${ARC_GNU} >> ${logfile} 2>&1
 then
-    sudo rm -rf arc_initramfs
-    sudo tar zxpf arc_initramfs_archives/${ARC_INITRAMFS}
-    if [ "x${ARC_UNPACKED_NAME}" != "x" ]
-    then
-	mv ${ARC_UNPACKED_NAME} arc_initramfs
-    fi
-    sudo chown -hR `id -u`:`id -g` arc_initramfs
+    logterm "ERROR: Could not change to root directory ${ARC_GNU}"
+    failedbuild
+fi
+
+if [ "x${arc_initramfs}" != "x" ]
+then
+    echo "(sudo password may be needed to set up initramfs)"
+    sudo rm -rf arc_initramfs >> ${logfile} 2>&1
+    sudo tar zxpf arc_initramfs_archives/${arc_initramfs} >> ${logfile} 2>&1
+    sudo chown -hR `id -u`:`id -g` arc_initramfs >> ${logfile} 2>&1
 fi
 
 # Blow away all existing libraries and copy in all the shared libraries and
 # one static library that is referred to. Edit libc.so to use the new
 # filename.
+logterm "Setting up libraries..."
 
-echo "Setting up libraries..."
-echo "Setting up libraries" >> $logfile 2>&1
-echo "====================" >> $logfile 2>&1
+# Do we need to blow away existing libraries?
 
-# rm -f arc_initramfs/lib/* >> $logfile 2>&1
-cp -df ${TOOLDIR}/arc-linux-uclibc/lib/*.so* \
+rm -f arc_initramfs/lib/* >> ${logfile} 2>&1
+
+cp -df ${tooldir}/arc-linux-uclibc/lib/*.so* \
       arc_initramfs/lib >> $logfile 2>&1
-cp -df ${TOOLDIR}/arc-linux-uclibc/lib/uclibc_nonshared.a \
+cp -df ${tooldir}/arc-linux-uclibc/lib/uclibc_nonshared.a \
       arc_initramfs/lib >> $logfile 2>&1
-${SED} -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
+sed -i arc_initramfs/lib/libc.so -e 's#/opt/[^/]*/arc-linux-uclibc##g'
 
-# As a sanity check remove the busybox images from initramfs. This means a
-# failed install of busybox will show up!
-rm -f arc_initramfs/bin/busybox*
-rm -f arc_initramfs/lib/busybox*
+# Copy across custom binaries
+logterm "Copy custom binaries..."
+cp -d ${tooldir}/target-bin/* arc_initramfs/bin >> $logfile 2>&1
 
-# Build busybox.
-echo "Building busybox..."
-echo "Building busybox" >> $logfile 2>&1
-echo "================" >> $logfile 2>&1
+# Fix rcS
+sed -i arc_initramfs/etc/init.d/rcS \
+    -e '/\/sbin\/udhcpc eth0/ d' \
+    -e '/Bringing up eth0/ a \
+      ifconfig eth0 192.168.218.2 netmask 255.255.255.0'
 
-cd busybox
-OLDPATH=${PATH}
-PATH=${TOOLDIR}/bin:${PATH}
-make clean >> $logfile 2>&1
-if make >> $logfile 2>&1
+
+# ------------------------------------------------------------------------------
+#
+#				Build BusyBox
+#
+# ------------------------------------------------------------------------------
+
+# Building BusyBox is optional
+if [ "${do_busybox}" = "--busybox" ]
 then
-    echo "Busybox build succeeded"
-else
-    echo "Busybox build failed"
-    exit 1
+    # As a sanity check remove the busybox images from initramfs. This means a
+    # failed install of busybox will show up!
+    rm -f arc_initramfs/bin/busybox*
+    rm -f arc_initramfs/lib/busybox*
+
+    # Build busybox.
+    logterm "Building BusyBox..."
+
+    if ! cd ${ARC_GNU}/busybox
+    then
+	logterm "ERROR: Could not change to BusyBox directory"
+	failedbuild
+    fi
+
+    if [ "x${busybox_version}" != "x" ]
+    then
+	logterm "Checking out version ${busybox_version}"
+	if ! git checkout ${busybox_version}
+	then
+	    logterm "ERROR: Could not check out BusyBox"
+	    failedbuild
+	fi
+    fi
+
+    logterm "Cleaning BusyBox..."
+    if ! make clean >> $logfile 2>&1
+    then
+	logterm "ERROR: Could not clean BusyBox"
+	failedbuild
+    fi
+
+    logterm "Making BusyBox defconfig..."
+    if ! make defconfig >> $logfile 2>&1
+    then
+	logterm "ERROR: Could not build Busybox defconfig"
+	failedbuild
+    fi
+
+    # We need to turn off IPv6 and set the correct location for the
+    # installation.
+    logterm "Patching BusyBox config..."
+    sed -i .config \
+	-e 's/CONFIG_PING6=y/# CONFIG_PING6 is not set/' \
+	-e 's/CONFIG_FEATURE_IPV6=y/# CONFIG_FEATURE_IPV6 is not set/' \
+	-e 's/CONFIG_FEATURE_PREFER_IPV4_ADDRESS=y/# CONFIG_FEATURE_PREFER_IPV4_ADDRESS is not set/' \
+	-e 's/CONFIG_FEATURE_IFUPDOWN_IPV6=y/# CONFIG_FEATURE_IFUPDOWN_IPV6 is not set/' \
+	-e 's/CONFIG_TRACEROUTE6=y/# CONFIG_TRACEROUTE6 is not set/' \
+	-e 's/CONFIG_CROSS_COMPILER_PREFIX=""/CONFIG_CROSS_COMPILER_PREFIX="arc-linux-uclibc-"/' \
+	-e 's|CONFIG_PREFIX="./_install"|CONFIG_PREFIX="../arc_initramfs"|'
+
+    logterm "Making BusyBox..."
+    if ! make >> $logfile 2>&1
+    then
+	logterm "ERROR: Could not build Busybox"
+	failedbuild
+    fi
+
+    logterm "Installing BusyBox..."
+
+    if ! make install >> $logfile 2>&1
+    then
+	logterm "ERROR: Could not install Busybox"
+	failedbuild
+    fi
+
+    logterm "Changing ownership and setuid of BusyBox..."
+    echo "(sudo password may be needed)"
+
+    if ! sudo chown root.root ../arc_initramfs/bin/busybox
+    then
+	logterm "ERROR: Could not change BusyBox ownership to root"
+	failedbuild
+    fi
+
+    if ! sudo chmod ug+s ../arc_initramfs/bin/busybox
+    then
+	logterm "ERROR: Could not make BusyBox setuid root"
+	failedbuild
+    fi
 fi
 
-echo "Installing busybox..."
-echo "Installing busybox" >> $logfile 2>&1
-echo "==================" >> $logfile 2>&1
+# ------------------------------------------------------------------------------
+#
+#				 Build Linux
+#
+# ------------------------------------------------------------------------------
 
-make install >> $logfile 2>&1
-PATH=${OLDPATH}
+logterm "Building linux..."
 
-echo "Changing ownership and setuid of busybox..."
-echo "Changing ownership and setuid of busybox" >> $logfile 2>&1
-echo "========================================" >> $logfile 2>&1
-
-sudo chown root.root ../arc_initramfs/bin/busybox
-sudo chmod ug+s ../arc_initramfs/bin/busybox
-
-# Copy across other custom binaries
-echo "Copy custom binaries..."
-echo "Copy custom binaries" >> $logfile 2>&1
-echo "====================" >> $logfile 2>&1
-cp -d ${TOOLDIR}/target-bin/* ../arc_initramfs/bin >> $logfile 2>&1
-
-# Build Linux
-echo "Building linux..."
-echo "Building linux" >> $logfile 2>&1
-echo "==============" >> $logfile 2>&1
-
-cd ../${LINUX_TREE}
-make ARCH=arc distclean                                     >> $logfile 2>&1
-
-if [ "x${LINUX_DEFCONFIG}" != "x" ]
+if ! cd ${ARC_GNU}/${linux_dir}
 then
-    make ARCH=arc KBUILD_DEFCONFIG=${LINUX_DEFCONFIG} defconfig >> $logfile 2>&1
-else
-    make ARCH=arc defconfig >> $logfile 2>&1
+    logterm "ERROR: Could not change to Linux directory ${linux_dir}"
+    failedbuild
 fi
-# Temporary patch to deal with compiler issue!
-echo "Patching LINUX .config"
-${SED} -i .config -e 's/COMPILE="arc-elf32-"/COMPILE="arc-linux-uclibc-"/'
 
-if make ARCH=arc >> $logfile 2>&1
+if [ "x${linux_version}" != "x" ]
 then
-    echo "Linux built successfully"
-    exit 0
-else
-    echo "Linux build failed"
-    exit 1
+    logterm "Checking out version ${linux_version}"
+    if ! git checkout ${linux_version}
+    then
+	logterm "ERROR: Could not check out linux"
+	failedbuild
+    fi
 fi
+
+if [ "x${linux_defconfig}" != "x" ]
+then
+    # Only clean if we are setting a defconfig
+    logterm "Cleaning Linux..."
+    if ! make ARCH=arc distclean >> $logfile 2>&1
+    then
+	logterm "ERROR: Could not clean Linux"
+	failedbuild
+    fi
+
+    logterm "Setting default config ${linux_defconfig}"
+    if ! make ARCH=arc KBUILD_DEFCONFIG=${linux_defconfig} defconfig \
+	      >> $logfile 2>&1
+    then
+	logterm "ERROR: Could not make default config for Linux"
+	failedbuild
+    fi
+#else
+#    make ARCH=arc defconfig >> $logfile 2>&1
+fi
+
+# Patch in the correct compiler and initramfs location for the kernel config
+logterm "Patching LINUX .config..."
+sed -i -e 's|CONFIG_INITRAMFS_SOURCE=".*"|CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"|' \
+    -e 's/COMPILE="arc-elf32-"/COMPILE="arc-linux-uclibc-"/' .config
+
+logterm "Making Linux..."
+if ! make ARCH=arc >> $logfile 2>&1
+then
+    logterm "ERROR: Could not build Linux"
+    failedbuild
+fi
+
+logterm "Linux build successful.  See ${logfile} for details."
+exit 0
+
