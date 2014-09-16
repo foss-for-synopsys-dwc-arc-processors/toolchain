@@ -78,11 +78,6 @@ ARC_GNU=`(cd "$d/.." && pwd)`
 # and $RESDIR if they don't exist.
 . "${ARC_GNU}"/toolchain/define-release.sh
 
-# Set up logging
-logfile="${LOGDIR}/kernel-build-$(date -u +%F-%H%M).log"
-rm -f "${logfile}"
-echo "Logging to ${logfile}"
-
 # Set defaults for some options
 do_busybox="--busybox"
 busybox_version="1_22_1"
@@ -132,6 +127,7 @@ do
 	    ;;
 
 	--busybox | --no-busybox)
+	    # Disable building BusyBox if desired.
 	    do_busybox="$1"
 	    ;;
 
@@ -154,9 +150,12 @@ do
             echo "                         [-d|--linux-defconfig <config>]"
             echo "                         [-l|--linux-dir <dir>]"
             echo "                         [-t|--tooldir <dir>]"
+	    echo "                         [--busybox | --no-busybox]"
+	    echo "                         [--busybox-version]"
+	    echo "                         [--linux-version]"
             echo "                         [-h|--help]"
 
-	    exit 1
+	    exit 0
 	    ;;
 
 	--)
@@ -174,6 +173,11 @@ do
 done
 
 # Silently ignore any other arguments
+
+# Set up logging
+logfile="${LOGDIR}/kernel-build-$(date -u +%F-%H%M).log"
+rm -f "${logfile}"
+echo "Logging to ${logfile}"
 
 # Ensure we have the right tool chain on the path!
 PATH=${tooldir}/bin:${PATH}
