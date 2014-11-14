@@ -1,4 +1,4 @@
-; ARC 4.8 Installer Base Script
+; ARC GNU Installer Base Script
 
 ; Copyright (C) 2013-2014 Synopsys Inc.
 ; Contributor: Simon Cook <simon.cook@embecosm.com>

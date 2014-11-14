@@ -1,4 +1,4 @@
-; ARC GNU IDE Installer
+; ARC GNU Installer
 ; Contributor: Simon Cook <simon.cook@embecosm.com>
 ; Contributor: Anton Kolesov <Anton.Kolesov@synopsys.com>
 ; This script requires setup-base.nsi.
