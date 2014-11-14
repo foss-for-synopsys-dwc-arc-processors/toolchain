@@ -5,7 +5,7 @@
 
 ; The following line is included to work around a bug with the "long string" version...
 !include "EnvVarUpdate.nsh"
-!define prodname "ARC_GNU_IDE"
+!define entry_name "arc_gnu"
 !define arctitle "ARC GNU IDE"
 
 !include "setup-base.nsi"
