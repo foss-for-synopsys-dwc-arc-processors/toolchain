@@ -23,6 +23,12 @@
 ;!include "EnvVarUpdate.nsh" (placed in top level script to avoid crashing)
 
 ;=================================================
+; Check for mandatory variable
+!ifndef arcver
+  !error "arcver varaible must be defined."
+!endif
+
+;=================================================
 ; Settings
   
   # File and Installer Name

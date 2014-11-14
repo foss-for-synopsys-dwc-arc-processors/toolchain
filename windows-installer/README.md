@@ -93,9 +93,10 @@ Generate installer an uninstaller sections:
 
     $ ./gen-nsis-sections.sh
 
-Generate installer:
+Generate installer. "arcver" NSIS variable must be defined, for example:
 
-    $ /cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe installer-standard.nsi
+    $ /cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=2014.12 \
+      installer-standard.nsi
 
 
 Notes cross-compiling for Windows

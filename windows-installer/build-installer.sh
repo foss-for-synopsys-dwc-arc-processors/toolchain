@@ -6,6 +6,11 @@
 # all plug-ins installed. This is a "quick and dirty" script, thus it have
 # such strict requirements.
 
+if [ -z "$RELEASE" ]; then
+    echo "RELEASE env variable must be set"
+    exit 1
+fi
+
 mkdir in
 cd in
 
@@ -50,7 +55,7 @@ echo "Generating nsis files..."
 
 # Generate installer
 echo "Creating installer..."
-/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe installer-standard.nsi
+/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE  installer-standard.nsi
 
 echo "Done"
 
