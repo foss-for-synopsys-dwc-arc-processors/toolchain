@@ -76,12 +76,12 @@ done
 # Specify the default versions to use as a string <tool>:<branch>. These are
 # the development versions for the ARC 4.8 tool chain release. Only actually
 # matters if --auto-checkout is set.
-cgen="cgen:arc-2014.08"
-binutils="binutils:arc-2014.08"
-gcc="gcc:arc-2014.08"
-gdb="gdb:arc-2014.08-gdb"
-newlib="newlib:arc-2014.08"
-uclibc="uClibc:arc-2014.08"
+cgen="cgen:arc-2014.12-rc1"
+binutils="binutils:arc-2014.12-rc1"
+gcc="gcc:arc-2014.12-rc1"
+gdb="gdb:arc-2014.12-rc1-gdb"
+newlib="newlib:arc-2014.12-rc1"
+uclibc="uClibc:arc-2014.12-rc1"
 
 if [ "x${uclibc_arg}" = "x--uclibc" ]
 then
