@@ -74,7 +74,7 @@ do
 done
 
 # Specify the default versions to use as a string <tool>:<branch>. These are
-# the development versions for the ARC 4.4 tool chain release. Only actually
+# the development versions for the ARC 4.8 tool chain release. Only actually
 # matters if --auto-checkout is set.
 cgen="cgen:arc-1.0-dev"
 binutils="binutils:arc-2.23-dev"
