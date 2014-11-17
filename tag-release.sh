@@ -39,9 +39,9 @@
 
 #  2. Tags and pushes the tag for all the component trees *except* toolchain.
 
-#  3. Checks out -stable branch for the current -dev branch.
+#  3. Checks out arc-releases branch.
 
-#  4. Merges -stable with -dev.
+#  4. Merges arc-releases with -dev.
 
 #  5. Edits arc-versions.sh so it checks out the tagged versions of all
 #     components.
@@ -161,15 +161,14 @@ if [[ $branch != *-dev ]] ; then
     exit 1
 fi
 
-# Merge with a stable branch
-stable_branch=$(sed -e s/-dev$/-stable/ <<< $branch)
-if ! git checkout $stable_branch ; then
-    echo "Failed to checkout branch $stable_branch"
+# Merge with a releases branch
+if ! git checkout arc-releases ; then
+    echo "Failed to checkout branch arc-releases"
     exit 1
 fi
 
 if ! git merge $branch ; then
-    echo "Failed to merge $stable_branch with $branch"
+    echo "Failed to merge arc-releases with $branch"
     exit 1
 fi
 
@@ -203,7 +202,7 @@ then
     exit 1
 fi
 
-if ! git push ${remote} ${tagname} $stable_branch
+if ! git push ${remote} ${tagname} arc-releases
 then
     echo "ERROR: Failed to push tag for toolchain"
     exit 1
