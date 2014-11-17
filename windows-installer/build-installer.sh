@@ -1,4 +1,20 @@
-#!/bin/bash
+#!/bin/bash -e
+
+# Copyright (C) 2014 Synopsys Inc.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 
 # It is assumed that current directory is directory where with script is
 # located. It is also assumed that all prerequisites are downloaded to the
@@ -6,10 +22,16 @@
 # all plug-ins installed. This is a "quick and dirty" script, thus it have
 # such strict requirements.
 
+if [ -z "$RELEASE" ]; then
+    echo "RELEASE env variable must be set"
+    exit 1
+fi
+
 mkdir in
 cd in
 
 # Copy MinGW and MSYS runtime files
+echo "Copying MSYS and MinGW runtime files..."
 tar xaf ../tars/coreutils-*-msys-*-bin.tar.lzma
 tar xaf ../tars/gcc-core-*-mingw32-dll.tar.lzma
 tar xaf ../tars/gettext-*-mingw32-dll.tar.lzma
@@ -21,27 +43,35 @@ tar xaf ../tars/make-*-mingw32-cvs-*-bin.tar.lzma
 mv bin/{mingw32-,}make.exe
 
 # Copy arcshell.bat
+echo "Copying arcshell.bat..."
 cp ../tars/arcshell.bat .
 
 # Copy OpenOCD
+echo "Copying OpenOCD..."
 tar xaf ../tars/openocd-ide-*.tgz --strip-components=1
 
 # Copy tool chain
-tar xaf ../tars/toolchain-ide-*.tgz --strip-components=1
-tar xaf ../tars/toolchain-ide-*_eb.tgz --strip-components=1
+echo "Copything toolchain..."
+tar xaf ../tars/arc_gnu_*_prebuilt_elf32_windows_install.tgz --strip-components=1
 
 # Copy Eclipse
-mv ../tars/eclipse .
+echo "Copying Eclipse..."
+rsync -a ../tars/eclipse .
 
 # Copy Java runtime environment:
+echo "Copying JRE..."
 mkdir eclipse/jre
 cd eclipse/jre
-tar xaf jre-*-windows-i586.tar.gz --strip-components=1
+tar xaf ../../../tars/jre-*-windows-i586.tar.gz --strip-components=1
 cd ../../..
 
 # Generate installer an uninstaller sections
+echo "Generating nsis files..."
 ./gen-nsis-sections.sh
 
 # Generate installer
-/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe installer-standard.nsi
+echo "Creating installer..."
+/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE  installer-standard.nsi
+
+echo "Done"
 

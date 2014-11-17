@@ -5,7 +5,7 @@ This is the main git repository for the ARC GNU tool chain. It contains just
 the scripts required to build the entire tool chain.
 
 The branch name corresponds to the development for the various ARC releases.
-* `arc-4.8-stable` is the stable branch for the 4.8 tool chain release. Head of
+* `arc-releases` is the stable branch for the 4.8 tool chain release. Head of
   this branch is either a latest stable release or latest release candidate for
   the upcoming release.
 * `arc-4.8-dev` is the development branch for the 4.8 tool chain release
@@ -17,15 +17,11 @@ is no guarantee of this. Users who encountered an error are welcomed to create
 a new bug report at GitHub Issues for this `toolchain` project.
 
 Within each branch there are points where the whole development has been put
-through comprehensive release testing. These are marked using git *tags*. For
-example tag `arc-4.8-R3` means that this is the third release of the Synopsys
-DesignWare ARC 4.8 tool chain.
+through comprehensive release testing. These are marked using git *tags*, for
+example `arc-2014.08` for toolchain released August 2014. 
 
 These tagged stable releases have been through full release testing, and known
 issues are documented in a Synopsys release notes.
-
-In general the tool chain release numbering corresponds to the version of GCC
-within that tool chain release.
 
 The build script will check out the corresponding branches from the tool chain
 component repositories.
@@ -127,9 +123,9 @@ while to get latest release or release candidate:
 
     $ git checkout arc-4.8-stable
 
-To get a specific release of GNU tool chain for example 4.8-R3:
+To get a specific release of GNU tool chain for example 2014.08:
 
-    $ git checkout arc-4.8-R3
+    $ git checkout arc-2014.08
 
 
 Building the tool chain

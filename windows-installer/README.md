@@ -5,12 +5,10 @@ This directory contains scripts to build a Windows installer for the ARC GNU
 tool chain.
 
 With a tool chain built and the required prerequisites (NSIS, Cygwin-like
-environment), `buildall.sh` can be called which will build a dated set of
-installers for a particular tool chain release. Note that current it is
-required to edit the variables in the `PARAMS` section of `buildall.sh` for
-the installer to work.
+environment), `build-installer.sh` can be called which will build an installer
+for a particular tool chain release.
 
-To avoid issues with long PATHs, the 8192 character "special build" is required
+To avoid issues with long PATHs, the NSIS 8192 character "special build" is required
 which can be found at http://nsis.sourceforge.net/Special_Builds#Large_strings.
 
 It is recommended to either copy contents of this directory to the location
@@ -93,13 +91,18 @@ Generate installer an uninstaller sections:
 
     $ ./gen-nsis-sections.sh
 
-Generate installer:
+Generate installer. "arcver" NSIS variable must be defined, for example:
 
-    $ /cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe installer-standard.nsi
+    $ /cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=2014.12 \
+      installer-standard.nsi
 
 
 Notes cross-compiling for Windows
 ---------------------------------
+
+In general you can rely on `Makefile.release` file in the upper directory for
+toolchain building. Further instructions basically explain what this Makefile
+does.
 
 When cross-compiling for Windows from Linux, a couple of changes need to be
 made to the `build-elf32.sh` script. Note that a native (Linux) build of the
@@ -118,15 +121,14 @@ then continue as normal.
 Third is that generated `gcc/auto-host.h` will contain a code that will cause a
 problem on Ubuntu MinGW, so `define caddr_t char *` should be removed.
 
-
 Note that cross-compiling only works for the ELF32 toolchain, so `--no-uclibc`
 should be passed as an option to `build-all.sh`. CGEN simulator cannot be built
 for Windows, so --no-sim option should be passed as well (./build-all.sh will
-disable simulator automaticcally only when build is done on Windows with MSyS).
+disable simulator automatically only when build is done on Windows with MSyS).
 
 To ease up the process this directory contains `build-elf32_windows.patch` that
-will patch build-elf32.sh to do everythign mentioned. It will copy auto-build.h
-from this direcotry. If you have auo-host.h from the native built you might
+will patch build-elf32.sh to do everything mentioned. It will copy auto-build.h
+from this directory. If you have auto-host.h from the native built you might
 want to copy it here instead of the one checked into the repository. This patch
 will not set --no-sim and --no-uclibc for you though.
 

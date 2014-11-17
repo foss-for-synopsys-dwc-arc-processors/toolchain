@@ -1,7 +1,8 @@
-; ARC 4.8 Installer Base Script
+; ARC GNU Installer Base Script
 
 ; Copyright (C) 2013-2014 Synopsys Inc.
 ; Contributor: Simon Cook <simon.cook@embecosm.com>
+; Contributor: Anton Kolesov  <anton.kolesov@synopsys.com>
 
 ; This program is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU General Public License as published by the Free
@@ -23,14 +24,20 @@
 ;!include "EnvVarUpdate.nsh" (placed in top level script to avoid crashing)
 
 ;=================================================
+; Check for mandatory variable
+!ifndef arcver
+  !error "arcver varaible must be defined."
+!endif
+
+;=================================================
 ; Settings
-  
+
   # File and Installer Name
-  outfile "${prodname}_${arcver}_win_install.exe"
+  outfile "${entry_name}_${arcver}_win_install.exe"
   Name "${arctitle} ${arcver}"
- 
-  # Default directory  
-  installDir "C:\${prodname}_${arcver}"
+
+  # Default directory
+  installDir "C:\${entry_name}"
 
   # Enable CRC
   CRCCheck on
@@ -41,7 +48,7 @@
   SetCompressor /FINAL lzma
 
   # Our registry key for uninstallation
-  !define uninstreg "Software\Microsoft\Windows\CurrentVersion\Uninstall\${prodname}"
+  !define uninstreg "Software\Microsoft\Windows\CurrentVersion\Uninstall\${entry_name}_${arcver}"
 
   # We want admin rights
   RequestExecutionLevel admin

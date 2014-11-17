@@ -1,3 +1,25 @@
+2014-09-16  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* build-kernel.sh: Tidy up --help option and commenting.
+
+2014-09-16  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	Upgrade the script for building a kernel from the command
+	line. This is not part of the official release, but can be
+	convenient for developers.
+
+	* build-kernel.sh: Add proper argument handling to allow control
+	of the build.
+
+2014-08-15  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* Makefile.release: Calculate MD5 sums for release tarballs.
+
+2014-08-14  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* windows-installer/build-installer.sh: Copy Eclipse instead of
+	moving.
+
 2014-08-06  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* tag-release.sh: Use stable branches for tags, instead of detached

@@ -60,6 +60,8 @@ LINUX_BE_TGZ := $(LINUX_BE_NAME).tar.gz
 WIN_ELF_LE_DIR := arc-elf32_windows
 # Big endian toolchain is installed to same directory as little endian
 #WIN_ELF_BE_DIR := $O/arceb-elf32_windows
+# md5sum
+MD5SUM_FILE := md5.sum
 
 ifeq ($(RELEASE),)
 $(error RELEASE variable can not be empty)
@@ -70,11 +72,16 @@ endif
 #
 .PHONY: checkout source-tarball unisrc elf-le-build elf-be-build elf-le elf-be all
 
-all: \
+all: $O/$(MD5SUM_FILE)
+	@echo "MD5 sums:"
+	@cat $<
+
+$O/$(MD5SUM_FILE): \
     $O/.stamp_source_tarball \
     $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
     $O/.stamp_linux_le_tarball $O/.stamp_linux_be_tarball \
     $O/.stamp_elf_le_windows_built $O/.stamp_elf_be_windows_built
+	cd $O && md5sum *.tar.gz > $@
 
 checkout: $O/.stamp_checked_out
 
