@@ -1,3 +1,7 @@
+2014-11-21  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* README.md: Update for 2014.12 release.
+
 2014-09-16  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* build-kernel.sh: Tidy up --help option and commenting.

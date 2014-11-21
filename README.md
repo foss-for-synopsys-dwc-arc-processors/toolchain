@@ -18,7 +18,7 @@ a new bug report at GitHub Issues for this `toolchain` project.
 
 Within each branch there are points where the whole development has been put
 through comprehensive release testing. These are marked using git *tags*, for
-example `arc-2014.08` for toolchain released August 2014. 
+example `arc-2014.12` for toolchain released in December 2014.
 
 These tagged stable releases have been through full release testing, and known
 issues are documented in a Synopsys release notes.
@@ -123,9 +123,9 @@ while to get latest release or release candidate:
 
     $ git checkout arc-4.8-stable
 
-To get a specific release of GNU tool chain for example 2014.08:
+To get a specific release of GNU tool chain for example 2014.12:
 
-    $ git checkout arc-2014.08
+    $ git checkout arc-2014.12
 
 
 Building the tool chain
