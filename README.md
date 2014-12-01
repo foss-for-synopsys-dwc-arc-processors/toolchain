@@ -257,14 +257,13 @@ will be printed on the server side.
 > https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
 
 Download and build the OpenOCD port for ARC as described here:
-https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.8-dev-4.8-R3/doc/README.ARC
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2014.12/doc/README.ARC
 
 Run OpenOCD:
 
-    $ openocd -f /usr/local/share/openocd/scripts/target/snps_starter_kit_arc-em.cfg \
-        -c init -c halt -c 'reset halt'
+    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk.cfg
 
-Compile and run:
+Compile test application and run:
 
     $ arc-elf32-gcc -marcem -g simple.c
     $ arc-elf32-gdb --quiet a.out
