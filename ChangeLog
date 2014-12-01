@@ -1,5 +1,11 @@
 2014-12-01  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* extras/em_starter_kit/crt0.S: New file.
+	* extras/em_starter_kit/em5d.lds: New file.
+	* extras/em_starter_kit/em7d.lds: New file.
+
+2014-12-01  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* README.md: Update reference to OpenOCD.
 
 2014-11-21  Anton Kolesov  <Anton.Kolesov@synopsys.com>
