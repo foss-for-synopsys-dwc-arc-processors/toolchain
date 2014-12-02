@@ -18,7 +18,7 @@ a new bug report at GitHub Issues for this `toolchain` project.
 
 Within each branch there are points where the whole development has been put
 through comprehensive release testing. These are marked using git *tags*, for
-example `arc-2014.12` for toolchain released in December 2014.
+example `arc-2014.12` for tool chain released in December 2014.
 
 These tagged stable releases have been through full release testing, and known
 issues are documented in a Synopsys release notes.
@@ -65,7 +65,7 @@ Getting sources
 
 If you use source tarball then it already contains all of the necessary sources
 except for Linux which is a separate product. Linux sources are required only
-for linux-uclibc tool chain, they are not required for baremetal elf32 tool
+for linux-uclibc tool chain, they are not required for bare metal elf32 tool
 chain.  Latest stable release from https://kernel.org/ is recommended, only
 versions >= 3.9 are supported. Untar linux tarball to the directory named
 `linux` that is the sibling of this `toolchain` directory. For example:
@@ -121,7 +121,7 @@ branch):
 
 while to get latest release or release candidate:
 
-    $ git checkout arc-4.8-stable
+    $ git checkout arc-releases
 
 To get a specific release of GNU tool chain for example 2014.12:
 
@@ -153,31 +153,39 @@ The most important options if `build-all.sh` are:
    moved to another system and used from the same location.
  * `--no-elf32` and `--no-uclibc` - choose type of tool chain to build. By
    default both are built. Specify `--no-uclibc` if you intend to work
-   exclusively with baremetal applications, specify `--no-elf32` of you intend
+   exclusively with bare metal applications, specify `--no-elf32` of you intend
    to work exclusively with Linux applications. Linux kernel is built with
    uClibc tool chain.
  * `--no-multilib` - do not build multilib standard libraries. Use it when you
-   are going to work exclusively with baremetal applications for ARC700. This
+   are going to work with bare metal applications for a particular core. This
    option does not affect uClibc tool chain.
- * `--cpu <cpu>` - configure GNU tool chain to use specific core as a default choice
-   (when -mcpu= options is not passed to GCC). Default is arc700. Combined with
-   `--no-multilib` you can build GNU tool chain that support only one specific core
-   you need. Valid values include `arc600`, `arc700`, `arcem` and `archs`.
+ * `--cpu <cpu>` - configure GNU tool chain to use specific core as a default
+   choice (default core is a core for which GCC will compile for, when `-mcpu=`
+   option is not passed). Default is arc700 for both bare metal and Linux
+   tool chains. Combined with `--no-multilib` you can build GNU tool chain that
+   support only one specific core you need. Valid values include `arc600`,
+   `arc700`, `arcem` and `archs`, however `arc600` and `arcem` are valid for
+   bare metal tool chain only.
 
-Please consult head of the `./build-all.sh` to get a full list of supported
-options and their detailed descriptions.
+Please consult head of the `./build-all.sh` file to get a full list of
+supported options and their detailed descriptions.
 
-### Examples
+### Build options examples
 
-Build default tool chain which supports every core:
+Build default tool chain, bare metal tool chain will support all ARC cores,
+while Linux tool chain will support ARC 700:
 
     $ ./build-all.sh --install-dir $INSTALL_ROOT
 
-Build tool chain for Linux development:
+Build tool chain for ARC 700 Linux development:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT
 
-Build tool chain for EM cores (for example for EM Starter Kit):
+Build tool chain for ARC HS Linux development:
+
+    $ ./build-all.sh --no-elf32 --cpu archs --install-dir $INSTALL_ROOT
+
+Build bare metal tool chain for EM cores (for example for EM Starter Kit):
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu arcem --no-multilib
 
