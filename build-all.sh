@@ -871,3 +871,9 @@ then
 	exit 1
     fi
 fi
+
+# Copy legal notice
+# Do not copy if toolchain hasn't been built
+if [ -d "${INSTALLDIR}/" ]; then
+    cp "${ARC_GNU}/toolchain/Synopsys_FOSS_Notices.pdf" "${INSTALLDIR}/"
+fi
