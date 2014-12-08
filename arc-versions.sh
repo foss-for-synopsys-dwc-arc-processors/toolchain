@@ -85,7 +85,7 @@ uclibc="uClibc:arc-2014.12-rc2"
 
 if [ "x${uclibc_arg}" = "x--uclibc" ]
 then
-    linux="linux:arc-3.15"
+    linux="linux:arc-3.13"
 else
     linux=""
 fi

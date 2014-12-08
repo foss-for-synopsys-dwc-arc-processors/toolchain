@@ -99,11 +99,11 @@ FunctionEnd
     ; http://nsis.sourceforge.net/Docs/AppendixG.html  (to build yourself)
     ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
     SetShellVarContext all
+    CreateShortCut "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
     CreateDirectory "$SMPROGRAMS\${shelldir}"
     CreateShortCut "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Command Prompt.lnk" '%comspec%' '/k "$INSTDIR\arcshell.bat"'
-    CreateShortCut "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
     CreateShortCut "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
-    CreateShortCut "$SMPROGRAMS\${shelldir}\Uninstall ${arctitle} ${arcver}.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+    CreateShortCut "$SMPROGRAMS\${shelldir}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
     CreateShortCut "$SMPROGRAMS\${shelldir}\Documentation.lnk" "$INSTDIR\share\doc" 0
     CreateShortCut "$SMPROGRAMS\${shelldir}\IDE Wiki on GitHub.lnk" \
       "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki" 0
@@ -117,10 +117,13 @@ FunctionEnd
   section "Uninstall"
     SetShellVarContext all
     Delete "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk"
-    Delete "$SMPROGRAMS\${arctitle}\${arctitle} ${arcver} Eclipse.lnk"
-    Delete "$SMPROGRAMS\${arctitle}\${arctitle} ${arcver} Command Prompt.lnk"
-    Delete "$SMPROGRAMS\${arctitle}\Uninstall ${arctitle} ${arcver}.lnk"
-    RmDir "$SMPROGRAMS\${arctitle}"
+	Delete "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Command Prompt.lnk"
+	Delete "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Eclipse.lnk"
+    Delete "$SMPROGRAMS\${shelldir}\Uninstall.lnk"
+	Delete "$SMPROGRAMS\${shelldir}\Documentation.lnk"
+	Delete "$SMPROGRAMS\${shelldir}\IDE Wiki on GitHub.lnk"
+	Delete "$SMPROGRAMS\${shelldir}\IDE Releases on GitHub.lnk"
+    RmDir "$SMPROGRAMS\${shelldir}"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
     !include "uninstall_files.nsi"
     Delete "$INSTDIR\Uninstall.exe"

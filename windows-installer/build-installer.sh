@@ -48,11 +48,11 @@ cp ../tars/arcshell.bat .
 
 # Copy OpenOCD
 echo "Copying OpenOCD..."
-tar xaf ../tars/openocd-ide-*.tgz --strip-components=1
+tar xaf ../tars/openocd-*.tar.gz --strip-components=1
 
 # Copy tool chain
 echo "Copything toolchain..."
-tar xaf ../tars/arc_gnu_*_prebuilt_elf32_windows_install.tgz --strip-components=1
+tar xaf ../tars/arc_gnu_*_prebuilt_elf32_windows_install.tar.gz --strip-components=1
 
 # Copy Eclipse
 echo "Copying Eclipse..."

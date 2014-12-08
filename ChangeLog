@@ -1,3 +1,7 @@
+2014-12-08  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* arc-versions.sh: Change Linux version to 3.13.
+
 2014-12-04  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* Synopsys_FOSS_Notices.pdf: New file.
