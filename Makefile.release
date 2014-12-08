@@ -63,7 +63,9 @@ LINUX_BE_700_TGZ := $(LINUX_BE_700_NAME).tar.gz
 LINUX_LE_HS_TGZ := $(LINUX_LE_HS_NAME).tar.gz
 LINUX_BE_HS_TGZ := $(LINUX_BE_HS_NAME).tar.gz
 # Baremetal for Windows
-WIN_ELF_LE_DIR := arc-elf32_windows
+WIN_ELF_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_windows_install
+WIN_ELF_LE_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_windows_install
+WIN_ELF_TGZ  := $(WIN_ELF_NAME).tar.gz
 # Big endian toolchain is installed to same directory as little endian
 #WIN_ELF_BE_DIR := $O/arceb-elf32_windows
 # md5sum
@@ -87,8 +89,9 @@ $O/$(MD5SUM_FILE): \
     $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
     $O/.stamp_linux_le_700_tarball $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball $O/.stamp_linux_be_hs_tarball \
-    $O/.stamp_elf_le_windows_built $O/.stamp_elf_be_windows_built
-	cd $O && md5sum *.tar.gz > $@
+    $O/.stamp_elf_windows_tarball
+	cd $O && md5sum *linux_install.tar.gz *sources.tar.gz *.zip > $@
+
 
 checkout: $O/.stamp_checked_out
 
@@ -202,6 +205,11 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_
 	# We install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $O/$(ELF_BE_DIR))/bin:$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim --release-name $(RELEASE)
+	touch $@
+
+$O/.stamp_elf_windows_tarball: $O/.stamp_elf_le_windows_built $O/.stamp_elf_be_windows_built
+	cd $O && tar czf $(WIN_ELF_TGZ) --transform='s#$(WIN_ELF_LE_DIR)#$(WIN_ELF_NAME)#' $(WIN_ELF_LE_DIR)/
+	cd $O && zip -q -r $(WIN_ELF_NAME).zip $(WIN_ELF_LE_DIR)/
 	touch $@
 
 #
