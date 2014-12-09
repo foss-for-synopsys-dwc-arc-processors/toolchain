@@ -33,7 +33,7 @@
 ; Settings
 
   # File and Installer Name
-  outfile "${entry_name}_${arcver}_win_install.exe"
+  outfile "${entry_name}_ide_${arcver}_win_install.exe"
   Name "${arctitle} ${arcver}"
 
   # Default directory
