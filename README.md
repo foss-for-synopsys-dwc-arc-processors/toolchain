@@ -253,6 +253,28 @@ And in another console (GDB output is omitted):
     (gdb) continue
     (gdb) q
 
+If one of the HS TCFs is used, then it is required to add `-on
+nsim_isa_ll64_option` to nSIM options, because GCC for ARC automatically
+generates double-world memory operations, which are not enabled in TCFs
+supplied with nSIM:
+
+    $ $NSIM_HOME/bin/nsimdrv -gdb -port 51000 \
+      -tcf $NSIM_HOME/etc/tcf/templates/hs36.tcf -on nsim_emt \
+      -on nsim_isa_ll64_option
+
+nSIM distribution doesn't containt big-endian TCFs, so `-on
+nsim_isa_big_endian` should be added to nSIM options to simulate big-endian
+cores:
+
+    $ $NSIM_HOME/bin/nsimdrv -gdb -port 51000 \
+      -tcf $NSIM_HOME/etc/tcf/templates/em6_gp.tcf -on nsim_emt \
+      -on nsim_isa_big_endian
+
+Default linker script of GNU Tool chain for ARC is not compatible with memory
+maps of cores that only has CCM memory (EM4, EM5D, HS34), thus to run
+application on nSIM with those TCFs it is required to link application with
+linker script appropriate for selected core.
+
 Please note that in case of gdbserver-based usage all execution, input and
 output happens on the side of host that runs gdbserver, so "hello world" string
 will be printed on the server side.
