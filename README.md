@@ -41,13 +41,13 @@ ARC GNU tool chain user guide or on the
 On Ubuntu 12.04/14.04 LTS you can install those with following command (as root):
 
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
-    libexpat1-dev libx11-dev texlive build-essential
+    libexpat1-dev libx11-dev texlive build-essential git
 
 On Fedora 17 you can install those with following command (as root):
 
     # yum groupinstall "Development Tools"
     # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
-    libX11-devel
+    libX11-devel git
 
 GCC depends on the GMP, MPFR and MPC packages, however there are problems with
 availability of those packages on the RHEL/CentOS systems (packages has too old
