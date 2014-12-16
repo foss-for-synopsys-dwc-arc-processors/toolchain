@@ -263,6 +263,12 @@ then
     echo "Building PDF documentation" >> "${log_path}"
     echo "==========================" >> "${log_path}"
 
+    # There are issues with Texinfo v4 and non-C locales.
+    # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
+    if [ 4 = `texi2dvi --version | grep -Po '(?<=Texinfo )[0-9]+'` ]; then
+	export LC_ALL=C
+    fi
+
     echo "Building PDFs ..."
     build_path=$(calcConfigPath "${build_dir}")
     cd "${build_path}"
