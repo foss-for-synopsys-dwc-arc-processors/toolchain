@@ -51,10 +51,10 @@ if [ string match arceb-* $target_triplet ] {
     set xarchflags "$xarchflags -on nsim_isa_big_endian"
 }
 
-# EM is default
-if { [string first ARC700 "$multilib_opts"] == 0 } {
+# ARC EM is default
+if { [string first arc700 "$multilib_opts"] == 0 } {
     set xarchflags "$xarchflags -p nsim_isa_family=a700 -on nsim_isa_sat -on nsim_isa_mpy32"
-} elseif { [string first HS "$multilib_opts"] == 0 } {
+} elseif { [string first archs "$multilib_opts"] == 0 } {
     set xarchflags "$xarchflags -p nsim_isa_family=av2hs -p nsim_isa_core=1 -on nsim_isa_ll64_option -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
 } else {
     set xarchflags "$xarchflags -p nsim_isa_family=av2em -p nsim_isa_core=1 -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"

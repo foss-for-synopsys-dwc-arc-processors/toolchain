@@ -16,7 +16,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 # We have to call this before loading the rest in order for it to be used.
-process_multilib_options "-mARC600"
+process_multilib_options "-marc600"
 
 load_generic_config "arc-sim.exp"
 
