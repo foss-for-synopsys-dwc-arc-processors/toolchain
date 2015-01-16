@@ -90,7 +90,8 @@ FunctionEnd
     WriteRegDWORD HKLM "${uninstreg}" "NoModify" "1"
     WriteRegDWORD HKLM "${uninstreg}" "NoRepair" "1"
 
-    !define shelldir "${arctitle} ${arcver}"
+    !define snps_shelldir "Synopsys Inc"
+    !define shelldir "${snps_shelldir}\${arctitle} ${arcver}"
 
     ; Add install directory to PATH and create shortcut to Eclipse
     ; See http://nsis.sourceforge.net/Environmental_Variables:_append,_prepend,_and_remove_entries
@@ -124,6 +125,7 @@ FunctionEnd
 	Delete "$SMPROGRAMS\${shelldir}\IDE Wiki on GitHub.lnk"
 	Delete "$SMPROGRAMS\${shelldir}\IDE Releases on GitHub.lnk"
     RmDir "$SMPROGRAMS\${shelldir}"
+    RmDir "$SMPROGRAMS\${snps_shelldir}"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
     !include "uninstall_files.nsi"
     Delete "$INSTDIR\Uninstall.exe"
