@@ -9,6 +9,10 @@
 
 	* run-tests.sh: Remove typo from comment and help text.
 
+2015-01-16  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/basenoards/arc-sim-nsimdrv.exp: Allow custom nSIM options.
+
 2014-12-19  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* dejagnu/baseboards/arc-sim-nsimdrv.exp: Update CPU C flags.

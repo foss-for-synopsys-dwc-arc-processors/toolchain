@@ -60,6 +60,11 @@ if { [string first arc700 "$multilib_opts"] == 0 } {
     set xarchflags "$xarchflags -p nsim_isa_family=av2em -p nsim_isa_core=1 -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
 }
 
+# Allow user to specify additional options, like JIT, etc.
+if { [info exists env(ARC_NSIM_OPTS) ] } {
+    set xarchflags "$xarchflags $env(ARC_NSIM_OPTS)"
+}
+
 # Setup the MetaWare simulator.
 set_board_info sim "$::env(NSIM_HOME)/bin/nsimdrv ${xarchflags}"
 set_board_info sim_time_limit 120
