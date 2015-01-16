@@ -117,15 +117,20 @@ FunctionEnd
 
   section "Uninstall"
     SetShellVarContext all
+
+    ; Desktop shortcut
     Delete "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk"
-	Delete "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Command Prompt.lnk"
-	Delete "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Eclipse.lnk"
+
+    ; Start menu entries
+    Delete "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Command Prompt.lnk"
+    Delete "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Eclipse.lnk"
     Delete "$SMPROGRAMS\${shelldir}\Uninstall.lnk"
-	Delete "$SMPROGRAMS\${shelldir}\Documentation.lnk"
-	Delete "$SMPROGRAMS\${shelldir}\IDE Wiki on GitHub.lnk"
-	Delete "$SMPROGRAMS\${shelldir}\IDE Releases on GitHub.lnk"
+    Delete "$SMPROGRAMS\${shelldir}\Documentation.lnk"
+    Delete "$SMPROGRAMS\${shelldir}\IDE Wiki on GitHub.lnk"
+    Delete "$SMPROGRAMS\${shelldir}\IDE Releases on GitHub.lnk"
     RmDir "$SMPROGRAMS\${shelldir}"
     RmDir "$SMPROGRAMS\${snps_shelldir}"
+
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
     !include "uninstall_files.nsi"
     Delete "$INSTDIR\Uninstall.exe"
