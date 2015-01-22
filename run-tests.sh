@@ -121,7 +121,7 @@
 # --gcc | --no-gcc
 # --libgcc | --no-libgcc
 # --libgloss | --no-libgloss
-# --newlib | --no-newlibe
+# --newlib | --no-newlib
 # --libstdc++ | --no-libstdc++
 # --sim | --no-sim
 # --gdb | --no-gdb
@@ -332,7 +332,7 @@ case ${opt} in
         echo "                      [--gcc | --no-gcc]"
         echo "                      [--libgcc | --no-libgcc]"
         echo "                      [--libgloss | --no-libgloss]"
-        echo "                      [--newlib | --no-newlibe]"
+        echo "                      [--newlib | --no-newlib]"
         echo "                      [--libstdc++ | --no-libstdc++]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--gdb | --no-gdb]"
