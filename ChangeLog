@@ -9,6 +9,10 @@
 
 	* run-tests.sh: Remove typo from comment and help text.
 
+2015-01-22  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* arc-external.sh: Use different GMP link.
+
 2015-01-16  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* dejagnu/basenoards/arc-sim-nsimdrv.exp: Allow custom nSIM options.
