@@ -1,3 +1,10 @@
+2015-01-27  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* build-all.sh: Add tls command line flags, and set TLS_SUPPORT
+	environment variable.
+	* build-uclibc.sh: Check TLS_SUPPORT environment variable to
+	control thread and tls support features.
+
 2015-01-22  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	* run-tests.sh: Remove typo from comment and help text.

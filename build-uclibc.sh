@@ -103,6 +103,11 @@
 #     Make target prefix to install host application. Should be either
 #     "install" or "install-strip".
 
+# TLS_SUPPORT
+
+#     Build with threading and thread local storage support if this is
+#     set to "yes".
+
 # Unlike earlier versions of this script, we do not recognize the
 # ARC_GNU_ONLY_CONFIGURE and ARC_GNU_CONTINUE environment variables. If you
 # are using this script, you need to run the whole thing. If you want to redo
@@ -339,13 +344,19 @@ cd "${build_dir_stage1}"
 # Configure the build. Disable anything that might try to build a run-time
 # library and don't bother with multilib for stage 1. Note: with gcc 4.4.x, we
 # also disable building libgomp
+if [ "x${TLS_SUPPORT}" = "xyes" ]
+then
+    thread_flags="--enable-threads --enable-tls"
+else
+    thread_flags="--disable-threads --disable-tls"
+fi
 config_path=$(calcConfigPath "${unified_src_abs}")
 if "${config_path}"/configure --target=${triplet} \
         --with-cpu=${ISA_CPU} \
         --disable-fast-install --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
         --disable-multilib \
         --enable-languages=c --prefix="${INSTALLDIR}" \
-        --without-headers --enable-shared --disable-threads --disable-tls \
+        --without-headers --enable-shared ${thread_flags} \
         --disable-libssp --disable-libmudflap --without-newlib --disable-c99 \
         --disable-libgomp ${CONFIG_EXTRA} \
         --with-sysroot=${SYSROOTDIR} \

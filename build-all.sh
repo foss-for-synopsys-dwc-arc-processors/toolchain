@@ -48,6 +48,7 @@
 #                  [--disable-werror | --no-disable-werror]
 #                  [--strip | --no-strip]
 #                  [--release-name <release>]
+#                  [--tls | --no-tls]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -250,6 +251,12 @@
 #     the gcc repository. If build is done from the source tarball, then
 #     current date is used.
 
+# --tls | --no-tls
+
+#     When building with tls support the uClibc tool chain will
+#     support threading and thread local storage (TLS).
+#     (default --no-tls)
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -322,6 +329,7 @@ HOST_INSTALL=install
 SED=sed
 RELEASE_NAME=
 is_tarball=
+TLS_SUPPORT="no"
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -515,6 +523,13 @@ case ${opt} in
 	RELEASE_NAME="$1"
 	;;
 
+    --tls)
+        TLS_SUPPORT="yes"
+        ;;
+    --no-tls)
+        TLS_SUPPORT="no"
+        ;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -546,6 +561,7 @@ case ${opt} in
 	echo "                      [--strip | --no-strip]"
 	echo "                      [--sed-tool <tool>]"
 	echo "                      [--release-name <release>]"
+	echo "                      [--tls | --no-tls]"
 	exit 1
 	;;
 
@@ -718,6 +734,7 @@ then
 fi
 export SED
 export RELEASE_NAME
+export TLS_SUPPORT
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
