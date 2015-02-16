@@ -1,5 +1,6 @@
 #!/bin/bash
-# Copyright (C) 2013-2014 Synopsys Inc.
+# Copyright (C) 2013-2015 Synopsys Inc.
+
 # Contributor Simon Cook <simon.cook@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 

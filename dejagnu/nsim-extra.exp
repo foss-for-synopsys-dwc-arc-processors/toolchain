@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2013 Synopsys Inc.
+# Copyright (C) 2013-2015 Synopsys Inc.
 
 # This file is additional DejaGnu procs to support nSim based testing.
 

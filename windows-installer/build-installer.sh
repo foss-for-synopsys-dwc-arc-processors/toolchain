@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-# Copyright (C) 2014 Synopsys Inc.
+# Copyright (C) 2014-2015 Synopsys Inc.
+
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free

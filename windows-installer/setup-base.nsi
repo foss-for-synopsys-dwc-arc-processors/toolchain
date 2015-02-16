@@ -1,6 +1,7 @@
 ; ARC GNU Installer Base Script
 
-; Copyright (C) 2013-2014 Synopsys Inc.
+; Copyright (C) 2013-2015 Synopsys Inc.
+;
 ; Contributor: Simon Cook <simon.cook@embecosm.com>
 ; Contributor: Anton Kolesov  <anton.kolesov@synopsys.com>
 
