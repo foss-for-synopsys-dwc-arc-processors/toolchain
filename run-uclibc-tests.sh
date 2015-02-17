@@ -106,10 +106,10 @@ readme=${res_uclibc}/README
 if [ "${ARC_ENDIAN}" = "little" ]
 then
     bd_uclibc=${ARC_GNU}/bd-${RELEASE}-uclibc
-    target_dir=arc-linux-uclibc
+    target_dir=arc-snps-linux-uclibc
 else
     bd_uclibc=${ARC_GNU}/bd-${RELEASE}-uclibceb
-    target_dir=arceb-linux-uclibc
+    target_dir=arceb-snps-linux-uclibc
 fi
 
 # Create a file of start up commands for GDB

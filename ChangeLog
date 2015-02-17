@@ -1,3 +1,8 @@
+2015-02-17  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* run-uclibc-tests.sh: Switch to arc-snps-linux-uclibc target
+	triplet when looking for results.
+
 2015-01-27  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	* build-all.sh: Add tls command line flags, and set TLS_SUPPORT
