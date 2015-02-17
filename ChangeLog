@@ -17,6 +17,21 @@
 
 	* build-uclibc.sh: Remove use of arc_config.
 
+2015-02-17  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* Makefile.release: Remove any mentions of release in directory names.
+	* README.md: Likewise.
+	* arc-clone-all.sh: Likewise.
+	* arc-init.sh: Likewise.
+	* build-all.sh: Likewise.
+	* build-elf32.sh: Likewise.
+	* build-kernel.sh: Likewise.
+	* build-uclibc.sh: Likewise.
+	* run-elf32-tests.sh: Likewise.
+	* run-tests.sh: Likewise.
+	* run-uclibc-tests.sh: Likewise.
+	* define-release.sh: Remove.
+
 2015-02-17  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	* run-uclibc-tests.sh: Switch to arc-snps-linux-uclibc target

@@ -28,18 +28,6 @@
 
 # The following environment variables must be supplied
 
-# RELEASE
-
-#     The number of the current ARC tool chain release.
-
-# LOGDIR
-
-#     Directory for all log files.
-
-# RESDIR
-
-#     Directory for all results directories.
-
 # ARC_GNU
 
 #     The directory containing all the sources. If not set, this will default
@@ -107,10 +95,10 @@ readme=${res_elf}/README
 if [ "${ARC_ENDIAN}" = "little" ]
 then
     target_dir=arc-elf32
-    bd_elf=${ARC_GNU}/bd-${RELEASE}-elf32
+    bd_elf="${ARC_GNU}/bd-elf32"
 else
     target_dir=arceb-elf32
-    bd_elf=${ARC_GNU}/bd-${RELEASE}-elf32eb
+    bd_elf="${ARC_GNU}/bd-elf32eb"
 fi
 
 # Create a README with info about the test
@@ -118,7 +106,6 @@ echo "Test of ELF32 tool chain run" > ${readme}
 echo "============================" >> ${readme}
 echo "" >> ${readme}
 echo "Start time:         $(date -u +%d\ %b\ %Y\ at\ %H:%M)" >> ${readme}
-echo "Tool chain release: ${RELEASE}"                        >> ${readme}
 echo "Endianness:         ${ARC_ENDIAN}"                     >> ${readme}
 echo "Test board:         ${ARC_TEST_BOARD_ELF32}"           >> ${readme}
 echo "Test IP address:    ${ARC_TEST_ADDR_ELF32}"            >> ${readme}

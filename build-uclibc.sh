@@ -37,10 +37,6 @@
 
 # All other parameters are set by environment variables.
 
-# RELEASE
-
-#     The number of the current ARC tool chain release.
-
 # LOGDIR
 
 #     Directory for all log files.
@@ -121,7 +117,7 @@
 # tricky under MinGW/MSYS environments).
 
 # The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-4.8-uclibc) local to the directory in which
+# and uses a build directory (bd-uclibc) local to the directory in which
 # it is executed.
 
 # The script generates a date and time stamped log file in the logs directory.
@@ -173,12 +169,12 @@
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arche=arceb
-    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-uclibceb
+    build_dir="$(echo "${PWD}")/bd-uclibceb"
 else
     arche=arc
-    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-uclibc
+    build_dir="$(echo "${PWD}")/bd-uclibc"
 fi
-build_dir_stage1=${build_dir}-stage1
+build_dir_stage1="${build_dir}-stage1"
 
 arch=arc
 unified_src_abs="$(echo "${PWD}")"/${UNISRC}

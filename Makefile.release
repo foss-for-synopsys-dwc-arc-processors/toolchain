@@ -31,7 +31,7 @@
 # ../release_output/.stamp_checked_out
 #
 
-UNIFIED_SRC_DIR := unisrc-4.8
+UNIFIED_SRC_DIR := unisrc
 BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
 --no-auto-checkout --no-unisrc --config-extra '--with-python=no LDFLAGS=-static'
 

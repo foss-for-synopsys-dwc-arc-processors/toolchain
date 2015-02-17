@@ -704,13 +704,11 @@ fi
 
 PARALLEL="-j ${jobs} -l ${load}"
 
-# Generic release set up, which we'll share with sub-scripts. This defines
-# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
-# and $RESDIR if they don't exist.
-. "${ARC_GNU}"/toolchain/define-release.sh
+# Standard setup
+. "${ARC_GNU}/toolchain/arc-init.sh"
 
 # Release specific unified source directory
-UNISRC=unisrc-${RELEASE}
+UNISRC=unisrc
 
 # All the things we export to the scripts
 export UNISRC

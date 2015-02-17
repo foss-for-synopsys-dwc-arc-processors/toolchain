@@ -365,11 +365,6 @@ fi
 # Parallelism
 PARALLEL="-j ${jobs} -l ${load}"
 
-# Generic release set up, which we'll share with sub-scripts. This defines
-# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
-# and $RESDIR if they don't exist.
-. "${ARC_GNU}"/toolchain/define-release.sh
-
 # Export everything needed by sub-scripts
 export ARC_TEST_BOARD_ELF32
 export ARC_TEST_BOARD_UCLIBC
