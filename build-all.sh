@@ -894,3 +894,5 @@ fi
 if [ -d "${INSTALLDIR}/" ]; then
     cp "${ARC_GNU}/toolchain/Synopsys_FOSS_Notices.pdf" "${INSTALLDIR}/"
 fi
+
+# vim: noexpandtab sts=4 ts=8:

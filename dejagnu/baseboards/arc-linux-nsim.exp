@@ -72,3 +72,5 @@ if { $tool == "gdb" } {
     # IP address of target
     set_board_info sockethost "$linux_hostname:"
 }
+
+# vim: noexpandtab sts=4 ts=8:

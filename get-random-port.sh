@@ -35,3 +35,4 @@ done
 
 echo "${portnum}"
 
+# vim: expandtab sts=4:

@@ -80,3 +80,5 @@ if ![ info exists HOSTCFLAGS ] {
 #        { -O3 -g -mARC700 -mdpfp -mno-dpfp-lrsr } \
 #        { -Os -mARC700 -mdpfp } \
 #        { -Os -mARC700 -mdpfp -mno-dpfp-lrsr } ]
+
+# vim: noexpandtab sts=4 ts=8:

@@ -20,3 +20,4 @@ process_multilib_options "-marc600"
 
 load_generic_config "arc-sim.exp"
 
+# vim: noexpandtab sts=4 ts=8:

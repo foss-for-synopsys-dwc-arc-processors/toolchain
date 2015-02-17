@@ -77,3 +77,4 @@ echo "Creating installer..."
 
 echo "Done"
 
+# vim: noexpandtab sts=4 ts=8:

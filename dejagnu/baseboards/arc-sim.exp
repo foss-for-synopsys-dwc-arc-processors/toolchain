@@ -65,3 +65,5 @@ set_board_info gdb,nosignals 1
 #set_board_info gdb,noinferiorio 1
 # Doesn't use HW watchpoints.
 set_board_info gdb,no_hardware_watchpoints 1
+
+# vim: noexpandtab sts=4 ts=8:

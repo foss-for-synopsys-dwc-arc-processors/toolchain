@@ -118,3 +118,5 @@ if { $tool == "gdb" } {
 variables are specified. Some tests are likely to fail."
     }
 }
+
+# vim: noexpandtab sts=4 ts=8:

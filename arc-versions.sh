@@ -143,20 +143,19 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-        # Only update to latest if we are not in detached HEAD mode.
-        # If tree is in detahed state, output differs between Git versions:
-        # Git 1.8 prints: * (detached from <tag_name>>)
-        # Git <1.8 prints: * (no branch)
-        if ! git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
-        then
-            echo "  pulling latest version"
-            if ! git pull
-            then
-                exit 1
-            fi
-        fi
+	# Only update to latest if we are not in detached HEAD mode.
+	# If tree is in detahed state, output differs between Git versions:
+	# Git 1.8 prints: * (detached from <tag_name>>)
+	# Git <1.8 prints: * (no branch)
+	if ! git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
+	then
+	    echo "  pulling latest version"
+	    if ! git pull
+	    then
+		exit 1
+	    fi
+	fi
     fi
 done
 
-# vi: set expandtab:
-
+# vim: noexpandtab sts=4 ts=8:

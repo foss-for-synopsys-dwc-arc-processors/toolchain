@@ -27,3 +27,4 @@
 
 verbose "Sourcing GDB extra definitions"
 
+# vim: noexpandtab sts=4 ts=8:

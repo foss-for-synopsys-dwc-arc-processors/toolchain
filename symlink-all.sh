@@ -71,3 +71,5 @@ do
 done
 
 exit 0
+
+# vim: noexpandtab sts=4 ts=8:

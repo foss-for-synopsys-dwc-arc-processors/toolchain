@@ -230,3 +230,5 @@ else
     echo "- full logs in ${logfile}" | tee -a ${logfile}
     exit 1
 fi
+
+# vim: noexpandtab sts=4 ts=8:

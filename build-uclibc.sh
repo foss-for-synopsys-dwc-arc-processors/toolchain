@@ -699,3 +699,5 @@ fi
 
 echo "DONE  UCLIBC: $(date)" >> ${logfile}
 echo "DONE  UCLIBC: $(date)"
+
+# vim: noexpandtab sts=4 ts=8:

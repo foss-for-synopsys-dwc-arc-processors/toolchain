@@ -51,3 +51,4 @@ for url in ${urls} ; do
     fi
 done
 
+# vim: expandtab sts=4:

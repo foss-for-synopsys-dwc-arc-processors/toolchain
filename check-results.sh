@@ -124,3 +124,4 @@ echo "-----                   ------ ----- ----- ----- ----- ----- ----- ----- -
 printf "TOTAL                   %6d %5d %5d %5d %5d %5d %5d %5d %6d\n" \
     ${pt} ${ft} ${xpt} ${xft} ${kft} ${urt} ${ust} ${utt} ${tott}
 
+# vim: noexpandtab sts=4 ts=8:

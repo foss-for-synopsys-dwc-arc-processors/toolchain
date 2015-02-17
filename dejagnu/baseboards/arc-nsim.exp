@@ -103,3 +103,4 @@ if { $tool == "gdb" } {
 	set_board_info gdb,nofileio 1
 }
 
+# vim: noexpandtab sts=4 ts=8:

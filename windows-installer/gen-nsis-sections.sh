@@ -24,31 +24,31 @@
 # default cd thiks those are options.
 
 copyDir() {
-  dirname=$1
-  space=$2
+    dirname=$1
+    space=$2
 
-  # We print files first and then do folders next
-  for f in *; do
-      if [ -f "$f" ]; then
-      	if [ "${dirname}" == "" ]; then
-	    	echo "${space}File \"${PREFIX}\\${f}\""
-      	else
-	    	echo "${space}File \"${PREFIX}\\${dirname}\\${f}\""
+    # We print files first and then do folders next
+    for f in *; do
+	if [ -f "$f" ]; then
+	    if [ "${dirname}" == "" ]; then
+		echo "${space}File \"${PREFIX}\\${f}\""
+	    else
+		echo "${space}File \"${PREFIX}\\${dirname}\\${f}\""
 	    fi
-      fi
-  done
+	fi
+    done
 
-  for f in *; do
-      if [ -d "$f" ]; then
-	  if [ "${dirname}" == "" ]; then
-	      (echo "setOutPath \"\$INSTDIR\\$f\""
-	       cd -- "$f" && copyDir "$f" "  ")
-	  else
-	      (echo "${space}setOutPath \"\$INSTDIR\\${dirname}\\$f"\"
-	       cd -- "$f" && copyDir "${dirname}\\$f" "  ${space}")
-	  fi
-      fi
-  done
+    for f in *; do
+	if [ -d "$f" ]; then
+	    if [ "${dirname}" == "" ]; then
+		(echo "setOutPath \"\$INSTDIR\\$f\""
+		    cd -- "$f" && copyDir "$f" "  ")
+	    else
+		(echo "${space}setOutPath \"\$INSTDIR\\${dirname}\\$f"\"
+		    cd -- "$f" && copyDir "${dirname}\\$f" "  ${space}")
+	    fi
+	fi
+    done
 }
 
 delDir() {
@@ -57,8 +57,8 @@ delDir() {
     # We remove files before their containing directories
     for f in *; do
 	if [ -f "$f" ]; then
-		# Delete is parsed so we need to $ -> $$
-		f=$(echo $f | /usr/bin/sed 's/\$/\$\$/g')
+	    # Delete is parsed so we need to $ -> $$
+	    f=$(echo $f | /usr/bin/sed 's/\$/\$\$/g')
 	    if [ "${dirname}" == "" ]; then
 		echo "Delete \"\$INSTDIR\\$f\""
 	    else
@@ -93,3 +93,5 @@ echo "setOutPath \"\$INSTDIR\"" > ../install_files.nsi
 copyDir "" "" >> ../install_files.nsi
 echo "Generating uninstall_files.nsi..."
 delDir "" ""  > ../uninstall_files.nsi
+
+# vim: noexpandtab sts=4 ts=8:

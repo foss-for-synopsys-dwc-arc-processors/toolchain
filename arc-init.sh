@@ -287,3 +287,5 @@ else
         printf "${path1}"
     }
 fi
+
+# vim: noexpandtab sts=4 ts=8:

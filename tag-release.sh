@@ -209,3 +209,5 @@ then
 fi
 
 echo "All repositories tagged as ${tagname}"
+
+# vim: noexpandtab sts=4 ts=8:

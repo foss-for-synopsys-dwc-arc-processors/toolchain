@@ -69,3 +69,5 @@ arg2=$2
     fi
 
 ) 200> ${lockfile}
+
+# vim: noexpandtab sts=4 ts=8:

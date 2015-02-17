@@ -236,3 +236,5 @@ then
 fi
 
 exit ${status}
+
+# vim: noexpandtab sts=4 ts=8:

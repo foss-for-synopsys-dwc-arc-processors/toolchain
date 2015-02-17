@@ -385,3 +385,4 @@ fi
 logterm "Linux build successful.  See ${logfile} for details."
 exit 0
 
+# vim: noexpandtab sts=4 ts=8:

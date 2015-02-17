@@ -66,5 +66,4 @@ for f in $files; do
     patchelf --set-rpath "${RPATH}" ${f}
 done
 
-# vi: set expandtab:
-
+# vim: noexpandtab sts=4 ts=8:
