@@ -1,3 +1,7 @@
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* doc/build.md: New file.
+
 2015-02-26  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	* arc-init.sh (temp_file_in_dir): New function.
