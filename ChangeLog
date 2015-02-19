@@ -1,5 +1,10 @@
 2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* arc-init.sh: Common build functions.
+	* build-elf32.sh: Build without unified source tree.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* doc/build.md: New file.
 
 2015-02-26  Andrew Burgess  <andrew.burgess@embecosm.com>

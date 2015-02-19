@@ -288,6 +288,70 @@ else
     }
 fi
 
+# Build functions for the repeated code (configure and make invocations).
+# Arguments:
+# $1 - name
+build_dir_init() {
+    echo "Building $1 ..." | tee -a "$logfile"
+    mkdir -p "$build_dir/$1"
+    cd "$build_dir/$1"
+}
+
+# Arguments:
+# $1 - name
+# $2 - src dir (optional, default is same as name)
+# $3 - extra options (optional)
+configure_elf32() {
+    local tool=$1
+    shift
+    if [ $# -gt 0 ]
+    then
+	local src=$1
+	shift
+    else
+	local src=$tool
+    fi
+    echo "  configuring..."
+    config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    if ! "$config_path/configure" \
+	--target=${arch}-elf32 \
+	--with-cpu=$ISA_CPU \
+	$ELF32_DISABLE_MULTILIB \
+	--with-pkgversion="ARCompact/ARCv2 ISA elf32 toolchain $RELEASE_NAME" \
+	--with-bugurl="http://solvnet.synopsys.com" \
+	--enable-fast-install=N/A \
+	--with-endian=$ARC_ENDIAN \
+	$DISABLEWERROR \
+	--enable-languages=c,c++ \
+	--prefix="$INSTALLDIR" \
+	--with-headers="$ARC_GNU/newlib/newlib/libc/include" \
+	$sim_config \
+	$CONFIG_EXTRA \
+	$* \
+	>> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while configuring."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+# Arguments:
+# $1 - step name
+# $* - make targets
+make_target() {
+    local step="$1"
+    shift
+    echo "  $step..."
+    if ! make $PARALLEL $* >> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while $1."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+
 # Create a common log directory for all logs in this and sub-scripts
 LOGDIR="$ARC_GNU/logs"
 mkdir -p "$LOGDIR"
