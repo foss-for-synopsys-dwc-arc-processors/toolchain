@@ -1,3 +1,7 @@
+2015-02-19  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* build-uclibc.sh: Remove use of arc_config.
+
 2015-02-17  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	* run-uclibc-tests.sh: Switch to arc-snps-linux-uclibc target

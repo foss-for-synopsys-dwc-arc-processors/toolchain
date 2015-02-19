@@ -288,23 +288,15 @@ fi
 # make will fail if there is yet no .config file, but we can ignore this error.
 make distclean >> "${logfile}" 2>&1 || true 
 
-# Patch the temporary install directories used into the uClibc config.
-# uClibc 0.9.34 onwards use defconfig
-if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
-then
-    ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
-           -e "s#%RUNTIME_PREFIX%#/#" \
-           -e "s#%DEVEL_PREFIX%#$/usr/#" \
-           -e "s#%CROSS_COMPILER_PREFIX%#${triplet}-#" \
-           < "${ARC_GNU}"/uClibc/arc_config > .config
-else
-    make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
-    ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
-           -e "s#%RUNTIME_PREFIX%#/#" \
-           -e "s#%DEVEL_PREFIX%#/usr/#" \
-           -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
-	   -i .config
-fi
+# Create the .config from the correct defconfig file.
+make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
+
+# Patch .config with the temporary install directories used.
+${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
+       -e "s#%RUNTIME_PREFIX%#/#" \
+       -e "s#%DEVEL_PREFIX%#/usr/#" \
+       -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
+       -i .config
 
 # Patch .config for big endian for use with correct flags
 if [ "${ARC_ENDIAN}" = "big" ]
@@ -407,27 +399,19 @@ echo "Start building UCLIBC ..."
 # done when we got the headers.
 cd ${uclibc_build_dir}
 
+# Create the .config from the correct defconfig file.
+make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
+
 # Patch the directories used into the uClibc config. Note that the kernel
 # headers will have been moved by the previous header install. At this step we
 # also disable HARDWIRED_ABSPATH to avoid absolute path references to allow
 # relocatable toolchains.
-if [ ! -f extra/Configs/defconfigs/arc/defconfig ]
-then
-    ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
-           -e "s#%RUNTIME_PREFIX%#/#" \
-           -e "s#%DEVEL_PREFIX%#/usr/#" \
-           -e "s#%CROSS_COMPILER_PREFIX%#${triplet}-#" \
-           -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
-           < "${ARC_GNU}"/uClibc/arc_config > .config
-else
-    make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
-    ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
-           -e "s#%RUNTIME_PREFIX%#/#" \
-           -e "s#%DEVEL_PREFIX%#/usr/#" \
-           -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
-           -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
-           -i .config
-fi
+${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
+       -e "s#%RUNTIME_PREFIX%#/#" \
+       -e "s#%DEVEL_PREFIX%#/usr/#" \
+       -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
+       -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
+       -i .config
 
 # Patch .config for big endian for use with correct flags
 if [ "${ARC_ENDIAN}" = "big" ]
