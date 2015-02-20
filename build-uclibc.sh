@@ -228,6 +228,7 @@ echo "Installing in ${INSTALLDIR}"
 
 # Setup vars
 SYSROOTDIR=${INSTALLDIR}/${triplet}/sysroot
+DEFCFG_DIR=extra/Configs/defconfigs/arc/
 
 # -----------------------------------------------------------------------------
 # Install the Linux headers
@@ -288,27 +289,37 @@ fi
 # make will fail if there is yet no .config file, but we can ignore this error.
 make distclean >> "${logfile}" 2>&1 || true 
 
-# Create the .config from the correct defconfig file.
-make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
+# Copy the defconfig file to a temporary location
+TEMP_DEFCFG=`mktemp --tmpdir=${DEFCFG_DIR} XXXXXXXXXX_defconfig`
+if [ ! -f "${TEMP_DEFCFG}" ]
+then
+    echo "ERROR: Failed to create temporary defconfig file."
+    exit 1
+fi
+cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
 
-# Patch .config with the temporary install directories used.
+# Patch defconfig with the temporary install directories used.
 ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
        -e "s#%RUNTIME_PREFIX%#/#" \
        -e "s#%DEVEL_PREFIX%#/usr/#" \
        -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
-       -i .config
+       -i ${TEMP_DEFCFG}
 
-# Patch .config for big endian for use with correct flags
+# Patch defconfig for big or little endian.
 if [ "${ARC_ENDIAN}" = "big" ]
 then
-    ${SED} -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
-           -e 's@# ARCH_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
-           -i .config
+    ${SED} -e 's@ARCH_WANTS_LITTLE_ENDIAN=y@ARCH_WANTS_BIG_ENDIAN=y@' \
+           -i ${TEMP_DEFCFG}
 else
-    ${SED} -e 's@ARCH_BIG_ENDIAN=y@# ARCH_BIG_ENDIAN is not set@' \
-           -e 's@# ARCH_LITTLE_ENDIAN is not set@ARCH_LITTLE_ENDIAN=y@' \
-           -i .config
+    ${SED} -e 's@ARCH_WANTS_BIG_ENDIAN=y@ARCH_WANTS_LITTLE_ENDIAN=y@' \
+           -i ${TEMP_DEFCFG}
 fi
+
+# Create the .config from the temporary defconfig file.
+make ARCH=arc `basename ${TEMP_DEFCFG}` >> "${logfile}" 2>&1
+
+# Now remove the temporary defconfig file.
+rm -f ${TEMP_DEFCFG}
 
 # PREFIX is an arg to Makefile, it is not set in .config.
 if make ARCH=${arch} V=1 PREFIX=${SYSROOTDIR} install_headers >> "${logfile}" 2>&1
@@ -399,31 +410,41 @@ echo "Start building UCLIBC ..."
 # done when we got the headers.
 cd ${uclibc_build_dir}
 
-# Create the .config from the correct defconfig file.
-make ARCH=arc ${UCLIBC_DEFCFG} >> "${logfile}" 2>&1
+# Copy the defconfig file to a temporary location
+TEMP_DEFCFG=`mktemp --tmpdir=${DEFCFG_DIR} XXXXXXXXXX_defconfig`
+if [ ! -f "${TEMP_DEFCFG}" ]
+then
+    echo "ERROR: Failed to create temporary defconfig file."
+    exit 1
+fi
+cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
 
-# Patch the directories used into the uClibc config. Note that the kernel
-# headers will have been moved by the previous header install. At this step we
-# also disable HARDWIRED_ABSPATH to avoid absolute path references to allow
-# relocatable toolchains.
+# Patch defconfig with the temporary install directories used.
 ${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
        -e "s#%RUNTIME_PREFIX%#/#" \
        -e "s#%DEVEL_PREFIX%#/usr/#" \
        -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
-       -e "s/HARDWIRED_ABSPATH=y/# HARDWIRED_ABSPATH is not set/" \
-       -i .config
+       -i ${TEMP_DEFCFG}
 
-# Patch .config for big endian for use with correct flags
+# At this step we also disable HARDWIRED_ABSPATH to avoid absolute
+# path references to allow relocatable toolchains.
+echo "HARDWIRED_ABSPATH=n" >> ${TEMP_DEFCFG}
+
+# Patch defconfig for big or little endian.
 if [ "${ARC_ENDIAN}" = "big" ]
 then
-    ${SED} -e 's@ARCH_LITTLE_ENDIAN=y@# ARCH_LITTLE_ENDIAN is not set@' \
-           -e 's@# ARCH_BIG_ENDIAN is not set@ARCH_BIG_ENDIAN=y@' \
-           -i .config
-else 
-    ${SED} -e 's@ARCH_BIG_ENDIAN=y@# ARCH_BIG_ENDIAN is not set@' \
-           -e 's@# ARCH_LITTLE_ENDIAN is not set@ARCH_LITTLE_ENDIAN=y@' \
-           -i .config
+    ${SED} -e 's@ARCH_WANTS_LITTLE_ENDIAN=y@ARCH_WANTS_BIG_ENDIAN=y@' \
+           -i ${TEMP_DEFCFG}
+else
+    ${SED} -e 's@ARCH_WANTS_BIG_ENDIAN=y@ARCH_WANTS_LITTLE_ENDIAN=y@' \
+           -i ${TEMP_DEFCFG}
 fi
+
+# Create the .config from the temporary defconfig file.
+make ARCH=arc `basename ${TEMP_DEFCFG}` >> "${logfile}" 2>&1
+
+# Now remove the temporary defconfig file.
+rm -f ${TEMP_DEFCFG}
 
 if make ARCH=${arch} clean >> "${logfile}" 2>&1
 then
