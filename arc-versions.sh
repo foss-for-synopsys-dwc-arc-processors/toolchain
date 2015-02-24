@@ -124,13 +124,7 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-	# Fetch any new branches
-	echo "  fetching branches"
-	if ! git fetch
-	then
-	    exit 1
-	fi
-	# Fetch any new tags
+	# Fetch any new tags and branches.
 	echo "  fetching tags"
 	if ! git fetch --tags
 	then
