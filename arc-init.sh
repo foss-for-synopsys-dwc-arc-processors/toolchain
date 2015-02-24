@@ -337,8 +337,96 @@ configure_elf32() {
 }
 
 # Arguments:
-# $1 - step name
-# $* - make targets
+# $1 - name
+# $2 - src dir (optional, default is same as name)
+# $3 - extra options (optional)
+configure_uclibc_stage1() {
+    local tool=$1
+    shift
+    if [ $# -gt 0 ]
+    then
+	local src=$1
+	shift
+    else
+	local src=$tool
+    fi
+    echo "  configuring..."
+    config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    if ! "$config_path/configure" \
+	--target=$triplet \
+	--with-cpu=$ISA_CPU \
+	--disable-fast-install \
+	--with-endian=$ARC_ENDIAN \
+	$DISABLEWERROR \
+	--disable-multilib \
+	--enable-languages=c \
+	--prefix="$INSTALLDIR" \
+	--without-headers \
+	--enable-shared \
+	$thread_flags \
+	--disable-libssp \
+	--disable-libmudflap \
+	--without-newlib \
+	--disable-c99 \
+	--disable-libgomp \
+	--with-pkgversion="$version_str" \
+	--with-bugurl="$bugurl_str" \
+	$CONFIG_EXTRA \
+	--with-sysroot="$SYSROOTDIR" \
+	$* \
+	>> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while configuring."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+# Arguments:
+# $1 - name
+# $2 - src dir (optional, default is same as name)
+# $3 - extra options (optional)
+configure_uclibc_stage2() {
+    local tool=$1
+    shift
+    if [ $# -gt 0 ]
+    then
+	local src=$1
+	shift
+    else
+	local src=$tool
+    fi
+    echo "  configuring..."
+    config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    if ! "$config_path/configure" \
+	--target=$triplet \
+	--with-cpu=${ISA_CPU} \
+	$UCLIBC_DISABLE_MULTILIB \
+	--with-pkgversion="$version_str" \
+	--with-bugurl="$bugurl_str" \
+	--enable-fast-install=N/A \
+	--with-endian=$ARC_ENDIAN \
+	$DISABLEWERROR \
+	--enable-languages=c,c++ \
+	--prefix="$INSTALLDIR" \
+	--enable-shared \
+	--without-newlib \
+	--disable-libgomp \
+	$CONFIG_EXTRA \
+	--with-sysroot="$SYSROOTDIR" \
+	$* \
+	>> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while configuring."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+# Arguments:
+# $1 - step name. It should be a gerund for proper text representation, as
+# "building", not "build".
+# remaining - make targets
 make_target() {
     local step="$1"
     shift

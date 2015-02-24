@@ -32,8 +32,8 @@
 
 #     Blow away any old build sub-directories
 
-# The directory in which we are invoked is the build directory, in which we
-# find the unified source tree and in which all build directories are created.
+# The directory in which we are invoked is the build directory, in which all
+# build directories are created.
 
 # All other parameters are set by environment variables.
 
@@ -45,10 +45,6 @@
 
 #     The directory containing all the sources. If not set, this will default
 #     to the directory containing this script.
-
-# UNISRC
-
-#     The name of the unified source directory within the build directory
 
 # LINUXDIR
 
@@ -69,21 +65,23 @@
 
 # UCLIBC_DEFCFG
 
-#     The defconfig to be used when building uClibc.
+#     The defconfig to be used when building uClibc. That should a name of file
+#     that is inside uClibc/extra/Configs/defconfig/arc directory.
 
 # ISA_CPU
 
-#     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
-#     archs.
+#     Specifies target ARC core, can be arc700 or archs.
 
-# CONFIG_FLAGS
+# CONFIG_EXTRA
 
 #     Additional flags for use with configuration.
 
 # CFLAGS_FOR_TARGET
 
 #     Additional flags used when building the target libraries (e.g. for
-#     compact libraries) picked up automatically by make.
+#     compact libraries) picked up automatically by make. This variable is used
+#     by configure scripts and make, and build-uclibc.sh doesn't do anything
+#     about it explicitly.
 
 # DO_PDF
 
@@ -116,8 +114,7 @@
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
 
-# The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-uclibc) local to the directory in which
+# The script uses a build directory (bd-uclibc) local to the directory in which
 # it is executed.
 
 # The script generates a date and time stamped log file in the logs directory.
@@ -174,10 +171,8 @@ else
     arche=arc
     build_dir="$(echo "${PWD}")/bd-uclibc"
 fi
-build_dir_stage1="${build_dir}-stage1"
 
 arch=arc
-unified_src_abs="$(echo "${PWD}")"/${UNISRC}
 triplet=${arche}-snps-linux-uclibc
 
 if [ $ISA_CPU = arc700 ]
@@ -209,18 +204,34 @@ done
 logfile="${LOGDIR}/uclibc-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
-echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" >> ${logfile}
-echo "START ${ARC_ENDIAN}-endian uClibc: $(date)"
+echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" | tee -a ${logfile}
 
-# Initalize, including getting the tool versions. Note that we don't need
-# newlib for now if we rebuild our unified source tree.
+# Initalize, including getting the tool versions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
 uclibc_build_dir="$(echo "${PWD}")"/uClibc
 linux_build_dir=${LINUXDIR}
 
+# If PDF docs are enabled, then check if prerequisites are satisfied.
+if [ "x${DO_PDF}" = "x--pdf" ]
+then
+    if ! which texi2pdf >/dev/null 2>/dev/null
+    then
+	echo "TeX is not installed. See README.md for a list of required"
+	echo "system packages. Option --no-pdf can be used to disable build"
+	echo "of PDF documentation."
+	exit 1
+    fi
+
+    # There are issues with Texinfo v4 and non-C locales.
+    # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
+    if [ 4 = `texi2dvi --version | grep -Po '(?<=Texinfo )[0-9]+'` ]
+    then
+	export LC_ALL=C
+    fi
+fi
+
 # Note stuff for the log
-echo "Installing in ${INSTALLDIR}" >> ${logfile} 2>&1
-echo "Installing in ${INSTALLDIR}"
+echo "Installing in ${INSTALLDIR}" | tee -a ${logfile}
 
 # Setup vars
 SYSROOTDIR=${INSTALLDIR}/${triplet}/sysroot
@@ -232,30 +243,31 @@ DEFCFG_DIR=extra/Configs/defconfigs/arc/
 echo "Installing Linux headers" >> "${logfile}"
 echo "========================" >> "${logfile}"
 
-echo "Start installing LINUX headers ..."
+echo "Installing Linux headers ..."
 
 cd "${linux_build_dir}"
 
 # Configure Linux if not already
-if [ ! -f .config ]; then
+if [ ! -f .config ]
+then
     if make ARCH=${arch} defconfig >> "${logfile}" 2>&1
     then
-	echo "  finished configuring LINUX"
+	echo "  finished configuring Linux"
     else
 	echo "ERROR: Linux configuration was not successful. Please"
 	echo "       see \"${logfile}\" for details."
 	exit 1
     fi
 else
-    echo "  LINUX already configured"
+    echo "  Linux already configured"
 fi
 
 if make ARCH=${arch} INSTALL_HDR_PATH=${SYSROOTDIR}/usr \
     headers_install >> "${logfile}" 2>&1
 then
-    echo "  finished installing LINUX headers"
+    echo "  finished installing Linux headers"
 else
-    echo "ERROR: LINUX header install was not successful. Please see"
+    echo "ERROR: Linux header install was not successful. Please see"
     echo "       \"${logfile}\" for details."
     exit 1
 fi
@@ -268,7 +280,7 @@ fi
 echo "Installing uClibc headers" >> "${logfile}"
 echo "=========================" >> "${logfile}"
 
-echo "Start installing UCLIBC headers ..."
+echo "Installing uClibc headers ..."
 
 # uClibc builds in place, so if ${ARC_GNU} is set (to a different location) we
 # have to create the directory and copy the source across.
@@ -327,79 +339,55 @@ rm -f ${TEMP_DEFCFG}
 # PREFIX is an arg to Makefile, it is not set in .config.
 if make ARCH=${arch} V=1 PREFIX=${SYSROOTDIR} install_headers >> "${logfile}" 2>&1
 then
-    echo "  finished installing UCLIBC headers"
+    echo "  finished installing uClibc headers"
 else
     echo "ERROR: uClibc header install was not successful. Please see"
     echo "       \"${logfile}\" for details."
     exit 1
 fi
-  
-# -----------------------------------------------------------------------------
-# Stage 1 GCC built without headers into the temporary install directory.
 
-echo "Building gcc stage 1" >> "${logfile}"
-echo "====================" >> "${logfile}"
-
-echo "Start building GCC stage 1 ..."
-
-# Create the build dir for stage 1.
-rm -rf "${build_dir_stage1}"
-mkdir -p "${build_dir_stage1}"
-cd "${build_dir_stage1}"
-
-# Configure the build. Disable anything that might try to build a run-time
-# library and don't bother with multilib for stage 1. Note: with gcc 4.4.x, we
-# also disable building libgomp
 if [ "x${TLS_SUPPORT}" = "xyes" ]
 then
     thread_flags="--enable-threads --enable-tls"
 else
     thread_flags="--disable-threads --disable-tls"
 fi
-config_path=$(calcConfigPath "${unified_src_abs}")
-if "${config_path}"/configure --target=${triplet} \
-        --with-cpu=${ISA_CPU} \
-        --disable-fast-install --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
-        --disable-multilib \
-        --enable-languages=c --prefix="${INSTALLDIR}" \
-        --without-headers --enable-shared ${thread_flags} \
-        --disable-libssp --disable-libmudflap --without-newlib --disable-c99 \
-        --disable-libgomp ${CONFIG_EXTRA} \
-        --with-sysroot=${SYSROOTDIR} \
-	>> "${logfile}" 2>&1
+
+# -----------------------------------------------------------------------------
+# Build Binutils - will be used by both state 1 and stage2
+# Note about separate install-gas: Gas installation depends on libopcodes - if
+# it detects that opcodes hasn't been yet installed, then install-gas will
+# install dummy "as" script instead of proper binary. However GNU makefile
+# doesn't describe this dependency, so in parallel installation there is a
+# chance that install-gas will run before install-opcodes, which will cause a
+# broken gas installation. Workaround is to call install-gas separately, after
+# other targets. libopcodes is a dependency of binutils (target, not package),
+# so as long as install-gas is done after install-binutils it should be safe.
+build_dir_init binutils
+configure_uclibc_stage2 binutils
+make_target building all-binutils all-gas all-ld
+make_target installing install-{binutils,ld}
+make_target "installing gas" install-gas
+if [ $DO_PDF == --pdf ]
 then
-    echo "  finished configuring stage 1"
-else
-    echo "ERROR: Stage 1 configure failed. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
-   
-if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
-                    all-target-libgcc >> "${logfile}" 2>&1
-then
-    echo "  finished building stage 1"
-else
-    echo "ERROR: Stage 1 build was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
+    make_target "generating PDF documentation" install-pdf-{binutils,ld,gas}
 fi
 
-if make install-binutils install-gas install-ld install-gcc \
-        install-target-libgcc >> "${logfile}" 2>&1
-then
-    echo "  finished installing stage 1"
-else
-    echo "ERROR: Stage 1 install was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
-
-# Add the newly created stage 1 tool chain to the path for now, but remember
-# the old path for restoring later.
+# -----------------------------------------------------------------------------
+# Add tool chain to the path for now, since binutils is required to build
+# libgcc, while GCC stage 1 will be required to build uClibc, but remember the
+# old path for restoring later.
 oldpath=${PATH}
 PATH=${INSTALLDIR}/bin:$PATH
 export PATH
+
+# -----------------------------------------------------------------------------
+# Build stage 1 GCC
+build_dir_init gcc-stage1
+configure_uclibc_stage1 gcc
+make_target building all-{gcc,target-libgcc}
+make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
+# No need for PDF docs for stage 1.
 
 # -----------------------------------------------------------------------------
 # Build uClibc using the stage 1 compiler.
@@ -407,7 +395,7 @@ export PATH
 echo "Building uClibc" >> "${logfile}"
 echo "===============" >> "${logfile}"
 
-echo "Start building UCLIBC ..."
+echo "Building uClibc ..."
 
 # We don't need to create directories or copy source, since that is already
 # done when we got the headers.
@@ -458,7 +446,7 @@ rm -f ${TEMP_DEFCFG}
 
 if make ARCH=${arch} clean >> "${logfile}" 2>&1
 then
-    echo "  finished cleaning UCLIBC"
+    echo "  finished cleaning uClibc"
 else
     echo "ERROR: uClibc clean was not successful. Please see"
     echo "       \"${logfile}\" for details."
@@ -468,7 +456,7 @@ fi
 # PREFIX is an arg to Makefile, it is not set in .config.
 if make ARCH=${arch} V=2 PREFIX=${SYSROOTDIR} >> "${logfile}" 2>&1
 then
-    echo "  finished building UCLIBC"
+    echo "  finished building uClibc"
 else
     echo "ERROR: uClibc build was not successful. Please see"
     echo "       \"${logfile}\" for details."
@@ -477,7 +465,7 @@ fi
 
 if make ARCH=${arch} V=2 PREFIX=${SYSROOTDIR} install >> "${logfile}" 2>&1
 then
-    echo "  finished installing UCLIBC"
+    echo "  finished installing uClibc"
 else
     echo "ERROR: uClibc install was not successful. Please see"
     echo "       \"${logfile}\" for details."
@@ -489,59 +477,14 @@ PATH=${oldpath}
 unset oldpath
 
 # -----------------------------------------------------------------------------
-# Build and install the full tool chain in the proper directory. Blow away the
-# old build directory and start again.
-echo "Building final (stage 2) tool chain" >> "${logfile}"
-echo "===================================" >> "${logfile}"
-
-echo "Start building Stage 2 TOOL CHAIN ..."
-
-# Recreate the build dir
-rm -rf "${build_dir}"
-mkdir -p "${build_dir}"
-cd "${build_dir}"
-
-# Configure the build. This time we allow things, and use the headers from the
-# stage 1 build. We still have to disable libgomp
-config_path=$(calcConfigPath "${unified_src_abs}")
-if "${config_path}"/configure --target=${triplet} \
-        --with-cpu=${ISA_CPU} \
-        ${UCLIBC_DISABLE_MULTILIB} \
-        --with-pkgversion="${version_str}"\
-        --with-bugurl="${bugurl_str}" \
-        --enable-fast-install=N/A  --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
-        --enable-languages=c,c++ --prefix="${INSTALLDIR}" \
-        --enable-shared --without-newlib --disable-libgomp ${CONFIG_EXTRA} \
-        --with-sysroot=${SYSROOTDIR} \
-    >> "${logfile}" 2>&1
+# GCC stage 2
+build_dir_init gcc-stage2
+configure_uclibc_stage2 gcc
+make_target building all-{gcc,target-libgcc,target-libstdc++-v3}
+make_target installing ${HOST_INSTALL}-gcc install-{target-libgcc,target-libstdc++-v3}
+if [ "$DO_PDF" = "--pdf" ]
 then
-    echo "  finished configuring stage 2 build"
-else
-    echo "ERROR: stage 2 configure failed. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
-
-if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
-                    all-target-libgcc all-target-libstdc++-v3 \
-                    >> "${logfile}" 2>&1
-then
-    echo "  finished building stage 2 tool chain"
-else
-    echo "ERROR: Stage 2 build was not successful. Please see "
-    echo "       \""${logfile}"\" for details."
-    exit 1
-fi
-
-if make ${HOST_INSTALL}-binutils ${HOST_INSTALL}-gas ${HOST_INSTALL}-ld \
-    ${HOST_INSTALL}-gcc install-target-libgcc install-target-libstdc++-v3 \
-	>> "${logfile}" 2>&1
-then
-    echo "  finished installing stage 2 tool chain"
-else
-    echo "ERROR: Stage 2 install was not successful. Please see "
-    echo "       \""${logfile}"\" for details."
-    exit 1
+    make_target "generating PDF documentation" install-pdf-gcc
 fi
 
 # Despite "--with-sysroot" libgcc and libstdc++ will be installed to default
@@ -563,35 +506,18 @@ export PATH
 
 # -----------------------------------------------------------------------------
 # Build and install GDB
-echo "Building GDB" >> "${logfile}"
-echo "============" >> "${logfile}"
-
-echo "Start building GDB ..."
-
-# Create the build dir, then build and install
-cd "${build_dir}"
-
-if make ${PARALLEL} all-gdb >> "${logfile}" 2>&1
+build_dir_init gdb
+configure_uclibc_stage2 gdb
+make_target building all-gdb
+make_target installing install-gdb
+if [ "$DO_PDF" = "--pdf" ]
 then
-    echo "  finished building GDB"
-else
-    echo "ERROR: GDB build was not successful. Please see "
-    echo "       \""${logfile}"\" for details."
-    exit 1
-fi
-
-if make install-gdb >> "${logfile}" 2>&1
-then
-    echo "  finished installing GDB"
-else
-    echo "ERROR: GDB install was not successful. Please see "
-    echo "       \""${logfile}"\" for details."
-    exit 1
+    make_target "generating PDF documentation" install-pdf-gdb
 fi
 
 # -----------------------------------------------------------------------------
 # Create symlinks
-echo "Creating symlinks" >> "${logfile}"
+echo "Creating symlinks..." | tee -a "${logfile}"
 echo "=================" >> "${logfile}"
 
 cd ${INSTALLDIR}/bin
@@ -609,13 +535,9 @@ echo "  finished creating symlinks"
 echo "Building gdbserver to run on an ARC" >> "${logfile}"
 echo "===================================" >> "${logfile}"
 
-echo "Start building GDBSERVER to run on an ARC ..."
+build_dir_init gdbserver
 
-rm -rf ${build_dir}/gdb/gdbserver
-mkdir -p ${build_dir}/gdb/gdbserver
-cd ${build_dir}/gdb/gdbserver
-
-config_path=$(calcConfigPath "${unified_src_abs}")/gdb/gdbserver
+config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdb/gdbserver
 if "${config_path}"/configure \
         --with-pkgversion="${version_str}"\
         --with-bugurl="${bugurl_str}" \
@@ -634,7 +556,7 @@ if make ${PARALLEL} \
     CFLAGS="-static -fcommon -mno-sdata -O3 ${CFLAGS_FOR_TARGET}" \
     >> "${logfile}" 2>&1
 then
-    echo "  finished building GDBSERVER to run on an arc"
+    echo "  finished building gdbserver to run on an arc"
 else
     echo "ERROR: gdbserver build was not successful. Please see"
     echo "       \"${logfile}\" for details."
@@ -644,53 +566,11 @@ fi
 mkdir -p ${INSTALLDIR}/target-bin
 if cp gdbserver ${INSTALLDIR}/target-bin
 then
-    echo "  finished installing GDBSERVER to run on an ARC"
+    echo "  finished installing gdbserver to run on an ARC"
 else
     echo "ERROR: gdbserver install was not successful. Please see"
     echo "       \"${logfile}\" for details."
     exit 1
-fi
-
-# Optionally build and install PDF documentation
-if [ "x${DO_PDF}" = "x--pdf" ]
-then
-    echo "Building PDF documentation" >> "${logfile}"
-    echo "==========================" >> "${logfile}"
-
-    # There are issues with Texinfo v4 and non-C locales.
-    # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
-    if [ 4 = `texi2dvi --version | grep -Po '(?<=Texinfo )[0-9]+'` ]; then
-	export LC_ALL=C
-    fi
-
-    echo "Building PDFs ..."
-    cd "${build_dir}"
-    if make ${PARALLEL} pdf-binutils pdf-gas pdf-ld pdf-gcc \
-	pdf-gdb >> "${logfile}" 2>&1
-    then
-	echo "  finished building PDFs"
-    else
-	echo "ERROR: PDF build failed."
-	echo "Advice: Use option --no-pdf if you don't need PDF documentation."
-	if ! which texi2pdf >/dev/null 2>/dev/null ; then
-	    echo "Is TeX installed? See section Prerequisites of " \
-	         "GCC Getting Started for a list of required system packages."
-	fi
-	exit 1
-    fi
-
-    echo "Installing PDF documentation" >> "${logfile}"
-    echo "============================" >> "${logfile}"
-
-    echo "Installing PDFs ..."
-    if make install-pdf-binutils install-pdf-gas install-pdf-ld \
-	install-pdf-gcc install-pdf-gdb >> "${logfile}" 2>&1
-    then
-	echo "  finished installing PDFs"
-    else
-	echo "ERROR: PDF install failed."
-	exit 1
-    fi
 fi
 
 echo "DONE  UCLIBC: $(date)" >> ${logfile}
