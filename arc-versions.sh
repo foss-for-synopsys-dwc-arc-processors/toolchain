@@ -74,20 +74,26 @@ do
     shift
 done
 
-# Specify the default versions to use as a string <tool>:<branch>. These are
-# the development versions for the ARC 4.8 tool chain release. Only actually
-# matters if --auto-checkout is set.
-cgen="cgen:arc-1.0-dev"
-binutils="binutils:arc-2.23-dev"
-gcc="gcc:arc-4.8-dev"
-gdb="gdb:arc-7.5-dev"
-newlib="newlib:arc-2.0-dev"
-uclibc="uClibc:arc-mainline-dev"
-
-if [ "x${uclibc_arg}" = "x--uclibc" ]
+# Specify the default versions to use as a string <tool>:<branch>. Those are
+# taken from the checkout configuration file. Only actually matters if
+# --auto-checkout is set.
+if [ -z "$CHECKOUT_CONFIG" ]
 then
-    linux="linux:arc-3.13"
+    CHECKOUT_CONFIG=arc-dev
+fi
+
+if echo "$CHECKOUT_CONFIG" | grep -qFe /
+then
+    # This is file path
+    source "$CHECKOUT_CONFIG"
 else
+    # This is configuration name
+    source "$ARC_GNU/toolchain/config/$CHECKOUT_CONFIG.sh"
+fi
+
+# Disable linux if needed
+if [ "x${uclibc_arg}" != "x--uclibc" ]
+then
     linux=""
 fi
 

@@ -48,6 +48,7 @@
 #                  [--strip | --no-strip]
 #                  [--release-name <release>]
 #                  [--tls | --no-tls]
+#                  [--checkout-config <config>]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -250,6 +251,18 @@
 #     support threading and thread local storage (TLS).
 #     (default --no-tls)
 
+# --checkout-config <config>
+
+#     Allows to override default checkout configuration. That affects git
+#     revisions/branches/tags that will be used to build toolchain, so this
+#     option doesn't have any effect if --no-auto-checkout is specified.
+#     Argument may take two forms - if it contains slash, then it is considered
+#     as file path and is used as-is; otherwise it is considered as a
+#     configuration name and will be used as toolchain/config/$config.sh. Build
+#     will be aborted if specified configuration doesn't exist.  Default value
+#     is "arc-dev" for development branch, and latest release tag for release
+#     branch.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -322,6 +335,7 @@ SED=sed
 RELEASE_NAME=
 is_tarball=
 TLS_SUPPORT="no"
+CHECKOUT_CONFIG=arc-dev
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -518,6 +532,11 @@ case ${opt} in
         TLS_SUPPORT="no"
         ;;
 
+    --checkout-config)
+	shift
+	CHECKOUT_CONFIG="$1"
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -549,6 +568,7 @@ case ${opt} in
 	echo "                      [--sed-tool <tool>]"
 	echo "                      [--release-name <release>]"
 	echo "                      [--tls | --no-tls]"
+	echo "                      [--checkout-config <config>]"
 	exit 1
 	;;
 
@@ -716,6 +736,7 @@ fi
 export SED
 export RELEASE_NAME
 export TLS_SUPPORT
+export CHECKOUT_CONFIG
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"

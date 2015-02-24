@@ -1,5 +1,13 @@
 2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* arc-versions.sh: Do not list git branches in it.
+	* build-all.sh: Add --checkout-config option
+	* config/arc-2014.08.sh: 2014.08 release tags.
+	* config/arc-2014.12.sh: 2014.12 release tags.
+	* config/arc-dev.sh: Git development branches.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* build-all.sh: Do not build unified source tree.
 	* build-uclibc: Remove mentions of unified source tree.
 	* symlink-all.sh: Remove.
