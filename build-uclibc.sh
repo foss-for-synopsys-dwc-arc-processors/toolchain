@@ -315,6 +315,13 @@ else
            -i ${TEMP_DEFCFG}
 fi
 
+# Patch the defconfig for thread support.
+if [ "x${TLS_SUPPORT}" = "xyes" ]
+then
+    ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
+           -i ${TEMP_DEFCFG}
+fi
+
 # Create the .config from the temporary defconfig file.
 make ARCH=arc `basename ${TEMP_DEFCFG}` >> "${logfile}" 2>&1
 
@@ -437,6 +444,13 @@ then
            -i ${TEMP_DEFCFG}
 else
     ${SED} -e 's@ARCH_WANTS_BIG_ENDIAN=y@ARCH_WANTS_LITTLE_ENDIAN=y@' \
+           -i ${TEMP_DEFCFG}
+fi
+
+# Patch the defconfig for thread support.
+if [ "x${TLS_SUPPORT}" = "xyes" ]
+then
+    ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
            -i ${TEMP_DEFCFG}
 fi
 

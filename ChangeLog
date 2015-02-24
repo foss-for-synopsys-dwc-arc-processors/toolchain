@@ -1,3 +1,8 @@
+2015-02-24  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* build-uclibc.sh: Switch on UCLIBC_HAS_THREADS_NATIVE and turn
+	off LINUXTHREADS_OLD when building with TLS support.
+
 2015-02-20  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	* build-uclibc.sh: Create a temporary defconfig file, edit the
