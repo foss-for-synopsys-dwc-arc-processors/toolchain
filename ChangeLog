@@ -1,5 +1,13 @@
 2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* build-all.sh: Do not build unified source tree.
+	* build-uclibc: Remove mentions of unified source tree.
+	* symlink-all.sh: Remove.
+	* README.md: No unified source tree anymore.
+	* Makefile.release: No need to build unisrc.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* arc-init.sh: Common build functions for uClibc tools.
 	* build-uclibc.sh: Build without unified source tree.
 

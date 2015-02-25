@@ -31,7 +31,6 @@
 #                  [--auto-pull | --no-auto-pull]
 #                  [--auto-checkout | --no-auto-checkout]
 #                  [--external-download | --no-external-download]
-#                  [--unisrc | --no-unisrc]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>]
@@ -84,9 +83,8 @@
 
 # --build-dir <build_dir>
 
-#     The directory in which the unified source tree will be constructed and
-#     in which the build directories will be created. If not sepcified, the
-#     script will use the source directory.
+#     The directory in which the build directories will be created. If not
+#     specified, the script will use the source directory.
 
 # --install-dir <install_dir>
 
@@ -132,12 +130,7 @@
 #     makefiles will recognize those directories properly and will use them
 #     instead of system libraries. Some systems (RHEL, CentOS) doesn't have all
 #     of the required dependencies in official repositories. This is done right
-#     after checkout and before unisrc is created. Default is to download.
-
-# --unisrc | --no-unisrc
-
-#     If --unisrc is specified, rebuild the unified source tree. If
-#     --no-unisrc is specified, do not rebuild it. The default is --unisrc.
+#     after checkout. Default is to download.
 
 # --elf32 | --no-elf32
 
@@ -315,7 +308,6 @@ build_pathnm ()
 autocheckout=""
 autopull=""
 external_download="--external-download"
-do_unisrc="--unisrc"
 elf32="--elf32"
 uclibc="--uclibc"
 ISA_CPU="arc700"
@@ -408,10 +400,6 @@ case ${opt} in
 
     --external-download | --no-external-download)
 	external_download=$1
-	;;
-
-    --unisrc | --no-unisrc)
-	do_unisrc=$1
 	;;
 
     --elf32 | --no-elf32)
@@ -541,7 +529,6 @@ case ${opt} in
 	echo "                      [--auto-checkout | --no-auto-checkout]"
         echo "                      [--auto-pull | --no-auto-pull]"
 	echo "                      [--external-download | --no-external-download]"
-        echo "                      [--unisrc | --no-unisrc]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
 	echo "                      [--datestamp-install]"
@@ -707,11 +694,7 @@ PARALLEL="-j ${jobs} -l ${load}"
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
-# Release specific unified source directory
-UNISRC=unisrc
-
 # All the things we export to the scripts
-export UNISRC
 export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
@@ -798,53 +781,6 @@ fi
 
 # Change to the build directory
 cd ${builddir}
-
-# Make a unified source tree in the build directory. Note that later versions
-# override earlier versions with the current symlinking version.
-if [ "x${do_unisrc}" = "x--unisrc" ]
-then
-    echo "Linking unified tree" >> "${logfile}"
-    echo "====================" >> "${logfile}"
-
-    echo "Linking unified tree ..."
-    component_dirs="gdb binutils gcc"
-    rm -rf ${UNISRC}
-
-    if ! mkdir -p ${UNISRC}
-    then
-	echo "ERROR: Failed to create ${UNISRC}"
-	echo "- see ${logfile}"
-	exit 1
-    fi
-
-    if ! ${ARC_GNU}/toolchain/symlink-all.sh ${UNISRC} \
-	"${component_dirs}" >> "${logfile}" 2>&1
-    then
-	echo "ERROR: Failed to symlink ${UNISRC}"
-	exit 1
-    fi
-
-    # Link in the top of the newlib and libgloss trees. We can't use
-    # symlink-all.sh on these, or we'll get symlinks to the source tree in the
-    # installation.
-    cd ${UNISRC}
-
-    if ! ln -s ${ARC_GNU}/newlib/libgloss . >> "${logfile}" 2>&1
-    then
-	echo "ERROR: Failed to symlink libgloss"
-	exit 1
-    fi
-
-    if ! ln -s ${ARC_GNU}/newlib/newlib . >> "${logfile}" 2>&1
-    then
-	echo "ERROR: Failed to symlink newlib"
-	exit 1
-    fi
-
-    # Revert back to the build directory
-    cd ${builddir}
-
-fi
 
 # Optionally build the arc-elf32- tool chain
 if [ "x${elf32}" = "x--elf32" ]

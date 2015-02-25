@@ -133,17 +133,16 @@ Building the tool chain
 
 The script `build-all.sh` will build and install both _arc*-elf32-_ and
 _arc*-snps-linux-uclibc-_ tool chains. The comments at the head of this script
-explain how it works and the parameters to use. It uses script
-`symlink-all.sh` to build a unified source directory.
+explain how it works and the parameters to use.
 
 The script `arc-versions.sh` specifies the branches to use in each component
 Git repository. It can be edited to change the default branches if required.
 
-After checking out correct branches and building a unified source directory
-`build-all.sh` in turn uses `build-elf32.sh` and `build-uclibc.sh`. These build
-respectively the _arc*-elf32_ and _arc*-snps-linux-uclibc_ tool chains. Details
-of the operation are provided as comments in each script file. Both these
-scripts use a common initialization script, `arc-init.sh`.
+After checking out correct branches  `build-all.sh` in turn uses
+`build-elf32.sh` and `build-uclibc.sh`. These build respectively the
+_arc*-elf32_ and _arc*-snps-linux-uclibc_ tool chains. Details of the operation
+are provided as comments in each script file. Both these scripts use a common
+initialization script, `arc-init.sh`.
 
 The most important options of `build-all.sh` are:
 

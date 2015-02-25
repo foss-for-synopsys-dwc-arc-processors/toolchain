@@ -102,22 +102,37 @@
 #     Build with threading and thread local storage support if this is
 #     set to "yes".
 
-# Unlike earlier versions of this script, we do not recognize the
-# ARC_GNU_ONLY_CONFIGURE and ARC_GNU_CONTINUE environment variables. If you
-# are using this script, you need to run the whole thing. If you want to redo
-# bits, go into the relevant directories and do it by hand!
-
-# This version is modified to work with the source tree as organized in
-# GitHub.
-
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
 
-# The script uses a build directory (bd-uclibc) local to the directory in which
-# it is executed.
-
 # The script generates a date and time stamped log file in the logs directory.
+
+# Approach is following:
+# 1. Install Linux headers
+# 2. Install uClibc headers
+# 3. Build and install Binutils
+# 4. Build and install GCC stage 1 (without C++)
+# 5. Build and install uClibc
+# 6. Build and install GCC stage 2 (with C++)
+# 7. Build and install GDB
+# 8. Build and copy GDB-server for target
+
+# Following after this paragraph text, is a text of historical significance
+# that described how things used to be done in the age of ARC GCC 4.4 and early
+# days of ARC GCC 4.8. Things changed since then so this is not totally
+# relevant today, but explains how things evolved, since some things today can
+# be done differently then they are done right now, because it was an evolution
+# of previous decisions. For example it seems that we can install Linux and
+# uClibc headers after stage 1 instead of doing this as a first step.  Although
+# that might be true in general, but not for ARC, since our libgcc depends on
+# libc headers. To be completely honest I haven't read this header guide while
+# modifying toolchain to support sysroot and avoid unified source tree, as I
+# was just looking at the code itself, and was completely oblivious to the
+# presence of this gentoo web-guide... (On the matter of comments in code: will
+# anybody read this???).
+
+# << How it used to be done: >>
 
 # This approach is based on Mike Frysinger's guidelines on building a
 # cross-compiler.
@@ -159,6 +174,8 @@
 
 # 6. Build & install GDB
 # 7. Build & install gdbserver
+
+# << End of history lesson >>
 
 
 # -----------------------------------------------------------------------------
@@ -240,10 +257,8 @@ DEFCFG_DIR=extra/Configs/defconfigs/arc/
 # -----------------------------------------------------------------------------
 # Install the Linux headers
 
-echo "Installing Linux headers" >> "${logfile}"
-echo "========================" >> "${logfile}"
-
-echo "Installing Linux headers ..."
+echo "Installing Linux headers ..." | tee -a "${logfile}"
+echo "============================" >> "${logfile}"
 
 cd "${linux_build_dir}"
 
@@ -277,10 +292,8 @@ fi
 # which we do not yet have. We get round this by using the native C
 # compiler. uClibc will complain, but get on with the job anyway.
 
-echo "Installing uClibc headers" >> "${logfile}"
-echo "=========================" >> "${logfile}"
-
-echo "Installing uClibc headers ..."
+echo "Installing uClibc headers ..." | tee -a "${logfile}"
+echo "=============================" >> "${logfile}"
 
 # uClibc builds in place, so if ${ARC_GNU} is set (to a different location) we
 # have to create the directory and copy the source across.
@@ -392,10 +405,8 @@ make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
 # -----------------------------------------------------------------------------
 # Build uClibc using the stage 1 compiler.
 
-echo "Building uClibc" >> "${logfile}"
-echo "===============" >> "${logfile}"
-
-echo "Building uClibc ..."
+echo "Building uClibc ..." | tee -a "${logfile}"
+echo "===================" >> "${logfile}"
 
 # We don't need to create directories or copy source, since that is already
 # done when we got the headers.
@@ -517,8 +528,8 @@ fi
 
 # -----------------------------------------------------------------------------
 # Create symlinks
-echo "Creating symlinks..." | tee -a "${logfile}"
-echo "=================" >> "${logfile}"
+echo "Creating symlinks ..." | tee -a "${logfile}"
+echo "=====================" >> "${logfile}"
 
 cd ${INSTALLDIR}/bin
 for i in ${triplet}-*
@@ -532,8 +543,8 @@ echo "  finished creating symlinks"
 # -----------------------------------------------------------------------------
 # gdbserver has to be built on its own.
 
-echo "Building gdbserver to run on an ARC" >> "${logfile}"
-echo "===================================" >> "${logfile}"
+echo "Building gdbserver to run on an ARC ..." | tee -a "${logfile}"
+echo "=======================================" >> "${logfile}"
 
 build_dir_init gdbserver
 
@@ -573,7 +584,6 @@ else
     exit 1
 fi
 
-echo "DONE  UCLIBC: $(date)" >> ${logfile}
-echo "DONE  UCLIBC: $(date)"
+echo "DONE  UCLIBC: $(date)" | tee -a "${logfile}"
 
 # vim: noexpandtab sts=4 ts=8:
