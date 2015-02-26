@@ -1,5 +1,10 @@
 2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* tag-release.sh: Do not push tags.
+	* push-release.sh: New file.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* arc-versions.sh: Do not list git branches in it.
 	* build-all.sh: Add --checkout-config option
 	* config/arc-2014.08.sh: 2014.08 release tags.
