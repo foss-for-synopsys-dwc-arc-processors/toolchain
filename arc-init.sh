@@ -158,7 +158,28 @@ save_res () {
 	return  1
     fi
 }
-    
+
+# Some targets have a version of mktemp that does not support the
+# --tmpdir option for creating temporary files in a particular
+# directory.  This wrapper takes a first argument a directory to
+# create the temporary file in, and a second argument the pattern to
+# pass to mktemp.  The function writes out the name of the newly
+# created temporary file, including directory prefix, and the return
+# value will be zero on success, otherwise non-zero on error.
+temp_file_in_dir () {
+    DIR=$1
+    PATTERN=$2
+    FILE=$(cd ${DIR} && mktemp "${PATTERN}")
+    STATUS=$?
+    if [ ${STATUS} == 0 ]
+    then
+        echo ${DIR}/${FILE}
+    else
+        echo "temp_file failed: ${FILE}"
+    fi
+    return ${STATUS}
+}
+
 # Make sure we stop if something failed. Since we are run with source, not exec
 # the build=*.sh scripts will also do this.
 trap "echo ERROR: Failed due to signal ; date ; exit 1" \
