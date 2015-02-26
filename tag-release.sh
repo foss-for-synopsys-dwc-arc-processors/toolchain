@@ -151,22 +151,27 @@ if ! git merge $branch ; then
     exit 1
 fi
 
+# Create toolchain configuration file for release
+cat > config/$tagname.sh <<EOF
+cgen=cgen:$tagname
+binutils=binutils:$tagname
+gcc=gcc:$tagname
+gdb=gdb:$tagname-gdb
+newlib=newlib:$tagname
+uclibc=uClibc:$tagname
+linux=linux:$tagname
+EOF
 
-# Edit arc-versions.sh but leave linux branch untouched.
-if ! sed -i -e "s/\(^[bcgnu][[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/" \
-    arc-versions.sh
+# Now tell arc-versions.sh to use this file instead of arc-dev:
+if ! sed -i \
+  -e 's/^default_toolchain_config=.*$/default_toolchain_config=arc-2015.06/' \
+  arc-versions.sh
 then
     echo "ERROR: Failed to edit arc-versions.sh"
     exit 1
 fi
 
-# Additional edit for GDB
-if ! sed -i -e "s/\(^gdb=[^:]*:\).*/\1${tagname}-gdb\"/" \
-    arc-versions.sh
-then
-    echo "ERROR: Failed to edit arc-versions.sh for GDB"
-    exit 1
-fi
+git add config/$tagname.sh
 
 if ! git commit -a -m "Create arc-versions.sh for tag ${tagname}"
 then

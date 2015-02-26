@@ -335,7 +335,7 @@ SED=sed
 RELEASE_NAME=
 is_tarball=
 TLS_SUPPORT="no"
-CHECKOUT_CONFIG=arc-dev
+CHECKOUT_CONFIG=
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in

@@ -74,12 +74,17 @@ do
     shift
 done
 
+# That should be a separate variable to allow for a straightforward creation of
+# new releases, where we want default to point to release, instead of dev
+# branch.
+default_toolchain_config=arc-dev
+
 # Specify the default versions to use as a string <tool>:<branch>. Those are
 # taken from the checkout configuration file. Only actually matters if
 # --auto-checkout is set.
 if [ -z "$CHECKOUT_CONFIG" ]
 then
-    CHECKOUT_CONFIG=arc-dev
+    CHECKOUT_CONFIG=$default_toolchain_config
 fi
 
 if echo "$CHECKOUT_CONFIG" | grep -qFe /

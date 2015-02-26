@@ -1,5 +1,11 @@
 2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* arc-versions.sh: Add default_toolchain_config variable.
+	* build-all.sh: Do not set TOOLCHAIN_CONFIG by default.
+	* tag-release.sh: Create toolchain config for created release.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* tag-release.sh: Do not push tags.
 	* push-release.sh: New file.
 
