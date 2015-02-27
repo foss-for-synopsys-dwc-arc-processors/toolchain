@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Copyright (C) 2010, 2011, 2012, 2013 Embecosm Limited
+# Copyright (C) 2013-2015 Synopsys, Inc.
+
+# Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Joern Rennecke <joern.rennecke@embecosm.com>
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
+
+# This file is additional DejaGnu procs to support telnet based testing.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#		ARC Bare Metal DejaGnu nSim Simulator Support
+#		=============================================
+
+# This board specification is for use with the ARC nSim simulator.
+
+# This is a list of toolchains that are supported on this board.
+set_board_info target_install ${target_triplet}
+
+# Load the generic configuration for this board. This will define a basic set
+# of routines needed by the tool to communicate with the board. Depends on the
+# tool.
+load_generic_config "gdb-comm"
+
+# Some extra procs for testing with nSim. This must go after gdb-comm, as it
+# overrides one of the function in gdb-comm.
+search_and_load_file "library file" "nsim-extra.exp" ${boards_dir}
+
+# GDB tests require special treatment, they ignore "gdb-comm" configuration
+# unless "monitor" GDB test suite configuration is loaded.
+if { $tool == "gdb" } {
+	load_lib "../config/monitor.exp"
+}
+
+# Any multilib options are set in an environment variable.
+process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
+
+set xldflags ""
+
+# We only support newlib on this target. We assume that all multilib
+# options have been specified before we get here.
+set_board_info compiler  "[find_gcc]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+
+# No linker script needed.
+set_board_info ldscript ""
+
+# This is a very simple board, that expects that OpenOCD has already been
+# started. It would be possible to allow automatic start/restart by using same
+# infrastructure as in nsim-gdb.
+set_board_info netport "localhost:3333"
+
+# GDB protocol to be used
+set_board_info gdb_protocol "remote"
+
+# Use 'continue' instead of 'run' when executing a test
+set_board_info gdb_run_command "continue"
+
+# On occations GDB cannot connect to nSIM and reboots it. By default amount of
+# reboots is limited to 15, after that all execution tests will be reported as
+# UNTESTED. We need to set an effectively infinite number of reboots so that
+# all execute tests will finish.
+set_board_info max_reload_reboots 1500000
+
+# Doesn't pass arguments or signals, can't return results, and doesn't
+# do inferiorio.
+set_board_info noargs 1
+set_board_info gdb,nosignals 1
+set_board_info gdb,noresults 1
+set_board_info gdb,noinferiorio 1
+set_board_info needs_status_wrapper ""
+
+if { $tool == "gdb" } {
+	# We use gdbserver to run applications
+	set_board_info use_gdb_stub 1
+	# GDB jumps to start_symbols after loading. Default value is `start'.
+	set_board_info gdb,start_symbol "__start"
+	set_board_info gdb,do_reload_on_run 1
+	set_board_info gdb,no_hardware_watchpoints 1
+	# This duplicates the one without 'gdb,'
+	set_board_info gdb,noargs 1
+	set_board_info gdb,nofileio 1
+}
+
+# vim: noexpandtab sts=4 ts=8:

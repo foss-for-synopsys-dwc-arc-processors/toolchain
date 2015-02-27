@@ -1,5 +1,9 @@
 2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* dejagnu/baseboards/arc-openocd.exp: New board.
+
+2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* build-all.sh: Remove --force option.
 	* build-elf32.sh: Likewise.
 	* build-uclibc.sh: Likewise.
