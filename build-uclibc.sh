@@ -205,7 +205,8 @@ echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" | tee -a ${logfile}
 # Initalize, including getting the tool versions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
 uclibc_build_dir="$(echo "${PWD}")"/uClibc
-linux_build_dir=${LINUXDIR}
+linux_src_dir=${LINUXDIR}
+linux_build_dir=$build_dir/linux
 
 # If PDF docs are enabled, then check if prerequisites are satisfied.
 if [ "x${DO_PDF}" = "x--pdf" ]
@@ -243,14 +244,25 @@ mkdir -p "$build_dir"
 echo "Installing Linux headers ..." | tee -a "${logfile}"
 echo "============================" >> "${logfile}"
 
-cd "${linux_build_dir}"
+cd "${linux_src_dir}"
 
-# Configure Linux if not already
+# It would be irresponsible for us to configure linux in source tree and leave
+# it at that, because if anybody else after that would try to configure/build
+# linux out-of-tree they will fail - Linux cannot configure out of tree when it
+# is already configured in tree. So we need to either clean configuration after
+# installing headers or just  configure out of tree ourself. Second options
+# seems like more solid solution. However it will fail if Linux already has
+# been configured. Bam! In that case we just use Linux as-is. All of that is
+# mildly complex but this approach makes sure that this script is a friendly
+# neighbor and doesn't pollute in many places.
 if [ ! -f .config ]
 then
-    if make ARCH=${arch} defconfig >> "${logfile}" 2>&1
+    # Linux makefile expects this directory to exist.
+    mkdir -p "$linux_build_dir"
+    if make ARCH=arc defconfig O="$linux_build_dir" >> "${logfile}" 2>&1
     then
 	echo "  finished configuring Linux"
+	cd "$linux_build_dir"
     else
 	echo "ERROR: Linux configuration was not successful. Please"
 	echo "       see \"${logfile}\" for details."
@@ -260,7 +272,9 @@ else
     echo "  Linux already configured"
 fi
 
-if make ARCH=${arch} INSTALL_HDR_PATH=${SYSROOTDIR}/usr \
+# Wherever linux has been configured in or out of tree, at this stage we are in
+# the directory with .config file.
+if make ARCH=arc INSTALL_HDR_PATH=${SYSROOTDIR}/usr \
     headers_install >> "${logfile}" 2>&1
 then
     echo "  finished installing Linux headers"

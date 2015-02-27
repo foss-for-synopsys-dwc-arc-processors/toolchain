@@ -1,5 +1,9 @@
 2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* build-uclibc.sh: Configure linux out of source tree.
+
+2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* build-cleanup.sh: Refresh.
 
 2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
