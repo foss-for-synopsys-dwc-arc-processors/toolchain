@@ -26,11 +26,7 @@
 
 # Usage:
 
-#     ${ARC_GNU}/toolchain/build_uclibc.sh [--force]
-
-# --force
-
-#     Blow away any old build sub-directories
+#     ${ARC_GNU}/toolchain/build_uclibc.sh
 
 # The directory in which we are invoked is the build directory, in which all
 # build directories are created.
@@ -200,23 +196,6 @@ else
 fi
 bugurl_str="http://solvnet.synopsys.com"
 
-# parse options
-until
-opt=$1
-case ${opt} in
-    --force)
-	rm -rf ${build_dir}
-	;;
-    ?*)
-	echo "Usage: ./build-uclibc.sh [--force]"
-	exit 1
-	;;
-esac
-[ -z "${opt}" ]
-do
-    shift
-done
-
 # Set up a logfile
 logfile="${LOGDIR}/uclibc-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
@@ -253,6 +232,10 @@ echo "Installing in ${INSTALLDIR}" | tee -a ${logfile}
 # Setup vars
 SYSROOTDIR=${INSTALLDIR}/${triplet}/sysroot
 DEFCFG_DIR=extra/Configs/defconfigs/arc/
+
+# Purge old build dir if there is any and create a new one.
+rm -rf "$build_dir"
+mkdir -p "$build_dir"
 
 # -----------------------------------------------------------------------------
 # Install the Linux headers

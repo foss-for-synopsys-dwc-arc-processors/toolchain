@@ -25,11 +25,7 @@
 # -----------------------------------------------------------------------------
 # Usage:
 
-#     ${ARC_GNU}/toolchain/build-elf32.sh [--force]
-
-# --force
-
-#     Blow away any old build sub-directories
+#     ${ARC_GNU}/toolchain/build-elf32.sh
 
 # The directory in which we are invoked is the build directory, in which we
 # find the components source trees and in which all build directories are created.
@@ -116,23 +112,6 @@ else
     build_dir="$(echo "${PWD}")/bd-elf32"
 fi
 
-# parse options
-until
-opt=$1
-case ${opt} in
-    --force)
-	rm -rf ${build_dir}
-	;;
-    ?*)
-	echo "Usage: ./build-elf32.sh [--force]"
-	exit 1
-	;;
-esac
-[ -z "${opt}" ]
-do
-    shift
-done
-
 # Set up a logfile
 logfile="${LOGDIR}/elf32-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
@@ -182,7 +161,8 @@ fi
 
 echo "Installing in ${INSTALLDIR}" | tee -a "$logfile"
 
-# Create the build dir
+# Purge old build dir if there is any and create a new one.
+rm -rf "$build_dir"
 mkdir -p "$build_dir"
 
 # Binutils

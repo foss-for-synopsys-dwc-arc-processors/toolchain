@@ -806,7 +806,7 @@ cd ${builddir}
 # Optionally build the arc-elf32- tool chain
 if [ "x${elf32}" = "x--elf32" ]
 then
-    if ! "${ARC_GNU}"/toolchain/build-elf32.sh --force
+    if ! "${ARC_GNU}"/toolchain/build-elf32.sh
     then
 	echo "ERROR: arc-elf32- tool chain build failed."
 	exit 1
@@ -819,7 +819,7 @@ fi
 # Optionally build the arc-linux-uclibc- tool chain
 if [ "x${uclibc}" = "x--uclibc" ]
 then
-    if ! "${ARC_GNU}"/toolchain/build-uclibc.sh --force
+    if ! "${ARC_GNU}"/toolchain/build-uclibc.sh
     then
 	echo "ERROR: arc-linux-uclibc- tool chain build failed."
 	exit 1
