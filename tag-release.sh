@@ -93,7 +93,7 @@ fi
 echo "All repos checked out"
 
 # Sanity check that each branch has a remote
-for repo in cgen binutils gcc gdb newlib uClibc toolchain
+for repo in cgen binutils gcc gdb newlib uClibc toolchain linux
 do
     cd ../${repo} > /dev/null 2>&1
     if ! branch=`git symbolic-ref -q HEAD --short`
@@ -110,21 +110,22 @@ do
     cd - > /dev/null 2>&1
 done
 
-# Tag each component (not Linux)
-for repo in cgen binutils gcc gdb newlib uClibc
+# Tag each component
+for repo in cgen binutils gcc gdb newlib uClibc linux
 do
     cd ../${repo} > /dev/null 2>&1
 
     # Special case for GDB, since we can't have two identical tags in the
     # binutils-gdb repo.
-    if [ "x${repo}" = "xgdb" ]
-    then
-	suffix="-gdb"
-    else
-	suffix=""
-    fi
+    # And another special case for Linux, since it is a separate product, we
+    # don't want it to be clear that this tag is for toolchian.
+    case $repo in
+	gdb) tag=${tagname}-gdb ;;
+	linux) tag=${tag/arc-/arc-gnu-} ;;
+	*) tag=$tagname
+    esac
 
-    if ! git tag ${tagname}${suffix}
+    if ! git tag ${tag}
     then
 	echo "ERROR: Failed to tag ${repo}"
 	exit 1

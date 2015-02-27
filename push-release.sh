@@ -61,6 +61,7 @@ do
     # tag-release.sh updates it.
     case $repo in
 	gdb) to_push=${tagname}-gdb ;;
+	linux) to_push=${tagname/arc-/arc-gdb-} ;;
 	toolchain) to_push="$tagname arc-releases" ;;
 	*) to_push=$tagname ;;
     esac

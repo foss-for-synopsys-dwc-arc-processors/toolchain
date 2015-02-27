@@ -1,5 +1,10 @@
 2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
+	* tag-releas.sh: Tag Linux repository.
+	* push-release.sh: Push Linux repository.
+
+2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
 	* build-uclibc.sh: Configure linux out of source tree.
 
 2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
