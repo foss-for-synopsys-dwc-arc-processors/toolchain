@@ -58,7 +58,7 @@ set_board_info telnet_exec_timeout   120
 
 # Set up FTP connection details.
 set_board_info ftp_username          root
-set_board_info ftp_password          ""
+set_board_info ftp_password          "\'\'"
 set_board_info ftp_download_timeout  10
 set_board_info ftp_upload_timeout    10
 
