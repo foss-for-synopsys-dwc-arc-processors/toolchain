@@ -379,11 +379,12 @@ fi
 build_dir_init binutils
 configure_uclibc_stage2 binutils
 make_target building all-binutils all-gas all-ld
-make_target installing install-{binutils,ld}
+make_target installing install-binutils install-ld
 make_target "installing gas" install-gas
 if [ $DO_PDF == --pdf ]
 then
-    make_target "generating PDF documentation" install-pdf-{binutils,ld,gas}
+    make_target "generating PDF documentation" install-pdf-binutils \
+      install-pdf-ld install-pdf-gas
 fi
 
 # -----------------------------------------------------------------------------
@@ -398,7 +399,7 @@ export PATH
 # Build stage 1 GCC
 build_dir_init gcc-stage1
 configure_uclibc_stage1 gcc
-make_target building all-{gcc,target-libgcc}
+make_target building all-gcc all-target-libgcc
 make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
 # No need for PDF docs for stage 1.
 
@@ -494,8 +495,9 @@ unset oldpath
 # GCC stage 2
 build_dir_init gcc-stage2
 configure_uclibc_stage2 gcc
-make_target building all-{gcc,target-libgcc,target-libstdc++-v3}
-make_target installing ${HOST_INSTALL}-gcc install-{target-libgcc,target-libstdc++-v3}
+make_target building all-gcc all-target-libgcc all-target-libstdc++-v3
+make_target installing ${HOST_INSTALL}-gcc install-target-libgcc \
+  install-target-libstdc++-v3
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gcc

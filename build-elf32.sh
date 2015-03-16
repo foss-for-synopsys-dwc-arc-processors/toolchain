@@ -172,7 +172,8 @@ make_target building all-binutils all-gas all-ld
 make_target installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-gas ${HOST_INSTALL}-ld
 if [ "$DO_PDF" = "--pdf" ]
 then
-    make_target "generating PDF documentation" install-pdf-{binutils,ld,gas}
+    make_target "generating PDF documentation" install-pdf-binutils \
+      install-pdf-ld install-pdf-gas
 fi
 
 # GCC
