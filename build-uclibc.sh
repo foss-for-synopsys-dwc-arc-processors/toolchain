@@ -93,9 +93,9 @@
 #     Make target prefix to install host application. Should be either
 #     "install" or "install-strip".
 
-# TLS_SUPPORT
+# NPTL_SUPPORT
 
-#     Build with threading and thread local storage support if this is
+#     Build with threading, thread local storage support and NPTL if this is
 #     set to "yes".
 
 # We source the script arc-init.sh to set up variables needed by the script
@@ -334,7 +334,7 @@ else
 fi
 
 # Patch the defconfig for thread support.
-if [ "x${TLS_SUPPORT}" = "xyes" ]
+if [ "x${NPTL_SUPPORT}" = "xyes" ]
 then
     ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
            -i ${TEMP_DEFCFG}
@@ -359,7 +359,7 @@ else
     exit 1
 fi
 
-if [ "x${TLS_SUPPORT}" = "xyes" ]
+if [ "x${NPTL_SUPPORT}" = "xyes" ]
 then
     thread_flags="--enable-threads --enable-tls"
 else
@@ -443,7 +443,7 @@ else
 fi
 
 # Patch the defconfig for thread support.
-if [ "x${TLS_SUPPORT}" = "xyes" ]
+if [ "x${NPTL_SUPPORT}" = "xyes" ]
 then
     ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
            -i ${TEMP_DEFCFG}

@@ -245,11 +245,11 @@
 #     the gcc repository. If build is done from the source tarball, then
 #     current date is used.
 
-# --tls | --no-tls
+# --nptl | --no-nptl
 
-#     When building with tls support the uClibc tool chain will
-#     support threading and thread local storage (TLS).
-#     (default --no-tls)
+#     When building Linux toolchain with NPTL support, it will support
+#     threading and thread local storage (TLS) and will use NPTL instead of old
+#     threads library. (default --nptl)
 
 # --checkout-config <config>
 
@@ -334,7 +334,7 @@ HOST_INSTALL=install
 SED=sed
 RELEASE_NAME=
 is_tarball=
-TLS_SUPPORT="no"
+NPTL_SUPPORT="yes"
 CHECKOUT_CONFIG=
 
 # Default multilib usage and conversion for toolchain building
@@ -525,11 +525,11 @@ case ${opt} in
 	RELEASE_NAME="$1"
 	;;
 
-    --tls)
-        TLS_SUPPORT="yes"
+    --nptl)
+        NPTL_SUPPORT="yes"
         ;;
-    --no-tls)
-        TLS_SUPPORT="no"
+    --no-nptl)
+        NPTL_SUPPORT="no"
         ;;
 
     --checkout-config)
@@ -735,7 +735,7 @@ then
 fi
 export SED
 export RELEASE_NAME
-export TLS_SUPPORT
+export NPTL_SUPPORT
 export CHECKOUT_CONFIG
 
 # Set up a logfile
