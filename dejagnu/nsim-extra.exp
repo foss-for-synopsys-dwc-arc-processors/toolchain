@@ -102,9 +102,13 @@ proc arc-nsim_reboot { connhost args } {
 	set board $connhost
     }
 
-    # Generate random port number.
-    set portnum [exec [file dirname $env(DEJAGNU)]/get-random-port.sh]
-    nsim_open $portnum
+    # GDB testsuite has an unfortunate trait - it reboots target after
+    # recording TCP port involved. As a result if we would try to generate new
+    # port number after reboot, test would fail, as it would use old TCP port
+    # number.
+    nsim_open [target_info nsim_port]
+
+    return 1
 }
 
 # vim: noexpandtab sts=4 ts=8:
