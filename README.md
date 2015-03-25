@@ -319,19 +319,25 @@ chain.  Command to start it:
 
 Where <core.xml> is a path to XML file describing AUX registers of target core.
 The Ashling drivers distribution contain files for ARC 600 (arc600-core.xml)
-and ARC 700 (arc700-core.xml). File for ARC EM is not part of Opella-XD
-drivers distribution, but is part of this `toolchain` repository and can be
-found in `extras/opella-xd` directory.
+and ARC 700 (arc700-core.xml). However due to recent changes in GDB with
+regards of support of XML target descriptions those files will not work out of
+the box, as order of some registers changed. To use Ashling GDB server with GDB
+starting from 2015.06 release it is required to use modified files that can be
+found in this `toolchain` repository in `extras/opella-xd` directory.
 
 The Ashling gdbserver might emit error messages like "Error: Core is running".
 Those messages are harmless and do not affect the debugging experience.
 
-*Before* connecting GDB to an Opella-XD gdbserver it is essential to
-specify the architecture of the target. For EM, type in GDB:
+*Before* connecting GDB to an Opella-XD gdbserver it is essential to specify
+path to XML target description file that is aligned to `<core.xml>` file passed
+to GDB server. All registers described in `<core.xml>` also must be described
+in XML target description file in the same order. Otherwise GDB will not
+function properly.
 
-    (gdb) set arc opella-target arcem
+    (gdb) set tdesc filename <path/to/opella-CPU-tdesc.xml>
 
-(other possible values are `arc600` and `arc700`).
+XML target description files are provided in the same `extras/opella-xd`
+directory as Ashling GDB server core files.
 
 Then connect to the target as with the OpenOCD/Linux gdbserver. For example a
 full session with an Opella-XD controlling an ARC EM target could start as
@@ -339,18 +345,13 @@ follows:
 
     $ arc-elf32-gcc -mEM -g simple.c
     $ arc-elf32-gdb --quiet a.out
-    (gdb) set arc opella-target arcem
+    (gdb) set tdesc filename toolchain/extras/opella-xd/opella-arcem-tdesc.xml
     (gdb) set target remote :2331
     (gdb) load
     (gdb) break main
     (gdb) continue
     (gdb) break exit
     (gdb) continue
-
-Available Opella targets are: *arc600*, *arc700* and *arcem*. The same target
-is used for both EM4 and EM6, so registers that are not present en EM4 template
-(for example IC_CTRL) still will be printed by the GDB. Their values will be
-shown as zeros and setting them will not affect core, nor will cause any error.
 
 
 ### Debugging applications on Linux for ARC
