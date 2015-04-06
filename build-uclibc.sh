@@ -368,19 +368,15 @@ fi
 
 # -----------------------------------------------------------------------------
 # Build Binutils - will be used by both state 1 and stage2
-# Note about separate install-gas: Gas installation depends on libopcodes - if
-# it detects that opcodes hasn't been yet installed, then install-gas will
-# install dummy "as" script instead of proper binary. However GNU makefile
-# doesn't describe this dependency, so in parallel installation there is a
-# chance that install-gas will run before install-opcodes, which will cause a
-# broken gas installation. Workaround is to call install-gas separately, after
-# other targets. libopcodes is a dependency of binutils (target, not package),
-# so as long as install-gas is done after install-binutils it should be safe.
 build_dir_init binutils
 configure_uclibc_stage2 binutils
-make_target building all-binutils all-gas all-ld
-make_target installing install-binutils install-ld
-make_target "installing gas" install-gas
+make_target building all-binutils all-ld all-gas
+# Gas requires opcodes to be installed, LD requires BFD to be installed.
+# However those dependencies are not described in the Makefiles, instead if
+# required components is not yet installed, then dummy as-new and ld-new will
+# be installed. Both libraries are installed by install-binutils. Therefore it
+# is required that binutils is installed before ld and gas.
+make_target_ordered installing install-binutils install-ld install-gas
 if [ $DO_PDF == --pdf ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \

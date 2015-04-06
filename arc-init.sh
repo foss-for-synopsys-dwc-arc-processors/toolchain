@@ -439,6 +439,22 @@ make_target() {
     fi
 }
 
+# Same as `make_target` but without parallelism, where order is required.
+# Arguments:
+# $1 - step name. It should be a gerund for proper text representation, as
+# "building", not "build".
+# remaining - make targets
+make_target_ordered() {
+    local step="$1"
+    shift
+    echo "  $step..."
+    if ! make $* >> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while $1."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
 
 # Create a common log directory for all logs in this and sub-scripts
 LOGDIR="$ARC_GNU/logs"

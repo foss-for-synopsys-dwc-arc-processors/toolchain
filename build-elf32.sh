@@ -169,7 +169,14 @@ mkdir -p "$build_dir"
 build_dir_init binutils
 configure_elf32 binutils
 make_target building all-binutils all-gas all-ld
-make_target installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-gas ${HOST_INSTALL}-ld
+# Gas requires opcodes to be installed, LD requires BFD to be installed.
+# However those dependencies are not described in the Makefiles, instead if
+# required components is not yet installed, then dummy as-new and ld-new will
+# be installed. Both libraries are installed by install-binutils. Therefore it
+# is required that binutils is installed before ld and gas. That order
+# denedency showed up only with Linux toolchain so far, but for safety same
+# patch is applied to baremetal toolchain.
+make_target_ordered installing install-binutils install-ld install-gas
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
