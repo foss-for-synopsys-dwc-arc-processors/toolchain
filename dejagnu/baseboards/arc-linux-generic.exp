@@ -111,8 +111,8 @@ if { $tool == "gdb" } {
     # the board, hence the contortion.
     if { [info exists env(ARC_GDB_COMMFILE)] } {
 	set board_info([get_local_hostname],gdb_opts) "-x $env(ARC_GDB_COMMFILE)"
-    } elseif { [info exists toolchain_sysroot_dir)] } {
-	set board_info([get_local_hostname],gdb_opts) "-ex 'set sysroot $toolchain_sysroot_dir'"
+    } elseif { [info exists ::toolchain_sysroot_dir)] } {
+	set board_info([get_local_hostname],gdb_opts) "-ex 'set sysroot $::toolchain_sysroot_dir'"
     } else {
 	puts "Neither ARC_GDB_COMMFILE, not toolchain_sysroot_dir environment
 variables are specified. Some tests are likely to fail."
