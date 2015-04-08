@@ -43,11 +43,17 @@ On Ubuntu 12.04/14.04 LTS those can be installed with following command (as root
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
       libexpat1-dev libx11-dev texlive build-essential git
 
-On Fedora 17 those can be installed those with following command (as root):
+On CentOS 6/7 those can be installed those with following command (as root):
 
     # yum groupinstall "Development Tools"
     # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
-      libX11-devel git
+      libX11-devel git texlive-*
+
+It's necessary to install a full `texlive` set in CentOS 6/7 (`texlive-*`) to
+prevent TeX blaming about missing fonts while building a documentation.
+Since `texlive-*` installs a huge bunch of packets (hundreds of megabytes)
+it's possible to omit `texlive-*` in `yum install` and pass `--no-pdf` option
+to the `build-all.sh` script if the documentation is not necessary.
 
 GCC depends on the GMP, MPFR and MPC packages, however there are problems with
 availability of those packages on the RHEL/CentOS 6 systems (packages has too
