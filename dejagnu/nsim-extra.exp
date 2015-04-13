@@ -111,41 +111,31 @@ proc arc-nsim_reboot { connhost args } {
     return 1
 }
 
-# By default between tests GDB will do `target exec`, then will reconnect to
-# target with `target remote`. As a result target will be left at the state of
-# end of previous test, likely in `exit()`. When GDB will reconnect with new
-# application, it will automatically try to unwind trace using old register
-# values, that will happen immediately after `target remote` before `load` that
-# will overwrite PC register. Consequently old-register values will be used and
-# in some unfortunate cases that might cause a failed assert in GDB. To avoid
-# possible issues this board should redefine gdb_comm_go_idle, so before
-# disconnecting from target GDB will reset crucial registers to 0.
-rename gdb_comm_go_idle arc_saved_gdb_comm_go_idle
+# There are problems with GDB loading new application with `file` command, at
+# least when new file has same filename as the old one. That problem is
+# not-deterministic and I wasn't able to trace down the source, however I see
+# that this happened between 7.5 and 7.6. To avoid troubles - restart GDB
+# completely. Restarting nSIM is not really required if it's registers are
+# reset, however for a good measure it is better to restart it, at the price of
+# performance penalty for restarting, of course.
+rename gdb_comm_start arc_saved_gdb_comm_start
 
-proc gdb_comm_go_idle {} {
-    global gdb_prompt
+proc gdb_comm_leave { } {
+    verbose "ARC specific gdb_comm_leave"
+    nsim_close
+    quit_gdb
+}
 
-    # Original gdb_comm_go_idle does the same, so it is save to not call it.
-    if {![board_info host exists fileid]} {
-	return -1
+proc gdb_comm_start { dest } {
+    global board board_info
+
+    if { ![info exists board] } {
+	set board $dest
     }
 
-    remote_send host "set \$pc=0\n"
-    remote_expect host 10 {
-	-re ".*$gdb_prompt $" {}
-    }
-
-    remote_send host "set \$blink=0\n"
-    remote_expect host 10 {
-	-re ".*$gdb_prompt $" {}
-    }
-
-    remote_send host "set \$lp_count=0\n"
-    remote_expect host 10 {
-	-re ".*$gdb_prompt $" {}
-    }
-
-    arc_saved_gdb_comm_go_idle
+    verbose "ARC specific gdb_comm_start"
+    nsim_open [target_info nsim_port]
+    arc_saved_gdb_comm_start $dest
 }
 
 # vim: noexpandtab sts=4 ts=8:
