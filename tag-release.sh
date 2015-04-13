@@ -165,7 +165,7 @@ EOF
 
 # Now tell arc-versions.sh to use this file instead of arc-dev:
 if ! sed -i \
-  -e 's/^default_toolchain_config=.*$/default_toolchain_config=arc-2015.06/' \
+  -e "s/^default_toolchain_config=.*$/default_toolchain_config=$tagname/" \
   arc-versions.sh
 then
     echo "ERROR: Failed to edit arc-versions.sh"
