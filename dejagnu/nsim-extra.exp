@@ -111,4 +111,24 @@ proc arc-nsim_reboot { connhost args } {
     return 1
 }
 
+# There are problems with GDB loading new application with `file` command, at
+# least when new file has same filename as the old one. That problem is
+# not-deterministic and I wasn't able to trace down the source, however I see
+# that this happened between 7.5 and 7.6. To avoid troubles - restart GDB
+# completely.  Note that it is known that GDB might misbehave when it connects
+# to target which has already set PC and BLINK register, so to avoid possible
+# issues gdbserver should be reset before disconnection. Here we rely on server
+# to implement k-packet, sent by GDB on "quit" command. Another option is to
+# reset registers manually or restart GDB-server completely. The latter is
+# highly undesirable, because it creates huge overhead in typical Dejagnu test
+# cases, which are very-very small, but there is lots of them.
+
+# Standard gdb_comm_leave will simply disconnect from target and will reuse
+# same GDB for next test.
+proc gdb_comm_leave { } {
+    global gdb_prompt
+    verbose "ARC specific gdb_comm_leave"
+    quit_gdb
+}
+
 # vim: noexpandtab sts=4 ts=8:
