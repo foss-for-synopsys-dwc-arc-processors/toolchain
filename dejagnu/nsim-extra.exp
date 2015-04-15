@@ -111,41 +111,4 @@ proc arc-nsim_reboot { connhost args } {
     return 1
 }
 
-# By default between tests GDB will do `target exec`, then will reconnect to
-# target with `target remote`. As a result target will be left at the state of
-# end of previous test, likely in `exit()`. When GDB will reconnect with new
-# application, it will automatically try to unwind trace using old register
-# values, that will happen immediately after `target remote` before `load` that
-# will overwrite PC register. Consequently old-register values will be used and
-# in some unfortunate cases that might cause a failed assert in GDB. To avoid
-# possible issues this board should redefine gdb_comm_go_idle, so before
-# disconnecting from target GDB will reset crucial registers to 0.
-rename gdb_comm_go_idle arc_saved_gdb_comm_go_idle
-
-proc gdb_comm_go_idle {} {
-    global gdb_prompt
-
-    # Original gdb_comm_go_idle does the same, so it is save to not call it.
-    if {![board_info host exists fileid]} {
-	return -1
-    }
-
-    remote_send host "set \$pc=0\n"
-    remote_expect host 10 {
-	-re ".*$gdb_prompt $" {}
-    }
-
-    remote_send host "set \$blink=0\n"
-    remote_expect host 10 {
-	-re ".*$gdb_prompt $" {}
-    }
-
-    remote_send host "set \$lp_count=0\n"
-    remote_expect host 10 {
-	-re ".*$gdb_prompt $" {}
-    }
-
-    arc_saved_gdb_comm_go_idle
-}
-
 # vim: noexpandtab sts=4 ts=8:
