@@ -50,8 +50,9 @@ fi
 
 # Get list of x86/x86_64 executables
 files=$(find -type f -exec file {} \; | \
-    grep 'ELF 32-bit LSB executable, Intel 80386\|ELF 64-bit LSB executable, x86-64'\
-	'\|ELF 64-bit LSB executable, AMD x86-64' | \
+    grep -e 'ELF 32-bit LSB executable, Intel 80386' \
+	 -e 'ELF 64-bit LSB executable, x86-64' \
+	 -e 'ELF 64-bit LSB executable, AMD x86-64' | \
     ${SED} -e 's/:.*$//')
 
 for f in $files; do
