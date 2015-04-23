@@ -190,9 +190,6 @@ build-all-windows.sh: build-all.sh | build-elf32-windows.sh $O/.stamp_source_tar
 $O/.stamp_elf_le_windows_built: $O/.stamp_checked_out build-all-windows.sh $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(ELF_LE_DIR)/bin):$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --no-sim --release-name $(RELEASE)
-	# Copy some Windows dlls: libgcc_s_sjlj-1.dll, libssp-0.dll, libstdc++-6.dll
-	# libwinpthread-1.dll
-	cp -rfdv /usr/i686-w64-mingw32/sys-root/mingw/bin/* $O/$(WIN_ELF_LE_DIR)/bin
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out build-all-windows.sh $O/.stamp_elf_be_built
