@@ -196,6 +196,18 @@ Build bare metal tool chain for EM cores (for example for EM Starter Kit):
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu arcem --no-multilib
 
+### Building toolchain on Windows
+
+To build toolchain for Windows hosts it is recommended to do a "canadian
+cross-compilation" on Linux, that is toolchain for ARC targets that runs on
+Windows hosts is built on Linux host. Build scripts expect to be run in
+Unix-like environment, so it is often faster and easier to build toolchain on
+Linux, that on Windows natively. While environments like Cygwin and Msys allow
+toolchain to be built on Windows natively this way is not officially supported
+and not recommended by Synopsys. Further instructions for building toolchain
+for Windows hosts can be found at [Windows-specific page]
+(windows-installer/README.md#notes-cross-compiling-for-windows).
+
 
 Usage examples
 --------------
