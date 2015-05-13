@@ -1,10 +1,8 @@
 #!/bin/sh
 
-# Copyright (C) 2012, 2013 Synopsys Inc.
+# Copyright (C) 2012-2015 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
-
-# This file is a master script for building ARC tool chains.
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -24,9 +22,8 @@
 
 # Remove the following from the build directory:
 # - the tool specific build directories (bd-*)
-# - temporary uClibc header install directories (tmp-install-uclibc-*)
 
-# Move logs to the log subdirectory, creating it if it does not exist.
+# Compress log files with bzip2.
 
 # Default source directory if not already set
 if [ "x${ARC_GNU}" = "x" ]
@@ -40,9 +37,5 @@ cd ${ARC_GNU}
 echo Removing tool specific build directories...
 rm -rf bd-*
 
-echo Removing temporary uClibc header install directories...
-rm -rf tmp-install-uclibc-*
-
 echo Archiving log files...
-mkdir -p logs
-mv -f *.log logs
+bzip2 logs/*.log

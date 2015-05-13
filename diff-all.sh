@@ -44,3 +44,5 @@ do
 	./diff-tests.sh ${dir1}/${t}.sum ${dir2}/${t}.sum ${msg}
     fi
 done
+
+# vim: noexpandtab sts=4 ts=8:

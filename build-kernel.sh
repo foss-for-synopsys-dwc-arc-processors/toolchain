@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012, 2013, 2014 Synopsys Inc.
+# Copyright (C) 2012-2015 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -73,10 +73,8 @@ failedbuild () {
 d=`dirname "$0"`
 ARC_GNU=`(cd "$d/.." && pwd)`
 
-# Generic release set up, which we'll share with sub-scripts. This defines
-# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
-# and $RESDIR if they don't exist.
-. "${ARC_GNU}"/toolchain/define-release.sh
+# Generic setup
+. "${ARC_GNU}/toolchain/arc-init.sh"
 
 # Set defaults for some options
 do_busybox="--busybox"
@@ -85,7 +83,7 @@ linux_dir=linux
 linux_defconfig=nsimosci_defconfig
 linux_version="arc-3.13"
 arc_initramfs="ARC700/arc_initramfs_12_2013_gnu_4_8_ABI_v3.tgz"
-tooldir=/opt/arc-${RELEASE}
+tooldir=/opt/arc
 
 # Parse options
 getopt_string=`getopt -n build-kernel.sh -o d:i:l:t:h -l linux-defconfig: \
@@ -385,3 +383,4 @@ fi
 logterm "Linux build successful.  See ${logfile} for details."
 exit 0
 
+# vim: noexpandtab sts=4 ts=8:

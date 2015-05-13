@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-# Copyright (C) 2013-2014 Synopsys Inc.
+# Copyright (C) 2013-2015 Synopsys Inc.
 
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
@@ -24,7 +24,7 @@
 #
 
 urls='
-ftp://ftp.gmplib.org/pub/gmp/gmp-5.1.3.tar.bz2
+https://gmplib.org/download/gmp/gmp-5.1.3.tar.bz2
 http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.bz2
 http://www.multiprecision.org/mpc/download/mpc-1.0.1.tar.gz
 '
@@ -51,3 +51,4 @@ for url in ${urls} ; do
     fi
 done
 
+# vim: expandtab sts=4:

@@ -48,7 +48,7 @@ if { $tool == "gdb" } {
 # Any multilib options are set in an environment variable.
 process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
 
-set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
+set xldflags ""
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
@@ -59,17 +59,10 @@ set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 # No linker script needed.
 set_board_info ldscript ""
 
-# nSIM is an exclusive resource -- only one client can connect at a time. For
-# this we cannot use get-ip.sh from arc-linux-nsim.exp, as it doesn't treat
-# target as an exclusive resource. Using script that generates random port
-# allows to leave management of nSIM instances to dejagnu -- it will start,
-# reboot and kill them as needed. get-random-port.sh verifies that generated
-# is free, there is still probability of collision due to race conditions, but
-# it is much less than in other situations.
-# Call to nsim_open will set the netport (used by gdb-comm) as well as setting
-# up nSim specific data.
-set port [exec [file dirname $env(DEJAGNU)]/get-random-port.sh]
-nsim_open $port
+# This is a very simple board, that expects that OpenOCD has already been
+# started. It would be possible to allow automatic start/restart by using same
+# infrastructure as in nsim-gdb.
+set_board_info netport "localhost:3333"
 
 # GDB protocol to be used
 set_board_info gdb_protocol "remote"

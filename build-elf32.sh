@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # Copyright (C) 2009, 2011, 2012, 2013 Embecosm Limited
-# Copyright (C) 2012-2014 Synopsys Inc.
+# Copyright (C) 2012-2015 Synopsys Inc.
 
 # Contributor Joern Rennecke <joern.rennecke@embecosm.com>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
-# This script builds the ARC 32-bit ELF tool chain from a unified source tree.
+# This script builds the ARC 32-bit ELF tool chain.
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -25,20 +25,12 @@
 # -----------------------------------------------------------------------------
 # Usage:
 
-#     ${ARC_GNU}/toolchain/build-elf32.sh [--force]
-
-# --force
-
-#     Blow away any old build sub-directories
+#     ${ARC_GNU}/toolchain/build-elf32.sh
 
 # The directory in which we are invoked is the build directory, in which we
-# find the unified source tree and in which all build directories are created.
+# find the components source trees and in which all build directories are created.
 
 # All other parameters are set by environment variables
-
-# RELEASE
-
-#     The number of the current ARC tool chain release.
 
 # LOGDIR
 
@@ -48,14 +40,6 @@
 
 #     The directory containing all the sources. If not set, this will default
 #     to the directory containing this script.
-
-# UNISRC
-
-#     The name of the unified source directory within the build directory
-
-# LINUXDIR
-
-#     The name of the Linux directory (absolute path)
 
 # INSTALLDIR
 
@@ -80,14 +64,16 @@
 #     Either --sim or --no-sim to control whether we build and install the
 #     CGEN simulator.
 
-# CONFIG_FLAGS
+# CONFIG_EXTRA
 
 #     Additional flags for use with configuration.
 
 # CFLAGS_FOR_TARGET
 
 #     Additional flags used when building the target libraries (e.g. for
-#     compact libraries) picked up automatically by make.
+#     compact libraries) picked up automatically by make. This variable is used
+#     by configure scripts and make, and build-elf.sh doesn't do anything about
+#     it explicitly.
 
 # DO_PDF
 
@@ -107,8 +93,7 @@
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
 
-# The script constructs a unified source directory (if --force is specified)
-# and uses a build directory (bd-${RELEASE}-elf32) local to the directory in
+# The script uses a build directory (bd-elf32[eb]) local to the directory in
 # which it is executed.
 
 # The script generates a date and time stamped log file in the logs directory.
@@ -117,44 +102,23 @@
 # GitHub.
 
 # ------------------------------------------------------------------------------
-# Local variables. We need to use unified_src as a relative directory when
-# constructing.
+# Local variables.
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arch=arceb
-    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-elf32eb
+    build_dir="$(echo "${PWD}")/bd-elf32eb"
 else
     arch=arc
-    build_dir="$(echo "${PWD}")"/bd-${RELEASE}-elf32
+    build_dir="$(echo "${PWD}")/bd-elf32"
 fi
-
-unified_src_abs="$(echo "${PWD}")"/${UNISRC}
-
-# parse options
-until
-opt=$1
-case ${opt} in
-    --force)
-	rm -rf ${build_dir}
-	;;
-    ?*)
-	echo "Usage: ./build-elf32.sh [--force]"
-	exit 1
-	;;
-esac
-[ -z "${opt}" ]
-do
-    shift
-done
 
 # Set up a logfile
 logfile="${LOGDIR}/elf32-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
-echo "START ELF32: $(date)" >> ${logfile}
-echo "START ELF32: $(date)"
+echo "START ELF32: $(date)" | tee -a "$logfile"
 
-# ARC initialization (Note. source, not exec)
+# Initialize common variables and functions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
 
 # variables to control whether the simulator is build. Note that we actively
@@ -176,128 +140,103 @@ else
 	-e 's!gdb_sim=../sim/arc/libsim.a!# gdb_sim=../sim/arc/libsim.a!'
 fi
 
-# Note stuff for the log
-log_path=$(calcConfigPath "${logfile}")
-
-echo "Installing in ${INSTALLDIR}" >> "${log_path}" 2>&1
-echo "Installing in ${INSTALLDIR}"
-
-
-# Configure binutils, GCC and newlib
-# TODO: should fix warnings instead of using --disable-werror.
-echo "Configuring tools" >> "${log_path}"
-echo "=================" >> "${log_path}"
-
-echo "Configuring tools ..."
-
-# Create the build dir
-build_path=$(calcConfigPath "${build_dir}")
-mkdir -p "${build_path}"
-cd "${build_path}"
-
-# Configure the build.
-config_path=$(calcConfigPath "${unified_src_abs}")
-log_path=$(calcConfigPath "${logfile}")
-if "${config_path}"/configure --target=${arch}-elf32 --with-cpu=${ISA_CPU} \
-        ${ELF32_DISABLE_MULTILIB} \
-        --with-pkgversion="ARCompact/ARCv2 ISA elf32 toolchain $RELEASE_NAME" \
-        --with-bugurl="http://solvnet.synopsys.com" \
-        --enable-fast-install=N/A \
-        --with-endian=${ARC_ENDIAN} ${DISABLEWERROR} \
-        --enable-languages=c,c++ --prefix=${INSTALLDIR} \
-        --with-headers="${config_path}"/newlib/libc/include \
-        ${sim_config} ${CONFIG_EXTRA} \
-    >> "${log_path}" 2>&1
+# If PDF docs are enabled, then check if prerequisites are satisfied.
+if [ "x${DO_PDF}" = "x--pdf" ]
 then
-    echo "  finished configuring tools"
-else
-    echo "ERROR: configure failed."
-    exit 1
+    if ! which texi2pdf >/dev/null 2>/dev/null
+    then
+	echo "TeX is not installed. See README.md for a list of required"
+	echo "system packages. Option --no-pdf can be used to disable build"
+	echo "of PDF documentation."
+	exit 1
+    fi
+
+    # There are issues with Texinfo v4 and non-C locales.
+    # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
+    if [ 4 = `texi2dvi --version | grep -Po '(?<=Texinfo )[0-9]+'` ]
+    then
+	export LC_ALL=C
+    fi
 fi
 
-# Build binutils, GCC, newlib and GDB
-echo "Building tools" >> "${log_path}"
-echo "==============" >> "${log_path}"
+echo "Installing in ${INSTALLDIR}" | tee -a "$logfile"
 
-echo "Building tools ..."
-build_path=$(calcConfigPath "${build_dir}")
-cd "${build_path}"
-log_path=$(calcConfigPath "${logfile}")
-if make ${PARALLEL} all-build all-binutils all-gas all-ld all-gcc \
-        all-target-libgcc all-target-libgloss all-target-newlib \
-        all-target-libstdc++-v3 ${sim_build} all-gdb >> "${log_path}" 2>&1
+# Purge old build dir if there is any and create a new one.
+rm -rf "$build_dir"
+mkdir -p "$build_dir"
+
+# Binutils
+build_dir_init binutils
+configure_elf32 binutils
+make_target building all-binutils all-gas all-ld
+# Gas requires opcodes to be installed, LD requires BFD to be installed.
+# However those dependencies are not described in the Makefiles, instead if
+# required components is not yet installed, then dummy as-new and ld-new will
+# be installed. Both libraries are installed by install-binutils. Therefore it
+# is required that binutils is installed before ld and gas. That order
+# denedency showed up only with Linux toolchain so far, but for safety same
+# patch is applied to baremetal toolchain.
+make_target_ordered installing install-binutils install-ld install-gas
+if [ "$DO_PDF" = "--pdf" ]
 then
-    echo "  finished building tools"
-else
-    echo "ERROR: tools build failed."
-    exit 1
+    make_target "generating PDF documentation" install-pdf-binutils \
+      install-pdf-ld install-pdf-gas
 fi
 
-# Install binutils, GCC, newlib and GDB
-echo "Installing tools" >> "${log_path}"
-echo "================" >> "${log_path}"
-
-echo "Installing tools ..."
-build_path=$(calcConfigPath "${build_dir}")
-cd "${build_path}"
-log_path=$(calcConfigPath "${logfile}")
-if make ${HOST_INSTALL}-binutils ${HOST_INSTALL}-gas ${HOST_INSTALL}-ld \
-    ${HOST_INSTALL}-gcc ${sim_install} install-gdb \
-    install-target-libgloss install-target-newlib install-target-libgcc \
-    install-target-libstdc++-v3 \
-    >> "${log_path}" 2>&1
+# GCC
+build_dir_init gcc
+configure_elf32 gcc gcc --with-newlib
+make_target building all-gcc all-target-libgcc
+make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
+if [ "$DO_PDF" = "--pdf" ]
 then
-    echo "  finished installing tools"
-else
-    echo "ERROR: tools install failed."
-    exit 1
+    make_target "generating PDF documentation" install-pdf-gcc
+fi
+
+# Newlib (build in sub-shell with new tools added to the PATH)
+build_dir_init newlib
+(
+PATH=$INSTALLDIR/bin:$PATH
+configure_elf32 newlib
+make_target building all-target-newlib
+make_target installing install-target-newlib
+if [ "$DO_PDF" = "--pdf" ]
+then
+    make_target "generating PDF documentation" install-pdf-target-newlib
+fi
+)
+
+# libstdc++
+# It is built in the build tree of GCC to avoid nasty problems which might
+# happen when libstdc++ is being built in the separate directory while new
+# compiler is in the PATH. Notably a known broken situation is when new
+# toolchain is being installed on top of the previous installation and
+# libstdc++ configure script will find some header files left from previous
+# installation and will decide that some features are present, while they are
+# not. That problem doesn't occur when libstdc++ is built in same build tree as
+# GCC before that.
+
+echo "Building libstdc++ ..." | tee -a "$logfile"
+cd $build_dir/gcc
+make_target building all-target-libstdc++-v3
+make_target installing install-target-libstdc++-v3
+# Don't build libstdc++ documentation because it requires additional software
+# on build host.
+
+# GDB and CGEN simulator (maybe)
+build_dir_init gdb
+configure_elf32 gdb
+make_target building all-gdb ${sim_build}
+make_target installing ${sim_install} install-gdb
+if [ "$DO_PDF" = "--pdf" ]
+then
+    make_target "generating PDF documentation" install-pdf-gdb
 fi
 
 # Restore GDB config for simulator (does nothing if the change was not made).
 ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
     -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
 
-# Optionally build and install PDF documentation
-if [ "x${DO_PDF}" = "x--pdf" ]
-then
-    echo "Building PDF documentation" >> "${log_path}"
-    echo "==========================" >> "${log_path}"
+echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 
-    echo "Building PDFs ..."
-    build_path=$(calcConfigPath "${build_dir}")
-    cd "${build_path}"
-    log_path=$(calcConfigPath "${logfile}")
-    if make ${PARALLEL} pdf-binutils pdf-gas pdf-ld pdf-gcc \
-	pdf-target-newlib pdf-gdb >> "${log_path}" 2>&1
-    then
-	echo "  finished building PDFs"
-    else
-	echo "ERROR: PDF build failed."
-	echo "Advice: Use option --no-pdf if you don't need PDF documentation."
-	if ! which texi2pdf >/dev/null 2>/dev/null ; then
-	    echo "Is TeX installed? See section Prerequisites of " \
-	         "GCC Getting Started for a list of required system packages."
-	fi
-	exit 1
-    fi
-
-    echo "Installing PDF documentation" >> "${log_path}"
-    echo "============================" >> "${log_path}"
-
-    echo "Installing PDFs ..."
-    build_path=$(calcConfigPath "${build_dir}")
-    cd "${build_path}"
-    log_path=$(calcConfigPath "${logfile}")
-    if make install-pdf-binutils install-pdf-gas install-pdf-ld \
-	install-pdf-gcc install-pdf-target-newlib install-pdf-gdb \
-	>> "${log_path}" 2>&1
-    then
-	echo "  finished installing PDFs"
-    else
-	echo "ERROR: PDF install failed."
-	exit 1
-    fi
-fi
-
-echo "DONE  ELF32: $(date)" >> "${log_path}"
-echo "DONE  ELF32: $(date)"
+# vim: noexpandtab sts=4 ts=8:

@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # Copyright (C) 2010, 2011, 2012, 2013 Embecosm Limited
+# Copyright (C) 2015 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Joern Rennecke <joern.rennecke@embecosm.com>
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 # This file is additional DejaGnu procs to support telnet based testing.
 
@@ -97,11 +99,24 @@ if { $tool == "gdb" } {
     # No hardware watchpoints
     set_board_info gdb,no_hardware_watchpoints 1
     # The command to use
-    set_board_info gdb_server_prog /bin/gdbserver
+    if { [info exists gdb_server_prog] } {
+	set_board_info gdb_server_prog $gdb_server_prog
+    } else {
+	set_board_info gdb_server_prog /bin/gdbserver
+    }
     # Use a GDB stub
     set_board_info use_gdb_stub 1
 
     # Set up sysroot. This is an option relating to the host running GDB, not
     # the board, hence the contortion.
-    set board_info([get_local_hostname],gdb_opts) "-x $env(ARC_GDB_COMMFILE)"
+    if { [info exists env(ARC_GDB_COMMFILE)] } {
+	set board_info([get_local_hostname],gdb_opts) "-x $env(ARC_GDB_COMMFILE)"
+    } elseif { [info exists ::toolchain_sysroot_dir)] } {
+	set board_info([get_local_hostname],gdb_opts) "-ex 'set sysroot $::toolchain_sysroot_dir'"
+    } else {
+	puts "Neither ARC_GDB_COMMFILE, not toolchain_sysroot_dir environment
+variables are specified. Some tests are likely to fail."
+    }
 }
+
+# vim: noexpandtab sts=4 ts=8:

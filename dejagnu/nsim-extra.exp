@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2013 Synopsys Inc.
+# Copyright (C) 2013-2015 Synopsys Inc.
 
 # This file is additional DejaGnu procs to support nSim based testing.
 
@@ -67,7 +67,13 @@ proc nsim_open { portnum } {
     # it is blocked and it stops responding to TCP connection and Dejagnu is
     # forced to restart it. I don't know a way to redirect nsim_gdb output to
     # null from Expect, so we have to use a shell to help as here.
-    spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -propsfile $env(ARC_NSIM_PROPS) -reconnect >/dev/null 2>/dev/null"
+
+    # Use either TCF or props file. TCF has higher priority.
+    if [info exists env(ARC_NSIM_TCF)] {
+	spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -tcf $env(ARC_NSIM_TCF) -reconnect >/dev/null 2>/dev/null"
+    } else {
+	spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -propsfile $env(ARC_NSIM_PROPS) -reconnect >/dev/null 2>/dev/null"
+    }
     unset_board_info nsim_id
     set_board_info nsim_id $spawn_id
     unset_board_info nsim_port
@@ -96,8 +102,33 @@ proc arc-nsim_reboot { connhost args } {
 	set board $connhost
     }
 
-    # Generate random port number.
-    set portnum [exec [file dirname $env(DEJAGNU)]/get-random-port.sh]
-    nsim_open $portnum
+    # GDB testsuite has an unfortunate trait - it reboots target after
+    # recording TCP port involved. As a result if we would try to generate new
+    # port number after reboot, test would fail, as it would use old TCP port
+    # number.
+    nsim_open [target_info nsim_port]
+
+    return 1
 }
 
+# There are problems with GDB loading new application with `file` command, at
+# least when new file has same filename as the old one. That problem is
+# not-deterministic and I wasn't able to trace down the source, however I see
+# that this happened between 7.5 and 7.6. To avoid troubles - restart GDB
+# completely.  Note that it is known that GDB might misbehave when it connects
+# to target which has already set PC and BLINK register, so to avoid possible
+# issues gdbserver should be reset before disconnection. Here we rely on server
+# to implement k-packet, sent by GDB on "quit" command. Another option is to
+# reset registers manually or restart GDB-server completely. The latter is
+# highly undesirable, because it creates huge overhead in typical Dejagnu test
+# cases, which are very-very small, but there is lots of them.
+
+# Standard gdb_comm_leave will simply disconnect from target and will reuse
+# same GDB for next test.
+proc gdb_comm_leave { } {
+    global gdb_prompt
+    verbose "ARC specific gdb_comm_leave"
+    quit_gdb
+}
+
+# vim: noexpandtab sts=4 ts=8:

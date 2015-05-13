@@ -99,3 +99,5 @@ oneres UNRESOLVED
 oneres UNTESTED
 oneres UNSUPPORTED
 rm ${tmpf1} ${tmpf2} ${tmpdiff}
+
+# vim: noexpandtab sts=4 ts=8:

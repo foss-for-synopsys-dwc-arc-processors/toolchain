@@ -1,3 +1,140 @@
+2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* tag-releas.sh: Tag Linux repository.
+	* push-release.sh: Push Linux repository.
+
+2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-uclibc.sh: Configure linux out of source tree.
+
+2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-cleanup.sh: Refresh.
+
+2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-openocd.exp: New board.
+
+2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-all.sh: Remove --force option.
+	* build-elf32.sh: Likewise.
+	* build-uclibc.sh: Likewise.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* arc-versions.sh: Add default_toolchain_config variable.
+	* build-all.sh: Do not set TOOLCHAIN_CONFIG by default.
+	* tag-release.sh: Create toolchain config for created release.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* tag-release.sh: Do not push tags.
+	* push-release.sh: New file.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* arc-versions.sh: Do not list git branches in it.
+	* build-all.sh: Add --checkout-config option
+	* config/arc-2014.08.sh: 2014.08 release tags.
+	* config/arc-2014.12.sh: 2014.12 release tags.
+	* config/arc-dev.sh: Git development branches.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-all.sh: Do not build unified source tree.
+	* build-uclibc: Remove mentions of unified source tree.
+	* symlink-all.sh: Remove.
+	* README.md: No unified source tree anymore.
+	* Makefile.release: No need to build unisrc.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* arc-init.sh: Common build functions for uClibc tools.
+	* build-uclibc.sh: Build without unified source tree.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* arc-init.sh: Common build functions.
+	* build-elf32.sh: Build without unified source tree.
+
+2015-02-26  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* doc/build.md: New file.
+
+2015-02-26  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* arc-init.sh (temp_file_in_dir): New function.
+	* build-uclibc.sh: Use temp_file_in_dir instead of mktemp.
+
+2015-02-24  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* build-uclibc.sh: Switch on UCLIBC_HAS_THREADS_NATIVE and turn
+	off LINUXTHREADS_OLD when building with TLS support.
+
+2015-02-20  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* build-uclibc.sh: Create a temporary defconfig file, edit the
+	temporary file, then create the .config file.
+
+2015-02-19  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* build-uclibc.sh: Remove use of arc_config.
+
+2015-02-17  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* Makefile.release: Remove any mentions of release in directory names.
+	* README.md: Likewise.
+	* arc-clone-all.sh: Likewise.
+	* arc-init.sh: Likewise.
+	* build-all.sh: Likewise.
+	* build-elf32.sh: Likewise.
+	* build-kernel.sh: Likewise.
+	* build-uclibc.sh: Likewise.
+	* run-elf32-tests.sh: Likewise.
+	* run-tests.sh: Likewise.
+	* run-uclibc-tests.sh: Likewise.
+	* define-release.sh: Remove.
+
+2015-02-17  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* run-uclibc-tests.sh: Switch to arc-snps-linux-uclibc target
+	triplet when looking for results.
+
+2015-01-27  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* build-all.sh: Add tls command line flags, and set TLS_SUPPORT
+	environment variable.
+	* build-uclibc.sh: Check TLS_SUPPORT environment variable to
+	control thread and tls support features.
+
+2015-01-22  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* run-tests.sh: Remove typo from comment and help text.
+
+2015-01-29  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-linux-generic.exp: Allow sysroot to be passed
+	directly.
+
+2015-01-22  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* arc-external.sh: Use different GMP link.
+
+2015-01-16  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/basenoards/arc-sim-nsimdrv.exp: Allow custom nSIM options.
+
+2014-12-19  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* dejagnu/baseboards/arc-sim-nsimdrv.exp: Update CPU C flags.
+	* dejagnu/baseboards/arc600-sim.exp: Same.
+
+2014-12-16  Anton Kolesov  <Anton.Kolesov@synopsys.com>
+
+	* build-elf32.sh: Fix documentation build problem on RHEL6.
+	* build-uclibc.sh: Same.
+
 2014-12-12  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* README.md: Add git to prerequisites.

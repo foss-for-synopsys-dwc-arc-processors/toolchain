@@ -181,13 +181,11 @@ then
     exit 1
 fi
 
-# Generic release set up, which we'll share with sub-scripts. This defines
-# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
-# and $RESDIR if they don't exist.
+# Generic setup
 d=`dirname "$0"`
 ARC_GNU=`(cd "$d/.." && pwd)`
 export ARC_GNU
-. ${ARC_GNU}/toolchain/define-release.sh
+. ${ARC_GNU}/toolchain/arc-init.sh
 
 # Set up a logfile
 logfile="${LOGDIR}/clone-all-$(date -u +%F-%H%M).log"
@@ -230,3 +228,5 @@ else
     echo "- full logs in ${logfile}" | tee -a ${logfile}
     exit 1
 fi
+
+# vim: noexpandtab sts=4 ts=8:

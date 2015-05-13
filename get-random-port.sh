@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2013-2014 Synopsys Inc.
+# Copyright (C) 2013-2015 Synopsys Inc.
 
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
@@ -35,3 +35,4 @@ done
 
 echo "${portnum}"
 
+# vim: expandtab sts=4:

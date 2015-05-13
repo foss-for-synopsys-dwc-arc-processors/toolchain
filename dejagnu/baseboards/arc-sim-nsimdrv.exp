@@ -1,7 +1,7 @@
 # Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free Software
 # Foundation, Inc.
 #
-# Copyright (C) 2013-2014 Synopsys, Inc.
+# Copyright (C) 2013-2015 Synopsys, Inc.
 #
 # Contributor: Anton Kolesov <anton.kolesov@synopsys.com>
 # Contributor: Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>
@@ -51,13 +51,18 @@ if [ string match arceb-* $target_triplet ] {
     set xarchflags "$xarchflags -on nsim_isa_big_endian"
 }
 
-# EM is default
-if { [string first ARC700 "$multilib_opts"] == 0 } {
+# ARC EM is default
+if { [string first arc700 "$multilib_opts"] == 0 } {
     set xarchflags "$xarchflags -p nsim_isa_family=a700 -on nsim_isa_sat -on nsim_isa_mpy32"
-} elseif { [string first HS "$multilib_opts"] == 0 } {
+} elseif { [string first archs "$multilib_opts"] == 0 } {
     set xarchflags "$xarchflags -p nsim_isa_family=av2hs -p nsim_isa_core=1 -on nsim_isa_ll64_option -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
 } else {
     set xarchflags "$xarchflags -p nsim_isa_family=av2em -p nsim_isa_core=1 -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
+}
+
+# Allow user to specify additional options, like JIT, etc.
+if { [info exists env(ARC_NSIM_OPTS) ] } {
+    set xarchflags "$xarchflags $env(ARC_NSIM_OPTS)"
 }
 
 # Setup the MetaWare simulator.
@@ -84,3 +89,5 @@ set_board_info noargs 1
 set_board_info gdb,nosignals 1
 set_board_info gdb,noresults 1
 set_board_info gdb,noinferiorio 1
+
+# vim: noexpandtab sts=4 ts=8:

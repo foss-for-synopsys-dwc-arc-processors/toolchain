@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
-Copyright (C) 2013-2014 Synopsys Inc.
+Copyright (C) 2013-2015 Synopsys Inc.
 
 Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
@@ -28,15 +28,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <register name="" number="0x" mask="0xFFFFFFFF" access="RW"
               description="" />
 -->
-
-    <!-- Baseline regs, always present -->
-    <!-- baseline:curr state -->
-    <register name="IDENTITY" description="Identity" number="0x4" mask ="0xFFFFFFFF" access="RO">
-        <field name="CHIPID" description="unique chip identifier"     size="16" offset="16" access="RO" />
-        <field name="ARCNUM" description="additional identity number" size= "8" offset= "8" access="RO" />
-        <field name="ARCVER" description="basecase version number"    size= "8" offset= "0" access="RO" />
-    </register>
+    <!-- registers from aux-minimal feature -->
     <register name="PC" description="program counter" number="0x6" mask ="0xFFFFFFFE" access="RW"/>
+    <register name="LP_START" description="Loop Start" number="0x2" mask ="0xFFFFFFFE" access="RW" >
+        <field name="reserved" onwrite="0" size="1"  offset="0" access="RW" />
+    </register>
+    <register name="LP_END" description="Loop End" number="0x3" mask ="0xFFFFFFFE" access="RW" >
+        <field name="reserved" onwrite="0" size="1"  offset="0" access="RW" />
+    </register>
     <register name="STATUS32" number="0xA" mask ="0x700FFFFF" access="RW" 
         description="status flags">
         <field name="H" description="halt bit" size="1"  offset= "0" access="RO">
@@ -57,6 +56,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         <field name="RB" size="3" offset="16" access="RW" description="Select register bank"/>
         <field name="AD" size="1" offset="19" access="RW" description="Disable alignment checking"/>
         <field name="IE" size="1" offset="31" access="RW" description="Interrupt enable"/>
+    </register>
+
+    <!-- Baseline regs, always present -->
+    <!-- baseline:curr state -->
+    <register name="IDENTITY" description="Identity" number="0x4" mask ="0xFFFFFFFF" access="RO">
+        <field name="CHIPID" description="unique chip identifier"     size="16" offset="16" access="RO" />
+        <field name="ARCNUM" description="additional identity number" size= "8" offset= "8" access="RO" />
+        <field name="ARCVER" description="basecase version number"    size= "8" offset= "0" access="RO" />
     </register>
     <register name="BTA" number="0x412" mask="0xFFFFFFFE" access="RW"
             description="branch target address" />
@@ -97,12 +104,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     -->
 
     <!-- if lp_size>0 -->
-    <register name="LP_START" description="Loop Start" number="0x2" mask ="0xFFFFFFFE" access="RW" >
-        <field name="reserved" onwrite="0" size="1"  offset="0" access="RW" />
-    </register>
-    <register name="LP_END" description="Loop End" number="0x3" mask ="0xFFFFFFFE" access="RW" >
-        <field name="reserved" onwrite="0" size="1"  offset="0" access="RW" />
-    </register>
 
     <!-- code density -->
     <register name="JLI_BASE" number="0x290" mask="0xFFFFFFFC" access="RW"

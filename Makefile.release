@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (C) 2014 Synopsys Inc.
+# Copyright (C) 2014-2015 Synopsys Inc.
 #
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 #
@@ -31,9 +31,8 @@
 # ../release_output/.stamp_checked_out
 #
 
-UNIFIED_SRC_DIR := unisrc-4.8
 BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
---no-auto-checkout --no-unisrc --config-extra '--with-python=no LDFLAGS=-static'
+--no-auto-checkout --config-extra '--with-python=no LDFLAGS=-static'
 
 #
 # Output artifacts
@@ -78,7 +77,7 @@ endif
 #
 # Human friendly aliases
 #
-.PHONY: checkout source-tarball unisrc elf-le-build elf-be-build elf-le elf-be all
+.PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be all
 
 all: $O/$(MD5SUM_FILE)
 	@echo "MD5 sums:"
@@ -97,8 +96,6 @@ checkout: $O/.stamp_checked_out
 
 source-tarball: $O/.stamp_source_tarball
 
-unisrc: $O/.stamp_unisrc
-
 elf-le-build: $O/.stamp_elf_le_built
 
 elf-be-build: $O/.stamp_elf_be_built
@@ -116,7 +113,7 @@ $O:
 # Checkout sources
 .NOTPARALLEL: $O/.stamp_checked_out
 $O/.stamp_checked_out: | $O
-	./build-all.sh --auto-pull --auto-checkout --no-unisrc --no-elf32 --no-uclibc
+	./build-all.sh --auto-pull --auto-checkout --no-elf32 --no-uclibc
 	touch $@
 
 # Create source tarball
@@ -125,17 +122,12 @@ $O/.stamp_source_tarball: $O/.stamp_checked_out
 	tar --exclude-vcs -c -z -f $(SOURCE_TARBALL_TGZ) --exclude=$O --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(SOURCE_TARBALL_CONTENTS)
 	touch $@
 
-# Create unified source tree
-$O/.stamp_unisrc: $O/.stamp_checked_out
-	./build-all.sh --no-auto-pull --no-auto-checkout --unisrc --no-elf32 --no-uclibc
-	touch $@
-
-$O/.stamp_elf_le_built: $O/.stamp_unisrc
+$O/.stamp_elf_le_built: $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(ELF_LE_DIR) \
 	    --no-uclibc --release-name $(RELEASE)
 	touch $@
 
-$O/.stamp_elf_be_built: $O/.stamp_unisrc
+$O/.stamp_elf_be_built: $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(ELF_BE_DIR) \
 	    --no-uclibc --release-name $(RELEASE) --big-endian
 	touch $@
@@ -148,22 +140,22 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 	cd $O && tar czf $(ELF_BE_TGZ) --transform='s#$(ELF_BE_DIR)#$(ELF_BE_NAME)#' $(ELF_BE_DIR)/
 	touch $@
 
-$O/.stamp_linux_le_700_built: $O/.stamp_unisrc
+$O/.stamp_linux_le_700_built: $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_LE_700_DIR) \
 	    --no-elf32 --release-name $(RELEASE) --cpu arc700
 	touch $@
 
-$O/.stamp_linux_le_hs_built: $O/.stamp_unisrc
+$O/.stamp_linux_le_hs_built: $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_LE_HS_DIR) \
 	    --no-elf32 --release-name $(RELEASE) --cpu archs
 	touch $@
 
-$O/.stamp_linux_be_700_built: $O/.stamp_unisrc
+$O/.stamp_linux_be_700_built: $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_BE_700_DIR) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu arc700
 	touch $@
 
-$O/.stamp_linux_be_hs_built: $O/.stamp_unisrc
+$O/.stamp_linux_be_hs_built: $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_BE_HS_DIR) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu archs
 	touch $@
@@ -195,13 +187,12 @@ build-all-windows.sh: build-all.sh | build-elf32-windows.sh $O/.stamp_source_tar
 	sed -e 's/build-elf32.sh/build-elf32-windows.sh/' <$< >$@
 	chmod +x $@
 
-$O/.stamp_elf_le_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_elf_le_built
+$O/.stamp_elf_le_windows_built: $O/.stamp_checked_out build-all-windows.sh $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(ELF_LE_DIR)/bin):$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --no-sim --release-name $(RELEASE)
-	cp -rfdv /usr/i686-pc-mingw32/sys-root/mingw/bin/* $O/$(WIN_ELF_LE_DIR)/bin
 	touch $@
 
-$O/.stamp_elf_be_windows_built: $O/.stamp_unisrc build-all-windows.sh $O/.stamp_elf_be_built
+$O/.stamp_elf_be_windows_built: $O/.stamp_checked_out build-all-windows.sh $O/.stamp_elf_be_built
 	# We install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $O/$(ELF_BE_DIR))/bin:$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim --release-name $(RELEASE)

@@ -2,7 +2,7 @@
 
 # Script to set RPATHs to be relative in shared binaries
 
-# Copyright (C) 2012-2014 Synopsys Inc.
+# Copyright (C) 2012-2015 Synopsys Inc.
 
 # Contributor Simon Cook <simon.cook@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
@@ -50,7 +50,9 @@ fi
 
 # Get list of x86/x86_64 executables
 files=$(find -type f -exec file {} \; | \
-    grep 'ELF 32-bit LSB executable, Intel 80386\|ELF 64-bit LSB executable, x86-64' | \
+    grep -e 'ELF 32-bit LSB executable, Intel 80386' \
+	 -e 'ELF 64-bit LSB executable, x86-64' \
+	 -e 'ELF 64-bit LSB executable, AMD x86-64' | \
     ${SED} -e 's/:.*$//')
 
 for f in $files; do
@@ -66,5 +68,4 @@ for f in $files; do
     patchelf --set-rpath "${RPATH}" ${f}
 done
 
-# vi: set expandtab:
-
+# vim: noexpandtab sts=4 ts=8:

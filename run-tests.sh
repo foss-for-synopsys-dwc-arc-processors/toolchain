@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012-2014 Synopsys Inc.
+# Copyright (C) 2012-2015 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
@@ -75,6 +75,11 @@
 #    matches multilib and endian options. This option makes sense only when
 #    target board is arc-nsim.
 
+# --elf32-nsim-tcf <path/to/nsim/tcf/file>
+
+#    Kind of like the --elf32-nsim-props, but specifies tcf file instead. If
+#    this option is set, then --elf32-nsim-props will be ignored.
+
 # --elf32-hostlink-library <path/to/hostlink/library>
 
 #    Path to hostlink library archive. Required for test runs with Metaware.
@@ -121,7 +126,7 @@
 # --gcc | --no-gcc
 # --libgcc | --no-libgcc
 # --libgloss | --no-libgloss
-# --newlib | --no-newlibe
+# --newlib | --no-newlib
 # --libstdc++ | --no-libstdc++
 # --sim | --no-sim
 # --gdb | --no-gdb
@@ -140,6 +145,7 @@ ARC_TEST_ADDR_ELF32=
 ARC_TEST_ADDR_UCLIBC=aa4_32
 ARC_MULTILIB_OPTIONS=""
 ARC_NSIM_PROPS="${NSIM_HOME}/systemc/configs/nsim_a700.props"
+ARC_NSIM_TCF="${NSIM_HOME}/etc/tcf/templates/hs36.tcf"
 ARC_HOSTLINK_LIBRARY=
 make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
            | grep -c processor`"
@@ -188,9 +194,14 @@ case ${opt} in
 	;;
 
     --elf32-nsim-props)
-    shift
-    ARC_NSIM_PROPS=$1
-    ;;
+	shift
+	ARC_NSIM_PROPS=$1
+	;;
+
+    --elf32-nsim-tcf)
+	shift
+	ARC_NSIM_TCF=$1
+	;;
 
     --elf32-hostlink-library)
 	shift
@@ -321,6 +332,7 @@ case ${opt} in
         echo "                      [--elf32-target-addr <address>]"
         echo "                      [--uclibc-target-addr <address>]"
         echo "                      [--elf32-nsim-props <path>]"
+        echo "                      [--elf32-nsim-tcf <path>]"
         echo "                      [--elf32-hostlink-library <path>]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
@@ -332,7 +344,7 @@ case ${opt} in
         echo "                      [--gcc | --no-gcc]"
         echo "                      [--libgcc | --no-libgcc]"
         echo "                      [--libgloss | --no-libgloss]"
-        echo "                      [--newlib | --no-newlibe]"
+        echo "                      [--newlib | --no-newlib]"
         echo "                      [--libstdc++ | --no-libstdc++]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--gdb | --no-gdb]"
@@ -365,11 +377,6 @@ fi
 # Parallelism
 PARALLEL="-j ${jobs} -l ${load}"
 
-# Generic release set up, which we'll share with sub-scripts. This defines
-# (and exports RELEASE, LOGDIR and RESDIR, creating directories named $LOGDIR
-# and $RESDIR if they don't exist.
-. "${ARC_GNU}"/toolchain/define-release.sh
-
 # Export everything needed by sub-scripts
 export ARC_TEST_BOARD_ELF32
 export ARC_TEST_BOARD_UCLIBC
@@ -392,6 +399,11 @@ export DO_NEWLIB
 export DO_LIBSTDCPP
 export DO_SIM
 export DO_GDB
+
+if [ "x$ARC_NSIM_TCF" != x ]
+then
+    export ARC_NSIM_TCF
+fi
 
 if [ "x${ARC_HOSTLINK_LIBRARY}" != x ]
 then

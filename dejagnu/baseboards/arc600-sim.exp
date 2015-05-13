@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014 Synopsys, Inc.
+# Copyright (C) 2012-2015 Synopsys, Inc.
 #
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 #
@@ -16,7 +16,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 # We have to call this before loading the rest in order for it to be used.
-process_multilib_options "-mARC600"
+process_multilib_options "-marc600"
 
 load_generic_config "arc-sim.exp"
 
+# vim: noexpandtab sts=4 ts=8:

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2007-2014 Synopsys Inc.
+# Copyright (C) 2007-2015 Synopsys Inc.
 
 # This file is a common initialization script for ARC tool chains.
 
@@ -158,7 +158,28 @@ save_res () {
 	return  1
     fi
 }
-    
+
+# Some targets have a version of mktemp that does not support the
+# --tmpdir option for creating temporary files in a particular
+# directory.  This wrapper takes a first argument a directory to
+# create the temporary file in, and a second argument the pattern to
+# pass to mktemp.  The function writes out the name of the newly
+# created temporary file, including directory prefix, and the return
+# value will be zero on success, otherwise non-zero on error.
+temp_file_in_dir () {
+    DIR=$1
+    PATTERN=$2
+    FILE=$(cd ${DIR} && mktemp "${PATTERN}")
+    STATUS=$?
+    if [ ${STATUS} == 0 ]
+    then
+        echo ${DIR}/${FILE}
+    else
+        echo "temp_file failed: ${FILE}"
+    fi
+    return ${STATUS}
+}
+
 # Make sure we stop if something failed. Since we are run with source, not exec
 # the build=*.sh scripts will also do this.
 trap "echo ERROR: Failed due to signal ; date ; exit 1" \
@@ -266,3 +287,186 @@ else
         printf "${path1}"
     }
 fi
+
+# Build functions for the repeated code (configure and make invocations).
+# Arguments:
+# $1 - name
+build_dir_init() {
+    echo "Building $1 ..." | tee -a "$logfile"
+    mkdir -p "$build_dir/$1"
+    cd "$build_dir/$1"
+}
+
+# Arguments:
+# $1 - name
+# $2 - src dir (optional, default is same as name)
+# $3 - extra options (optional)
+configure_elf32() {
+    local tool=$1
+    shift
+    if [ $# -gt 0 ]
+    then
+	local src=$1
+	shift
+    else
+	local src=$tool
+    fi
+    echo "  configuring..."
+    config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    if ! "$config_path/configure" \
+	--target=${arch}-elf32 \
+	--with-cpu=$ISA_CPU \
+	$ELF32_DISABLE_MULTILIB \
+	--with-pkgversion="ARCompact/ARCv2 ISA elf32 toolchain $RELEASE_NAME" \
+	--with-bugurl="http://solvnet.synopsys.com" \
+	--enable-fast-install=N/A \
+	--with-endian=$ARC_ENDIAN \
+	$DISABLEWERROR \
+	--enable-languages=c,c++ \
+	--prefix="$INSTALLDIR" \
+	--with-headers="$ARC_GNU/newlib/newlib/libc/include" \
+	$sim_config \
+	$CONFIG_EXTRA \
+	$* \
+	>> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while configuring."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+# Arguments:
+# $1 - name
+# $2 - src dir (optional, default is same as name)
+# $3 - extra options (optional)
+configure_uclibc_stage1() {
+    local tool=$1
+    shift
+    if [ $# -gt 0 ]
+    then
+	local src=$1
+	shift
+    else
+	local src=$tool
+    fi
+    echo "  configuring..."
+    config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    if ! "$config_path/configure" \
+	--target=$triplet \
+	--with-cpu=$ISA_CPU \
+	--disable-fast-install \
+	--with-endian=$ARC_ENDIAN \
+	$DISABLEWERROR \
+	--disable-multilib \
+	--enable-languages=c \
+	--prefix="$INSTALLDIR" \
+	--without-headers \
+	--enable-shared \
+	$thread_flags \
+	--disable-libssp \
+	--disable-libmudflap \
+	--without-newlib \
+	--disable-c99 \
+	--disable-libgomp \
+	--with-pkgversion="$version_str" \
+	--with-bugurl="$bugurl_str" \
+	$CONFIG_EXTRA \
+	--with-sysroot="$SYSROOTDIR" \
+	$* \
+	>> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while configuring."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+# Arguments:
+# $1 - name
+# $2 - src dir (optional, default is same as name)
+# $3 - extra options (optional)
+configure_uclibc_stage2() {
+    local tool=$1
+    shift
+    if [ $# -gt 0 ]
+    then
+	local src=$1
+	shift
+    else
+	local src=$tool
+    fi
+    echo "  configuring..."
+    config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    if ! "$config_path/configure" \
+	--target=$triplet \
+	--with-cpu=${ISA_CPU} \
+	$UCLIBC_DISABLE_MULTILIB \
+	--with-pkgversion="$version_str" \
+	--with-bugurl="$bugurl_str" \
+	--enable-fast-install=N/A \
+	--with-endian=$ARC_ENDIAN \
+	$DISABLEWERROR \
+	--enable-languages=c,c++ \
+	--prefix="$INSTALLDIR" \
+	--enable-shared \
+	--without-newlib \
+	--disable-libgomp \
+	$CONFIG_EXTRA \
+	--with-sysroot="$SYSROOTDIR" \
+	$* \
+	>> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while configuring."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+# Arguments:
+# $1 - step name. It should be a gerund for proper text representation, as
+# "building", not "build".
+# remaining - make targets
+make_target() {
+    local step="$1"
+    shift
+    echo "  $step..."
+    if ! make $PARALLEL $* >> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while $1."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+# Same as `make_target` but without parallelism, where order is required.
+# Arguments:
+# $1 - step name. It should be a gerund for proper text representation, as
+# "building", not "build".
+# remaining - make targets
+make_target_ordered() {
+    local step="$1"
+    shift
+    echo "  $step..."
+    if ! make $* >> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while $1."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
+# Create a common log directory for all logs in this and sub-scripts
+LOGDIR="$ARC_GNU/logs"
+mkdir -p "$LOGDIR"
+
+# Create a common results directory in which sub-directories will be created
+# for each set of tests.
+RESDIR="$ARC_GNU/results"
+mkdir -p "$RESDIR"
+
+# Export the environment variables
+export LOGDIR
+export RESDIR
+
+# vim: noexpandtab sts=4 ts=8:

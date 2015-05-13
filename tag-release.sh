@@ -1,8 +1,6 @@
 #!/bin/sh
 
-# Script to specify versions of tools to use.
-
-# Copyright (C) 2012-2014 Synopsys Inc.
+# Copyright (C) 2012-2015 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
@@ -37,7 +35,7 @@
 
 #  1. Run arc-versions.sh to checkout the heads of all component trees
 
-#  2. Tags and pushes the tag for all the component trees *except* toolchain.
+#  2. Tags all the component trees *except* toolchain.
 
 #  3. Checks out arc-releases branch.
 
@@ -46,7 +44,7 @@
 #  5. Edits arc-versions.sh so it checks out the tagged versions of all
 #     components.
 
-#  6. Commits this change, tags that commit and pushes that tag.
+#  6. Commits this change and tags that commit.
 
 # At the end, the toolchain branch will be checked out on that tag. For
 # ongoing development we'll need to checkout the dev branch.
@@ -65,13 +63,6 @@ then
     exit 1
 else
     tagname=$1
-fi
-
-# Default source directory if not already set
-if [ "x${ARC_GNU}" = "x" ]
-then
-    d=`dirname "$0"`
-    ARC_GNU=`(cd "$d/.." && pwd)`
 fi
 
 # Default Linux directory if not already set.
@@ -102,9 +93,8 @@ fi
 echo "All repos checked out"
 
 # Sanity check that each branch has a remote
-for repo in cgen binutils gcc gdb newlib uClibc toolchain
+for repo in cgen binutils gcc gdb newlib uClibc toolchain linux
 do
-    d=`pwd`
     cd ../${repo} > /dev/null 2>&1
     if ! branch=`git symbolic-ref -q HEAD --short`
     then
@@ -114,47 +104,37 @@ do
 
     if ! remote=`git config branch.${branch}.remote`
     then
-	echo "ERROR: branch ${branch} of ${repo} has no uptream"
+	echo "ERROR: branch ${branch} of ${repo} has no upstream"
 	exit 1
     fi
-    cd ${d} > /dev/null 2>&1
+    cd - > /dev/null 2>&1
 done
 
-# Tag and push the tags for each component (not Linux)
-for repo in cgen binutils gcc gdb newlib uClibc
+# Tag each component
+for repo in cgen binutils gcc gdb newlib uClibc linux
 do
-    d=`pwd`
     cd ../${repo} > /dev/null 2>&1
-    branch=`git symbolic-ref -q HEAD --short`
-    remote=`git config branch.${branch}.remote`
 
     # Special case for GDB, since we can't have two identical tags in the
     # binutils-gdb repo.
-    if [ "x${repo}" = "xgdb" ]
-    then
-	suffix="-gdb"
-    else
-	suffix=""
-    fi
+    # And another special case for Linux, since it is a separate product, we
+    # don't want it to be clear that this tag is for toolchian.
+    case $repo in
+	gdb) tag=${tagname}-gdb ;;
+	linux) tag=${tag/arc-/arc-gnu-} ;;
+	*) tag=$tagname
+    esac
 
-    if ! git tag ${tagname}${suffix}
+    if ! git tag ${tag}
     then
 	echo "ERROR: Failed to tag ${repo}"
 	exit 1
     fi
 
-    if ! git push ${remote} ${tagname}${suffix}
-    then
-	echo "ERROR: Failed to push tag for ${repo}"
-	exit 1
-    fi
-
-    cd ${d} > /dev/null 2>&1
+    cd - > /dev/null 2>&1
 done
 
-# Get the remote for the current toolchain branch
 branch=`git symbolic-ref -q HEAD --short`
-remote=`git config branch.${branch}.remote`
 
 if [[ $branch != *-dev ]] ; then
     echo 'Current branch is not a *-dev branch! Cannot create a tag from it'
@@ -172,22 +152,27 @@ if ! git merge $branch ; then
     exit 1
 fi
 
+# Create toolchain configuration file for release
+cat > config/$tagname.sh <<EOF
+cgen=cgen:$tagname
+binutils=binutils:$tagname
+gcc=gcc:$tagname
+gdb=gdb:$tagname-gdb
+newlib=newlib:$tagname
+uclibc=uClibc:$tagname
+linux=linux:$tagname
+EOF
 
-# Edit arc-versions.sh but leave linux branch untouched.
-if ! sed -i -e "s/\(^[bcgnu][[:alpha:]]*=[^:]*:\).*/\1${tagname}\"/" \
-    arc-versions.sh
+# Now tell arc-versions.sh to use this file instead of arc-dev:
+if ! sed -i \
+  -e "s/^default_toolchain_config=.*$/default_toolchain_config=$tagname/" \
+  arc-versions.sh
 then
     echo "ERROR: Failed to edit arc-versions.sh"
     exit 1
 fi
 
-# Additional edit for GDB
-if ! sed -i -e "s/\(^gdb=[^:]*:\).*/\1${tagname}-gdb\"/" \
-    arc-versions.sh
-then
-    echo "ERROR: Failed to edit arc-versions.sh for GDB"
-    exit 1
-fi
+git add config/$tagname.sh
 
 if ! git commit -a -m "Create arc-versions.sh for tag ${tagname}"
 then
@@ -195,17 +180,13 @@ then
     exit 1
 fi
 
-# Tag and push the commit
+# Tag the commit
 if ! git tag ${tagname}
 then
     echo "ERROR: Failed to tag toolchain"
     exit 1
 fi
 
-if ! git push ${remote} ${tagname} arc-releases
-then
-    echo "ERROR: Failed to push tag for toolchain"
-    exit 1
-fi
-
 echo "All repositories tagged as ${tagname}"
+
+# vim: noexpandtab sts=4 ts=8:

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2012-2014 Synopsys Inc.
+# Copyright (C) 2012-2015 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 
@@ -27,18 +27,6 @@
 #   ./run-uclibc-tests.sh
 
 # The following environment variables must be supplied
-
-# RELEASE
-
-#     The number of the current ARC tool chain release.
-
-# LOGDIR
-
-#     Directory for all log files.
-
-# RESDIR
-
-#     Directory for all results directories.
 
 # ARC_GNU
 
@@ -105,11 +93,11 @@ readme=${res_uclibc}/README
 # Location of some files depends on endianess
 if [ "${ARC_ENDIAN}" = "little" ]
 then
-    bd_uclibc=${ARC_GNU}/bd-${RELEASE}-uclibc
-    target_dir=arc-linux-uclibc
+    bd_uclibc="${ARC_GNU}/bd-uclibc"
+    target_dir=arc-snps-linux-uclibc
 else
-    bd_uclibc=${ARC_GNU}/bd-${RELEASE}-uclibceb
-    target_dir=arceb-linux-uclibc
+    bd_uclibc="${ARC_GNU}/bd-uclibceb"
+    target_dir=arceb-snps-linux-uclibc
 fi
 
 # Create a file of start up commands for GDB
@@ -123,7 +111,6 @@ echo "Test of UCLIBC tool chain run" > ${readme}
 echo "=============================" >> ${readme}
 echo "" >> ${readme}
 echo "Start time:         $(date -u +%d\ %b\ %Y\ at\ %H:%M)" >> ${readme}
-echo "Tool chain release: ${RELEASE}"                        >> ${readme}
 echo "Endianness:         ${ARC_ENDIAN}"                     >> ${readme}
 echo "Test board:         ${ARC_TEST_BOARD_UCLIBC}"          >> ${readme}
 echo "Test IP address:    ${ARC_TEST_ADDR_UCLIBC}"           >> ${readme}
@@ -236,3 +223,5 @@ then
 fi
 
 exit ${status}
+
+# vim: noexpandtab sts=4 ts=8:

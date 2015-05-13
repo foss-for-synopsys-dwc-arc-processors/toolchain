@@ -2,9 +2,10 @@
 
 # Script to specify versions of tools to use.
 
-# Copyright (C) 2012-2014 Synopsys Inc.
+# Copyright (C) 2012-2015 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
 # This script is sourced to specify the versions of tools to be built.
 
@@ -73,41 +74,46 @@ do
     shift
 done
 
-# Specify the default versions to use as a string <tool>:<branch>. These are
-# the development versions for the ARC 4.8 tool chain release. Only actually
-# matters if --auto-checkout is set.
-cgen="cgen:arc-2014.12"
-binutils="binutils:arc-2014.12"
-gcc="gcc:arc-2014.12"
-gdb="gdb:arc-2014.12-gdb"
-newlib="newlib:arc-2014.12"
-uclibc="uClibc:arc-2014.12"
+# That should be a separate variable to allow for a straightforward creation of
+# new releases, where we want default to point to release, instead of dev
+# branch.
+default_toolchain_config=arc-dev
 
-if [ "x${uclibc_arg}" = "x--uclibc" ]
+# Specify the default versions to use as a string <tool>:<branch>. Those are
+# taken from the checkout configuration file. Only actually matters if
+# --auto-checkout is set.
+if [ -z "$CHECKOUT_CONFIG" ]
 then
-    linux="linux:arc-2014.12"
+    CHECKOUT_CONFIG=$default_toolchain_config
+fi
+
+if echo "$CHECKOUT_CONFIG" | grep -qFe /
+then
+    # This is file path
+    source "$CHECKOUT_CONFIG"
 else
+    # This is configuration name
+    source "$ARC_GNU/toolchain/config/$CHECKOUT_CONFIG.sh"
+fi
+
+# Disable linux if needed
+if [ "x${uclibc_arg}" != "x--uclibc" ]
+then
     linux=""
 fi
 
-# We have to deal with some awkward cases here, because we have to deal with
-# the possibility that we may currently be on a detached HEAD (so cannot
-# fetch), or we will to checkout a detached HEAD (e.g. a tag). We also need to
-# deal with the case that the branch we wish to checkout is not yet in the
-# local repo, so we need to fetch before checking out.
+# It is not safe to "pull" in the initial state, because if repository is
+# currently in detached state (e.g. on a tag), then pull will fail. It is also
+# not safe to checkout before fetching data, because it might be required to
+# checkout branch/tag that hasn't been fetched from remote yet. Thus the
+# sequence of actions is following:
 
-# The particularly awkward case is when we are detached, and want to checkout
-# a branch which is not yet in the local repo. In this case we must checkout
-# some other branch, then fetch, then checkout the branch we want. This has a
-# performance penalty, but only when coming from a detached branch.
+# 1. Fetch
+# 2. Checkout the branch/tag
+# 3. Pull unless we are in a detached HEAD state.
 
-# In summary the steps are:
-# 1. If we are in detached HEAD state, checkout some arbitrary branch.
-# 2. Fetch (in case new branch)
-# 3. Checkout the branch
-# 4. Pull unless we are in a detached HEAD state.
-
-# Steps 1, 2 and 4 are only used if we have --auto-pull enabled.
+# Steps 1 and 3 are only used if we have --auto-pull enabled.
+# Step 2 is only used if we have --auto-checkout enabled.
 
 # All this will go horribly wrong if you leave uncommitted changes lying
 # around or if you change the remote. Nothing then but to sort it out by hand!
@@ -129,24 +135,7 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-    # See note below why two expressions are requied.
-	if git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
-	then
-	    # Detached head. Checkout an arbitrary branch
-	    arb_br=`git branch | grep -v '^\*' | head -1`
-	    echo "  detached HEAD, interim checkout of ${arb_br}"
-	    if ! git checkout ${arb_br} > /dev/null 2>&1
-	    then
-		exit 1
-	    fi
-	fi
-	# Fetch any new branches
-	echo "  fetching branches"
-	if ! git fetch
-	then
-	    exit 1
-	fi
-	# Fetch any new tags
+	# Fetch any new tags and branches.
 	echo "  fetching tags"
 	if ! git fetch --tags
 	then
@@ -165,20 +154,19 @@ do
 
     if [ "x${autopull}" = "x--auto-pull" ]
     then
-        # Only update to latest if we are not in detached HEAD mode.
-        # If tree is in detahed state, output differs between Git versions:
-        # Git 1.8 prints: * (detached from <tag_name>>)
-        # Git <1.8 prints: * (no branch)
-        if ! git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
-        then
-            echo "  pulling latest version"
-            if ! git pull
-            then
-                exit 1
-            fi
-        fi
+	# Only update to latest if we are not in detached HEAD mode.
+	# If tree is in detahed state, output differs between Git versions:
+	# Git 1.8 prints: * (detached from <tag_name>>)
+	# Git <1.8 prints: * (no branch)
+	if ! git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
+	then
+	    echo "  pulling latest version"
+	    if ! git pull
+	    then
+		exit 1
+	    fi
+	fi
     fi
 done
 
-# vi: set expandtab:
-
+# vim: noexpandtab sts=4 ts=8:

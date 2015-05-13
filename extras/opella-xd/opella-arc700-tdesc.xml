@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<!-- Copyright 2015 (c) Synopsys Inc.
+
+     Copying and distribution of this file, with or without modification,
+     are permitted in any medium without royalty provided the copyright
+     notice and this notice are preserved.  -->
+<!DOCTYPE target SYSTEM "gdb-target.dtd">
+<target>
+  <architecture>arc:ARCv2</architecture>
+  <!-- No OSABI for bare metal -->
+  <!-- No compatibility for ARC -->
+  <feature name="org.gnu.gdb.arc.core.v2">
+    <reg name="r0" bitsize="32" group="general"/>
+    <reg name="r1" bitsize="32" group="general"/>
+    <reg name="r2" bitsize="32" group="general"/>
+    <reg name="r3" bitsize="32" group="general"/>
+    <reg name="r4" bitsize="32" group="general"/>
+    <reg name="r5" bitsize="32" group="general"/>
+    <reg name="r6" bitsize="32" group="general"/>
+    <reg name="r7" bitsize="32" group="general"/>
+    <reg name="r8" bitsize="32" group="general"/>
+    <reg name="r9" bitsize="32" group="general"/>
+    <reg name="r10" bitsize="32" group="general"/>
+    <reg name="r11" bitsize="32" group="general"/>
+    <reg name="r12" bitsize="32" group="general"/>
+    <reg name="r13" bitsize="32" group="general"/>
+    <reg name="r14" bitsize="32" group="general"/>
+    <reg name="r15" bitsize="32" group="general"/>
+    <reg name="r16" bitsize="32" group="general"/>
+    <reg name="r17" bitsize="32" group="general"/>
+    <reg name="r18" bitsize="32" group="general"/>
+    <reg name="r19" bitsize="32" group="general"/>
+    <reg name="r20" bitsize="32" group="general"/>
+    <reg name="r21" bitsize="32" group="general"/>
+    <reg name="r22" bitsize="32" group="general"/>
+    <reg name="r23" bitsize="32" group="general"/>
+    <reg name="r24" bitsize="32" group="general"/>
+    <reg name="r25" bitsize="32" group="general"/>
+    <!-- ARC core pointer registers -->
+    <reg name="gp" bitsize="32" group="general" type="data_ptr"/>
+    <reg name="fp" bitsize="32" group="general" type="data_ptr"/>
+    <reg name="sp" bitsize="32" group="general" type="data_ptr"/>
+    <!-- Code pointers. R30 is general purpose, but it used to be ILINK2 in
+    ARCompact, thus its odd position in between of special purpose registers.
+    GCC does't use this register, so it isn't a member of general group. -->
+    <reg name="ilink" bitsize="32" group="general" type="code_ptr"/>
+    <reg name="r30" bitsize="32" group=""/>
+    <reg name="blink" bitsize="32" group="general" type="code_ptr"/>
+    <reg name="lp_count" bitsize="32" group="general" type="uint32" regnum="60"/>
+    <reg name="pcl" bitsize="32" group="" type="code_ptr" regnum="63"/>
+  </feature>
+  <xi:include href="aux-minimal.xml"/>
+  <feature name="org.gnu.gdb.arc.aux-other">
+    <reg bitsize="32" name="STATUS" group=""/>
+    <reg bitsize="32" name="IDENTITY" group=""/>
+    <reg bitsize="32" name="DEBUG" group=""/>
+    <reg bitsize="32" name="STATUS32_L1" group=""/>
+    <reg bitsize="32" name="STATUS32_L2" group=""/>
+    <reg bitsize="32" name="COUNT0" group=""/>
+    <reg bitsize="32" name="CONTROL0" group=""/>
+    <reg bitsize="32" name="LIMIT0" group=""/>
+    <reg bitsize="32" name="INT_VECTOR_BASE" group=""/>
+    <reg bitsize="32" name="AUX_MACMODE" group=""/>
+    <reg bitsize="32" name="AUX_IRQ_LV12" group=""/>
+    <reg bitsize="32" name="COUNT1" group=""/>
+    <reg bitsize="32" name="CONTROL1" group=""/>
+    <reg bitsize="32" name="LIMIT1" group=""/>
+    <reg bitsize="32" name="AUX_IRQ_LEV" group=""/>
+    <reg bitsize="32" name="AUX_IRQ_HINT" group=""/>
+    <reg bitsize="32" name="ERET" group=""/>
+    <reg bitsize="32" name="ERBTA" group=""/>
+    <reg bitsize="32" name="ERSTATUS" group=""/>
+    <reg bitsize="32" name="ECR" group=""/>
+    <reg bitsize="32" name="EFA" group=""/>
+    <reg bitsize="32" name="ICAUSE1" group=""/>
+    <reg bitsize="32" name="ICAUSE2" group=""/>
+    <reg bitsize="32" name="AUX_IENABLE" group=""/>
+    <reg bitsize="32" name="AUX_ITRIGGER" group=""/>
+    <reg bitsize="32" name="XPU" group=""/>
+    <reg bitsize="32" name="BTA" group=""/>
+    <reg bitsize="32" name="BTA_L1" group=""/>
+    <reg bitsize="32" name="BTA_L2" group=""/>
+    <reg bitsize="32" name="AUX_IRQ_PULSE_CANCEL" group=""/>
+    <reg bitsize="32" name="AUX_IRQ_PENDING" group=""/>
+    <!-- cache control regs -->
+    <reg bitsize="32" name="IC_IVIC" group=""/>
+    <reg bitsize="32" name="IC_CTRL" group=""/>
+    <reg bitsize="32" name="DC_IVDC" group=""/>
+    <reg bitsize="32" name="DC_CTRL" group=""/>
+    <!-- actionpoint 0 regs -->
+    <reg bitsize="32" name="AMV0" group=""/>
+    <reg bitsize="32" name="AMM0" group=""/>
+    <reg bitsize="32" name="AC0" group=""/>
+    <!-- Build Configuration Registers -->
+    <reg bitsize="32" name="unused" group=""/>
+    <reg bitsize="32" name="DCCM_BASE_BUILD" group=""/>
+    <reg bitsize="32" name="CRC_BASE_BUILD" group=""/>
+    <reg bitsize="32" name="BTA_LINK_BUILD" group=""/>
+    <reg bitsize="32" name="DVBF_BUILD" group=""/>
+    <reg bitsize="32" name="TEL_INSTR_BUILD" group=""/>
+    <reg bitsize="32" name="unused" group=""/>
+    <reg bitsize="32" name="MEMSUBSYS" group=""/>
+    <reg bitsize="32" name="VECBASE_AC_BUILD" group=""/>
+    <reg bitsize="32" name="P_BASE_ADDRESS" group=""/>
+    <reg bitsize="32" name="unused" group=""/>
+    <reg bitsize="32" name="unused" group=""/>
+    <reg bitsize="32" name="unused" group=""/>
+    <reg bitsize="32" name="unused" group=""/>
+    <reg bitsize="32" name="unused" group=""/>
+    <reg bitsize="32" name="MMU_BUILD" group=""/>
+    <reg bitsize="32" name="ARCANGEL_BUILD" group=""/>
+    <reg bitsize="32" name="unused" group=""/>
+    <reg bitsize="32" name="DCACHE_BUILD" group=""/>
+    <reg bitsize="32" name="MADI_BUILD" group=""/>
+    <reg bitsize="32" name="DCCM_BUILD" group=""/>
+    <reg bitsize="32" name="TIMER_BUILD" group=""/>
+    <reg bitsize="32" name="AP_BUILD" group=""/>
+    <reg bitsize="32" name="ICACHE_BUILD" group=""/>
+    <reg bitsize="32" name="ICCM_BUILD" group=""/>
+    <reg bitsize="32" name="DSPRAM_BUILD" group=""/>
+    <reg bitsize="32" name="MAC_BUILD" group=""/>
+    <reg bitsize="32" name="MULTIPLY_BUILD" group=""/>
+    <reg bitsize="32" name="SWAP_BUILD" group=""/>
+    <reg bitsize="32" name="NORM_BUILD" group=""/>
+    <reg bitsize="32" name="MINMAX_BUILD" group=""/>
+    <reg bitsize="32" name="BARREL_BUILD" group=""/>
+  </feature>
+</target>
