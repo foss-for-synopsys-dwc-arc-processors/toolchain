@@ -49,6 +49,7 @@
 #                  [--release-name <release>]
 #                  [--tls | --no-tls]
 #                  [--checkout-config <config>]
+#                  [--host <triplet>]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -263,6 +264,14 @@
 #     is "arc-dev" for development branch, and latest release tag for release
 #     branch.
 
+# --host <triplet>
+
+#     `<triplet>` will be passed to toolchain `configure` scripts as a value of
+#     --host option. Needed for Canadian cross compilation, for example allows
+#     to build on Linux host toolchain that will run on Windows host and will
+#     compile software for ARC processors. Note that this makes sense only for
+#     baremetal (elf32) toolchain.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -336,6 +345,7 @@ RELEASE_NAME=
 is_tarball=
 NPTL_SUPPORT="yes"
 CHECKOUT_CONFIG=
+TOOLCHAIN_HOST=
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -537,6 +547,11 @@ case ${opt} in
 	CHECKOUT_CONFIG="$1"
 	;;
 
+    --host)
+	shift
+	TOOLCHAIN_HOST="$1"
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -569,6 +584,7 @@ case ${opt} in
 	echo "                      [--release-name <release>]"
 	echo "                      [--tls | --no-tls]"
 	echo "                      [--checkout-config <config>]"
+	echo "                      [--host <triplet>]"
 	exit 1
 	;;
 
@@ -737,6 +753,8 @@ export SED
 export RELEASE_NAME
 export NPTL_SUPPORT
 export CHECKOUT_CONFIG
+# Used by configure funcs in arc-init.sh
+export TOOLCHAIN_HOST
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"

@@ -6,6 +6,7 @@
 
 # Contributor Brendan Kehoe <brendan@zen.org>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 # RelPath function from http://www.ynform.org/w/Pub/Relpath 
 
@@ -313,6 +314,13 @@ configure_elf32() {
     fi
     echo "  configuring..."
     config_path="$(calcConfigPath "$ARC_GNU/$src")"
+
+    if [ "$TOOLCHAIN_HOST" ]; then
+	host_opt="--host=$TOOLCHAIN_HOST"
+    else
+	host_opt=
+    fi
+
     if ! "$config_path/configure" \
 	--target=${arch}-elf32 \
 	--with-cpu=$ISA_CPU \
@@ -325,6 +333,7 @@ configure_elf32() {
 	--enable-languages=c,c++ \
 	--prefix="$INSTALLDIR" \
 	--with-headers="$ARC_GNU/newlib/newlib/libc/include" \
+	$host_opt \
 	$sim_config \
 	$CONFIG_EXTRA \
 	$* \
