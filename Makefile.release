@@ -70,6 +70,20 @@ WIN_ELF_TGZ  := $(WIN_ELF_NAME).tar.gz
 # md5sum
 MD5SUM_FILE := md5.sum
 
+# IDE
+# Coma separated list
+ECLIPSE_REPO := http://download.eclipse.org/releases/luna
+# Coma separated list
+ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
+ECLIPSE_VERSION := luna-SR2
+ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR2
+ECLIPSE_ARC_PLUGIN_DIR := arc_gnu_ide_$(RELEASE)_plugins
+ECLIPSE_ARC_PLUGIN_TGZ := $(ECLIPSE_ARC_PLUGIN_DIR).zip
+LINUX_IDE_NAME := arc_gnu_ide_$(RELEASE)_linux_install
+LINUX_IDE_TGZ := $(LINUX_IDE_NAME).tar.gz
+ECLIPSE_VANILLA_WIN_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
+ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
+
 ifeq ($(RELEASE),)
 $(error RELEASE variable can not be empty)
 endif
@@ -195,6 +209,42 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
 $O/.stamp_elf_windows_tarball: $O/.stamp_elf_le_windows_built $O/.stamp_elf_be_windows_built
 	cd $O && tar czf $(WIN_ELF_TGZ) --transform='s#$(WIN_ELF_LE_DIR)#$(WIN_ELF_NAME)#' $(WIN_ELF_LE_DIR)/
 	cd $O && zip -q -r $(WIN_ELF_NAME).zip $(WIN_ELF_LE_DIR)/
+	touch $@
+
+#
+# IDE related targets
+#
+.PHONY: ide
+ide: $O/.stamp_ide_linux_tar $O/$(ECLIPSE_ARC_PLUGIN_TGZ)
+
+$O/$(ECLIPSE_ARC_PLUGIN_TGZ): $O/$(ECLIPSE_ARC_PLUGIN_DIR)
+	cd $O && zip -q -r $(ECLIPSE_ARC_PLUGIN_TGZ) $(ECLIPSE_ARC_PLUGIN_DIR)/
+
+$O/$(ECLIPSE_VANILLA_LINUX_TGZ):
+	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_LINUX_TGZ)&r=1'
+
+$O/$(ECLIPSE_VANILLA_WIN_TGZ):
+	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_WIN_TGZ)&r=1'
+
+$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_LINUX_TGZ)
+	mkdir -p $O/$(LINUX_IDE_NAME)
+	tar xaf $< -C $O/$(LINUX_IDE_NAME)
+	$O/$(LINUX_IDE_NAME)/eclipse/eclipse \
+	    -application org.eclipse.equinox.p2.director \
+	    -noSplash \
+	    -repository $(ECLIPSE_REPO),file://$(realpath $O/$(ECLIPSE_ARC_PLUGIN_DIR)) \
+	    -installIU $(ECLIPSE_PREREQ),com.arc.cdt.feature.feature.group
+	touch $@
+
+$O/.stamp_ide_linux_tar: \
+	$O/.stamp_ide_linux_eclipse \
+	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
+	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
+	cp -ad $O/$(ELF_LE_DIR)/* $O/$(LINUX_IDE_NAME)
+	cp -ad $O/$(ELF_BE_DIR)/* $O/$(LINUX_IDE_NAME)
+	cp -ad $O/$(LINUX_LE_HS_DIR)/* $O/$(LINUX_IDE_NAME)
+	cp -ad $O/$(LINUX_BE_HS_DIR)/* $O/$(LINUX_IDE_NAME)
+	tar caf $O/$(LINUX_IDE_TGZ) -C $O $(LINUX_IDE_NAME)
 	touch $@
 
 #
