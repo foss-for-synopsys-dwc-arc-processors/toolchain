@@ -179,23 +179,17 @@ $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
 #
 # Windows build
 #
-build-elf32-windows.sh: windows-installer/build-elf32_windows.patch build-elf32.sh $O/.stamp_source_tarball
-	patch -p1 -o $@ < $<
-	chmod u+x $@
-
-build-all-windows.sh: build-all.sh | build-elf32-windows.sh $O/.stamp_source_tarball
-	sed -e 's/build-elf32.sh/build-elf32-windows.sh/' <$< >$@
-	chmod +x $@
-
-$O/.stamp_elf_le_windows_built: $O/.stamp_checked_out build-all-windows.sh $O/.stamp_elf_le_built
-	PATH=$(shell readlink -e $O/$(ELF_LE_DIR)/bin):$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --no-sim --release-name $(RELEASE)
+$O/.stamp_elf_le_windows_built: $O/.stamp_checked_out $O/.stamp_elf_le_built
+	PATH=$(shell readlink -e $O/$(ELF_LE_DIR)/bin):$$PATH ./build-all.sh $(BUILDALLFLAGS) \
+	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --no-sim --release-name $(RELEASE) \
+	     --host i686-w64-mingw32
 	touch $@
 
-$O/.stamp_elf_be_windows_built: $O/.stamp_checked_out build-all-windows.sh $O/.stamp_elf_be_built
-	# We install toolchain in the same dir as little endian
-	PATH=$(shell readlink -e $O/$(ELF_BE_DIR))/bin:$$PATH ./build-all-windows.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim --release-name $(RELEASE)
+$O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
+	# Install toolchain in the same dir as little endian
+	PATH=$(shell readlink -e $O/$(ELF_BE_DIR))/bin:$$PATH ./build-all.sh $(BUILDALLFLAGS) \
+	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --big-endian --no-sim \
+	     --release-name $(RELEASE) --host i686-w64-mingw32
 	touch $@
 
 $O/.stamp_elf_windows_tarball: $O/.stamp_elf_le_windows_built $O/.stamp_elf_be_windows_built

@@ -31,8 +31,8 @@ Prerequisites
 -------------
 
 Linux like environment is required to build GNU tool chain for ARC. To build a
-tool chain for Windows, it is recommended to cross compile it using MinGW on
-Linux. Refer to `windows-installer` directory for instructions.
+tool chain for Windows, it is recommended to cross-compile it using MinGW on
+Linux. Refer to "Building tool chain on Windows" section of this document.
 
 GNU tool chain for ARC has same standard prerequisites as an upstream GNU tool
 chain as documented in the GNU tool chain user guide or on the [GCC
@@ -173,6 +173,10 @@ The most important options of `build-all.sh` are:
    chain that supports only one specific core. Valid values include `arc600`,
    `arc700`, `arcem` and `archs`, however `arc600` and `arcem` are valid for
    bare metal tool chain only.
+ * `--host <triplet>` - option to set host triplet of tool chain. That allows to
+   do Canadian cross-compilation, where tool chain for ARC processors
+   (`--target`) will run on Windows hosts (`--host`) but will be built on Linux
+   host (`--build`).
 
 Please consult head of the `./build-all.sh` file to get a full list of
 supported options and their detailed descriptions.
@@ -196,17 +200,49 @@ Build bare metal tool chain for EM cores (for example for EM Starter Kit):
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu arcem --no-multilib
 
-### Building toolchain on Windows
+### Building tool chain on Windows
 
-To build toolchain for Windows hosts it is recommended to do a "canadian
-cross-compilation" on Linux, that is toolchain for ARC targets that runs on
+To build tool chain for Windows hosts it is recommended to do a "Canadian
+cross-compilation" on Linux, that is tool chain for ARC targets that runs on
 Windows hosts is built on Linux host. Build scripts expect to be run in
-Unix-like environment, so it is often faster and easier to build toolchain on
-Linux, that on Windows natively. While environments like Cygwin and Msys allow
-toolchain to be built on Windows natively this way is not officially supported
-and not recommended by Synopsys. Further instructions for building toolchain
-for Windows hosts can be found at [Windows-specific page]
-(windows-installer/README.md#notes-cross-compiling-for-windows).
+Unix-like environment, so it is often faster and easier to build tool chain on
+Linux, that on Windows natively. While environments like Cygwin and MSYS allow
+tool chain to be built on Windows natively this way is not officially supported
+and not recommended by Synopsys.
+
+Some limitation apply:
+* CGEN simulator is not support on Windows hosts, thus should be disabled with
+  `--no-sim` option.
+* Only bare metal (elf32) tool chain can be built this way.
+* It is required to have tool chain for Linux hosts in the `PATH` for Canadian
+  cross-build to succeed - it will be used to compile standard library of tool
+  chain.
+
+To cross-compile tool chain on Linux, mingw tool chain should be installed. On
+Ubuntu that can be done with `mingw-w64` package:
+
+    # apt-get install mingw-w64
+
+RHEL 6 has a very antique mingw (4.4-something), so it is recommended to first
+add EPEL repository, then install mingw from it. In CentOS:
+
+    # yum install epel-release
+    # yum install mingw-binutils-generic mingw-filesystem-base \
+      mingw32-binutils mingw32-cpp mingw32-crt mingw32-filesystem mingw32-gcc \
+      mingw32-gcc-c++ mingw32-headers mingw32-winpthreads \
+      mingw32-winpthreads-static
+
+For instruction how to install EPEL on RHEL, see
+<https://fedoraproject.org/wiki/EPEL/FAQ>.
+
+After prerequisites are installed and Linux tools are in the `PATH`, do:
+
+    $ ./build-all.sh --no-uclibc --no-sim --host i686-w64-mingw32
+
+Note that value of host triplet depends on what mingw tool chain is being used.
+Triplet `i686-w64-mingw32` is valid for mingw tool chain currently used in
+Ubuntu and EPEL, but, for example, mingw tool chain in standard RHEL 6 has
+triplet `i686-pc-mingw32`.
 
 
 Usage examples
