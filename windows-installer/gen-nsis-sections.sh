@@ -23,34 +23,6 @@
 # NB: `cd' is called with --, because some directories start with -, so by
 # default cd thiks those are options.
 
-copyDir() {
-    dirname=$1
-    space=$2
-
-    # We print files first and then do folders next
-    for f in *; do
-	if [ -f "$f" ]; then
-	    if [ "${dirname}" == "" ]; then
-		echo "${space}File \"${PREFIX}\\${f}\""
-	    else
-		echo "${space}File \"${PREFIX}\\${dirname}\\${f}\""
-	    fi
-	fi
-    done
-
-    for f in *; do
-	if [ -d "$f" ]; then
-	    if [ "${dirname}" == "" ]; then
-		(echo "setOutPath \"\$INSTDIR\\$f\""
-		    cd -- "$f" && copyDir "$f" "  ")
-	    else
-		(echo "${space}setOutPath \"\$INSTDIR\\${dirname}\\$f"\"
-		    cd -- "$f" && copyDir "${dirname}\\$f" "  ${space}")
-	    fi
-	fi
-    done
-}
-
 delDir() {
     dirname=$1
 
@@ -87,11 +59,15 @@ else
     PREFIX="$1"
 fi
 
+if [ "$2" ]; then
+    SECTION_NAME="$2"
+else
+    SECTION_NAME=all
+fi
+file_uninst=$(pwd)/section_${SECTION_NAME}_uninstall.nsi
+
 cd -- $PREFIX
-echo "Generating install_files.nsi..."
-echo "setOutPath \"\$INSTDIR\"" > ../install_files.nsi
-copyDir "" "" >> ../install_files.nsi
-echo "Generating uninstall_files.nsi..."
-delDir "" ""  > ../uninstall_files.nsi
+echo "Appending to $file_uninst..."
+delDir "" ""  >> $file_uninst
 
 # vim: noexpandtab sts=4 ts=8:

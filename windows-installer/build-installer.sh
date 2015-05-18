@@ -34,73 +34,83 @@ if [ -z "$RELEASE" ]; then
     exit 1
 fi
 
-rm -rf tmp packages/arc_gnu_ide_plugins *.nsi *.nsh
+rm -rf tmp packages/arc_gnu_ide_plugins *.nsi *.nsh *.bmp
 mkdir tmp
 
-# Copy core utils
-echo "Copying core utils and MSYS runtime files..."
-tar -C tmp -xaf packages/coreutils/coreutils-*-msys-*-bin.tar.lzma
-tar -C tmp -xaf packages/coreutils/libiconv-*-msys-*-dll*.tar.lzma
-tar -C tmp -xaf packages/coreutils/libintl-*-msys-*-dll*.tar.lzma
-tar -C tmp -xaf packages/coreutils/msysCORE-*-msys-*-bin.tar.lzma
+echo "Preparing common files..."
+mkdir tmp/common
+cp toolchain/windows-installer/arcshell.bat tmp/common
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/common common
 
-# Copy Make and MinGW runtime files
-echo "Copying Make and MinGW runtime files..."
-tar -C tmp -xaf packages/make/gcc-core-*-mingw32-dll.tar.lzma
-tar -C tmp -xaf packages/make/gettext-*-mingw32-dll.tar.lzma
-tar -C tmp -xaf packages/make/libiconv-*-mingw32-dll.tar.lzma
-tar -C tmp -xaf packages/make/make-*-mingw32-cvs-*-bin.tar.lzma
-mv tmp/bin/{mingw32-,}make.exe
+echo "Preparing core utils and MSYS runtime files..."
+mkdir tmp/coreutils
+tar -C tmp/coreutils -xaf packages/coreutils/coreutils-*-msys-*-bin.tar.lzma
+tar -C tmp/coreutils -xaf packages/coreutils/libiconv-*-msys-*-dll*.tar.lzma
+tar -C tmp/coreutils -xaf packages/coreutils/libintl-*-msys-*-dll*.tar.lzma
+tar -C tmp/coreutils -xaf packages/coreutils/msysCORE-*-msys-*-bin.tar.lzma
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/coreutils coreutils
 
-# Copy arcshell.bat
-echo "Copying arcshell.bat..."
-cp toolchain/windows-installer/arcshell.bat tmp/
+echo "Preparing Make and MinGW runtime files..."
+mkdir tmp/make
+tar -C tmp/make -xaf packages/make/gcc-core-*-mingw32-dll.tar.lzma
+tar -C tmp/make -xaf packages/make/gettext-*-mingw32-dll.tar.lzma
+tar -C tmp/make -xaf packages/make/libiconv-*-mingw32-dll.tar.lzma
+tar -C tmp/make -xaf packages/make/make-*-mingw32-cvs-*-bin.tar.lzma
+mv tmp/make/bin/{mingw32-,}make.exe
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/make make
 
-# Copy OpenOCD
-echo "Copying OpenOCD..."
-tar -C tmp -xaf packages/openocd-*.tar.gz --strip-components=1
+echo "Preparing OpenOCD..."
+mkdir tmp/openocd
+tar -C tmp/openocd -xaf packages/arc_openocd_*_win_install.tar.gz --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/openocd/ openocd
 
-# Copy tool chain
-echo "Copything toolchain..."
-tar -C tmp -xaf packages/arc_gnu_*_prebuilt_elf32_win_install.tar.gz --strip-components=1
+echo "Preparing little-endian toolchain..."
+mkdir tmp/toolchain_le
+tar -C tmp/toolchain_le -xaf packages/arc_gnu_*_prebuilt_elf32_le_win_install.tar.gz \
+    --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/toolchain_le toolchain_le
 
-# Unzip Eclipse
-unzip packages/eclipse-cpp-*-win32.zip -d tmp
+echo "Preparing big-endian toolchain..."
+mkdir tmp/toolchain_be
+tar -C tmp/toolchain_be -xaf packages/arc_gnu_*_prebuilt_elf32_be_win_install.tar.gz \
+    --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/toolchain_be toolchain_be
 
-# Copy Java runtime environment:
-echo "Copying JRE..."
-mkdir tmp/eclipse/jre
-tar -C tmp/eclipse/jre -xaf packages/jre-*-windows-i586.tar.gz --strip-components=1
-
-# Install ARC plugins
-mkdir packages/arc_gnu_ide_plugins
-unzip packages/arc_gnu_ide_2015.06_plugins.zip -d packages
+echo "Preparing Eclipse..."
+mkdir tmp/eclipse
+unzip packages/eclipse-cpp-*-win32.zip -d tmp/eclipse
 # For some reason some of important exec files don't have exec bit set by the 
 # cygwin unzip, but eclipse.exe has it.
-chmod +x tmp/eclipse/eclipsec.exe
-chmod +x tmp/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
-
+chmod +x tmp/eclipse/eclipse/eclipsec.exe
+chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
+# Install ARC plugins
+mkdir tmp/arc_gnu_ide_plugins
+unzip packages/arc_gnu_ide_2015.06_plugins.zip -d tmp/arc_gnu_ide_plugins
 # Same as in Makefile.release
-tmp/eclipse/eclipsec.exe \
+echo "Installing ARC plugins into Eclipse..."
+tmp/eclipse/eclipse/eclipsec.exe \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
-    -repository ${ECLIPSE_REPO},file://$(cygpath -w -a packages/arc_gnu_ide_plugins) \
+    -repository ${ECLIPSE_REPO},file://$(cygpath -w -a tmp/arc_gnu_ide_plugins) \
     -installIU ${ECLIPSE_PREREQ},com.arc.cdt.feature.feature.group
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/eclipse eclipse
 
-# Generate installer and uninstaller sections
-echo "Generating NSIS files..."
-./toolchain/windows-installer/gen-nsis-sections.sh tmp
+# Copy Java runtime environment:
+echo "Preparing JRE..."
+mkdir -p tmp/jre/eclipse/jre
+tar -C tmp/jre/eclipse/jre -xaf packages/jre-*-windows-i586.tar.gz --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/jre jre
 
+#
+# Generate installer
+#
+echo "Creating installer..."
 # All file paths should relative to the location of .nsi file (or to current
 # directory if /NOCD is used). To simplify scripts they are copied here, so
 # all of them are in current directory.
 cp toolchain/windows-installer/*.nsi .
 cp toolchain/windows-installer/*.nsh .
-
-# Generate installer
-echo "Creating installer..."
-cp toolchain/windows-installer/*.nsi .
-cp toolchain/windows-installer/*.nsh .
+cp toolchain/windows-installer/snps_logo.bmp .
 /cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE installer.nsi
 
 echo "Done"

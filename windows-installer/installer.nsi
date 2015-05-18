@@ -22,11 +22,12 @@
 !define entry_name "arc_gnu"
 !define arctitle "ARC GNU IDE"
 
-;=================================================
+!define snps_startmenu_dir "Synopsys Inc"
+!define startmenu_dir "${snps_startmenu_dir}\${arctitle} ${arcver}"
+
 !include "MUI2.nsh"
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
-;!include "EnvVarUpdate.nsh" (placed in top level script to avoid crashing)
 
 ;=================================================
 ; Check for mandatory variable
@@ -37,37 +38,47 @@
 ;=================================================
 ; Settings
 
-  # File and Installer Name
-  outfile "${entry_name}_ide_${arcver}_win_install.exe"
-  Name "${arctitle} ${arcver}"
+# File and Installer Name
+outfile "${entry_name}_ide_${arcver}_win_install.exe"
+Name "${arctitle} ${arcver}"
 
-  # Default directory
-  installDir "C:\${entry_name}"
+# Default directory
+installDir "C:\${entry_name}"
 
-  # Enable CRC
-  CRCCheck on
+# Enable CRC
+CRCCheck on
 
-  # Compression
-  SetCompress force
-  #SetCompressor zlib
-  SetCompressor /FINAL lzma
+# Compression
+SetCompress force
+SetCompressor zlib
+#SetCompressor /FINAL lzma
 
-  # Our registry key for uninstallation
-  !define uninstreg "Software\Microsoft\Windows\CurrentVersion\Uninstall\${entry_name}_${arcver}"
+# Our registry key for uninstallation
+!define uninstreg "Software\Microsoft\Windows\CurrentVersion\Uninstall\${entry_name}_${arcver}"
 
-  # We want admin rights
-  RequestExecutionLevel admin
+# We want admin rights
+RequestExecutionLevel admin
 
 ;=================================================
-; Pages to Use
 
-  !insertmacro MUI_PAGE_DIRECTORY
-  !insertmacro MUI_PAGE_INSTFILES
-  !insertmacro MUI_UNPAGE_CONFIRM
-  !insertmacro MUI_UNPAGE_INSTFILES
+# Defines for pages must be before page macro insertion.
+!define MUI_COMPONENTSPAGE_SMALLDESC
+!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_RIGHT
+!define MUI_HEADERIMAGE_BITMAP "snps_logo.bmp"
+
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+!insertmacro MUI_LANGUAGE "English"
 
 ;=================================================
 ; On start, we want to ensure we have admin rights
+; (akolesov): But do we really need this func? We already have
+; `RequestExecutionLEvem admin`...
 
 Function .onInit
   UserInfo::GetAccountType
@@ -79,11 +90,17 @@ Function .onInit
   ${EndIf}
 FunctionEnd
 
-;=================================================
-; Default section - files to install
+#
+# Default section - always installed
+#
+section ""
+    SetOutPath "$INSTDIR"
+    File /r tmp\common\*
+    # Make sure that /bin exists (will be added to the PATH).
+    SetOutPath "$INSTDIR\bin"
 
-  section
-    !include "install_files.nsi"
+    SetOutPath "$INSTDIR\eclipse"
+
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
     ; Write registry entries for uninstaller
@@ -95,51 +112,168 @@ FunctionEnd
     WriteRegDWORD HKLM "${uninstreg}" "NoModify" "1"
     WriteRegDWORD HKLM "${uninstreg}" "NoRepair" "1"
 
-    !define snps_shelldir "Synopsys Inc"
-    !define shelldir "${snps_shelldir}\${arctitle} ${arcver}"
-
     ; Add install directory to PATH and create shortcut to Eclipse
     ; See http://nsis.sourceforge.net/Environmental_Variables:_append,_prepend,_and_remove_entries
-    ; NOTE THAT WE NEED A CUSTOM BUILD OF NSIS THAT SUPPORTS LONGER STRINGS TO SUPPORT THIS VERSION!!!
-    ; http://nsis.sourceforge.net/Special_Builds       (has build for 8192 length strings)
+    ; NOTE THAT WE NEED A CUSTOM BUILD OF NSIS THAT SUPPORTS LONGER STRINGS TO
+    ; SUPPORT THIS VERSION!!!
+    ; http://nsis.sourceforge.net/Special_Builds (has build for 8192 length strings)
     ; http://nsis.sourceforge.net/Docs/AppendixG.html  (to build yourself)
     ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
     SetShellVarContext all
-    CreateShortCut "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
-    CreateDirectory "$SMPROGRAMS\${shelldir}"
-    CreateShortCut "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Command Prompt.lnk" '%comspec%' '/k "$INSTDIR\arcshell.bat"'
-    CreateShortCut "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Eclipse.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
-    CreateShortCut "$SMPROGRAMS\${shelldir}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
-    CreateShortCut "$SMPROGRAMS\${shelldir}\Documentation.lnk" "$INSTDIR\share\doc" 0
-    CreateShortCut "$SMPROGRAMS\${shelldir}\IDE Wiki on GitHub.lnk" \
-      "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki" 0
-    CreateShortCut "$SMPROGRAMS\${shelldir}\IDE Releases on GitHub.lnk" \
-      "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/releases" 0
-  sectionend
 
-;=================================================
-; Uninstaller
+    # Create shortcuts
+    CreateDirectory "$SMPROGRAMS\${startmenu_dir}"
+    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\${arctitle} ${arcver} Command Prompt.lnk" \
+	'%comspec%' '/k "$INSTDIR\arcshell.bat"'
+    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\Documentation.lnk" "$INSTDIR\share\doc"
+    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Wiki on GitHub.lnk" \
+      "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki"
+    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Releases on GitHub.lnk" \
+      "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/releases"
+SectionEnd
 
-  section "Uninstall"
-    SetShellVarContext all
+#
+# Optional sections
+#
 
-    ; Desktop shortcut
+# Toolchain little-endian
+Section "GNU Toolchain for ARC" SecToolchain
+    SetOutPath "$INSTDIR"
+    File /r tmp\toolchain_le\*
+SectionEnd
+
+Section un.SecToolchain
+    !include "section_toolchain_le_uninstall.nsi"
+SectionEnd
+
+LangString DESC_SecToolchain ${LANG_ENGLISH} \
+    "Baremetal GNU Toolchain for ARC processors (little endian)"
+
+# Toolchain big-endian
+Section "GNU Toolchain for ARC (big endian)" SecToolchainBE
+    SetOutPath "$INSTDIR"
+    File /r tmp\toolchain_be\*
+SectionEnd
+
+Section un.SecToolchainBE
+    !include "section_toolchain_be_uninstall.nsi"
+SectionEnd
+
+LangString DESC_SecToolchainBE ${LANG_ENGLISH} \
+    "Baremetal GNU Toolchain for ARC processors (big endian)"
+
+# Eclipse
+Section "Eclipse IDE for ARC" SecEclipse
+    SetOutPath "$INSTDIR"
+    File /r tmp\eclipse\*
+
+    # Desktop shortcut
+    CreateShortCut "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk" \
+	"$INSTDIR\eclipse\eclipse.exe"
+    # Start menu items. Default section is done first, so directories exist.
+    CreateShortCut \
+	"$SMPROGRAMS\${startmenu_dir}\${arctitle} ${arcver} Eclipse.lnk" \
+	"$INSTDIR\eclipse\eclipse.exe"
+SectionEnd
+
+Section un.SecEclipse
+    !include "section_eclipse_uninstall.nsi"
+
+    # Desktop shortcut
     Delete "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk"
+    # Start menu entry
+    Delete "$SMPROGRAMS\${startmenu_dir}\${arctitle} ${arcver} Eclipse.lnk"
+SectionEnd
+
+LangString DESC_SecEclipse ${LANG_ENGLISH} \
+    "Eclipse IDE for C/C++ development for ARC processors"
+
+# JRE
+Section "Java runtime for Eclipse" SecJRE
+    SetOutPath "$INSTDIR"
+    File /r tmp\jre\*
+SectionEnd
+
+Section un.SecJRE
+    !include "section_jre_uninstall.nsi"
+SectionEnd
+
+LangString DESC_SecJRE ${LANG_ENGLISH} \
+    "Private copy of Java runtime for Eclipse. Not required if your machine already has \
+Java runtime >= 1.7 installed."
+
+# MSYS core utils
+Section "MSYS Core Utils" SecMSYSCoreUtils
+    SetOutPath "$INSTDIR"
+    File /r tmp\coreutils\*
+SectionEnd
+
+Section un.SecMSYSCoreUtils
+    !include "section_coreutils_uninstall.nsi"
+SectionEnd
+
+LangString DESC_SecMSYSCoreUtils ${LANG_ENGLISH} \
+    "*nix core utilites: cp, mv, tail, etc. Required for Eclipse IDE."
+
+# GNU make
+Section "GNU Make" SecGNUMake
+    SetOutPath "$INSTDIR"
+    File /r tmp\make\*
+SectionEnd
+
+Section un.SecGNUMake
+    !include "section_make_uninstall.nsi"
+SectionEnd
+
+LangString DESC_SecGNUMake ${LANG_ENGLISH} \
+    "GNU make. Required for IDE for ARC."
+
+# OpenOCD
+Section "OpenOCD" SecOpenOCD
+    SetOutPath "$INSTDIR"
+    File /r tmp\openocd\*
+SectionEnd
+
+Section un.SecOpenOCD
+    !include "section_openocd_uninstall.nsi"
+SectionEnd
+
+LangString DESC_SecOpenOCD ${LANG_ENGLISH} \
+    "Required to connect to hardware targets via JTAG."
+
+# Now assign descriptions to sections
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecMSYSCoreUtils} $(DESC_SecMSYSCoreUtils)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecGNUMake} $(DESC_SecGNUMake)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecOpenOCD} $(DESC_SecOpenOCD)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecToolchain} $(DESC_SecToolchain)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecToolchainBE} $(DESC_SecToolchainBE)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecEclipse} $(DESC_SecEclipse)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecJRE} $(DESC_SecJRE)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+#
+# Default section - always uninstalled
+#
+Section "Uninstall"
+    SetShellVarContext all
+    !include "section_common_uninstall.nsi"
 
     ; Start menu entries
-    Delete "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Command Prompt.lnk"
-    Delete "$SMPROGRAMS\${shelldir}\${arctitle} ${arcver} Eclipse.lnk"
-    Delete "$SMPROGRAMS\${shelldir}\Uninstall.lnk"
-    Delete "$SMPROGRAMS\${shelldir}\Documentation.lnk"
-    Delete "$SMPROGRAMS\${shelldir}\IDE Wiki on GitHub.lnk"
-    Delete "$SMPROGRAMS\${shelldir}\IDE Releases on GitHub.lnk"
-    RmDir "$SMPROGRAMS\${shelldir}"
-    RmDir "$SMPROGRAMS\${snps_shelldir}"
+    Delete "$SMPROGRAMS\${startmenu_dir}\${arctitle} ${arcver} Command Prompt.lnk"
+    Delete "$SMPROGRAMS\${startmenu_dir}\Uninstall.lnk"
+    Delete "$SMPROGRAMS\${startmenu_dir}\Documentation.lnk"
+    Delete "$SMPROGRAMS\${startmenu_dir}\IDE Wiki on GitHub.lnk"
+    Delete "$SMPROGRAMS\${startmenu_dir}\IDE Releases on GitHub.lnk"
+    RmDir "$SMPROGRAMS\${startmenu_dir}"
+    RmDir "$SMPROGRAMS\${snps_startmenu_dir}"
 
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
-    !include "uninstall_files.nsi"
     Delete "$INSTDIR\Uninstall.exe"
     DeleteRegKey HKLM "${uninstreg}"
+    # bin is always created, so should be always removed.
+    RMDir "$INSTDIR\bin"
     RMDir "$INSTDIR"
-  sectionend
+SectionEnd
 
