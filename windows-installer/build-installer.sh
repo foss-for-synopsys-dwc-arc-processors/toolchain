@@ -24,56 +24,84 @@
 # all plug-ins installed. This is a "quick and dirty" script, thus it have
 # such strict requirements.
 
+# Params
+# Eclipse parameters copied from Makefile.release
+ECLIPSE_REPO=http://download.eclipse.org/releases/luna
+ECLIPSE_PREREQ=org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
+
 if [ -z "$RELEASE" ]; then
     echo "RELEASE env variable must be set"
     exit 1
 fi
 
-mkdir in
-cd in
+rm -rf tmp packages/arc_gnu_ide_plugins *.nsi *.nsh
+mkdir tmp
 
-# Copy MinGW and MSYS runtime files
-echo "Copying MSYS and MinGW runtime files..."
-tar xaf ../tars/coreutils-*-msys-*-bin.tar.lzma
-tar xaf ../tars/gcc-core-*-mingw32-dll.tar.lzma
-tar xaf ../tars/gettext-*-mingw32-dll.tar.lzma
-tar xaf ../tars/libiconv-*-msys-*-dll*.tar.lzma
-tar xaf ../tars/libiconv-*-mingw32-dll.tar.lzma
-tar xaf ../tars/libintl-*-msys-*-dll*.tar.lzma
-tar xaf ../tars/msysCORE-*-msys-*-bin.tar.lzma
-tar xaf ../tars/make-*-mingw32-cvs-*-bin.tar.lzma
-mv bin/{mingw32-,}make.exe
+# Copy core utils
+echo "Copying core utils and MSYS runtime files..."
+tar -C tmp -xaf packages/coreutils/coreutils-*-msys-*-bin.tar.lzma
+tar -C tmp -xaf packages/coreutils/libiconv-*-msys-*-dll*.tar.lzma
+tar -C tmp -xaf packages/coreutils/libintl-*-msys-*-dll*.tar.lzma
+tar -C tmp -xaf packages/coreutils/msysCORE-*-msys-*-bin.tar.lzma
+
+# Copy Make and MinGW runtime files
+echo "Copying Make and MinGW runtime files..."
+tar -C tmp -xaf packages/make/gcc-core-*-mingw32-dll.tar.lzma
+tar -C tmp -xaf packages/make/gettext-*-mingw32-dll.tar.lzma
+tar -C tmp -xaf packages/make/libiconv-*-mingw32-dll.tar.lzma
+tar -C tmp -xaf packages/make/make-*-mingw32-cvs-*-bin.tar.lzma
+mv tmp/bin/{mingw32-,}make.exe
 
 # Copy arcshell.bat
 echo "Copying arcshell.bat..."
-cp ../tars/arcshell.bat .
+cp toolchain/windows-installer/arcshell.bat tmp/
 
 # Copy OpenOCD
 echo "Copying OpenOCD..."
-tar xaf ../tars/openocd-*.tar.gz --strip-components=1
+tar -C tmp -xaf packages/openocd-*.tar.gz --strip-components=1
 
 # Copy tool chain
 echo "Copything toolchain..."
-tar xaf ../tars/arc_gnu_*_prebuilt_elf32_windows_install.tar.gz --strip-components=1
+tar -C tmp -xaf packages/arc_gnu_*_prebuilt_elf32_win_install.tar.gz --strip-components=1
 
-# Copy Eclipse
-echo "Copying Eclipse..."
-rsync -a ../tars/eclipse .
+# Unzip Eclipse
+unzip packages/eclipse-cpp-*-win32.zip -d tmp
 
 # Copy Java runtime environment:
 echo "Copying JRE..."
-mkdir eclipse/jre
-cd eclipse/jre
-tar xaf ../../../tars/jre-*-windows-i586.tar.gz --strip-components=1
-cd ../../..
+mkdir tmp/eclipse/jre
+tar -C tmp/eclipse/jre -xaf packages/jre-*-windows-i586.tar.gz --strip-components=1
 
-# Generate installer an uninstaller sections
-echo "Generating nsis files..."
-./gen-nsis-sections.sh
+# Install ARC plugins
+mkdir packages/arc_gnu_ide_plugins
+unzip packages/arc_gnu_ide_2015.06_plugins.zip -d packages
+# For some reason some of important exec files don't have exec bit set by the 
+# cygwin unzip, but eclipse.exe has it.
+chmod +x tmp/eclipse/eclipsec.exe
+chmod +x tmp/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
+
+# Same as in Makefile.release
+tmp/eclipse/eclipsec.exe \
+    -application org.eclipse.equinox.p2.director \
+    -noSplash \
+    -repository ${ECLIPSE_REPO},file://$(cygpath -w -a packages/arc_gnu_ide_plugins) \
+    -installIU ${ECLIPSE_PREREQ},com.arc.cdt.feature.feature.group
+
+# Generate installer and uninstaller sections
+echo "Generating NSIS files..."
+./toolchain/windows-installer/gen-nsis-sections.sh tmp
+
+# All file paths should relative to the location of .nsi file (or to current
+# directory if /NOCD is used). To simplify scripts they are copied here, so
+# all of them are in current directory.
+cp toolchain/windows-installer/*.nsi .
+cp toolchain/windows-installer/*.nsh .
 
 # Generate installer
 echo "Creating installer..."
-/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE  installer-standard.nsi
+cp toolchain/windows-installer/*.nsi .
+cp toolchain/windows-installer/*.nsh .
+/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE installer-standard.nsi
 
 echo "Done"
 
