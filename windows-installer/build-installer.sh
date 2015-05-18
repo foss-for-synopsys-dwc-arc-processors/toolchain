@@ -101,7 +101,7 @@ cp toolchain/windows-installer/*.nsh .
 echo "Creating installer..."
 cp toolchain/windows-installer/*.nsi .
 cp toolchain/windows-installer/*.nsh .
-/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE installer-standard.nsi
+/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE installer.nsi
 
 echo "Done"
 

@@ -18,6 +18,10 @@
 ; You should have received a copy of the GNU General Public License along
 ; with this program.  If not, see <http://www.gnu.org/licenses/>.          
 
+!include "EnvVarUpdate.nsh"
+!define entry_name "arc_gnu"
+!define arctitle "ARC GNU IDE"
+
 ;=================================================
 !include "MUI2.nsh"
 !include "FileFunc.nsh"
