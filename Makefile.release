@@ -94,7 +94,8 @@ endif
 #
 # Human friendly aliases
 #
-.PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be all
+.PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be all \
+    windows ide win-openocd
 
 all: $O/$(MD5SUM_FILE)
 	@echo "MD5 sums:"
@@ -105,8 +106,7 @@ $O/$(MD5SUM_FILE): \
     $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
     $O/.stamp_linux_le_700_tarball $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball $O/.stamp_linux_be_hs_tarball \
-    $O/.stamp_elf_le_windows_tarball \
-    $O/.stamp_elf_be_windows_tarball
+    windows ide
 	cd $O && md5sum *linux_install.tar.gz *sources.tar.gz *.zip > $@
 
 
@@ -121,6 +121,10 @@ elf-be-build: $O/.stamp_elf_be_built
 elf-le: $O/.stamp_elf_le_tarball
 
 elf-be: $O/.stamp_elf_be_tarball
+
+windows: $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
+
+ide: $O/.stamp_ide_linux_tar $O/$(ECLIPSE_ARC_PLUGIN_TGZ)
 
 #
 # Real targets
@@ -225,9 +229,6 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 #
 # IDE related targets
 #
-.PHONY: ide
-ide: $O/.stamp_ide_linux_tar $O/$(ECLIPSE_ARC_PLUGIN_TGZ)
-
 $O/$(ECLIPSE_ARC_PLUGIN_TGZ): $O/$(ECLIPSE_ARC_PLUGIN_DIR)
 	cd $O/$(ECLIPSE_ARC_PLUGIN_DIR) && zip -q -r ../$(ECLIPSE_ARC_PLUGIN_TGZ) *
 
