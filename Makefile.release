@@ -86,6 +86,7 @@ LINUX_IDE_NAME := arc_gnu_ide_$(RELEASE)_linux_install
 LINUX_IDE_TGZ := $(LINUX_IDE_NAME).tar.gz
 ECLIPSE_VANILLA_WIN_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
+OPENOCD_DIR := arc_openocd_$(RELEASE)_win_install
 
 ifeq ($(RELEASE),)
 $(error RELEASE variable can not be empty)
@@ -95,7 +96,7 @@ endif
 # Human friendly aliases
 #
 .PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be all \
-    windows ide win-openocd
+    windows ide openocd
 
 all: $O/$(MD5SUM_FILE)
 	@echo "MD5 sums:"
@@ -106,8 +107,8 @@ $O/$(MD5SUM_FILE): \
     $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
     $O/.stamp_linux_le_700_tarball $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball $O/.stamp_linux_be_hs_tarball \
-    windows ide
-	cd $O && md5sum *linux_install.tar.gz *sources.tar.gz *.zip > $@
+    windows ide openocd
+	cd $O && md5sum *linux_install.tar.gz *sources.tar.gz *win_install.zip *plugins.zip > $@
 
 
 checkout: $O/.stamp_checked_out
@@ -125,6 +126,8 @@ elf-be: $O/.stamp_elf_be_tarball
 windows: $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
 
 ide: $O/.stamp_ide_linux_tar $O/$(ECLIPSE_ARC_PLUGIN_TGZ)
+
+openocd: $O/$(OPENOCD_DIR).zip $O/$(OPENOCD_DIR).tar.gz
 
 #
 # Real targets
@@ -259,9 +262,16 @@ $O/.stamp_ide_linux_tar: \
 	tar caf $O/$(LINUX_IDE_TGZ) -C $O $(LINUX_IDE_NAME)
 	touch $@
 
+# Make openocd zip file.
+$O/$(OPENOCD_DIR).zip: $O/$(OPENOCD_DIR)
+	cd $O && zip -q -r $(OPENOCD_DIR).zip $(OPENOCD_DIR)/
+
+$O/$(OPENOCD_DIR).tar.gz: $O/$(OPENOCD_DIR)
+	tar -C $O -caf $O/$(OPENOCD_DIR).tar.gz $(OPENOCD_DIR)/
+
 #
 # Clean
 #
 .PHONY: clean
 clean:
-	-rm -rf $O
+	-rm s-rf $O
