@@ -194,7 +194,6 @@ then
 else
     version_str="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
 fi
-bugurl_str="http://solvnet.synopsys.com"
 
 # Set up a logfile
 logfile="${LOGDIR}/uclibc-build-$(date -u +%F-%H%M).log"
@@ -549,10 +548,11 @@ echo "=======================================" >> "${logfile}"
 
 build_dir_init gdbserver
 
+# ARC_COMMON_BUGURL is defined in arc-init.sh, which has been source.
 config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdb/gdbserver
 if "${config_path}"/configure \
         --with-pkgversion="${version_str}"\
-        --with-bugurl="${bugurl_str}" \
+        --with-bugurl="$ARC_COMMON_BUGURL" \
         --host=${triplet} >> "${logfile}" 2>> "${logfile}"
 then
     echo "  finished configuring gdbserver"

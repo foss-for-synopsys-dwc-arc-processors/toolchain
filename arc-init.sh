@@ -72,6 +72,8 @@
 
 # 10-Jan-13; Jeremy Bennett. Add useful functions.
 
+# Common variables
+ARC_COMMON_BUGURL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/issues"
 
 # -----------------------------------------------------------------------------
 # Useful functions
@@ -326,7 +328,7 @@ configure_elf32() {
 	--with-cpu=$ISA_CPU \
 	$ELF32_DISABLE_MULTILIB \
 	--with-pkgversion="ARCompact/ARCv2 ISA elf32 toolchain $RELEASE_NAME" \
-	--with-bugurl="http://solvnet.synopsys.com" \
+	--with-bugurl="$ARC_COMMON_BUGURL" \
 	--enable-fast-install=N/A \
 	--with-endian=$ARC_ENDIAN \
 	$DISABLEWERROR \
@@ -379,7 +381,7 @@ configure_uclibc_stage1() {
 	--disable-c99 \
 	--disable-libgomp \
 	--with-pkgversion="$version_str" \
-	--with-bugurl="$bugurl_str" \
+	--with-bugurl="$ARC_COMMON_BUGURL" \
 	$CONFIG_EXTRA \
 	--with-sysroot="$SYSROOTDIR" \
 	$* \
@@ -412,7 +414,7 @@ configure_uclibc_stage2() {
 	--with-cpu=${ISA_CPU} \
 	$UCLIBC_DISABLE_MULTILIB \
 	--with-pkgversion="$version_str" \
-	--with-bugurl="$bugurl_str" \
+	--with-bugurl="$ARC_COMMON_BUGURL" \
 	--enable-fast-install=N/A \
 	--with-endian=$ARC_ENDIAN \
 	$DISABLEWERROR \
