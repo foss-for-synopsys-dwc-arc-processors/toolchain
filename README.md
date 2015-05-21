@@ -4,28 +4,34 @@ ARC GNU Tool Chain
 This is the main Git repository for the ARC GNU tool chain. It contains just
 the scripts required to build the entire tool chain.
 
-The branch name corresponds to the development for the various ARC releases.
+Branches in this repository are:
 * `arc-releases` is the stable branch for the tool chain release. Head of
-  this branch is either a latest stable release or latest release candidate for
-  the upcoming release.
-* `arc-dev` is the development branch for the current tool chain release
+  this branch is a latest stable release. It is a branch recommended for most
+  users.
+* `arc-staging` is the semi-stable branch for the tool chain release
+  candidates. Head of this branch is either a latest stable release or latest
+  release candidate for the upcoming release.
+* `arc-dev` is the development branch for the current tool chain release. 
 * `arc-4.8-dev` is the development branch for the 4.8 tool chain release
 * `arc-4.4-dev` is the development branch for the 4.4 tool chain release
-* `arc-mainline-dev` is the mainline development branch
+* `arc-mainline-dev` is the mainline development branch (deprecated)
 
 While the top of *development* branches should build and run reliably, there
 is no guarantee of this. Users who encountered an error are welcomed to create
 a new bug report at GitHub Issues for this `toolchain` project.
 
-Within each branch there are points where the whole development has been put
-through comprehensive release testing. These are marked using Git *tags*, for
-example `arc-2014.12` for tool chain released in December 2014.
+The build script in this repository can be used for different versions of
+toolchain components, however such cross-version compatibility is not
+guaranteed.
 
-These tagged stable releases have been through full release testing, and known
-issues are documented in a Synopsys release notes.
+The build script from this repository by default will automatically check out
+components to versions corresponding to the toolchain branch. Build script from
+development branch of toolchain repository will by default check out latest
+development branches of components. Build script from release and staging
+branches will check out components to the corresponding git tag. For example
+build script for 2015.06 release will checkout out components to arc-2015.06
+tag.
 
-The build script will check out the corresponding branches from the tool chain
-component repositories.
 
 Prerequisites
 -------------
