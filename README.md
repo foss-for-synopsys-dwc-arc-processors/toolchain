@@ -187,6 +187,14 @@ The most important options of `build-all.sh` are:
 Please consult head of the `./build-all.sh` file to get a full list of
 supported options and their detailed descriptions.
 
+Note about `--cpu` and `--target-cflags` options. They allow to build toolchain
+tailored for a particular core. Option `--cpu` will change default CPU of
+GCC. Option `--target-cflags` on the other hand will change only CFLAGS used to
+compile toolchain standard library, but will not affect default compiler
+option. Consequently, when using a toolchain configured this way it is still
+will be required to provide corresponding compiler options, except for the
+`-mcpu`.
+
 ### Build options examples
 
 Build default tool chain, bare metal tool chain will support all ARC cores,
@@ -205,6 +213,33 @@ Build tool chain for ARC HS Linux development:
 Build bare metal tool chain for EM cores (for example for EM Starter Kit):
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu arcem --no-multilib
+
+Build bare metal tool chain for ARC EM5D in the ARC EM Starter Kit 2.0:
+
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu arcem --target-cflags "-mcode-density -mno-div-rem -mswap -mnorm \
+      -mmpy-option=6 -mshift-assist -mbarrel-shifter"
+
+Build bare metal tool chain for ARC EM7D in the ARC EM Starter Kit 2.0
+(EM7D_FPU is similiar, but with -mfpu=fpuda):
+
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu arcem --target-cflags "-mcode-density -mno-div-rem -mswap -mnorm \
+      -mmpy-option=6 -mshift-assist -mbarrel-shifter --param l1-cache-size=16384 \
+      --param l1-cache-line-size=32"
+
+Build bare metal tool chain for ARC EM4 in the ARC EM Starter Kit 1.1:
+
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu arcem --target-cflags "-mcode-density -mdiv-rem -mswap -mnorm \
+      -mmpy-option=6 -mshift-assist -mbarrel-shifter"
+
+Build bare metal tool chain for ARC EM6 in the ARC EM Starter Kit 1.1:
+
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu arcem --target-cflags "-mcode-density -mdiv-rem -mswap -mnorm \
+      -mmpy-option=6 -mshift-assist -mbarrel-shifter \
+      --param l1-cache-size=32768 --param l1-cache-line-size=128"
 
 ### Building tool chain on Windows
 
