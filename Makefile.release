@@ -86,7 +86,11 @@ LINUX_IDE_NAME := arc_gnu_ide_$(RELEASE)_linux_install
 LINUX_IDE_TGZ := $(LINUX_IDE_NAME).tar.gz
 ECLIPSE_VANILLA_WIN_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
+
+# OpenOCD
 OOCD_WIN_DIR := arc_openocd_$(RELEASE)_win_install
+OOCD_LINUX_DIR := arc_openocd_$(RELEASE)_linux_install
+OOCD_LINUX_SRC_DIR := ../openocd
 
 ifeq ($(RELEASE),)
 $(error RELEASE variable can not be empty)
@@ -96,7 +100,8 @@ endif
 # Human friendly aliases
 #
 .PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be all \
-    windows ide openocd-win
+    windows ide openocd-win \
+    openocd openocd-tar openocd-build openocd-install openocd-configure openocd-bootstrap
 
 all: $O/$(MD5SUM_FILE)
 	@echo "MD5 sums:"
@@ -107,7 +112,10 @@ $O/$(MD5SUM_FILE): \
     $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
     $O/.stamp_linux_le_700_tarball $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball $O/.stamp_linux_be_hs_tarball \
-    windows ide openocd-win
+    $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball \
+    $O/$(OOCD_WIN_DIR).zip $O/$(OOCD_WIN_DIR).tar.gz \
+    $O/.stamp_ide_linux_tar $O/$(ECLIPSE_ARC_PLUGIN_TGZ) \
+    $O/$(OOCD_LINUX_DIR).tar.gz
 	cd $O && md5sum *linux_install.tar.gz *sources.tar.gz *win_install.zip *plugins.zip > $@
 
 
@@ -127,7 +135,6 @@ windows: $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
 
 ide: $O/.stamp_ide_linux_tar $O/$(ECLIPSE_ARC_PLUGIN_TGZ)
 
-openocd-win: $O/$(OOCD_WIN_DIR).zip $O/$(OOCD_WIN_DIR).tar.gz
 
 #
 # Real targets
@@ -252,6 +259,7 @@ $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_LINUX_TGZ)
 	touch $@
 
 $O/.stamp_ide_linux_tar: \
+	$O/$(OOCD_LINUX_DIR)/bin/openocd \
 	$O/.stamp_ide_linux_eclipse \
 	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
 	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
@@ -262,10 +270,40 @@ $O/.stamp_ide_linux_tar: \
 	mkdir $O/$(LINUX_IDE_NAME)/eclipse/jre
 	tar xaf $O/jre-*-linux-x64.tar.gz -C $O/$(LINUX_IDE_NAME)/eclipse/jre \
 	    --strip-components=1
+	cp -ad $O/$(OOCD_LINUX_DIR)/* $O/$(LINUX_IDE_NAME)
 	tar caf $O/$(LINUX_IDE_TGZ) -C $O $(LINUX_IDE_NAME)
 	touch $@
 
+#
+# OpenOCD
+#
+openocd: $(OOCD_LINUX_SRC_DIR)/src/openocd
+openocd-bootstrap: $(OOCD_LINUX_SRC_DIR)/configure
+openocd-configure: $(OOCD_LINUX_SRC_DIR)/Makefile
+openocd-build: $(OOCD_LINUX_SRC_DIR)/src/openocd
+openocd-install: $(OOCD_LINUX_DIR)/bin/openocd
+openocd-tar: $O/$(OOCD_LINUX_DIR).tar.gz
+openocd: openocd-tar
+
+$(OOCD_LINUX_SRC_DIR)/configure:
+	cd $(OOCD_LINUX_SRC_DIR) && ./bootstrap
+
+$(OOCD_LINUX_SRC_DIR)/Makefile: $(OOCD_LINUX_SRC_DIR)/configure
+	cd $(OOCD_LINUX_SRC_DIR) && ./configure --enable-ftdi --disable-werror \
+	    --prefix=$(abspath $O/$(OOCD_LINUX_DIR))
+
+$(OOCD_LINUX_SRC_DIR)/src/openocd: $(OOCD_LINUX_SRC_DIR)/Makefile
+	$(MAKE) -C $(OOCD_LINUX_SRC_DIR) all pdf
+
+$O/$(OOCD_LINUX_DIR)/bin/openocd: $(OOCD_LINUX_SRC_DIR)/src/openocd
+	$(MAKE) -C $(OOCD_LINUX_SRC_DIR) install install-pdf
+
+$O/$(OOCD_LINUX_DIR).tar.gz: $O/$(OOCD_LINUX_DIR)/bin/openocd
+	tar -C $O -caf $O/$(OOCD_LINUX_DIR).tar.gz $(OOCD_LINUX_DIR)/
+
 # Make OpenOCD for Windows zip file.
+openocd-win: $O/$(OOCD_WIN_DIR).zip $O/$(OOCD_WIN_DIR).tar.gz
+
 $O/$(OOCD_WIN_DIR).zip: $O/$(OOCD_WIN_DIR)
 	cd $O && zip -q -r $(OOCD_WIN_DIR).zip $(OOCD_WIN_DIR)/
 
