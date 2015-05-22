@@ -259,6 +259,9 @@ $O/.stamp_ide_linux_tar: \
 	cp -ad $O/$(ELF_BE_DIR)/* $O/$(LINUX_IDE_NAME)
 	cp -ad $O/$(LINUX_LE_HS_DIR)/* $O/$(LINUX_IDE_NAME)
 	cp -ad $O/$(LINUX_BE_HS_DIR)/* $O/$(LINUX_IDE_NAME)
+	mkdir $O/$(LINUX_IDE_NAME)/eclipse/jre
+	tar xaf $O/jre-*-linux-x64.tar.gz -C $O/$(LINUX_IDE_NAME)/eclipse/jre \
+	    --strip-components=1
 	tar caf $O/$(LINUX_IDE_TGZ) -C $O $(LINUX_IDE_NAME)
 	touch $@
 
