@@ -116,12 +116,12 @@ status=0
 # binutils
 if [ "x${DO_BINUTILS}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/binutils \
 	binutils \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/binutils \
 	${res_elf} \
 	binutils/binutils \
 	"${logfile_elf}" \
@@ -130,12 +130,12 @@ fi
 # gas
 if [ "x${DO_GAS}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/binutils \
 	gas \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/binutils \
 	${res_elf} \
 	gas/testsuite/gas \
 	"${logfile_elf}" \
@@ -144,12 +144,12 @@ fi
 # ld
 if [ "x${DO_LD}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/binutils \
 	ld \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/binutils \
 	${res_elf} ld/ld \
 	"${logfile_elf}" \
 	|| status=1
@@ -157,19 +157,19 @@ fi
 # gcc and g++
 if [ "x${DO_GCC}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/gcc \
 	gcc \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
     save_res \
-	${bd_elf} \
+	${bd_elf}/gcc \
 	${res_elf} \
 	gcc/testsuite/gcc/gcc \
 	"${logfile_elf}" \
 	|| status=1
     echo "Testing g++..."
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/gcc \
 	${res_elf} \
 	gcc/testsuite/g++/g++ \
 	"${logfile_elf}" \
@@ -178,12 +178,12 @@ fi
 # libgcc
 if [ "x${DO_LIBGCC}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/gcc \
 	target-libgcc \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/gcc \
 	${res_elf} \
 	${target_dir}/libgcc/testsuite/libgcc \
 	"${logfile_elf}" \
@@ -192,12 +192,12 @@ fi
 # libgloss
 if [ "x${DO_LIBGLOSS}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/newlib \
 	target-libgloss \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/newlib \
 	${res_elf} \
 	${target_dir}/libgloss/testsuite/libgloss \
 	"${logfile_elf}" \
@@ -206,12 +206,12 @@ fi
 # newlib
 if [ "x${DO_NEWLIB}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/newlib \
 	target-newlib \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/newlib \
 	${res_elf} \
 	${target_dir}/newlib/testsuite/newlib \
 	"${logfile_elf}" \
@@ -220,12 +220,12 @@ fi
 # libstdc++
 if [ "x${DO_LIBSTDCPP}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/gcc \
 	target-libstdc++-v3 \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/gcc \
 	${res_elf} \
 	${target_dir}/libstdc++-v3/testsuite/libstdc++ \
 	"${logfile_elf}" \
@@ -234,12 +234,12 @@ fi
 # sim
 if [ "x${DO_SIM}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/gdb \
 	sim \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/gdb \
 	${res_elf} sim/testsuite/sim \
 	"${logfile_elf}" \
 	|| status=1
@@ -247,12 +247,12 @@ fi
 # gdb
 if [ "x${DO_GDB}" = "xyes" ]
 then
-    run_check ${bd_elf} \
+    run_check ${bd_elf}/gdb \
 	gdb \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf} \
+    save_res ${bd_elf}/gdb \
 	${res_elf} gdb/testsuite/gdb \
 	"${logfile_elf}" \
 	|| status=1
