@@ -1,8 +1,6 @@
 ##############################################################################
 # Copyright (C) 2014-2015 Synopsys Inc.
 #
-# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
-#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 3 of the License, or (at your option)
@@ -15,7 +13,6 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
-# This is a script to create prebuilt packages of GNU Toolchain
 #
 ##############################################################################
 
@@ -26,9 +23,12 @@
 #
 # 1. Checkout toolchain directory to desired branch. Create tags if needed.
 #
-# 2. Run "make -f Makefile.release RELEASE=<release>". If you do not want
-# build-all.sh to checkout directories, then do "touch
-# ../release_output/.stamp_checked_out
+# 2. Run "make -f Makefile.release RELEASE=<release> toolchain". If you do not
+# want build-all.sh to checkout directories, then do "touch
+# ../release_output/.stamp_checked_out before running makefile.  Note that
+# "toolchain" target will build only toolchain prebuilts, nothing else, but it
+# also doesn't have other prerequisites. Target "all" will also build IDE and
+# OpenOCD, however this also requires additional preparations.
 #
 
 BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
@@ -38,59 +38,50 @@ BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
 # Output artifacts
 #
 O := ../release_output
-OS_NAME := linux
-SOURCE_TARBALL_CONTENTS :=$(addprefix ../,binutils cgen gcc gdb newlib toolchain uClibc)
-SOURCE_TARBALL_TGZ := $O/arc_gnu_$(RELEASE)_sources.tar.gz
-# Baremetal toolchain
-ELF_LE_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_le_$(OS_NAME)_install
-ELF_BE_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_be_$(OS_NAME)_install
-ELF_LE_DIR := arc-elf32
-ELF_BE_DIR := arceb-elf32
-ELF_LE_TGZ := $(ELF_LE_NAME).tar.gz
-ELF_BE_TGZ := $(ELF_BE_NAME).tar.gz
-# Linux toolchain
-LINUX_LE_700_NAME := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_$(OS_NAME)_install
-LINUX_LE_HS_NAME := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_$(OS_NAME)_install
-LINUX_BE_700_NAME := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_$(OS_NAME)_install
-LINUX_BE_HS_NAME := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(OS_NAME)_install
-LINUX_LE_700_DIR := arc700-linux
-LINUX_BE_700_DIR := arceb700-linux
-LINUX_LE_HS_DIR := archs-linux
-LINUX_BE_HS_DIR := arcebhs-linux
-LINUX_LE_700_TGZ := $(LINUX_LE_700_NAME).tar.gz
-LINUX_BE_700_TGZ := $(LINUX_BE_700_NAME).tar.gz
-LINUX_LE_HS_TGZ := $(LINUX_LE_HS_NAME).tar.gz
-LINUX_BE_HS_TGZ := $(LINUX_BE_HS_NAME).tar.gz
-# Baremetal for Windows
-WIN_ELF_LE_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_le_win_install
-WIN_ELF_BE_NAME := arc_gnu_$(RELEASE)_prebuilt_elf32_be_win_install
-WIN_ELF_LE_DIR  := arc-elf32_win
-WIN_ELF_BE_DIR  := arceb-elf32_win
-WIN_ELF_LE_TGZ  := $(WIN_ELF_LE_NAME).tar.gz
-WIN_ELF_BE_TGZ  := $(WIN_ELF_BE_NAME).tar.gz
-# Big endian toolchain is installed to same directory as little endian
-#WIN_ELF_BE_DIR := $O/arceb-elf32_windows
-# md5sum
-MD5SUM_FILE := md5.sum
+# Use -a when invoking tar, then we can easily change to .tar.xz if we want.
+TAR_EXT := .tar.gz
 
-# IDE
+# Toolchain: source tarball
+TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils cgen gcc gdb newlib toolchain uClibc)
+TOOLS_SOURCE_DIR := $O/arc_gnu_$(RELEASE)_sources
+
+# Toolchain: baremetal for Linux hosts
+TOOLS_ELFLE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_le_linux_install
+TOOLS_ELFBE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_be_linux_install
+
+# Toolchain: baremetal for Windows hosts
+TOOLS_ELFLE_DIR_WIN := arc_gnu_$(RELEASE)_prebuilt_elf32_le_win_install
+TOOLS_ELFBE_DIR_WIN := arc_gnu_$(RELEASE)_prebuilt_elf32_be_win_install
+
+# Toolchain: linux
+TOOLS_LINUXLE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_linux_install
+TOOLS_LINUXBE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_linux_install
+TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_linux_install
+TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_linux_install
+
+# IDE: vanilla Eclipse variables
+ECLIPSE_VERSION := luna-SR2
+ECLIPSE_VANILLA_ZIP_WIN := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
+ECLIPSE_VANILLA_TGZ_LINUX := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
 ECLIPSE_REPO := http://download.eclipse.org/releases/luna
 # Coma separated list
 ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
-ECLIPSE_VERSION := luna-SR2
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR2
-ECLIPSE_ARC_PLUGIN_DIR := arc_gnu_ide_$(RELEASE)_plugins
-ECLIPSE_ARC_PLUGIN_TGZ := $(ECLIPSE_ARC_PLUGIN_DIR).zip
-LINUX_IDE_NAME := arc_gnu_ide_$(RELEASE)_linux_install
-LINUX_IDE_TGZ := $(LINUX_IDE_NAME).tar.gz
-ECLIPSE_VANILLA_WIN_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
-ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
+# IDE: output related variables
+IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
+IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
+IDE_PLUGINS_DIR := arc_gnu_$(RELEASE)_ide_plugins
+IDE_PLUGINS_ZIP := $(IDE_PLUGINS_DIR).zip
 
 # OpenOCD
-OOCD_WIN_DIR := arc_openocd_$(RELEASE)_win_install
-OOCD_LINUX_DIR := arc_openocd_$(RELEASE)_linux_install
-OOCD_LINUX_SRC_DIR := ../openocd
+OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
+OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_linux_install
+# Should be created and checked out manually before running this Makefile.
+OOCD_SRC_DIR_LINUX := ../openocd
+
+# md5sum
+MD5SUM_FILE := md5.sum
 
 ifeq ($(RELEASE),)
 $(error RELEASE variable can not be empty)
@@ -101,11 +92,19 @@ endif
 #
 .PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be all \
     windows ide openocd-win \
-    openocd openocd-tar openocd-build openocd-install openocd-configure openocd-bootstrap
+    openocd openocd-tar openocd-build openocd-install openocd-configure openocd-bootstrap \
+    toolchain
 
 all: $O/$(MD5SUM_FILE)
 	@echo "MD5 sums:"
 	@cat $<
+
+toolchain: \
+    $O/.stamp_source_tarball \
+    $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
+    $O/.stamp_linux_le_700_tarball $O/.stamp_linux_be_700_tarball \
+    $O/.stamp_linux_le_hs_tarball $O/.stamp_linux_be_hs_tarball \
+    $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
 
 $O/$(MD5SUM_FILE): \
     $O/.stamp_source_tarball \
@@ -113,9 +112,9 @@ $O/$(MD5SUM_FILE): \
     $O/.stamp_linux_le_700_tarball $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball $O/.stamp_linux_be_hs_tarball \
     $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball \
-    $O/$(OOCD_WIN_DIR).zip $O/$(OOCD_WIN_DIR).tar.gz \
-    $O/.stamp_ide_linux_tar $O/$(ECLIPSE_ARC_PLUGIN_TGZ) \
-    $O/$(OOCD_LINUX_DIR).tar.gz
+    $O/$(OOCD_DIR_WIN).zip $O/$(OOCD_DIR_WIN).tar.gz \
+    $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP) \
+    $O/$(OOCD_DIR_LINUX).tar.gz
 	cd $O && md5sum *linux_install.tar.gz *sources.tar.gz *win_install.zip *plugins.zip > $@
 
 
@@ -133,7 +132,7 @@ elf-be: $O/.stamp_elf_be_tarball
 
 windows: $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
 
-ide: $O/.stamp_ide_linux_tar $O/$(ECLIPSE_ARC_PLUGIN_TGZ)
+ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
 
 
 #
@@ -151,168 +150,173 @@ $O/.stamp_checked_out: | $O
 # Create source tarball
 .NOTPARALLEL: $O/.stamp_source_tarball
 $O/.stamp_source_tarball: $O/.stamp_checked_out
-	tar --exclude-vcs -c -z -f $(SOURCE_TARBALL_TGZ) --exclude=$O --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(SOURCE_TARBALL_CONTENTS)
+	tar --exclude-vcs -c -z -f $(TOOLS_SOURCE_DIR)$(TAR_EXT) --exclude=$O \
+	    --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(TOOLS_SOURCE_CONTENTS)
 	touch $@
 
 $O/.stamp_elf_le_built: $O/.stamp_checked_out
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(ELF_LE_DIR) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_DIR_LINUX) \
 	    --no-uclibc --release-name $(RELEASE)
 	touch $@
 
 $O/.stamp_elf_be_built: $O/.stamp_checked_out
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(ELF_BE_DIR) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_DIR_LINUX) \
 	    --no-uclibc --release-name $(RELEASE) --big-endian
 	touch $@
 
 $O/.stamp_elf_le_tarball: $O/.stamp_elf_le_built
-	cd $O && tar czf $(ELF_LE_TGZ) --transform='s#$(ELF_LE_DIR)#$(ELF_LE_NAME)#' $(ELF_LE_DIR)/
+	cd $O && tar czf $(TOOLS_ELFLE_DIR_LINUX)$(TAR_EXT) $(TOOLS_ELFLE_DIR_LINUX)/
 	touch $@
 
 $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
-	cd $O && tar czf $(ELF_BE_TGZ) --transform='s#$(ELF_BE_DIR)#$(ELF_BE_NAME)#' $(ELF_BE_DIR)/
+	cd $O && tar czf $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT) $(TOOLS_ELFBE_DIR_LINUX)/
 	touch $@
 
 $O/.stamp_linux_le_700_built: $O/.stamp_checked_out
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_LE_700_DIR) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --cpu arc700
 	touch $@
 
 $O/.stamp_linux_le_hs_built: $O/.stamp_checked_out
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_LE_HS_DIR) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --cpu archs
 	touch $@
 
 $O/.stamp_linux_be_700_built: $O/.stamp_checked_out
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_BE_700_DIR) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu arc700
 	touch $@
 
 $O/.stamp_linux_be_hs_built: $O/.stamp_checked_out
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(LINUX_BE_HS_DIR) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu archs
 	touch $@
 
 $O/.stamp_linux_le_700_tarball: $O/.stamp_linux_le_700_built
-	cd $O && tar czf $(LINUX_LE_700_TGZ) --transform='s#$(LINUX_LE_700_DIR)#$(LINUX_LE_700_NAME)#' $(LINUX_LE_700_DIR)/
+	cd $O && tar czf $(TOOLS_LINUXLE_700_DIR_LINUX)$(TAR_EXT) \
+	    $(TOOLS_LINUXLE_700_DIR_LINUX)/
 	touch $@
 
 $O/.stamp_linux_le_hs_tarball: $O/.stamp_linux_le_hs_built
-	cd $O && tar czf $(LINUX_LE_HS_TGZ) --transform='s#$(LINUX_LE_HS_DIR)#$(LINUX_LE_HS_NAME)#' $(LINUX_LE_HS_DIR)/
+	cd $O && tar czf $(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
+	    $(TOOLS_LINUXLE_HS_DIR_LINUX)/
 	touch $@
 
 $O/.stamp_linux_be_700_tarball: $O/.stamp_linux_be_700_built
-	cd $O && tar czf $(LINUX_BE_700_TGZ) --transform='s#$(LINUX_BE_700_DIR)#$(LINUX_BE_700_NAME)#' $(LINUX_BE_700_DIR)/
+	cd $O && tar czf $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT) \
+	    $(TOOLS_LINUXBE_700_DIR_LINUX)/
 	touch $@
 
 $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
-	cd $O && tar czf $(LINUX_BE_HS_TGZ) --transform='s#$(LINUX_BE_HS_DIR)#$(LINUX_BE_HS_NAME)#' $(LINUX_BE_HS_DIR)/
+	cd $O && tar czf $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
+	    $(TOOLS_LINUXBE_HS_DIR_LINUX)/
 	touch $@
 
 #
 # Windows build
 #
 $O/.stamp_elf_le_windows_built: $O/.stamp_checked_out $O/.stamp_elf_le_built
-	PATH=$(shell readlink -e $O/$(ELF_LE_DIR)/bin):$$PATH ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(WIN_ELF_LE_DIR) --no-uclibc --no-sim --release-name $(RELEASE) \
-	     --host i686-w64-mingw32
+	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
+	     ./build-all.sh $(BUILDALLFLAGS) \
+	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
+	     --release-name $(RELEASE) --host i686-w64-mingw32
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
 	# Install toolchain in the same dir as little endian
-	PATH=$(shell readlink -e $O/$(ELF_BE_DIR))/bin:$$PATH ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(WIN_ELF_BE_DIR) --no-uclibc --big-endian --no-sim \
+	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
+	     ./build-all.sh $(BUILDALLFLAGS) \
+	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
 	     --release-name $(RELEASE) --host i686-w64-mingw32
 	touch $@
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
-	cd $O && tar czf $(WIN_ELF_LE_TGZ) \
-	    --transform='s#$(WIN_ELF_LE_DIR)#$(WIN_ELF_LE_NAME)#' $(WIN_ELF_LE_DIR)/
-	cd $O && zip -q -r $(WIN_ELF_LE_NAME).zip $(WIN_ELF_LE_DIR)/
+	cd $O && tar czf $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT) $(TOOLS_ELFLE_DIR_WIN)/
+	cd $O && zip -q -r $(TOOLS_ELFLE_DIR_WIN).zip $(TOOLS_ELFLE_DIR_WIN)/
 	touch $@
 
 $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
-	cd $O && tar czf $(WIN_ELF_BE_TGZ) \
-	    --transform='s#$(WIN_ELF_BE_DIR)#$(WIN_ELF_BE_NAME)#' $(WIN_ELF_BE_DIR)/
-	cd $O && zip -q -r $(WIN_ELF_BE_NAME).zip $(WIN_ELF_BE_DIR)/
+	cd $O && tar czf $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT) $(TOOLS_ELFBE_DIR_WIN)/
+	cd $O && zip -q -r $(TOOLS_ELFBE_DIR_WIN).zip $(TOOLS_ELFBE_DIR_WIN)/
 	touch $@
 
 #
 # IDE related targets
 #
-$O/$(ECLIPSE_ARC_PLUGIN_TGZ): $O/$(ECLIPSE_ARC_PLUGIN_DIR)
-	cd $O/$(ECLIPSE_ARC_PLUGIN_DIR) && zip -q -r ../$(ECLIPSE_ARC_PLUGIN_TGZ) *
+$O/$(IDE_PLUGINS_ZIP): $O/$(IDE_PLUGINS_DIR)
+	cd $O/$(IDE_PLUGINS_DIR) && zip -q -r ../$(IDE_PLUGINS_ZIP) *
 
-$O/$(ECLIPSE_VANILLA_LINUX_TGZ):
-	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_LINUX_TGZ)&r=1'
+$O/$(ECLIPSE_VANILLA_TGZ_LINUX):
+	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_TGZ_LINUX)&r=1'
 
-$O/$(ECLIPSE_VANILLA_WIN_TGZ):
-	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_WIN_TGZ)&r=1'
+$O/$(ECLIPSE_VANILLA_ZIP_WIN):
+	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_ZIP_WIN)&r=1'
 
-$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_LINUX_TGZ)
-	mkdir -p $O/$(LINUX_IDE_NAME)
-	tar xaf $< -C $O/$(LINUX_IDE_NAME)
-	$O/$(LINUX_IDE_NAME)/eclipse/eclipse \
+$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX)
+	mkdir -p $O/$(IDE_INSTALL_LINUX)
+	tar xaf $< -C $O/$(IDE_INSTALL_LINUX)
+	$O/$(IDE_INSTALL_LINUX)/eclipse/eclipse \
 	    -application org.eclipse.equinox.p2.director \
 	    -noSplash \
-	    -repository $(ECLIPSE_REPO),file://$(realpath $O/$(ECLIPSE_ARC_PLUGIN_DIR)) \
+	    -repository $(ECLIPSE_REPO),file://$(realpath $O/$(IDE_PLUGINS_DIR)) \
 	    -installIU $(ECLIPSE_PREREQ),com.arc.cdt.feature.feature.group
 	touch $@
 
 $O/.stamp_ide_linux_tar: \
-	$O/$(OOCD_LINUX_DIR)/bin/openocd \
+	$O/$(OOCD_DIR_LINUX)/bin/openocd \
 	$O/.stamp_ide_linux_eclipse \
 	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
 	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
-	cp -ad $O/$(ELF_LE_DIR)/* $O/$(LINUX_IDE_NAME)
-	cp -ad $O/$(ELF_BE_DIR)/* $O/$(LINUX_IDE_NAME)
-	cp -ad $O/$(LINUX_LE_HS_DIR)/* $O/$(LINUX_IDE_NAME)
-	cp -ad $O/$(LINUX_BE_HS_DIR)/* $O/$(LINUX_IDE_NAME)
-	mkdir $O/$(LINUX_IDE_NAME)/eclipse/jre
-	tar xaf $O/jre-*-linux-x64.tar.gz -C $O/$(LINUX_IDE_NAME)/eclipse/jre \
+	cp -ad $O/$(TOOLS_ELFLE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -ad $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -ad $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -ad $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	mkdir $O/$(IDE_INSTALL_LINUX)/eclipse/jre
+	tar xaf $O/jre-*-linux-x64.tar.gz -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
-	cp -ad $O/$(OOCD_LINUX_DIR)/* $O/$(LINUX_IDE_NAME)
-	tar caf $O/$(LINUX_IDE_TGZ) -C $O $(LINUX_IDE_NAME)
+	cp -ad $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	tar caf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
 	touch $@
 
 #
 # OpenOCD
 #
-openocd: $(OOCD_LINUX_SRC_DIR)/src/openocd
-openocd-bootstrap: $(OOCD_LINUX_SRC_DIR)/configure
-openocd-configure: $(OOCD_LINUX_SRC_DIR)/Makefile
-openocd-build: $(OOCD_LINUX_SRC_DIR)/src/openocd
-openocd-install: $(OOCD_LINUX_DIR)/bin/openocd
-openocd-tar: $O/$(OOCD_LINUX_DIR).tar.gz
+openocd: $(OOCD_SRC_DIR_LINUX)/src/openocd
+openocd-bootstrap: $(OOCD_SRC_DIR_LINUX)/configure
+openocd-configure: $(OOCD_SRC_DIR_LINUX)/Makefile
+openocd-build: $(OOCD_SRC_DIR_LINUX)/src/openocd
+openocd-install: $(OOCD_DIR_LINUX)/bin/openocd
+openocd-tar: $O/$(OOCD_DIR_LINUX).tar.gz
 openocd: openocd-tar
 
-$(OOCD_LINUX_SRC_DIR)/configure:
-	cd $(OOCD_LINUX_SRC_DIR) && ./bootstrap
+$(OOCD_SRC_DIR_LINUX)/configure:
+	cd $(OOCD_SRC_DIR_LINUX) && ./bootstrap
 
-$(OOCD_LINUX_SRC_DIR)/Makefile: $(OOCD_LINUX_SRC_DIR)/configure
-	cd $(OOCD_LINUX_SRC_DIR) && ./configure --enable-ftdi --disable-werror \
-	    --prefix=$(abspath $O/$(OOCD_LINUX_DIR))
+$(OOCD_SRC_DIR_LINUX)/Makefile: $(OOCD_SRC_DIR_LINUX)/configure
+	cd $(OOCD_SRC_DIR_LINUX) && ./configure --enable-ftdi --disable-werror \
+	    --prefix=$(abspath $O/$(OOCD_DIR_LINUX))
 
-$(OOCD_LINUX_SRC_DIR)/src/openocd: $(OOCD_LINUX_SRC_DIR)/Makefile
-	$(MAKE) -C $(OOCD_LINUX_SRC_DIR) all pdf
+$(OOCD_SRC_DIR_LINUX)/src/openocd: $(OOCD_SRC_DIR_LINUX)/Makefile
+	$(MAKE) -C $(OOCD_SRC_DIR_LINUX) all pdf
 
-$O/$(OOCD_LINUX_DIR)/bin/openocd: $(OOCD_LINUX_SRC_DIR)/src/openocd
-	$(MAKE) -C $(OOCD_LINUX_SRC_DIR) install install-pdf
+$O/$(OOCD_DIR_LINUX)/bin/openocd: $(OOCD_SRC_DIR_LINUX)/src/openocd
+	$(MAKE) -C $(OOCD_SRC_DIR_LINUX) install install-pdf
 
-$O/$(OOCD_LINUX_DIR).tar.gz: $O/$(OOCD_LINUX_DIR)/bin/openocd
-	tar -C $O -caf $O/$(OOCD_LINUX_DIR).tar.gz $(OOCD_LINUX_DIR)/
+$O/$(OOCD_DIR_LINUX).tar.gz: $O/$(OOCD_DIR_LINUX)/bin/openocd
+	tar -C $O -caf $O/$(OOCD_DIR_LINUX).tar.gz $(OOCD_DIR_LINUX)/
 
 # Make OpenOCD for Windows zip file.
-openocd-win: $O/$(OOCD_WIN_DIR).zip $O/$(OOCD_WIN_DIR).tar.gz
+openocd-win: $O/$(OOCD_DIR_WIN).zip $O/$(OOCD_DIR_WIN).tar.gz
 
-$O/$(OOCD_WIN_DIR).zip: $O/$(OOCD_WIN_DIR)
-	cd $O && zip -q -r $(OOCD_WIN_DIR).zip $(OOCD_WIN_DIR)/
+$O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
+	cd $O && zip -q -r $(OOCD_DIR_WIN).zip $(OOCD_DIR_WIN)/
 
-$O/$(OOCD_WIN_DIR).tar.gz: $O/$(OOCD_WIN_DIR)
-	tar -C $O -caf $O/$(OOCD_WIN_DIR).tar.gz $(OOCD_WIN_DIR)/
+$O/$(OOCD_DIR_WIN).tar.gz: $O/$(OOCD_DIR_WIN)
+	tar -C $O -caf $O/$(OOCD_DIR_WIN).tar.gz $(OOCD_DIR_WIN)/
 
 #
 # Clean
 #
 .PHONY: clean
 clean:
-	-rm s-rf $O
+	-rm -rf $O

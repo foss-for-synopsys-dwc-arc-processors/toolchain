@@ -61,7 +61,7 @@ mv tmp/make/bin/{mingw32-,}make.exe
 
 echo "Preparing OpenOCD..."
 mkdir tmp/openocd
-tar -C tmp/openocd -xaf packages/arc_openocd_*_win_install.tar.gz --strip-components=1
+tar -C tmp/openocd -xaf packages/arc_gnu_*_openocd_win_install.tar.gz --strip-components=1
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/openocd/ openocd
 
 echo "Preparing little-endian toolchain..."
@@ -85,7 +85,7 @@ chmod +x tmp/eclipse/eclipse/eclipsec.exe
 chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
 # Install ARC plugins
 mkdir tmp/arc_gnu_ide_plugins
-unzip packages/arc_gnu_ide_2015.06_plugins.zip -d tmp/arc_gnu_ide_plugins
+unzip packages/arc_gnu_2015.06_ide_plugins.zip -d tmp/arc_gnu_ide_plugins
 # Same as in Makefile.release
 echo "Installing ARC plugins into Eclipse..."
 tmp/eclipse/eclipse/eclipsec.exe \
