@@ -7,14 +7,14 @@ the scripts required to build the entire tool chain.
 Branches in this repository are:
 * `arc-releases` is the stable branch for the tool chain release. Head of
   this branch is a latest stable release. It is a branch recommended for most
-  users.
+  users
 * `arc-staging` is the semi-stable branch for the tool chain release
   candidates. Head of this branch is either a latest stable release or latest
-  release candidate for the upcoming release.
-* `arc-dev` is the development branch for the current tool chain release. 
+  release candidate for the upcoming release
+* `arc-dev` is the development branch for the current tool chain release
 * `arc-4.8-dev` is the development branch for the 4.8 tool chain release
 * `arc-4.4-dev` is the development branch for the 4.4 tool chain release
-* `arc-mainline-dev` is the mainline development branch (deprecated)
+* `arc-mainline-dev` is the mainline development branch (deprecated).
 
 While the top of *development* branches should build and run reliably, there
 is no guarantee of this. Users who encountered an error are welcomed to create
@@ -120,7 +120,7 @@ commands:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
 
 The binutils and gdb share the same repository, but must be in separate
-directories, because they use separate branches. Option `--reference` passed
+directories, because they use different branches. Option `--reference` passed
 when cloning gdb repository will tell Git to share internal Git files between
 binutils and gdb repository. This will greatly reduce amount of disk space
 consumed and time to clone the repository.
@@ -128,27 +128,31 @@ consumed and time to clone the repository.
 By default `toolchain` repository will be checked out to the current
 development branch `arc-dev`.
 
-Following command will check out repository to the latest release or release
-candidate:
+Following command will check out repository to the latest release:
 
     $ git checkout arc-releases
 
-This repository can be checked out to a specific GNU tool chain for ARC release
-by specifying a particular release tag, for example for 2014.12 release that
+This repository can be checked out to a specific GNU Tool chain for ARC release
+by specifying a particular release tag, for example for 2015.06 release that
 would be:
 
-    $ git checkout arc-2014.12
+    $ git checkout arc-2015.06
 
 
-Building the tool chain
+Building the Tool chain
 -----------------------
 
 The script `build-all.sh` will build and install both _arc*-elf32-_ and
 _arc*-snps-linux-uclibc-_ tool chains. The comments at the head of this script
 explain how it works and the parameters to use.
 
-The script `arc-versions.sh` specifies the branches to use in each component
-Git repository. It can be edited to change the default branches if required.
+The script `arc-versions.sh` checks out each component Git repository to a
+specified branch. Branches to checkout are specified in files in `config`
+directory. Which file is default depends on current `toolchain` branch:
+`arc-dev` branch default to `config/arc-dev.sh` file, while `arc-releases` and
+`arc-staging` will default to a file corresponding to a particular release or
+release candidate. Default choice of `config` file can be overridden with
+`--checkout-config` option of `build-all.sh` script.
 
 After checking out correct branches  `build-all.sh` in turn uses
 `build-elf32.sh` and `build-uclibc.sh`. These build respectively the
@@ -173,7 +177,7 @@ The most important options of `build-all.sh` are:
    are going to work with bare metal applications for a particular core. This
    option does not affect uClibc tool chain.
  * `--cpu <cpu>` - configure GNU tool chain to use specific core as a default
-   choice (default core is a core for which GCC will compile for, when `-mcpu=`
+   choice (default core is a core for which GCC will compile for when `-mcpu=`
    option is not passed). Default is arc700 for both bare metal and Linux tool
    chains. Combined with `--no-multilib` this options allows to build GNU tool
    chain that supports only one specific core. Valid values include `arc600`,
@@ -188,12 +192,12 @@ Please consult head of the `./build-all.sh` file to get a full list of
 supported options and their detailed descriptions.
 
 Note about `--cpu` and `--target-cflags` options. They allow to build toolchain
-tailored for a particular core. Option `--cpu` will change default CPU of
-GCC. Option `--target-cflags` on the other hand will change only CFLAGS used to
+tailored for a particular core. Option `--cpu` will change default CPU of GCC.
+Option `--target-cflags` on the other hand will change only CFLAGS used to
 compile toolchain standard library, but will not affect default compiler
-option. Consequently, when using a toolchain configured this way it is still
-will be required to provide corresponding compiler options, except for the
-`-mcpu`.
+options. Consequently, when using a toolchain configured this way it still will
+be required to provide corresponding compiler options except for the `-mcpu`.
+
 
 ### Build options examples
 
@@ -210,7 +214,7 @@ Build tool chain for ARC HS Linux development:
 
     $ ./build-all.sh --no-elf32 --cpu archs --install-dir $INSTALL_ROOT
 
-Build bare metal tool chain for EM cores (for example for EM Starter Kit):
+Build bare metal tool chain for ARC EM cores:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu arcem --no-multilib
 
@@ -247,9 +251,10 @@ To build tool chain for Windows hosts it is recommended to do a "Canadian
 cross-compilation" on Linux, that is tool chain for ARC targets that runs on
 Windows hosts is built on Linux host. Build scripts expect to be run in
 Unix-like environment, so it is often faster and easier to build tool chain on
-Linux, that on Windows natively. While environments like Cygwin and MSYS allow
-tool chain to be built on Windows natively this way is not officially supported
-and not recommended by Synopsys.
+Linux, than do this on Windows using environments like Cygwin and MSYS. While
+those allow tool chain to be built on Windows natively this way is not
+officially supported and not recommended by Synopsys, due to severe performance
+penalty of those environments on build time and possible compatibility issue.
 
 Some limitation apply:
 * CGEN simulator is not support on Windows hosts, thus should be disabled with
@@ -289,8 +294,8 @@ triplet `i686-pc-mingw32`.
 Usage examples
 --------------
 
-In all of those examples it is expected that GNU tool chain for ARC has been
-added to the PATH:
+In all of the following examples it is expected that GNU tool chain for ARC has
+been added to the PATH:
 
     $ export PATH=$INSTALL_ROOT/bin:$PATH
 
@@ -312,10 +317,10 @@ To debug it in the GDB using simulator (GDB output omitted):
     (gdb) target sim
     (gdb) load
     (gdb) start
-    (gdb) l
+    (gdb) list
     (gdb) continue
     hello world
-    (gdb) q
+    (gdb) quit
 
 CGEN simulator supports only ARC 600 and ARC 700.
 
@@ -340,7 +345,7 @@ And in second console (GDB output is omitted):
     (gdb) break exit
     (gdb) continue
     (gdb) continue
-    (gdb) q
+    (gdb) quit
 
 If one of the HS TCFs is used, then it is required to add `-on
 nsim_isa_ll64_option` to nSIM options, because GCC for ARC automatically
@@ -394,6 +399,7 @@ Compile test application and run:
     (gdb) next
     (gdb) break exit
     (gdb) continue
+    (gdb) quit
 
 
 ### Using Ashling Opella-XD debug probe to debug bare metal applications
@@ -447,6 +453,7 @@ follows:
     (gdb) continue
     (gdb) break exit
     (gdb) continue
+    (gdb) quit
 
 
 ### Debugging applications on Linux for ARC
