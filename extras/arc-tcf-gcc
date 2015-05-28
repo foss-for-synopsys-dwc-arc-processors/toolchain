@@ -1,0 +1,145 @@
+#!/usr/bin/perl
+# Copyright (C) 2015 Synopsys Inc.
+
+# Contributor Claudiu Zissulescu <claziss@synopsys.com>
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#          SCRIPT TO RUN ARC-ELF32 GCC COMPILER USING TCF FILES
+#          ====================================================
+
+# Invocation Syntax
+
+#   arc-elf32-tcf-gcc [--tcf <tcf_file>]
+#                     [--compiler <compiler>]
+#                     [--verbose]
+
+# This script is a wrapper to compile and file using a provided TCF
+# file for setting the common options and memory configuration for a
+# given architecture.  The arguments have the following meanings:
+
+# --tcf <tcf_file>
+
+#    The name and the location of the TCF file.
+
+# --compiler <compiler>
+
+#    Overwrites the default compiler name.  The compiler tool chain needs to be
+#    in the PATH. Default value depends on the name of this file - it will call
+#    compiler that has the same name, only without -tcf part. Therefore:
+#    - arc-elf32-tcf-gcc     -> arc-elf32-gcc
+#    - arceb-elf32-tcf-gcc   -> arceb-elf32-gcc
+#    - arc-linux-tcf-gcc     -> arc-linux-gcc
+#    - arceb-linux-tcf-gcc   -> arceb-linux-gcc
+#    - arc-a-b-tcf-gcc       -> arc-a-b-gcc
+#    - arc-tcf-elf32-tcf-gcc -> arc-tcf-elf32-gcc
+
+# --verbose
+
+#    Verbose output. Prints the compiler invokation command.
+
+# ------------------------------------------------------------------------------
+
+use strict;
+use warnings;
+use XML::LibXML;
+use File::Basename;
+use File::Temp qw/ tempfile tempdir /;
+
+my @gcc_args;
+my $filename = "";
+my $compiler = "arc-elf32-gcc";
+my $lfilename = "";
+my $cfilename = "";
+my $dirname;
+my $verbose = 0;
+
+sub parseXML
+{
+    my ($xml_file, $node) = @_;
+
+    my @cnfgl = $xml_file->findnodes($node);
+
+    my $filename = $cnfgl[0]->getAttribute('filename');
+
+    $filename = $dirname . "/" .  $filename;
+    open (my $fh, '>', $filename)
+	|| die "Could not open file $filename' $!";
+
+    print $fh $cnfgl[0]->textContent;
+    close $fh;
+
+    return $filename
+}
+
+# Parse input arguments, search for --tcf <filename>, and extract it.
+# Look also for --compiler <compiler name>, and extract it.
+sub parseInputArgs
+{
+    my (@ins) = @_;
+
+    while (scalar (@ins) > 0)
+    {
+	if ($ins[0] eq "--tcf")
+	{
+	    $filename = $ins[1];
+	    shift (@ins); shift (@ins);
+	}
+	elsif ($ins[0] eq "--compiler")
+	{
+	    $compiler = $ins[1];
+	    shift (@ins); shift (@ins);
+	}
+	elsif ($ins[0] eq "--verbose")
+	{
+	    $verbose = 1;
+	    shift (@ins);
+	}
+	else
+	{
+	    push @gcc_args, $ins[0];
+	    shift (@ins);
+	}
+    }
+}
+
+
+sub processXML
+{
+    return "" if ($filename eq "");
+
+    my $parser = XML::LibXML->new();
+    my $tcf    = $parser->parse_file($filename);
+    my $sn = '/config_list/configuration[@name="gnu_linker_command_file"]';
+    parseXML ($tcf, $sn);
+    my $cmdline = " -Wl,-marcv2elfb -L" . $dirname . " ";
+    $sn = '/config_list/configuration[@name="gcc_compiler"]';
+    $cmdline .= " @" . parseXML ($tcf, $sn);
+    return $cmdline;
+}
+
+#-------------------------------------------------------------
+# Main entry
+#-------------------------------------------------------------
+if ($0 =~ m/-tcf-gcc$/) {
+    $compiler = fileparse($0);
+    $compiler =~ s/-tcf-gcc$/-gcc/;
+}
+
+parseInputArgs(@ARGV);
+$dirname = tempdir();
+my $cmd = processXML();
+$cmd = $compiler . $cmd . " " . join (" ", @gcc_args);
+print $cmd, "\n" if ($verbose) ;
+system ($cmd);

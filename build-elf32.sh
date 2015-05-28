@@ -271,6 +271,9 @@ fi
 ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
     -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
 
+# Copy TCF handler.
+cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gcc"
+
 echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 
 # vim: noexpandtab sts=4 ts=8:
