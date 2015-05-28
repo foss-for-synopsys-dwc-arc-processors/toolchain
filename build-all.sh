@@ -47,7 +47,7 @@
 #                  [--disable-werror | --no-disable-werror]
 #                  [--strip | --no-strip]
 #                  [--release-name <release>]
-#                  [--tls | --no-tls]
+#                  [--nptl | --no-nptl]
 #                  [--checkout-config <config>]
 #                  [--host <triplet>]
 
@@ -582,7 +582,7 @@ case ${opt} in
 	echo "                      [--strip | --no-strip]"
 	echo "                      [--sed-tool <tool>]"
 	echo "                      [--release-name <release>]"
-	echo "                      [--tls | --no-tls]"
+	echo "                      [--nptl | --no-nptl]"
 	echo "                      [--checkout-config <config>]"
 	echo "                      [--host <triplet>]"
 	exit 1
