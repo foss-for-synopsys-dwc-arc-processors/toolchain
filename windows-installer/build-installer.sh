@@ -111,6 +111,7 @@ echo "Creating installer..."
 cp toolchain/windows-installer/*.nsi .
 cp toolchain/windows-installer/*.nsh .
 cp toolchain/windows-installer/snps_logo.bmp .
+cp toolchain/windows-installer/Synopsys_FOSS_Notices.txt .
 /cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE installer.nsi
 
 echo "Done"

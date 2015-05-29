@@ -67,6 +67,7 @@ RequestExecutionLevel admin
 !define MUI_HEADERIMAGE_RIGHT
 !define MUI_HEADERIMAGE_BITMAP "snps_logo.bmp"
 
+!insertmacro MUI_PAGE_LICENSE "Synopsys_FOSS_Notices.txt"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
