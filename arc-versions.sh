@@ -156,9 +156,11 @@ do
     then
 	# Only update to latest if we are not in detached HEAD mode.
 	# If tree is in detahed state, output differs between Git versions:
-	# Git 1.8 prints: * (detached from <tag_name>>)
+	# Git >=2.4 prints: *(HEAD detached at <tag_name>)
+	# Git 1.8-2.3 prints: * (detached from <tag_name>)
 	# Git <1.8 prints: * (no branch)
-	if ! git branch | grep -q -e '\* (detached from .*)' -e '\* (no branch)'
+	if ! git branch | grep -q -e '\* (HEAD detached at .*)' \
+	    -e '\* (detached from .*)' -e '\* (no branch)'
 	then
 	    echo "  pulling latest version"
 	    if ! git pull
