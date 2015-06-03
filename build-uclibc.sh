@@ -541,48 +541,74 @@ done
 echo "  finished creating symlinks"
 
 # -----------------------------------------------------------------------------
-# gdbserver has to be built on its own.
+# Native GDB
 
-echo "Building gdbserver to run on an ARC ..." | tee -a "${logfile}"
-echo "=======================================" >> "${logfile}"
+if [ $DO_NATIVE_GDB = yes ]; then
 
-build_dir_init gdbserver
+    # GDB needs ncurses (termcap to be exact).
+    # Since ncurses is a separate product it is an outlier with regards of build process.
+    echo "Building native ncurses to run on an ARC ..." | tee -a "${logfile}"
 
-# ARC_COMMON_BUGURL is defined in arc-init.sh, which has been source.
-config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdb/gdbserver
-if "${config_path}"/configure \
-        --with-pkgversion="${version_str}"\
-        --with-bugurl="$ARC_COMMON_BUGURL" \
-        --host=${triplet} >> "${logfile}" 2>> "${logfile}"
-then
-    echo "  finished configuring gdbserver"
+    ncurses_version=5.9
+    ncurses_url_base=http://ftp.gnu.org/pub/gnu/ncurses
+    ncurses_tar=ncurses-${ncurses_version}.tar.gz
+    ncurses_url=$ncurses_url_base/$ncurses_tar
+    cd "$ARC_GNU/toolchain"
+    mkdir -p _download_tmp
+    if [ ! -s _download_tmp/$ncurses_tar ]; then
+	wget -nv -O _download_tmp/$ncurses_tar $ncurses_url
+    fi
+
+    build_dir_init ncurses
+    tar xaf $ARC_GNU/toolchain/_download_tmp/$ncurses_tar --strip-components=1
+    # Ada is not supported on ARC, so it has to be disabled, otherwise dumb
+    # configure script might find Ada compiler for host system and will try to
+    # use it as a compiler for ARC.
+    # C++ has to be disabled because of STAR9000908736 - there is an error when
+    # linking its demo application. Otherwise there is no reason to disable C++
+    # support.
+    configure_for_arc . $triplet --without-cxx-binding --without-ada
+    make_target building
+    make_target_ordered installing install DESTDIR=$SYSROOTDIR
+
+    echo "Building native GDB to run on an ARC ..." | tee -a "${logfile}"
+
+    build_dir_init native_gdb
+
+    config_path=$(calcConfigPath "${ARC_GNU}")/gdb
+    configure_for_arc "$config_path" $triplet \
+	--disable-gas --disable-ld --disable-binutils
+    make_target building
+    # For reasons I do not know arc-linux-strip is ignored by install-sh, even
+    # though gdb/Makefile sets STRIPPROG. But it installs it in some
+    # funny/complex way, which perhaps is source of an issue. To avoid any
+    # troubles just set STRIPPROG to arc-linux-strip. Note: STRIP is Makefile
+    # variable; STRIPPROG is variable used by install-sh; STRIP is already set
+    # correctly, but STRIPPROG is not.
+    # Unforunately strip will strip complete symbol table, instead of just
+    # debug symbols.
+    make_target_ordered installing install-strip-gdb DESTDIR=$SYSROOTDIR \
+	STRIPPROG=${triplet}-strip
 else
-    echo "ERROR: gdbserver configure failed. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
+    # If native GDB has been disabled, then simple gdbserver still will be
+    # built. It doesn't need ncurses.
+    echo "Building gdbserver to run on an ARC ..." | tee -a "$logfile"
 
-CC=${triplet}-gcc
-export CC
-if make ${PARALLEL} \
-    CFLAGS="-static -fcommon -mno-sdata -O3 ${CFLAGS_FOR_TARGET}" \
-    >> "${logfile}" 2>&1
-then
-    echo "  finished building gdbserver to run on an arc"
-else
-    echo "ERROR: gdbserver build was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
+    build_dir_init gdbserver
+    # Static options are same as when gdbserver is configured by the top-level
+    # configure script.
+    config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdb/gdbserver
+    LDFLAGS="-static-libstdc++ -static-libgcc" \
+	configure_for_arc "$config_path" $triplet
+    make_target building
 
-mkdir -p ${INSTALLDIR}/target-bin
-if cp gdbserver ${INSTALLDIR}/target-bin
-then
-    echo "  finished installing gdbserver to run on an ARC"
-else
-    echo "ERROR: gdbserver install was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
+    # gdbserver makefile lacks install-strip target. It is possible to trick
+    # gdbserver Makefile to install stripped binary by setting INSTAL_PROGRAM
+    # Makefile variable to 'install -c -s', however this way gdbserver would be
+    # stripped from all symbols, not just debug symbols.
+    # Note that $SYSROOTDIR/usr/bin might not exist yet.
+    mkdir -p $SYSROOTDIR/usr/bin
+    ${triplet}-objcopy -g gdbserver $SYSROOTDIR/usr/bin/gdbserver
 fi
 
 echo "DONE  UCLIBC: $(date)" | tee -a "${logfile}"

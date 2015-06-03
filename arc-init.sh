@@ -434,17 +434,49 @@ configure_uclibc_stage2() {
     fi
 }
 
+
+# Configure application to run on ARC, that is --host=arc-snps-linux-uclibc (or
+# whatever is correct for particular case).
+# Arguments:
+# $1 - source directory
+# $2 - target triplet
+# rest are passed to configure as is
+configure_for_arc() {
+    echo "  configuring..."
+
+    local srcdir=$1
+    local triplet=$2
+    shift 2
+
+    # --prefix must correspond to prefix on *target* system, not where it will
+    # be installed on build host - prefix value might be stored somewhere in
+    # final product, therefore stored value should be one which is valid for
+    # target system. To install files on build host DESTDIR should be set when
+    # calling "make install". Note - prefix is set to /usr, DESTDIR should
+    # point to sysroot.
+    if ! $srcdir/configure --prefix=/usr --host=$triplet \
+	    --with-pkgversion="${version_str}"\
+	    --with-bugurl="$ARC_COMMON_BUGURL" \
+	    CFLAGS="$CFLAGS_FOR_TARGET" $* \
+	    >> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while configuring."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
 # Arguments:
 # $1 - step name. It should be a gerund for proper text representation, as
 # "building", not "build".
-# remaining - make targets
+# remaining - make targets. Although really can be make vars as well, like "A=aa".
 make_target() {
     local step="$1"
     shift
     echo "  $step..."
     if ! make $PARALLEL $* >> "$logfile" 2>&1
     then
-	echo "ERROR: failed while $1."
+	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
 	exit 1
     fi
@@ -461,7 +493,7 @@ make_target_ordered() {
     echo "  $step..."
     if ! make $* >> "$logfile" 2>&1
     then
-	echo "ERROR: failed while $1."
+	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
 	exit 1
     fi
