@@ -71,8 +71,19 @@ RequestExecutionLevel admin
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
+
+# Uninstaller pages mostly use same defines as installer ones, so to have
+# different texts, defiens should be done twice: for install page and for
+# uninstall page.
+!define MUI_FINISHPAGE_TEXT "Please note: uninstall process can only remove \
+files created by the installer. Programs like Eclipse may create files \
+which will be left behind by the installer. Users should manually remove these \
+file after uninstall to avoid any problems, especially when uninstalling to \
+upgrade to new version being re-installed to same location."
+
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
 
 !insertmacro MUI_LANGUAGE "English"
 
