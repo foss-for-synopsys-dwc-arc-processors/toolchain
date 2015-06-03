@@ -54,7 +54,7 @@ SetCompressor zlib
 #SetCompressor /FINAL lzma
 
 # Our registry key for uninstallation
-!define uninstreg "Software\Microsoft\Windows\CurrentVersion\Uninstall\${entry_name}_${arcver}"
+!define uninstreg "Software\Microsoft\Windows\CurrentVersion\Uninstall\${entry_name}"
 
 # We want admin rights
 RequestExecutionLevel admin
@@ -88,6 +88,12 @@ Function .onInit
       MessageBox mb_iconstop "Administrator rights are required to install this program."
       SetErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
       Quit
+  ${EndIf}
+
+  ReadRegStr $0 HKLM "${uninstreg}" "UninstallString"
+  ${If} $0 != ""
+    MessageBox mb_iconstop "Please, uninstall previous version of ${arctitle} first."
+    Abort
   ${EndIf}
 FunctionEnd
 
