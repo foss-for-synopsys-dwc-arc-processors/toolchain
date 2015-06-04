@@ -68,7 +68,9 @@ if { [info exists env(ARC_NSIM_OPTS) ] } {
 # Setup the MetaWare simulator.
 set_board_info sim "$::env(NSIM_HOME)/bin/nsimdrv ${xarchflags}"
 set_board_info sim_time_limit 120
-set_board_info is-simulator 1
+# is_simulator should be set already by 'load_generic_config "sim"'. Do it here
+# to be safe.
+set_board_info is_simulator 1
 
 # nsimdrv doesn't return application's exit code as it's own exit code, thus it
 # is required to use status wrapper, that will print "***EXIT <number>" message.

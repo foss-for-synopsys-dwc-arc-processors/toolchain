@@ -105,6 +105,6 @@ if { $tool == "gdb" } {
 
 # Tests may recognize this board as a simulator and reduce amount
 # of computations.
-set_board_info is-simulator 1
+set_board_info is_simulator 1
 
 # vim: noexpandtab sts=4 ts=8:
