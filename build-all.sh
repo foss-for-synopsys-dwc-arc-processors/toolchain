@@ -754,6 +754,18 @@ fi
 
 PARALLEL="-j ${jobs} -l ${load}"
 
+# Set version string for Linux uClibc toolchain, it will be used by arc-init. I
+# do not like this cross-file dependency, but otherwise it happens that
+# arc-init depends on either UCLIBC_TOOLS_VERSION, or on ISA_CPU+RELEASE_NAME.
+# Probably that stuff should be centralized is some better way or uClibc
+# configure procedures should take version string as an argument.
+if [ $ISA_CPU = arc700 ]
+then
+    UCLIBC_TOOLS_VERSION="ARCompact ISA Linux uClibc toolchain $RELEASE_NAME"
+else
+    UCLIBC_TOOLS_VERSION="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
+fi
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
@@ -783,6 +795,7 @@ export NPTL_SUPPORT
 export CHECKOUT_CONFIG
 # Used by configure funcs in arc-init.sh
 export TOOLCHAIN_HOST
+export UCLIBC_TOOLS_VERSION
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"

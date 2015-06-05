@@ -188,13 +188,6 @@ fi
 arch=arc
 triplet=${arche}-snps-linux-uclibc
 
-if [ $ISA_CPU = arc700 ]
-then
-    version_str="ARCompact ISA Linux uClibc toolchain $RELEASE_NAME"
-else
-    version_str="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
-fi
-
 # Set up a logfile
 logfile="${LOGDIR}/uclibc-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"

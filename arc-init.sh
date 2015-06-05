@@ -380,7 +380,7 @@ configure_uclibc_stage1() {
 	--without-newlib \
 	--disable-c99 \
 	--disable-libgomp \
-	--with-pkgversion="$version_str" \
+	--with-pkgversion="$UCLIBC_TOOLS_VERSION" \
 	--with-bugurl="$ARC_COMMON_BUGURL" \
 	$CONFIG_EXTRA \
 	--with-sysroot="$SYSROOTDIR" \
@@ -413,7 +413,7 @@ configure_uclibc_stage2() {
 	--target=$triplet \
 	--with-cpu=${ISA_CPU} \
 	$UCLIBC_DISABLE_MULTILIB \
-	--with-pkgversion="$version_str" \
+	--with-pkgversion="$UCLIBC_TOOLS_VERSION" \
 	--with-bugurl="$ARC_COMMON_BUGURL" \
 	--enable-fast-install=N/A \
 	--with-endian=$ARC_ENDIAN \
@@ -455,7 +455,7 @@ configure_for_arc() {
     # calling "make install". Note - prefix is set to /usr, DESTDIR should
     # point to sysroot.
     if ! $srcdir/configure --prefix=/usr --host=$triplet \
-	    --with-pkgversion="${version_str}"\
+	    --with-pkgversion="$UCLIBC_TOOLS_VERSION"\
 	    --with-bugurl="$ARC_COMMON_BUGURL" \
 	    CFLAGS="$CFLAGS_FOR_TARGET" $* \
 	    >> "$logfile" 2>&1
