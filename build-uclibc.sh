@@ -554,6 +554,10 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     build_dir_init ncurses
     tar xaf $ARC_GNU/toolchain/_download_tmp/$ncurses_tar --strip-components=1
+
+    # Update ncurses/config.sub which is not aware of arceb-* targets
+    patch config.sub $ARC_GNU/toolchain/extras/ncurses.big-endian.patch
+
     # Ada is not supported on ARC, so it has to be disabled, otherwise dumb
     # configure script might find Ada compiler for host system and will try to
     # use it as a compiler for ARC.
