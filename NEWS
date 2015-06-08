@@ -1,0 +1,41 @@
+Major changes in 2015.06 release
+--------------------------------
+
+Build process:
+- Added NPTL Support (--nptl/--no-nptl options of build-all.sh). NPTL is now
+  default threading library for Linux uClibc toolchain.
+- Major change in toolchain build process - unified source tree is not used
+  anymore. Options --unisrc/--no-unisrc removed.
+- Added custom "configuration" files, that contain branches to be checked out.
+  Option --checkout-config added.
+- Added --host option to build-all.sh that allows to choose runtime host of
+  toolchain build. That allows to do a Canadian cross build without modifying
+  build scripts.
+- Linux is now configured out of source tree.
+- Error during PDF documentation build on RHEL 6
+- Improve performance of branch checkout phase.
+- It is now not required to copy `auto-host.h` file while doing Canadian
+  cross-build for Windows - root bug in GCC has been fixed.
+- Removed support for the old style uClibc "full" configurations, only defconfig
+  is supported now.
+- Removed option `--force`.
+- Changed default Linux branch from 3.13 to 3.18.
+- Added a new "TCF" wrapper for GCC. Script `arc-elf32-tcf-gcc` accepts `--tcf`
+  option with path to TCF file, from which GCC options will be automatically
+  extracted. Compatible TCF file is required (compatible TCF file have
+  "gcc_compiler" section).
+
+Release process:
+- Extracted push-release.sh script from tag-release.sh.
+- Makefile.release now automatically builds Linux IDE release tarball.
+- Windows installer build script now automatically installs ARC plugins to
+  vanilla Eclipse and creates installers after that.
+- Changed naming convention of release tarballs to ensure consistent naming
+  across different products: arc_gnu_{release}_{product}[_{os}_install].
+- Automated process of OpenOCD building for release.
+- Components in Windows installer can now be installed separately.
+
+DejaGNU boards:
+- Added DejaGNU board for OpenOCD.
+- Fix numerous issues with nSIM-GDB DejaGNU board
+

@@ -37,9 +37,9 @@
 
 #  2. Tags all the component trees *except* toolchain.
 
-#  3. Checks out arc-releases branch.
+#  3. Checks out arc-staging branch.
 
-#  4. Merges arc-releases with -dev.
+#  4. Merges arc-staging with -dev.
 
 #  5. Edits arc-versions.sh so it checks out the tagged versions of all
 #     components.
@@ -142,13 +142,13 @@ if [[ $branch != *-dev ]] ; then
 fi
 
 # Merge with a releases branch
-if ! git checkout arc-releases ; then
-    echo "Failed to checkout branch arc-releases"
+if ! git checkout arc-staging ; then
+    echo "Failed to checkout branch arc-staging"
     exit 1
 fi
 
 if ! git merge $branch ; then
-    echo "Failed to merge arc-releases with $branch"
+    echo "Failed to merge arc-staging with $branch"
     exit 1
 fi
 

@@ -6,6 +6,7 @@
 
 # Contributor Brendan Kehoe <brendan@zen.org>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 # RelPath function from http://www.ynform.org/w/Pub/Relpath 
 
@@ -71,6 +72,8 @@
 
 # 10-Jan-13; Jeremy Bennett. Add useful functions.
 
+# Common variables
+ARC_COMMON_BUGURL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/issues"
 
 # -----------------------------------------------------------------------------
 # Useful functions
@@ -313,18 +316,26 @@ configure_elf32() {
     fi
     echo "  configuring..."
     config_path="$(calcConfigPath "$ARC_GNU/$src")"
+
+    if [ "$TOOLCHAIN_HOST" ]; then
+	host_opt="--host=$TOOLCHAIN_HOST"
+    else
+	host_opt=
+    fi
+
     if ! "$config_path/configure" \
 	--target=${arch}-elf32 \
 	--with-cpu=$ISA_CPU \
 	$ELF32_DISABLE_MULTILIB \
 	--with-pkgversion="ARCompact/ARCv2 ISA elf32 toolchain $RELEASE_NAME" \
-	--with-bugurl="http://solvnet.synopsys.com" \
+	--with-bugurl="$ARC_COMMON_BUGURL" \
 	--enable-fast-install=N/A \
 	--with-endian=$ARC_ENDIAN \
 	$DISABLEWERROR \
 	--enable-languages=c,c++ \
 	--prefix="$INSTALLDIR" \
 	--with-headers="$ARC_GNU/newlib/newlib/libc/include" \
+	$host_opt \
 	$sim_config \
 	$CONFIG_EXTRA \
 	$* \
@@ -369,8 +380,8 @@ configure_uclibc_stage1() {
 	--without-newlib \
 	--disable-c99 \
 	--disable-libgomp \
-	--with-pkgversion="$version_str" \
-	--with-bugurl="$bugurl_str" \
+	--with-pkgversion="$UCLIBC_TOOLS_VERSION" \
+	--with-bugurl="$ARC_COMMON_BUGURL" \
 	$CONFIG_EXTRA \
 	--with-sysroot="$SYSROOTDIR" \
 	$* \
@@ -402,8 +413,8 @@ configure_uclibc_stage2() {
 	--target=$triplet \
 	--with-cpu=${ISA_CPU} \
 	$UCLIBC_DISABLE_MULTILIB \
-	--with-pkgversion="$version_str" \
-	--with-bugurl="$bugurl_str" \
+	--with-pkgversion="$UCLIBC_TOOLS_VERSION" \
+	--with-bugurl="$ARC_COMMON_BUGURL" \
 	--enable-fast-install=N/A \
 	--with-endian=$ARC_ENDIAN \
 	$DISABLEWERROR \
@@ -423,17 +434,49 @@ configure_uclibc_stage2() {
     fi
 }
 
+
+# Configure application to run on ARC, that is --host=arc-snps-linux-uclibc (or
+# whatever is correct for particular case).
+# Arguments:
+# $1 - source directory
+# $2 - target triplet
+# rest are passed to configure as is
+configure_for_arc() {
+    echo "  configuring..."
+
+    local srcdir=$1
+    local triplet=$2
+    shift 2
+
+    # --prefix must correspond to prefix on *target* system, not where it will
+    # be installed on build host - prefix value might be stored somewhere in
+    # final product, therefore stored value should be one which is valid for
+    # target system. To install files on build host DESTDIR should be set when
+    # calling "make install". Note - prefix is set to /usr, DESTDIR should
+    # point to sysroot.
+    if ! $srcdir/configure --prefix=/usr --host=$triplet \
+	    --with-pkgversion="$UCLIBC_TOOLS_VERSION"\
+	    --with-bugurl="$ARC_COMMON_BUGURL" \
+	    CFLAGS="$CFLAGS_FOR_TARGET" $* \
+	    >> "$logfile" 2>&1
+    then
+	echo "ERROR: failed while configuring."
+	echo "See \`$logfile' for details."
+	exit 1
+    fi
+}
+
 # Arguments:
 # $1 - step name. It should be a gerund for proper text representation, as
 # "building", not "build".
-# remaining - make targets
+# remaining - make targets. Although really can be make vars as well, like "A=aa".
 make_target() {
     local step="$1"
     shift
     echo "  $step..."
     if ! make $PARALLEL $* >> "$logfile" 2>&1
     then
-	echo "ERROR: failed while $1."
+	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
 	exit 1
     fi
@@ -450,7 +493,7 @@ make_target_ordered() {
     echo "  $step..."
     if ! make $* >> "$logfile" 2>&1
     then
-	echo "ERROR: failed while $1."
+	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
 	exit 1
     fi

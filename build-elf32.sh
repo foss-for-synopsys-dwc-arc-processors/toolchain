@@ -183,9 +183,43 @@ then
       install-pdf-ld install-pdf-gas
 fi
 
-# GCC
+# Sometimes there are problems with libstdc++ precompiled headers and canadian
+# cross toolchain - this happens because libstdc++ configure scripts checks
+# feature availability using the host compiler with host headers, but when
+# doing header precompilation it uses host compiler with headers of new
+# toolchain. Those headers should be the same in general, but there is a nasty
+# cyclic dependency with fenv.h. If compiler which is being used for configure
+# has this header - then this "host header" will be used. If it doesn't have
+# fenv.h - then file from libstdc++ distribution is used. In normal case of a
+# bare toolchain there is no such header, so final toolchain includes file from
+# libstdc++. But with windows cross compilation, during configure stage this
+# header exists in toolchain - version that was installed from libstdc++. Thus
+# configure got confused, because that is not a real file in the sense
+# libstdc++ expects it to be. As a results "new" libstdc++ is configured like
+# fenv.h exists, but it is not.
+
+# Ultimately that seems to happen because libstdc++ configure script uses host
+# compiler as-is, with it's own headers, but instead it should use it only as
+# code-compiler, with -nostdinc and headers of toolchain being built. What is
+# more, that is exactly how things happen, when toolchain is built from unified
+# source tree, when newlib is in the tree. But when they are build separately -
+# things get awry, and improper process is used. That happens squarely because
+# top level `configure` script will modify FLAGS_FOR_TARGET variable the way we
+# need it _only_ when newlib is part of the whole build. For us workaround is
+# simple - build of libstdc++ precompiled headers should be disabled (it
+# doesn't seem they are installed anywhere), which removes problematic build
+# step. Perhaps, more sustainable solution would be to make a step back with
+# regards of unified tree usage and make newlib part of the unified source tree
+# for baremetal builds.
+if [ "$TOOLCHAIN_HOST" ]; then
+    pch_opt=--disable-libstdcxx-pch
+else
+    pch_opt=
+fi
+
+# GCC + configure of libstdc++
 build_dir_init gcc
-configure_elf32 gcc gcc --with-newlib
+configure_elf32 gcc gcc --with-newlib $pch_opt
 make_target building all-gcc all-target-libgcc
 make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
 if [ "$DO_PDF" = "--pdf" ]
@@ -236,6 +270,9 @@ fi
 # Restore GDB config for simulator (does nothing if the change was not made).
 ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
     -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
+
+# Copy TCF handler.
+cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gcc"
 
 echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 

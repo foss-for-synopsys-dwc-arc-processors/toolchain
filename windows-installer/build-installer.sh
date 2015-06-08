@@ -24,56 +24,95 @@
 # all plug-ins installed. This is a "quick and dirty" script, thus it have
 # such strict requirements.
 
+# Params
+# Eclipse parameters copied from Makefile.release
+ECLIPSE_REPO=http://download.eclipse.org/releases/luna
+ECLIPSE_PREREQ=org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
+
 if [ -z "$RELEASE" ]; then
     echo "RELEASE env variable must be set"
     exit 1
 fi
 
-mkdir in
-cd in
+rm -rf tmp packages/arc_gnu_ide_plugins *.nsi *.nsh *.bmp
+mkdir tmp
 
-# Copy MinGW and MSYS runtime files
-echo "Copying MSYS and MinGW runtime files..."
-tar xaf ../tars/coreutils-*-msys-*-bin.tar.lzma
-tar xaf ../tars/gcc-core-*-mingw32-dll.tar.lzma
-tar xaf ../tars/gettext-*-mingw32-dll.tar.lzma
-tar xaf ../tars/libiconv-*-msys-*-dll*.tar.lzma
-tar xaf ../tars/libiconv-*-mingw32-dll.tar.lzma
-tar xaf ../tars/libintl-*-msys-*-dll*.tar.lzma
-tar xaf ../tars/msysCORE-*-msys-*-bin.tar.lzma
-tar xaf ../tars/make-*-mingw32-cvs-*-bin.tar.lzma
-mv bin/{mingw32-,}make.exe
+echo "Preparing common files..."
+mkdir tmp/common
+cp toolchain/windows-installer/arcshell.bat tmp/common
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/common common
 
-# Copy arcshell.bat
-echo "Copying arcshell.bat..."
-cp ../tars/arcshell.bat .
+echo "Preparing core utils and MSYS runtime files..."
+mkdir tmp/coreutils
+tar -C tmp/coreutils -xaf packages/coreutils/coreutils-*-msys-*-bin.tar.lzma
+tar -C tmp/coreutils -xaf packages/coreutils/libiconv-*-msys-*-dll*.tar.lzma
+tar -C tmp/coreutils -xaf packages/coreutils/libintl-*-msys-*-dll*.tar.lzma
+tar -C tmp/coreutils -xaf packages/coreutils/msysCORE-*-msys-*-bin.tar.lzma
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/coreutils coreutils
 
-# Copy OpenOCD
-echo "Copying OpenOCD..."
-tar xaf ../tars/openocd-*.tar.gz --strip-components=1
+echo "Preparing Make and MinGW runtime files..."
+mkdir tmp/make
+tar -C tmp/make -xaf packages/make/gcc-core-*-mingw32-dll.tar.lzma
+tar -C tmp/make -xaf packages/make/gettext-*-mingw32-dll.tar.lzma
+tar -C tmp/make -xaf packages/make/libiconv-*-mingw32-dll.tar.lzma
+tar -C tmp/make -xaf packages/make/make-*-mingw32-cvs-*-bin.tar.lzma
+mv tmp/make/bin/{mingw32-,}make.exe
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/make make
 
-# Copy tool chain
-echo "Copything toolchain..."
-tar xaf ../tars/arc_gnu_*_prebuilt_elf32_windows_install.tar.gz --strip-components=1
+echo "Preparing OpenOCD..."
+mkdir tmp/openocd
+tar -C tmp/openocd -xaf packages/arc_gnu_*_openocd_win_install.tar.gz --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/openocd/ openocd
 
-# Copy Eclipse
-echo "Copying Eclipse..."
-rsync -a ../tars/eclipse .
+echo "Preparing little-endian toolchain..."
+mkdir tmp/toolchain_le
+tar -C tmp/toolchain_le -xaf packages/arc_gnu_*_prebuilt_elf32_le_win_install.tar.gz \
+    --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/toolchain_le toolchain_le
+
+echo "Preparing big-endian toolchain..."
+mkdir tmp/toolchain_be
+tar -C tmp/toolchain_be -xaf packages/arc_gnu_*_prebuilt_elf32_be_win_install.tar.gz \
+    --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/toolchain_be toolchain_be
+
+echo "Preparing Eclipse..."
+mkdir tmp/eclipse
+unzip packages/eclipse-cpp-*-win32.zip -d tmp/eclipse
+# For some reason some of important exec files don't have exec bit set by the 
+# cygwin unzip, but eclipse.exe has it.
+chmod +x tmp/eclipse/eclipse/eclipsec.exe
+chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
+# Install ARC plugins
+mkdir tmp/arc_gnu_ide_plugins
+unzip packages/arc_gnu_2015.06_ide_plugins.zip -d tmp/arc_gnu_ide_plugins
+# Same as in Makefile.release
+echo "Installing ARC plugins into Eclipse..."
+tmp/eclipse/eclipse/eclipsec.exe \
+    -application org.eclipse.equinox.p2.director \
+    -noSplash \
+    -repository ${ECLIPSE_REPO},file://$(cygpath -w -a tmp/arc_gnu_ide_plugins) \
+    -installIU ${ECLIPSE_PREREQ},com.arc.cdt.feature.feature.group
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/eclipse eclipse
 
 # Copy Java runtime environment:
-echo "Copying JRE..."
-mkdir eclipse/jre
-cd eclipse/jre
-tar xaf ../../../tars/jre-*-windows-i586.tar.gz --strip-components=1
-cd ../../..
+echo "Preparing JRE..."
+mkdir -p tmp/jre/eclipse/jre
+tar -C tmp/jre/eclipse/jre -xaf packages/jre-*-windows-i586.tar.gz --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/jre jre
 
-# Generate installer an uninstaller sections
-echo "Generating nsis files..."
-./gen-nsis-sections.sh
-
+#
 # Generate installer
+#
 echo "Creating installer..."
-/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE  installer-standard.nsi
+# All file paths should relative to the location of .nsi file (or to current
+# directory if /NOCD is used). To simplify scripts they are copied here, so
+# all of them are in current directory.
+cp toolchain/windows-installer/*.nsi .
+cp toolchain/windows-installer/*.nsh .
+cp toolchain/windows-installer/snps_logo.bmp .
+cp toolchain/windows-installer/Synopsys_FOSS_Notices.txt .
+/cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe /Darcver=$RELEASE installer.nsi
 
 echo "Done"
 

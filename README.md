@@ -4,35 +4,41 @@ ARC GNU Tool Chain
 This is the main Git repository for the ARC GNU tool chain. It contains just
 the scripts required to build the entire tool chain.
 
-The branch name corresponds to the development for the various ARC releases.
+Branches in this repository are:
 * `arc-releases` is the stable branch for the tool chain release. Head of
-  this branch is either a latest stable release or latest release candidate for
-  the upcoming release.
+  this branch is a latest stable release. It is a branch recommended for most
+  users
+* `arc-staging` is the semi-stable branch for the tool chain release
+  candidates. Head of this branch is either a latest stable release or latest
+  release candidate for the upcoming release
 * `arc-dev` is the development branch for the current tool chain release
 * `arc-4.8-dev` is the development branch for the 4.8 tool chain release
 * `arc-4.4-dev` is the development branch for the 4.4 tool chain release
-* `arc-mainline-dev` is the mainline development branch
+* `arc-mainline-dev` is the mainline development branch (deprecated).
 
 While the top of *development* branches should build and run reliably, there
 is no guarantee of this. Users who encountered an error are welcomed to create
 a new bug report at GitHub Issues for this `toolchain` project.
 
-Within each branch there are points where the whole development has been put
-through comprehensive release testing. These are marked using Git *tags*, for
-example `arc-2014.12` for tool chain released in December 2014.
+The build script in this repository can be used for different versions of
+toolchain components, however such cross-version compatibility is not
+guaranteed.
 
-These tagged stable releases have been through full release testing, and known
-issues are documented in a Synopsys release notes.
+The build script from this repository by default will automatically check out
+components to versions corresponding to the toolchain branch. Build script from
+development branch of toolchain repository will by default check out latest
+development branches of components. Build script from release and staging
+branches will check out components to the corresponding git tag. For example
+build script for 2015.06 release will checkout out components to arc-2015.06
+tag.
 
-The build script will check out the corresponding branches from the tool chain
-component repositories.
 
 Prerequisites
 -------------
 
 Linux like environment is required to build GNU tool chain for ARC. To build a
-tool chain for Windows, it is recommended to cross compile it using MinGW on
-Linux. Refer to `windows-installer` directory for instructions.
+tool chain for Windows, it is recommended to cross-compile it using MinGW on
+Linux. Refer to "Building tool chain on Windows" section of this document.
 
 GNU tool chain for ARC has same standard prerequisites as an upstream GNU tool
 chain as documented in the GNU tool chain user guide or on the [GCC
@@ -114,7 +120,7 @@ commands:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
 
 The binutils and gdb share the same repository, but must be in separate
-directories, because they use separate branches. Option `--reference` passed
+directories, because they use different branches. Option `--reference` passed
 when cloning gdb repository will tell Git to share internal Git files between
 binutils and gdb repository. This will greatly reduce amount of disk space
 consumed and time to clone the repository.
@@ -122,27 +128,31 @@ consumed and time to clone the repository.
 By default `toolchain` repository will be checked out to the current
 development branch `arc-dev`.
 
-Following command will check out repository to the latest release or release
-candidate:
+Following command will check out repository to the latest release:
 
     $ git checkout arc-releases
 
-This repository can be checked out to a specific GNU tool chain for ARC release
-by specifying a particular release tag, for example for 2014.12 release that
+This repository can be checked out to a specific GNU Tool chain for ARC release
+by specifying a particular release tag, for example for 2015.06 release that
 would be:
 
-    $ git checkout arc-2014.12
+    $ git checkout arc-2015.06
 
 
-Building the tool chain
+Building the Tool chain
 -----------------------
 
 The script `build-all.sh` will build and install both _arc*-elf32-_ and
 _arc*-snps-linux-uclibc-_ tool chains. The comments at the head of this script
 explain how it works and the parameters to use.
 
-The script `arc-versions.sh` specifies the branches to use in each component
-Git repository. It can be edited to change the default branches if required.
+The script `arc-versions.sh` checks out each component Git repository to a
+specified branch. Branches to checkout are specified in files in `config`
+directory. Which file is default depends on current `toolchain` branch:
+`arc-dev` branch default to `config/arc-dev.sh` file, while `arc-releases` and
+`arc-staging` will default to a file corresponding to a particular release or
+release candidate. Default choice of `config` file can be overridden with
+`--checkout-config` option of `build-all.sh` script.
 
 After checking out correct branches  `build-all.sh` in turn uses
 `build-elf32.sh` and `build-uclibc.sh`. These build respectively the
@@ -167,15 +177,27 @@ The most important options of `build-all.sh` are:
    are going to work with bare metal applications for a particular core. This
    option does not affect uClibc tool chain.
  * `--cpu <cpu>` - configure GNU tool chain to use specific core as a default
-   choice (default core is a core for which GCC will compile for, when `-mcpu=`
+   choice (default core is a core for which GCC will compile for when `-mcpu=`
    option is not passed). Default is arc700 for both bare metal and Linux tool
    chains. Combined with `--no-multilib` this options allows to build GNU tool
    chain that supports only one specific core. Valid values include `arc600`,
    `arc700`, `arcem` and `archs`, however `arc600` and `arcem` are valid for
    bare metal tool chain only.
+ * `--host <triplet>` - option to set host triplet of tool chain. That allows to
+   do Canadian cross-compilation, where tool chain for ARC processors
+   (`--target`) will run on Windows hosts (`--host`) but will be built on Linux
+   host (`--build`).
 
 Please consult head of the `./build-all.sh` file to get a full list of
 supported options and their detailed descriptions.
+
+Note about `--cpu` and `--target-cflags` options. They allow to build toolchain
+tailored for a particular core. Option `--cpu` will change default CPU of GCC.
+Option `--target-cflags` on the other hand will change only CFLAGS used to
+compile toolchain standard library, but will not affect default compiler
+options. Consequently, when using a toolchain configured this way it still will
+be required to provide corresponding compiler options except for the `-mcpu`.
+
 
 ### Build options examples
 
@@ -192,28 +214,88 @@ Build tool chain for ARC HS Linux development:
 
     $ ./build-all.sh --no-elf32 --cpu archs --install-dir $INSTALL_ROOT
 
-Build bare metal tool chain for EM cores (for example for EM Starter Kit):
+Build bare metal tool chain for ARC EM cores:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu arcem --no-multilib
 
-### Building toolchain on Windows
+Build bare metal tool chain for ARC EM5D in the ARC EM Starter Kit 2.0:
 
-To build toolchain for Windows hosts it is recommended to do a "canadian
-cross-compilation" on Linux, that is toolchain for ARC targets that runs on
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu arcem --target-cflags "-mcode-density -mno-div-rem -mswap -mnorm \
+      -mmpy-option=6 -mshift-assist -mbarrel-shifter"
+
+Build bare metal tool chain for ARC EM7D in the ARC EM Starter Kit 2.0
+(EM7D_FPU is similiar, but with -mfpu=fpuda):
+
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu arcem --target-cflags "-mcode-density -mno-div-rem -mswap -mnorm \
+      -mmpy-option=6 -mshift-assist -mbarrel-shifter --param l1-cache-size=16384 \
+      --param l1-cache-line-size=32"
+
+Build bare metal tool chain for ARC EM4 in the ARC EM Starter Kit 1.1:
+
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu arcem --target-cflags "-mcode-density -mdiv-rem -mswap -mnorm \
+      -mmpy-option=6 -mshift-assist -mbarrel-shifter"
+
+Build bare metal tool chain for ARC EM6 in the ARC EM Starter Kit 1.1:
+
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu arcem --target-cflags "-mcode-density -mdiv-rem -mswap -mnorm \
+      -mmpy-option=6 -mshift-assist -mbarrel-shifter \
+      --param l1-cache-size=32768 --param l1-cache-line-size=128"
+
+### Building tool chain on Windows
+
+To build tool chain for Windows hosts it is recommended to do a "Canadian
+cross-compilation" on Linux, that is tool chain for ARC targets that runs on
 Windows hosts is built on Linux host. Build scripts expect to be run in
-Unix-like environment, so it is often faster and easier to build toolchain on
-Linux, that on Windows natively. While environments like Cygwin and Msys allow
-toolchain to be built on Windows natively this way is not officially supported
-and not recommended by Synopsys. Further instructions for building toolchain
-for Windows hosts can be found at [Windows-specific page]
-(windows-installer/README.md#notes-cross-compiling-for-windows).
+Unix-like environment, so it is often faster and easier to build tool chain on
+Linux, than do this on Windows using environments like Cygwin and MSYS. While
+those allow tool chain to be built on Windows natively this way is not
+officially supported and not recommended by Synopsys, due to severe performance
+penalty of those environments on build time and possible compatibility issue.
+
+Some limitation apply:
+* CGEN simulator is not support on Windows hosts, thus should be disabled with
+  `--no-sim` option.
+* Only bare metal (elf32) tool chain can be built this way.
+* It is required to have tool chain for Linux hosts in the `PATH` for Canadian
+  cross-build to succeed - it will be used to compile standard library of tool
+  chain.
+
+To cross-compile tool chain on Linux, mingw tool chain should be installed. On
+Ubuntu that can be done with `mingw-w64` package:
+
+    # apt-get install mingw-w64
+
+RHEL 6 has a very antique mingw (4.4-something), so it is recommended to first
+add EPEL repository, then install mingw from it. In CentOS:
+
+    # yum install epel-release
+    # yum install mingw-binutils-generic mingw-filesystem-base \
+      mingw32-binutils mingw32-cpp mingw32-crt mingw32-filesystem mingw32-gcc \
+      mingw32-gcc-c++ mingw32-headers mingw32-winpthreads \
+      mingw32-winpthreads-static
+
+For instruction how to install EPEL on RHEL, see
+<https://fedoraproject.org/wiki/EPEL/FAQ>.
+
+After prerequisites are installed and Linux tools are in the `PATH`, do:
+
+    $ ./build-all.sh --no-uclibc --no-sim --host i686-w64-mingw32
+
+Note that value of host triplet depends on what mingw tool chain is being used.
+Triplet `i686-w64-mingw32` is valid for mingw tool chain currently used in
+Ubuntu and EPEL, but, for example, mingw tool chain in standard RHEL 6 has
+triplet `i686-pc-mingw32`.
 
 
 Usage examples
 --------------
 
-In all of those examples it is expected that GNU tool chain for ARC has been
-added to the PATH:
+In all of the following examples it is expected that GNU tool chain for ARC has
+been added to the PATH:
 
     $ export PATH=$INSTALL_ROOT/bin:$PATH
 
@@ -235,10 +317,10 @@ To debug it in the GDB using simulator (GDB output omitted):
     (gdb) target sim
     (gdb) load
     (gdb) start
-    (gdb) l
+    (gdb) list
     (gdb) continue
     hello world
-    (gdb) q
+    (gdb) quit
 
 CGEN simulator supports only ARC 600 and ARC 700.
 
@@ -263,7 +345,7 @@ And in second console (GDB output is omitted):
     (gdb) break exit
     (gdb) continue
     (gdb) continue
-    (gdb) q
+    (gdb) quit
 
 If one of the HS TCFs is used, then it is required to add `-on
 nsim_isa_ll64_option` to nSIM options, because GCC for ARC automatically
@@ -317,6 +399,7 @@ Compile test application and run:
     (gdb) next
     (gdb) break exit
     (gdb) continue
+    (gdb) quit
 
 
 ### Using Ashling Opella-XD debug probe to debug bare metal applications
@@ -370,6 +453,7 @@ follows:
     (gdb) continue
     (gdb) break exit
     (gdb) continue
+    (gdb) quit
 
 
 ### Debugging applications on Linux for ARC

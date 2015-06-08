@@ -47,8 +47,10 @@
 #                  [--disable-werror | --no-disable-werror]
 #                  [--strip | --no-strip]
 #                  [--release-name <release>]
-#                  [--tls | --no-tls]
+#                  [--nptl | --no-nptl]
 #                  [--checkout-config <config>]
+#                  [--host <triplet>]
+#                  [--native-gdb | --no-native-gdb]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -263,6 +265,30 @@
 #     is "arc-dev" for development branch, and latest release tag for release
 #     branch.
 
+# --host <triplet>
+
+#     `<triplet>` will be passed to toolchain `configure` scripts as a value of
+#     --host option. Needed for Canadian cross compilation, for example allows
+#     to build on Linux host toolchain that will run on Windows host and will
+#     compile software for ARC processors. Note that this makes sense only for
+#     baremetal (elf32) toolchain.
+
+# --native-gdb | --no-native-gdb
+
+#     Whether to build or not to build native GDB - GDB that will run directly
+#     on ARC Linux. Default is yes. Makes sense only for Linux toolchain
+#     (--uclibc). Note that GDB requires ncurses, which will be built
+#     automatically. That has several possible points of failure:
+#     - ncurses is not part of GNU Toolchain. Its source is autodownloaded.
+#       Build process will fail if it cannot be downloaded. If you have
+#       problems, either use --no-native-gdb or put ncurses-5.9.tar.gz into
+#       toolchain/_download_tmp directory.
+#     - static ncurses libs will be installed to sysroot. You might experience
+#       issues if you will build ncurses on your own (or via Buildroot). If that
+#       is the case - build toolchain without native GDB, and then build GDB
+#       manually with your ncurses. Buildroot handles this nicely.
+#     - Due to a bug ncurses has to be built without C++ bindings.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -327,6 +353,7 @@ ISA_CPU="arc700"
 UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
+DO_NATIVE_GDB=yes
 rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
@@ -336,6 +363,7 @@ RELEASE_NAME=
 is_tarball=
 NPTL_SUPPORT="yes"
 CHECKOUT_CONFIG=
+TOOLCHAIN_HOST=
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -537,6 +565,19 @@ case ${opt} in
 	CHECKOUT_CONFIG="$1"
 	;;
 
+    --host)
+	shift
+	TOOLCHAIN_HOST="$1"
+	;;
+
+    --native-gdb)
+	DO_NATIVE_GDB=yes
+	;;
+
+    --no-native-gdb)
+	DO_NATIVE_GDB=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -567,8 +608,10 @@ case ${opt} in
 	echo "                      [--strip | --no-strip]"
 	echo "                      [--sed-tool <tool>]"
 	echo "                      [--release-name <release>]"
-	echo "                      [--tls | --no-tls]"
+	echo "                      [--nptl | --no-nptl]"
 	echo "                      [--checkout-config <config>]"
+	echo "                      [--host <triplet>]"
+	echo "                      [--native-gdb | --no-native-gdb]"
 	exit 1
 	;;
 
@@ -711,6 +754,18 @@ fi
 
 PARALLEL="-j ${jobs} -l ${load}"
 
+# Set version string for Linux uClibc toolchain, it will be used by arc-init. I
+# do not like this cross-file dependency, but otherwise it happens that
+# arc-init depends on either UCLIBC_TOOLS_VERSION, or on ISA_CPU+RELEASE_NAME.
+# Probably that stuff should be centralized is some better way or uClibc
+# configure procedures should take version string as an argument.
+if [ $ISA_CPU = arc700 ]
+then
+    UCLIBC_TOOLS_VERSION="ARCompact ISA Linux uClibc toolchain $RELEASE_NAME"
+else
+    UCLIBC_TOOLS_VERSION="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
+fi
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
@@ -725,6 +780,7 @@ export ISA_CPU
 export DO_SIM
 export CONFIG_EXTRA
 export DO_PDF
+export DO_NATIVE_GDB
 export PARALLEL
 export UCLIBC_DEFCFG
 export DISABLEWERROR
@@ -737,6 +793,9 @@ export SED
 export RELEASE_NAME
 export NPTL_SUPPORT
 export CHECKOUT_CONFIG
+# Used by configure funcs in arc-init.sh
+export TOOLCHAIN_HOST
+export UCLIBC_TOOLS_VERSION
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
