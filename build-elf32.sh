@@ -294,6 +294,13 @@ ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 # Copy TCF handler.
 cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gcc"
 
+# Copy platform specific headers from "include" to "sys-include". By default
+# "sys-include" contains generic headers from newlib's sources tree and this
+# include directory has higher priority than just "include". Thus it's necessary
+# to overwrite "sys-include" by "include" to make ARC specific headers visible.
+rm -rf "$INSTALLDIR/${arch}-elf32/sys-include"
+cp -a "$INSTALLDIR/${arch}-elf32/include" "$INSTALLDIR/${arch}-elf32/sys-include"
+
 echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 
 # vim: noexpandtab sts=4 ts=8:
