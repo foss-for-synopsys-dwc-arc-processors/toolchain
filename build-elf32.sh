@@ -120,6 +120,7 @@ echo "START ELF32: $(date)" | tee -a "$logfile"
 
 # Initialize common variables and functions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
+toolchain_build_dir=$PWD/toolchain
 
 # variables to control whether the simulator is build. Note that we actively
 # edit in the requirement for a simulator library in case it has been left
@@ -256,6 +257,24 @@ make_target building all-target-libstdc++-v3
 make_target installing install-target-libstdc++-v3
 # Don't build libstdc++ documentation because it requires additional software
 # on build host.
+
+# Expat if requested
+if [ "$SYSTEM_EXPAT" = no ]
+then
+    mkdir -p $toolchain_build_dir/_download_tmp
+    expat_version=2.1.0
+    expat_tar=expat-${expat_version}.tar.gz
+    if [ ! -s $toolchain_build_dir/_download_tmp/$expat_tar ]; then
+	wget -nv -O $toolchain_build_dir/_download_tmp/$expat_tar \
+	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
+    fi
+
+    build_dir_init expat
+    tar xzf $toolchain_build_dir/_download_tmp/$expat_tar --strip-components=1
+    configure_elf32 expat $PWD
+    make_target building all
+    make_target installing install
+fi
 
 # GDB and CGEN simulator (maybe)
 build_dir_init gdb

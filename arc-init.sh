@@ -315,7 +315,14 @@ configure_elf32() {
 	local src=$tool
     fi
     echo "  configuring..."
-    config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    # If there is / in srcdir - that this is already a path. Otherwise
+    # construct path from a directory name.
+    if echo "$src" | grep -q -e /
+    then
+	config_path="$(calcConfigPath $src)"
+    else
+	config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    fi
 
     if [ "$TOOLCHAIN_HOST" ]; then
 	host_opt="--host=$TOOLCHAIN_HOST"
@@ -408,7 +415,14 @@ configure_uclibc_stage2() {
 	local src=$tool
     fi
     echo "  configuring..."
-    config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    # If there is / in srcdir - that this is already a path. Otherwise
+    # construct path from a directory name.
+    if echo "$src" | grep -q -e /
+    then
+	config_path="$(calcConfigPath $src)"
+    else
+	config_path="$(calcConfigPath "$ARC_GNU/$src")"
+    fi
     if ! "$config_path/configure" \
 	--target=$triplet \
 	--with-cpu=${ISA_CPU} \

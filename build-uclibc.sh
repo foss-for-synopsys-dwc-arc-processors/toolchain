@@ -196,6 +196,7 @@ echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" | tee -a ${logfile}
 
 # Initalize, including getting the tool versions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
+toolchain_build_dir="$(echo "${PWD}")"/toolchain
 uclibc_build_dir="$(echo "${PWD}")"/uClibc
 linux_src_dir=${LINUXDIR}
 linux_build_dir=$build_dir/linux
@@ -510,6 +511,25 @@ export PATH
 
 # -----------------------------------------------------------------------------
 # Build and install GDB
+
+# Expat if requested
+if [ "$SYSTEM_EXPAT" = no ]
+then
+    mkdir -p $toolchain_build_dir/_download_tmp
+    expat_version=2.1.0
+    expat_tar=expat-${expat_version}.tar.gz
+    if [ ! -s $toolchain_build_dir/_download_tmp/$expat_tar ]; then
+	wget -nv -O $toolchain_build_dir/_download_tmp/$expat_tar \
+	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
+    fi
+
+    build_dir_init expat
+    tar xzf $toolchain_build_dir/_download_tmp/$expat_tar --strip-components=1
+    configure_uclibc_stage2 expat $PWD
+    make_target building all
+    make_target installing install
+fi
+
 build_dir_init gdb
 configure_uclibc_stage2 gdb
 make_target building all-gdb
@@ -540,20 +560,18 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     # GDB needs ncurses (termcap to be exact).
     # Since ncurses is a separate product it is an outlier with regards of build process.
-    echo "Building native ncurses to run on an ARC ..." | tee -a "${logfile}"
-
     ncurses_version=5.9
     ncurses_url_base=http://ftp.gnu.org/pub/gnu/ncurses
     ncurses_tar=ncurses-${ncurses_version}.tar.gz
     ncurses_url=$ncurses_url_base/$ncurses_tar
-    cd "$ARC_GNU/toolchain"
-    mkdir -p _download_tmp
-    if [ ! -s _download_tmp/$ncurses_tar ]; then
-	wget -nv -O _download_tmp/$ncurses_tar $ncurses_url
+    mkdir -p $toolchain_build_dir/_download_tmp
+    cd $toolchain_build_dir/_download_tmp
+    if [ ! -s $ncurses_tar ]; then
+	wget -nv -O $ncurses_tar $ncurses_url
     fi
 
     build_dir_init ncurses
-    tar xaf $ARC_GNU/toolchain/_download_tmp/$ncurses_tar --strip-components=1
+    tar xaf $toolchain_build_dir/_download_tmp/$ncurses_tar --strip-components=1
 
     # Update ncurses/config.sub which is not aware of arceb-* targets
     patch config.sub $ARC_GNU/toolchain/extras/ncurses.big-endian.patch
@@ -567,8 +585,6 @@ if [ $DO_NATIVE_GDB = yes ]; then
     configure_for_arc . $triplet --without-cxx-binding --without-ada
     make_target building
     make_target_ordered installing install DESTDIR=$SYSROOTDIR
-
-    echo "Building native GDB to run on an ARC ..." | tee -a "${logfile}"
 
     build_dir_init native_gdb
 
@@ -589,8 +605,6 @@ if [ $DO_NATIVE_GDB = yes ]; then
 else
     # If native GDB has been disabled, then simple gdbserver still will be
     # built. It doesn't need ncurses.
-    echo "Building gdbserver to run on an ARC ..." | tee -a "$logfile"
-
     build_dir_init gdbserver
     # Static options are same as when gdbserver is configured by the top-level
     # configure script.
