@@ -129,7 +129,7 @@ if [ "x${DO_SIM}" = "x--sim" ]
 then
     sim_config="--enable-sim --enable-sim-endian=no"
     sim_build=all-sim
-    # CGEN doesn't have install-strip target.
+    # NB: CGEN doesn't have install-strip target.
     sim_install=install-sim
     ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 	   -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
@@ -177,7 +177,8 @@ make_target building all-binutils all-gas all-ld
 # is required that binutils is installed before ld and gas. That order
 # denedency showed up only with Linux toolchain so far, but for safety same
 # patch is applied to baremetal toolchain.
-make_target_ordered installing install-binutils install-ld install-gas
+make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
+    ${HOST_INSTALL}-gas
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
@@ -280,7 +281,7 @@ fi
 build_dir_init gdb
 configure_elf32 gdb
 make_target building all-gdb ${sim_build}
-make_target installing ${sim_install} install-gdb
+make_target installing ${sim_install} ${HOST_INSTALL}-gdb
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb

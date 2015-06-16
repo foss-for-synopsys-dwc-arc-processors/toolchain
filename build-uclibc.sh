@@ -369,7 +369,8 @@ make_target building all-binutils all-ld all-gas
 # required components is not yet installed, then dummy as-new and ld-new will
 # be installed. Both libraries are installed by install-binutils. Therefore it
 # is required that binutils is installed before ld and gas.
-make_target_ordered installing install-binutils install-ld install-gas
+make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
+  ${HOST_INSTALL}-gas
 if [ $DO_PDF == --pdf ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
@@ -533,7 +534,7 @@ fi
 build_dir_init gdb
 configure_uclibc_stage2 gdb
 make_target building all-gdb
-make_target installing install-gdb
+make_target installing ${HOST_INSTALL}-gdb
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb
