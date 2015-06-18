@@ -309,7 +309,7 @@ been added to the PATH:
 
 Build application:
 
-    $ arc-elf32-gcc hello_world.c -marc700
+    $ arc-elf32-gcc hello_world.c -marc700 -g
 
 To run it on CGEN-based simulator without debugger:
 
