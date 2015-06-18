@@ -371,7 +371,7 @@ make_target building all-binutils all-ld all-gas
 # is required that binutils is installed before ld and gas.
 make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
   ${HOST_INSTALL}-gas
-if [ $DO_PDF == --pdf ]
+if [ $DO_PDF = --pdf ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
       install-pdf-ld install-pdf-gas

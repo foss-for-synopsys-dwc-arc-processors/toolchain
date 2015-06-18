@@ -174,7 +174,7 @@ temp_file_in_dir () {
     PATTERN=$2
     FILE=$(cd ${DIR} && mktemp "${PATTERN}")
     STATUS=$?
-    if [ ${STATUS} == 0 ]
+    if [ ${STATUS} = 0 ]
     then
         echo ${DIR}/${FILE}
     else
