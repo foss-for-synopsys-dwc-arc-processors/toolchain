@@ -121,7 +121,7 @@ do
     # don't want it to be clear that this tag is for toolchian.
     case $repo in
 	gdb) tag=${tagname}-gdb ;;
-	linux) tag=${tag/arc-/arc-gnu-} ;;
+	linux) tag=${tagname/arc-/arc-gnu-} ;;
 	*) tag=$tagname
     esac
 
@@ -160,7 +160,7 @@ gcc=gcc:$tagname
 gdb=gdb:$tagname-gdb
 newlib=newlib:$tagname
 uclibc=uClibc:$tagname
-linux=linux:$tagname
+linux=linux:${tagname/arc-/arc-gnu-}
 EOF
 
 # Now tell arc-versions.sh to use this file instead of arc-dev:

@@ -44,8 +44,8 @@ else
     tagname=$1
 fi
 
-# Tag and push the tags for each component (not Linux)
-for repo in cgen binutils gcc gdb newlib uClibc toolchain
+# Push the tags for each component
+for repo in cgen binutils gcc gdb newlib uClibc toolchain linux
 do
     cd ../${repo} > /dev/null 2>&1
     # Repositories are likely to be in detached state and `git symbolic-ref
