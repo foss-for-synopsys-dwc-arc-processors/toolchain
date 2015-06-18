@@ -5,9 +5,13 @@ MEMORY
     RAM  : ORIGIN = 0x10000000, LENGTH = 128M
 }
 
+/* Have to put all code sections in ICCM. Cannot put everything into RAM,
+ * because .ivt+.init must be at 0x0 for GNU linker, and cannot put .text in
+ * RAM and .init in ICCM, because that would create a long jump, that doesn't
+ * fir into S25 jump that might be present in crtbegin.o */
 REGION_ALIAS("REGION_IVT",    ICCM)
 REGION_ALIAS("REGION_INIT",   ICCM)
-REGION_ALIAS("REGION_TEXT",   RAM)
+REGION_ALIAS("REGION_TEXT",   ICCM)
 REGION_ALIAS("REGION_RODATA", RAM)
 REGION_ALIAS("REGION_DATA",   RAM)
 REGION_ALIAS("REGION_SDATA",  RAM)
