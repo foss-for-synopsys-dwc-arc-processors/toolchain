@@ -24,7 +24,7 @@
 # This should be run in the INSTALL directory, so there should be a bin
 # subdirectory.
 
-REPLACEDIR=${INSTALLDIR}
+REPLACEDIR=$1
 cd ${REPLACEDIR}
 
 # Get a suitable SED
@@ -37,7 +37,7 @@ else
 fi
 
 if ! [ -d bin ]; then
-    echo "\`$INSTALLDIR' is not a toolchain installation directory."
+    echo "\`$REPLACEDIR' is not a toolchain installation directory."
     exit 1
 fi
 

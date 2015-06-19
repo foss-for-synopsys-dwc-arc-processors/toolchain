@@ -917,7 +917,7 @@ fi
 # Patch RPATHs so they are relative
 if [ "x${rel_rpaths}" = "x--rel-rpaths" ]
 then
-    if ! "${ARC_GNU}"/toolchain/rel-rpaths.sh >> "${logfile}" 2>&1
+    if ! "${ARC_GNU}"/toolchain/rel-rpaths.sh ${INSTALLDIR} >> "${logfile}" 2>&1
     then
 	echo "ERROR: Unable to make RPATHs relative. Is patchelf installed?"
 	exit 1
