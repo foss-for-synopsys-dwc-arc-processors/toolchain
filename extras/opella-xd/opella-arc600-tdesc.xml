@@ -6,10 +6,10 @@
      notice and this notice are preserved.  -->
 <!DOCTYPE target SYSTEM "gdb-target.dtd">
 <target>
-  <architecture>arc:ARCv2</architecture>
+  <architecture>arc:ARC600</architecture>
   <!-- No OSABI for bare metal -->
   <!-- No compatibility for ARC -->
-  <feature name="org.gnu.gdb.arc.core.v2">
+  <feature name="org.gnu.gdb.arc.core.arcompact">
     <reg name="r0" bitsize="32" group="general"/>
     <reg name="r1" bitsize="32" group="general"/>
     <reg name="r2" bitsize="32" group="general"/>
