@@ -96,8 +96,8 @@ parse_args () {
 
 # -----------------------------------------------------------------------------
 # Function to clone a tool and (optionally) its upstream. The ARC branches of
-# the tool will be from a remote called "arc", the upstream branches from a
-# remote called "upstream".
+# the tool will be from a remote with default name ("origin"), the upstream
+# branches from a remote called "upstream".
 
 # With the creation of the binutils-gdb combined repo, the name of the repo
 # and the name of the tool are no longer the same, so we need a third argument.
@@ -130,9 +130,9 @@ clone_tool () {
 
     # Clone the ARC repo
     if [ ${is_dev} = "false" ] \
-	|| ! git clone -q -o arc ${ssh_repo} ${tool} >> ${logfile} 2>&1
+	|| ! git clone -q ${ssh_repo} ${tool} >> ${logfile} 2>&1
     then
-	if ! git clone -q -o arc ${http_repo} ${tool} >> ${logfile} 2>&1
+	if ! git clone -q ${http_repo} ${tool} >> ${logfile} 2>&1
 	then
 	    echo "Warning: Failed to clone ${http_repo}" | tee -a ${logfile}
 	    return 1

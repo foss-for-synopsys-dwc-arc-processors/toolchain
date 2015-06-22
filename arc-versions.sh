@@ -136,8 +136,14 @@ do
     if [ "x${autopull}" = "x--auto-pull" ]
     then
 	# Fetch any new tags and branches.
+	# Note the usage of --all. Without this option and without explicit
+	# remote name `git fetch` will succeed only if there is remote named
+	# "origin", and it will fetch only it (which might be really not what
+	# is desired). And if there is no remote named "origin" then `git
+	# fetch` will fail even if there is only a single remote in git
+	# configuration.
 	echo "  fetching tags"
-	if ! git fetch --tags
+	if ! git fetch --tags --all
 	then
 	    exit 1
 	fi
