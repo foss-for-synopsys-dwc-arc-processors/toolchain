@@ -128,6 +128,10 @@ consumed and time to clone the repository.
 By default `toolchain` repository will be checked out to the current
 development branch `arc-dev`.
 
+If current working directory is not a "toolchain" directory, then change to it:
+
+    $ cd toolchain
+
 Following command will check out repository to the latest release:
 
     $ git checkout arc-releases
