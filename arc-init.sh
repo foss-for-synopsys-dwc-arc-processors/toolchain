@@ -460,6 +460,14 @@ configure_for_arc() {
 
     local srcdir=$1
     local triplet=$2
+
+    # Cannto do a simple "CFLAGS=$CFLAGS_FOR_TARGET, because if latter is empty
+    # that would reset CFLAGS unnecessarily.
+    local cflags=
+    if [ "$CFLAGS_FOR_TARGET" ]
+    then
+	cflags="CFLAGS=$CFLAGS_FOR_TARGET"
+    fi
     shift 2
 
     # --prefix must correspond to prefix on *target* system, not where it will
@@ -471,7 +479,7 @@ configure_for_arc() {
     if ! $srcdir/configure --prefix=/usr --host=$triplet \
 	    --with-pkgversion="$UCLIBC_TOOLS_VERSION"\
 	    --with-bugurl="$ARC_COMMON_BUGURL" \
-	    CFLAGS="$CFLAGS_FOR_TARGET" $* \
+	    $cflags $* \
 	    >> "$logfile" 2>&1
     then
 	echo "ERROR: failed while configuring."
