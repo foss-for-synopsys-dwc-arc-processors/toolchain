@@ -51,6 +51,7 @@
 #                  [--checkout-config <config>]
 #                  [--host <triplet>]
 #                  [--native-gdb | --no-native-gdb]
+#                  [--system-expat | --no-system-expat]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -289,6 +290,15 @@
 #       manually with your ncurses. Buildroot handles this nicely.
 #     - Due to a bug ncurses has to be built without C++ bindings.
 
+# --system-expat | --no-system-expat
+
+#    Whether to use expat library installed into system or build it in this
+#    script. expat is used by GDB to parse XML, therefore is needed to work
+#    with XML Target descriptions. Usually using system expat is sufficient,
+#    however it may cause issues if system doesn't have expat or it is of wrong
+#    version. Notable use case for --no-system-expat is mingw32 build, if mingw
+#    installation lacks expat. Default value is to use system expat.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -364,6 +374,7 @@ is_tarball=
 NPTL_SUPPORT="yes"
 CHECKOUT_CONFIG=
 TOOLCHAIN_HOST=
+SYSTEM_EXPAT=yes
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -578,6 +589,14 @@ case ${opt} in
 	DO_NATIVE_GDB=no
 	;;
 
+    --system-expat)
+	SYSTEM_EXPAT=yes
+	;;
+
+    --no-system-expat)
+	SYSTEM_EXPAT=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -612,6 +631,7 @@ case ${opt} in
 	echo "                      [--checkout-config <config>]"
 	echo "                      [--host <triplet>]"
 	echo "                      [--native-gdb | --no-native-gdb]"
+	echo "                      [--system-expat | --no-system-expat]"
 	exit 1
 	;;
 
@@ -796,6 +816,7 @@ export CHECKOUT_CONFIG
 # Used by configure funcs in arc-init.sh
 export TOOLCHAIN_HOST
 export UCLIBC_TOOLS_VERSION
+export SYSTEM_EXPAT
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
@@ -896,7 +917,7 @@ fi
 # Patch RPATHs so they are relative
 if [ "x${rel_rpaths}" = "x--rel-rpaths" ]
 then
-    if ! "${ARC_GNU}"/toolchain/rel-rpaths.sh >> "${logfile}" 2>&1
+    if ! "${ARC_GNU}"/toolchain/rel-rpaths.sh ${INSTALLDIR} >> "${logfile}" 2>&1
     then
 	echo "ERROR: Unable to make RPATHs relative. Is patchelf installed?"
 	exit 1

@@ -120,6 +120,7 @@ echo "START ELF32: $(date)" | tee -a "$logfile"
 
 # Initialize common variables and functions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
+toolchain_build_dir=$PWD/toolchain
 
 # variables to control whether the simulator is build. Note that we actively
 # edit in the requirement for a simulator library in case it has been left
@@ -128,7 +129,7 @@ if [ "x${DO_SIM}" = "x--sim" ]
 then
     sim_config="--enable-sim --enable-sim-endian=no"
     sim_build=all-sim
-    # CGEN doesn't have install-strip target.
+    # NB: CGEN doesn't have install-strip target.
     sim_install=install-sim
     ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 	   -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
@@ -176,7 +177,8 @@ make_target building all-binutils all-gas all-ld
 # is required that binutils is installed before ld and gas. That order
 # denedency showed up only with Linux toolchain so far, but for safety same
 # patch is applied to baremetal toolchain.
-make_target_ordered installing install-binutils install-ld install-gas
+make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
+    ${HOST_INSTALL}-gas
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
@@ -257,11 +259,29 @@ make_target installing install-target-libstdc++-v3
 # Don't build libstdc++ documentation because it requires additional software
 # on build host.
 
+# Expat if requested
+if [ "$SYSTEM_EXPAT" = no ]
+then
+    mkdir -p $toolchain_build_dir/_download_tmp
+    expat_version=2.1.0
+    expat_tar=expat-${expat_version}.tar.gz
+    if [ ! -s $toolchain_build_dir/_download_tmp/$expat_tar ]; then
+	wget -nv -O $toolchain_build_dir/_download_tmp/$expat_tar \
+	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
+    fi
+
+    build_dir_init expat
+    tar xzf $toolchain_build_dir/_download_tmp/$expat_tar --strip-components=1
+    configure_elf32 expat $PWD
+    make_target building all
+    make_target installing install
+fi
+
 # GDB and CGEN simulator (maybe)
 build_dir_init gdb
 configure_elf32 gdb
 make_target building all-gdb ${sim_build}
-make_target installing ${sim_install} install-gdb
+make_target installing ${sim_install} ${HOST_INSTALL}-gdb
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb

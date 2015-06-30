@@ -24,7 +24,7 @@
 # This should be run in the INSTALL directory, so there should be a bin
 # subdirectory.
 
-REPLACEDIR=${INSTALLDIR}
+REPLACEDIR=$1
 cd ${REPLACEDIR}
 
 # Get a suitable SED
@@ -37,7 +37,7 @@ else
 fi
 
 if ! [ -d bin ]; then
-    echo "\`$INSTALLDIR' is not a toolchain installation directory."
+    echo "\`$REPLACEDIR' is not a toolchain installation directory."
     exit 1
 fi
 
@@ -51,7 +51,7 @@ fi
 # Get list of x86/x86_64 executables
 files=$(find -type f -exec file {} \; | \
     grep -e 'ELF 32-bit LSB executable, Intel 80386' \
-	 -e 'ELF 64-bit LSB executable, x86-64' \
+	 -e 'ELF 64-bit LSB\s*executable, x86-64' \
 	 -e 'ELF 64-bit LSB executable, AMD x86-64' | \
     ${SED} -e 's/:.*$//')
 
@@ -63,7 +63,7 @@ for f in $files; do
 	continue
     fi
     # Build a relative directory
-    RELDIR=`echo ${f#./} | sed -e 's#[^/]##g' | ${SED} -e 's#/#/..#g'`
+    RELDIR=`echo ${f#./} | ${SED} -e 's#[^/]##g' | ${SED} -e 's#/#/..#g'`
     RPATH=$(echo "${RPATH}" | ${SED} "s#.*\[${REPLACEDIR}\(.*\)\]#\$ORIGIN${RELDIR}\1#")
     patchelf --set-rpath "${RPATH}" ${f}
 done

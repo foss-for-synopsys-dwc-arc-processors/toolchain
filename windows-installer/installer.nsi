@@ -35,11 +35,18 @@
   !error "arcver varaible must be defined."
 !endif
 
+# Check that NSIS build for large strings is used
+!if ${NSIS_MAX_STRLEN} < 8192
+    !error "NSIS_MAX_STRLEN is ${NSIS_MAX_STRLEN} which is less than 8192, \
+    Please see comments in installer.nsi for details on installing NSIS 'big \
+    string' version."
+!endif
+
 ;=================================================
 ; Settings
 
 # File and Installer Name
-outfile "${entry_name}_ide_${arcver}_win_install.exe"
+outfile "${entry_name}_${arcver}_ide_win_install.exe"
 Name "${arctitle} ${arcver}"
 
 # Default directory

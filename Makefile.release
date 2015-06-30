@@ -219,7 +219,7 @@ $O/.stamp_elf_le_windows_built: $O/.stamp_checked_out $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
-	     --release-name $(RELEASE) --host i686-w64-mingw32
+	     --release-name $(RELEASE) --host i686-w64-mingw32 --no-system-expat
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
@@ -227,7 +227,7 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
-	     --release-name $(RELEASE) --host i686-w64-mingw32
+	     --release-name $(RELEASE) --host i686-w64-mingw32 --no-system-expat
 	touch $@
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built

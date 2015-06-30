@@ -128,6 +128,10 @@ consumed and time to clone the repository.
 By default `toolchain` repository will be checked out to the current
 development branch `arc-dev`.
 
+If current working directory is not a "toolchain" directory, then change to it:
+
+    $ cd toolchain
+
 Following command will check out repository to the latest release:
 
     $ git checkout arc-releases
@@ -257,20 +261,24 @@ officially supported and not recommended by Synopsys, due to severe performance
 penalty of those environments on build time and possible compatibility issue.
 
 Some limitation apply:
-* CGEN simulator is not support on Windows hosts, thus should be disabled with
-  `--no-sim` option.
-* Only bare metal (elf32) tool chain can be built this way.
-* It is required to have tool chain for Linux hosts in the `PATH` for Canadian
+- CGEN simulator is not supported on Windows hosts, thus should be disabled
+  with `--no-sim` option.
+- Only bare metal (elf32) tool chain can be built this way.
+- It is required to have tool chain for Linux hosts in the `PATH` for Canadian
   cross-build to succeed - it will be used to compile standard library of tool
   chain.
+- Expat library is required for GDB to parse XML target description files. This
+  library might be not available in some Mingw setup. Easiest solution is to
+  let `build-all.sh` script to build Expat by passing option
+  `--no-system-expat`.
 
-To cross-compile tool chain on Linux, mingw tool chain should be installed. On
+To cross-compile tool chain on Linux, Mingw tool chain should be installed. On
 Ubuntu that can be done with `mingw-w64` package:
 
     # apt-get install mingw-w64
 
-RHEL 6 has a very antique mingw (4.4-something), so it is recommended to first
-add EPEL repository, then install mingw from it. In CentOS:
+RHEL 6 has a very antique Mingw (4.4-something), so it is recommended to first
+add EPEL repository, then install Mingw from it. In CentOS:
 
     # yum install epel-release
     # yum install mingw-binutils-generic mingw-filesystem-base \
@@ -283,7 +291,8 @@ For instruction how to install EPEL on RHEL, see
 
 After prerequisites are installed and Linux tools are in the `PATH`, do:
 
-    $ ./build-all.sh --no-uclibc --no-sim --host i686-w64-mingw32
+    $ ./build-all.sh --no-uclibc --no-sim --host i686-w64-mingw32 \
+      --no-system-expat
 
 Note that value of host triplet depends on what mingw tool chain is being used.
 Triplet `i686-w64-mingw32` is valid for mingw tool chain currently used in
@@ -304,7 +313,7 @@ been added to the PATH:
 
 Build application:
 
-    $ arc-elf32-gcc hello_world.c -marc700
+    $ arc-elf32-gcc hello_world.c -marc700 -g
 
 To run it on CGEN-based simulator without debugger:
 
