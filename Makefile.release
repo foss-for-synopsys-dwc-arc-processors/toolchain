@@ -260,6 +260,10 @@ $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX)
 	    -noSplash \
 	    -repository $(ECLIPSE_REPO),file://$(realpath $O/$(IDE_PLUGINS_DIR)) \
 	    -installIU $(ECLIPSE_PREREQ),com.arc.cdt.feature.feature.group
+	# Eclipse will create a bunch of repos with local paths, that will not
+	# work for end-users, hence those repos must be manually removed.
+	sed -i -e "/$(subst /,_,$O)/ d" \
+	    $O/$(IDE_INSTALL_LINUX)/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
 	touch $@
 
 $O/.stamp_ide_linux_tar: \

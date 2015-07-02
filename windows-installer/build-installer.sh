@@ -93,6 +93,10 @@ tmp/eclipse/eclipse/eclipsec.exe \
     -noSplash \
     -repository ${ECLIPSE_REPO},file://$(cygpath -w -a tmp/arc_gnu_ide_plugins) \
     -installIU ${ECLIPSE_PREREQ},com.arc.cdt.feature.feature.group
+# Eclipse will create a bunch of repos with local paths, that will not work for
+# end-users, hence those repos must be manually removed.
+sed -i -e "/$(echo "$(cygpath -w -a tmp)" | tr \\ _ | sed 's/[A-Z]://')/ d" \
+    tmp/eclipse/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/eclipse eclipse
 
 # Copy Java runtime environment:
