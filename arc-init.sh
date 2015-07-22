@@ -347,7 +347,7 @@ configure_elf32() {
 	$host_opt \
 	$sim_config \
 	$CONFIG_EXTRA \
-	$* \
+	"$@" \
 	>> "$logfile" 2>&1
     then
 	echo "ERROR: failed while configuring."

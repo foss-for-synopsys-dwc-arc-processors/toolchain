@@ -53,6 +53,8 @@
 #                  [--native-gdb | --no-native-gdb]
 #                  [--system-expat | --no-system-expat]
 #                  [--elf32-gcc-stage1 | --no-elf32-gcc-stage1]
+#                  [--optsize-newlib | --no-optsize-newlib]
+#                  [--optsize-libstdc++ | --no-optsize-libstdc++]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -311,6 +313,23 @@
 #     presented in PATH thus newlib may be built by precompiled GCC. Default
 #     is --elf32-gcc-stage1.
 
+# --optsize-newlib | --no-optsize-newlib
+
+#    Whether to build an optimized for code size second set of newlib libc and
+#    libm archives. Generated files will have _nano prefix, for example
+#    libc_nano.a. This affects only elf32/baremetal toolchain. Default is
+#    --optsize-libs.
+
+# --optsize-libstdc++ | --no-optsize-libstdc++
+
+#    Whether to build an optimized for code size libcstdc++ archive. Generated
+#    files will have _nano prefix, for example libctdc++_nano.a. This change
+#    affects only elf32/baremetal toolchain. Note that due to quirks of
+#    libstdc++ configure script, enabling this option will cause GCC to be
+#    built one more time (specifically for code size libcstdc++), therefore
+#    enabling this option might cause big increase in build time of the
+#    toolchain. Default is --optsize-libstdc++.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -389,6 +408,8 @@ CHECKOUT_CONFIG=
 TOOLCHAIN_HOST=
 SYSTEM_EXPAT=yes
 DO_ELF32_GCC_STAGE1=yes
+BUILD_OPTSIZE_NEWLIB=yes
+BUILD_OPTSIZE_LIBSTDCXX=yes
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -622,6 +643,22 @@ case ${opt} in
 	DO_ELF32_GCC_STAGE1=no
 	;;
 
+    --optsize-newlib)
+	BUILD_OPTSIZE_NEWLIB=yes
+	;;
+
+    --no-optsize-newlib)
+	BUILD_OPTSIZE_NEWLIB=no
+	;;
+
+    --optsize-libstdc++)
+	BUILD_OPTSIZE_LIBSTDCXX=yes
+	;;
+
+    --no-optsize-libstdc++)
+	BUILD_OPTSIZE_LIBSTDCXX=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -658,6 +695,8 @@ case ${opt} in
 	echo "                      [--native-gdb | --no-native-gdb]"
 	echo "                      [--system-expat | --no-system-expat]"
 	echo "                      [--elf32-gcc-stage1 | --no-elf32-gcc-stage1]"
+	echo "                      [--optsize-newlib | --no-optsize-newlib]"
+	echo "                      [--optsize-libstdc++ | --no-optsize-libstdc++]"
 	exit 1
 	;;
 
@@ -845,6 +884,8 @@ export TOOLCHAIN_HOST
 export UCLIBC_TOOLS_VERSION
 export SYSTEM_EXPAT
 export DO_ELF32_GCC_STAGE1
+export BUILD_OPTSIZE_NEWLIB
+export BUILD_OPTSIZE_LIBSTDCXX
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"

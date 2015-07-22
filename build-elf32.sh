@@ -90,6 +90,14 @@
 #     Make target prefix to install host application. Should be either
 #     "install" or "install-strip".
 
+# BUILD_OPTSIZE_NEWLIB
+
+#     Build newlib libraries optimized for size in addition to normal ones.
+
+# BUILD_OPTSIZE_LIBSTDCXX
+
+#     Build libstdc++ libraries optimized for size in addition to normal ones.
+
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
@@ -167,6 +175,9 @@ echo "Installing in ${INSTALLDIR}" | tee -a "$logfile"
 rm -rf "$build_dir"
 mkdir -p "$build_dir"
 
+# Location for toolchain with libs optimized for size.
+optsize_install_dir=$build_dir/optsize_libs_install
+
 # Binutils
 build_dir_init binutils
 configure_elf32 binutils
@@ -180,6 +191,17 @@ make_target building all-binutils all-gas all-ld
 # patch is applied to baremetal toolchain.
 make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
     ${HOST_INSTALL}-gas
+
+# To play safe, libstdc++ is not built separately, but with the whole gcc,
+# because it might not behave properly if it will be built by external
+# compiler. Thus it is requried to install binutils to dummy installation dir
+# for optsize libs. Cannot use "make DESTDIR=..." install, because prefix is !=
+# /. Perhaps it makes sense to do prefix=/ and install everything with properly
+# set DESTDIR.
+if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
+    cp -a $INSTALLDIR $optsize_install_dir
+fi
+
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
@@ -233,7 +255,9 @@ if [ "$DO_ELF32_GCC_STAGE1" = "yes" ]; then
     make_target installing ${HOST_INSTALL}-gcc
 fi
 
+#
 # Newlib (build in sub-shell with new tools added to the PATH)
+#
 build_dir_init newlib
 (
 PATH=$INSTALLDIR/bin:$PATH
@@ -248,14 +272,72 @@ fi
 
 # GCC + configure of libstdc++ with newly installed newlib headers
 build_dir_init gcc-stage2
+# -f{function,data}-sections is passed for libgcc. This is especially
+# beneficial when generic software floating point implementation is used - it
+# is all in one file, so using one function will pull in whole file, which can
+# be as big as some smaller applications. Note that this will make sense only
+# if final application is linked with --gc-sections.
 configure_elf32 gcc gcc --with-newlib \
     --with-headers="$INSTALLDIR/${arch}-elf32/include" \
-    --with-libs="$INSTALLDIR/${arch}-elf32/lib" $pch_opt
+    --with-libs="$INSTALLDIR/${arch}-elf32/lib" $pch_opt \
+    CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections $CFLAGS_FOR_TARGET"
 make_target building all-gcc all-target-libgcc
 make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gcc
+fi
+
+# Compiler flags which tend to produce best code size results for ARC.
+# CFLAGS_FOR_TARGET will be used after this optsize_flags, therefore one still
+# can override default flags using --target-cflags.
+optsize_flags="-Os -g -ffunction-sections -fdata-sections "\
+    "-fno-branch-count-reg -fira-loop-pressure -fira-region=all "\
+    "-fno-sched-spec-insn-heuristic -fno-move-loop-invariants -mindexed-loads "\
+    "-mauto-modify-reg -fno-delayed-branch"
+
+#
+# Newlib optimized for size (build in sub-shell with new tools added to the PATH)
+#
+if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
+    build_dir_init newlib_optsize
+    (
+	# Original install dir is needed to know where to copy multilib files
+	# to, and where to get GCC executable.
+	orig_install_dir=$INSTALLDIR
+	PATH=$INSTALLDIR/bin:$PATH
+	INSTALLDIR=$optsize_install_dir
+	export CFLAGS_FOR_TARGET="$optsize_flags $CFLAGS_FOR_TARGET"
+
+	configure_elf32 newlib_name newlib        \
+	    --enable-newlib-reent-small           \
+	    --disable-newlib-fvwrite-in-streamio  \
+	    --disable-newlib-fseek-optimization   \
+	    --disable-newlib-wide-orient          \
+	    --enable-newlib-nano-malloc           \
+	    --disable-newlib-unbuf-stream-opt     \
+	    --enable-lite-exit                    \
+	    --enable-newlib-global-atexit         \
+	    --enable-newlib-nano-formatted-io     \
+	    --disable-newlib-multithread
+	make_target building all-target-newlib
+	make_target installing install-target-newlib
+
+	# Now copy multilibs. Code has been borrowed from ARM toolchain
+	# build-common.sh file found at https://launchpad.net/gcc-arm-embedded
+	multilibs=($($orig_install_dir/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null))
+	for multilib in "${multilibs[@]}" ; do
+	    multi_dir="${arch}-elf32/lib/${multilib%%;*}"
+	    src_dir=$optsize_install_dir/$multi_dir
+	    dst_dir=$orig_install_dir/$multi_dir
+	    cp -f $src_dir/libc.a $dst_dir/libc_nano.a
+	    cp -f $src_dir/libg.a $dst_dir/libg_nano.a
+	    cp -f $src_dir/libm.a $dst_dir/libm_nano.a
+	    # Copy nano.specs. That one really should come from libgloss, not
+	    # from "extras" but ARC doesn't support libgloss yet.
+	    cp "$ARC_GNU/toolchain/extras/nano.specs" $dst_dir/
+	done
+    )
 fi
 
 # libstdc++
@@ -274,6 +356,31 @@ make_target building all-target-libstdc++-v3
 make_target installing install-target-libstdc++-v3
 # Don't build libstdc++ documentation because it requires additional software
 # on build host.
+
+#
+# libstdc++ optimized for size
+#
+if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
+    build_dir_init libstdcxx_optsize
+    (
+	INSTALLDIR=$optsize_install_dir
+        configure_elf32 libstdc++_optsize gcc --with-newlib $pch_opt \
+	CXXFLAGS_FOR_TARGET="$optsize_flags -fno-exceptions $CXXFLAGS_FOR_TARGET"
+    )
+    make_target building all-target-libstdc++-v3
+    make_target installing install-target-libstdc++-v3
+
+    # Now copy multilibs. Code has been borrowed from ARM toolchain
+    # build-common.sh file found at https://launchpad.net/gcc-arm-embedded
+    multilibs=($($INSTALLDIR/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null))
+    for multilib in "${multilibs[@]}" ; do
+	multi_dir="${arch}-elf32/lib/${multilib%%;*}"
+	src_dir=$optsize_install_dir/$multi_dir
+	dst_dir=$INSTALLDIR/$multi_dir
+	cp -f $src_dir/libstdc++.a $dst_dir/libstdc++_nano.a
+	cp -f $src_dir/libsupc++.a $dst_dir/libsupc++_nano.a
+    done
+fi
 
 # Expat if requested
 if [ "$SYSTEM_EXPAT" = no ]
