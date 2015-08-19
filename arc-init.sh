@@ -341,7 +341,6 @@ configure_elf32() {
 	$DISABLEWERROR \
 	--enable-languages=c,c++ \
 	--prefix="$INSTALLDIR" \
-	--with-headers="$ARC_GNU/newlib/newlib/libc/include" \
 	$host_opt \
 	$sim_config \
 	$CONFIG_EXTRA \
