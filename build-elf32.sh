@@ -219,15 +219,13 @@ else
     pch_opt=
 fi
 
-# GCC + configure of libstdc++
-build_dir_init gcc
-configure_elf32 gcc gcc --with-newlib $pch_opt
-make_target building all-gcc all-target-libgcc
-make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
-if [ "$DO_PDF" = "--pdf" ]
-then
-    make_target "generating PDF documentation" install-pdf-gcc
-fi
+# GCC must be built in 2 stages. First minimal GCC build is for building
+# newlib and second stage is a complete GCC with newlib headers. See:
+# http://www.ifp.illinois.edu/~nakazato/tips/xgcc.html
+build_dir_init gcc-stage1
+configure_elf32 gcc gcc --without-headers --with-newlib
+make_target building all-gcc
+make_target installing ${HOST_INSTALL}-gcc
 
 # Newlib (build in sub-shell with new tools added to the PATH)
 build_dir_init newlib
@@ -242,6 +240,16 @@ then
 fi
 )
 
+# GCC + configure of libstdc++ with newly installed newlib headers
+build_dir_init gcc-stage2
+configure_elf32 gcc gcc --with-newlib $pch_opt
+make_target building all-gcc all-target-libgcc
+make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
+if [ "$DO_PDF" = "--pdf" ]
+then
+    make_target "generating PDF documentation" install-pdf-gcc
+fi
+
 # libstdc++
 # It is built in the build tree of GCC to avoid nasty problems which might
 # happen when libstdc++ is being built in the separate directory while new
@@ -253,7 +261,7 @@ fi
 # GCC before that.
 
 echo "Building libstdc++ ..." | tee -a "$logfile"
-cd $build_dir/gcc
+cd $build_dir/gcc-stage2
 make_target building all-target-libstdc++-v3
 make_target installing install-target-libstdc++-v3
 # Don't build libstdc++ documentation because it requires additional software
@@ -293,13 +301,6 @@ ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 
 # Copy TCF handler.
 cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gcc"
-
-# Copy platform specific headers from "include" to "sys-include". By default
-# "sys-include" contains generic headers from newlib's sources tree and this
-# include directory has higher priority than just "include". Thus it's necessary
-# to overwrite "sys-include" by "include" to make ARC specific headers visible.
-rm -rf "$INSTALLDIR/${arch}-elf32/sys-include"
-cp -a "$INSTALLDIR/${arch}-elf32/include" "$INSTALLDIR/${arch}-elf32/sys-include"
 
 echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 
