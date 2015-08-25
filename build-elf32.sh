@@ -242,7 +242,9 @@ fi
 
 # GCC + configure of libstdc++ with newly installed newlib headers
 build_dir_init gcc-stage2
-configure_elf32 gcc gcc --with-newlib $pch_opt
+configure_elf32 gcc gcc --with-newlib \
+    --with-headers="$INSTALLDIR/${arch}-elf32/include" \
+    --with-libs="$INSTALLDIR/${arch}-elf32/lib" $pch_opt
 make_target building all-gcc all-target-libgcc
 make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
 if [ "$DO_PDF" = "--pdf" ]
