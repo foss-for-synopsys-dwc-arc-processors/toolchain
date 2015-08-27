@@ -52,6 +52,7 @@
 #                  [--host <triplet>]
 #                  [--native-gdb | --no-native-gdb]
 #                  [--system-expat | --no-system-expat]
+#                  [--elf32-gcc-stage1 | --no-elf32-gcc-stage1]
 
 # This script is a convenience wrapper to build the ARC GNU 4.4 tool
 # chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
@@ -299,6 +300,13 @@
 #    version. Notable use case for --no-system-expat is mingw32 build, if mingw
 #    installation lacks expat. Default value is to use system expat.
 
+# --elf32-gcc-stage1 | --no-elf32-gcc-stage1
+
+#     Whether to build or not to build gcc-stage1 for elf32 targets. It may
+#     may be useful to turn off building gcc-stage1 if toolchain is already
+#     presented in PATH thus newlib may be built by precompiled GCC. Default
+#     is --elf32-gcc-stage1.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -375,6 +383,7 @@ NPTL_SUPPORT="yes"
 CHECKOUT_CONFIG=
 TOOLCHAIN_HOST=
 SYSTEM_EXPAT=yes
+DO_ELF32_GCC_STAGE1=yes
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -597,6 +606,14 @@ case ${opt} in
 	SYSTEM_EXPAT=no
 	;;
 
+    --elf32-gcc-stage1)
+	DO_ELF32_GCC_STAGE1=yes
+	;;
+
+    --no-elf32-gcc-stage1)
+	DO_ELF32_GCC_STAGE1=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -632,6 +649,7 @@ case ${opt} in
 	echo "                      [--host <triplet>]"
 	echo "                      [--native-gdb | --no-native-gdb]"
 	echo "                      [--system-expat | --no-system-expat]"
+	echo "                      [--elf32-gcc-stage1 | --no-elf32-gcc-stage1]"
 	exit 1
 	;;
 
@@ -817,6 +835,7 @@ export CHECKOUT_CONFIG
 export TOOLCHAIN_HOST
 export UCLIBC_TOOLS_VERSION
 export SYSTEM_EXPAT
+export DO_ELF32_GCC_STAGE1
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
