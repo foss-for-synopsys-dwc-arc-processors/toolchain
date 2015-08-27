@@ -222,10 +222,15 @@ fi
 # GCC must be built in 2 stages. First minimal GCC build is for building
 # newlib and second stage is a complete GCC with newlib headers. See:
 # http://www.ifp.illinois.edu/~nakazato/tips/xgcc.html
-build_dir_init gcc-stage1
-configure_elf32 gcc gcc --without-headers --with-newlib
-make_target building all-gcc
-make_target installing ${HOST_INSTALL}-gcc
+# When building in Canadian cross stage 1  toolchain is useless, because it is
+# not runnable on a build host, hence toolchain that can run on host should be
+# already present in PATH and stage 1 may be skipped.
+if [ "$DO_ELF32_GCC_STAGE1" = "yes" ]; then
+    build_dir_init gcc-stage1
+    configure_elf32 gcc gcc --without-headers --with-newlib
+    make_target building all-gcc
+    make_target installing ${HOST_INSTALL}-gcc
+fi
 
 # Newlib (build in sub-shell with new tools added to the PATH)
 build_dir_init newlib
