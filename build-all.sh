@@ -206,9 +206,13 @@
 
 # --target-cflags <flags>
 
-#     Use <flags> as the value of CFLAGS_FOR_TARGET when configuring. This can
-#     be used for example to make more compact libraries, by specifying "-Os
-#     -g".
+#     <flags> value will be used as CFLAGS/CXXFLAGS when building target
+#     packages. Depending on a particular type of software either
+#     CFLAGSS/CXXFLAGS will be set, or CFLAGS_FOR_TARGET/CXXFLAGS_FOR_TARGET
+#     will be set.  This can be used for example to make more compact
+#     libraries, by specifying "-Os -g". Note that this will override default
+#     "-O2 -g", therefore to append a flag to default one, for example -mll64,
+#     value of <flags> would be like "-O2 -g -mll64".
 
 # --multilib | --no-multilib
 
@@ -375,6 +379,7 @@ DO_NATIVE_GDB=yes
 rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
+CXXFLAGS_FOR_TARGET=""
 HOST_INSTALL=install
 SED=sed
 RELEASE_NAME=
@@ -526,7 +531,10 @@ case ${opt} in
 
     --target-cflags)
 	shift
+	# libstdc++ uses CXXFLAGS instead of CFLAGS, therefore both should be
+	# set.
 	CFLAGS_FOR_TARGET="$1"
+	CXXFLAGS_FOR_TARGET="$1"
 	;;
 
     --multilib | --enable-multilib)
@@ -826,6 +834,7 @@ export HOST_INSTALL
 if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
 then
     export CFLAGS_FOR_TARGET
+    export CXXFLAGS_FOR_TARGET
 fi
 export SED
 export RELEASE_NAME

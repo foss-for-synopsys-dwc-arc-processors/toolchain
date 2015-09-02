@@ -73,6 +73,7 @@
 #     Additional flags for use with configuration.
 
 # CFLAGS_FOR_TARGET
+# CXXFLAGS_FOR_TARGET
 
 #     Additional flags used when building the target libraries (e.g. for
 #     compact libraries) picked up automatically by make. This variable is used
