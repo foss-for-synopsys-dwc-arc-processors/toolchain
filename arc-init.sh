@@ -340,6 +340,9 @@ configure_elf32() {
 	--with-endian=$ARC_ENDIAN \
 	$DISABLEWERROR \
 	--enable-languages=c,c++ \
+	--disable-shared \
+	--disable-tls \
+	--disable-threads \
 	--prefix="$INSTALLDIR" \
 	$host_opt \
 	$sim_config \
