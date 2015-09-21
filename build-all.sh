@@ -56,14 +56,6 @@
 #                  [--optsize-newlib | --no-optsize-newlib]
 #                  [--optsize-libstdc++ | --no-optsize-libstdc++]
 
-# This script is a convenience wrapper to build the ARC GNU 4.4 tool
-# chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
-# Kehoe/Jeremy Bennett's build-uclibc.sh script. The arguments have the
-# following meanings:
-
-# This version is modified to work with the source tree as organized in
-# GitHub.
-
 # --source-dir <source_dir>
 
 #     The location of the ARC GNU tools source tree. If not specified, the
@@ -332,12 +324,6 @@
 
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
-
-# We do not recognize the ARC_GNU_ONLY_CONFIGURE and ARC_GNU_CONTINUE
-# environment variables, which were used in previous versions of this
-# script. If you are using this script, you need to run the whole thing. If
-# you want to redo bits, use the underlying scripts, or go into the relevant
-# directories and do it by hand!
 
 # ------------------------------------------------------------------------------
 # Unset variables, which if inherited as environment variables from the caller
