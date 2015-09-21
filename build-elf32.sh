@@ -291,10 +291,10 @@ fi
 # Compiler flags which tend to produce best code size results for ARC.
 # CFLAGS_FOR_TARGET will be used after this optsize_flags, therefore one still
 # can override default flags using --target-cflags.
-optsize_flags="-Os -g -ffunction-sections -fdata-sections "\
-    "-fno-branch-count-reg -fira-loop-pressure -fira-region=all "\
-    "-fno-sched-spec-insn-heuristic -fno-move-loop-invariants -mindexed-loads "\
-    "-mauto-modify-reg -fno-delayed-branch"
+optsize_flags="-Os -g -ffunction-sections -fdata-sections \
+    -fno-branch-count-reg -fira-loop-pressure -fira-region=all \
+    -fno-sched-spec-insn-heuristic -fno-move-loop-invariants -mindexed-loads \
+    -mauto-modify-reg -fno-delayed-branch"
 
 #
 # Newlib optimized for size (build in sub-shell with new tools added to the PATH)
