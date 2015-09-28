@@ -330,6 +330,10 @@ configure_elf32() {
 	host_opt=
     fi
 
+    # Options --with-gnu-as --with-gnu-ld should be set explicitly, because gcc
+    # is built separately from bintuils and hence "configure" cannot determine
+    # if this is GNU as and ld or not.  As a result it would assume that they
+    # are not and some features will be disabled.
     if ! "$config_path/configure" \
 	--target=${arch}-elf32 \
 	--with-cpu=$ISA_CPU \
@@ -344,6 +348,8 @@ configure_elf32() {
 	--disable-tls \
 	--disable-threads \
 	--prefix="$INSTALLDIR" \
+	--with-gnu-as \
+	--with-gnu-ld \
 	$host_opt \
 	$sim_config \
 	$CONFIG_EXTRA \
@@ -372,6 +378,11 @@ configure_uclibc_stage1() {
     fi
     echo "  configuring..."
     config_path="$(calcConfigPath "$ARC_GNU/$src")"
+
+    # Options --with-gnu-as --with-gnu-ld should be set explicitly, because gcc
+    # is built separately from bintuils and hence "configure" cannot determine
+    # if this is GNU as and ld or not.  As a result it would assume that they
+    # are not and some features will be disabled.
     if ! "$config_path/configure" \
 	--target=$triplet \
 	--with-cpu=$ISA_CPU \
@@ -391,6 +402,8 @@ configure_uclibc_stage1() {
 	--disable-libgomp \
 	--with-pkgversion="$UCLIBC_TOOLS_VERSION" \
 	--with-bugurl="$ARC_COMMON_BUGURL" \
+	--with-gnu-as \
+	--with-gnu-ld \
 	$CONFIG_EXTRA \
 	--with-sysroot="$SYSROOTDIR" \
 	$* \
@@ -425,6 +438,11 @@ configure_uclibc_stage2() {
     else
 	config_path="$(calcConfigPath "$ARC_GNU/$src")"
     fi
+
+    # Options --with-gnu-as --with-gnu-ld should be set explicitly, because gcc
+    # is built separately from bintuils and hence "configure" cannot determine
+    # if this is GNU as and ld or not.  As a result it would assume that they
+    # are not and some features will be disabled.
     if ! "$config_path/configure" \
 	--target=$triplet \
 	--with-cpu=${ISA_CPU} \
@@ -439,6 +457,8 @@ configure_uclibc_stage2() {
 	--enable-shared \
 	--without-newlib \
 	--disable-libgomp \
+	--with-gnu-as \
+	--with-gnu-ld \
 	$CONFIG_EXTRA \
 	--with-sysroot="$SYSROOTDIR" \
 	$* \
