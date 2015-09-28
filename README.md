@@ -201,6 +201,10 @@ Option `--target-cflags` on the other hand will change only CFLAGS used to
 compile toolchain standard library, but will not affect default compiler
 options. Consequently, when using a toolchain configured this way it still will
 be required to provide corresponding compiler options except for the `-mcpu`.
+Option `--target-cflags` sets C[XX]FLAGS_FOR_TARGET. Those two variables
+override default C[XX]FLAGS of standard libraries which are "-O2 -g". Hence to
+specify custom architecture flags, but preserve optimizations it is required to
+pass optimization flags to --target-cflags as well.
 
 
 ### Build options examples
@@ -225,28 +229,28 @@ Build bare metal tool chain for ARC EM cores:
 Build bare metal tool chain for ARC EM5D in the ARC EM Starter Kit 2.0:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu arcem --target-cflags "-mcode-density -mno-div-rem -mswap -mnorm \
+      --cpu arcem --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap -mnorm \
       -mmpy-option=6 -mshift-assist -mbarrel-shifter"
 
 Build bare metal tool chain for ARC EM7D in the ARC EM Starter Kit 2.0
 (EM7D_FPU is similiar, but with -mfpu=fpuda):
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu arcem --target-cflags "-mcode-density -mno-div-rem -mswap -mnorm \
-      -mmpy-option=6 -mshift-assist -mbarrel-shifter --param l1-cache-size=16384 \
-      --param l1-cache-line-size=32"
+      --cpu arcem --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap \
+      -mnorm -mmpy-option=6 -mshift-assist -mbarrel-shifter \
+      --param l1-cache-size=16384 --param l1-cache-line-size=32"
 
 Build bare metal tool chain for ARC EM4 in the ARC EM Starter Kit 1.1:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu arcem --target-cflags "-mcode-density -mdiv-rem -mswap -mnorm \
-      -mmpy-option=6 -mshift-assist -mbarrel-shifter"
+      --cpu arcem --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
+      -mnorm -mmpy-option=6 -mshift-assist -mbarrel-shifter"
 
 Build bare metal tool chain for ARC EM6 in the ARC EM Starter Kit 1.1:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu arcem --target-cflags "-mcode-density -mdiv-rem -mswap -mnorm \
-      -mmpy-option=6 -mshift-assist -mbarrel-shifter \
+      --cpu arcem --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
+      -mnorm -mmpy-option=6 -mshift-assist -mbarrel-shifter \
       --param l1-cache-size=32768 --param l1-cache-line-size=128"
 
 ### Building tool chain on Windows
