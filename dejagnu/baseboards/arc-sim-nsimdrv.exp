@@ -37,7 +37,7 @@ set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
 # Set common defaults
-set xarchflags "-on nsim_isa_spfp -on nsim_isa_dpfp -on nsim_isa_atomic_option \
+set nsimflags "-on nsim_isa_spfp -on nsim_isa_dpfp -on nsim_isa_atomic_option \
     -on nsim_isa_enable_timer_0 -on nsim_isa_enable_timer_1"
 
 # Hostlink library support
@@ -46,37 +46,37 @@ if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
         -Wl,--no-whole-archive"
 } else {
     # Use nSIM GNU IO hostlink, instead of MetaWare compatible one
-    set xarchflags "$xarchflags -on nsim_emt"
+    set nsimflags "$nsimflags -on nsim_emt"
 }
 
 # Big-endian?
 if [ string match arceb-* $target_triplet ] {
-    set xarchflags "$xarchflags -on nsim_isa_big_endian"
+    set nsimflags "$nsimflags -on nsim_isa_big_endian"
 }
 
 # ARC EM is default
 if { [string first arc700 "$multilib_opts"] == 0 } {
-    set xarchflags "$xarchflags -p nsim_isa_family=a700 -on nsim_isa_sat \
+    set nsimflags "$nsimflags -p nsim_isa_family=a700 -on nsim_isa_sat \
         -on nsim_isa_mpy32"
 } elseif { [string first arc600 "$multilib_opts"] == 0 } {
-    set xarchflags "$xarchflags -p nsim_isa_family=a600 -p nsim_isa_core=6 \
+    set nsimflags "$nsimflags -p nsim_isa_family=a600 -p nsim_isa_core=6 \
         -on nsim_isa_sat -on nsim_isa_mult32"
 } elseif { [string first archs "$multilib_opts"] == 0 } {
-    set xarchflags "$xarchflags -p nsim_isa_family=av2hs -p nsim_isa_core=1 \
+    set nsimflags "$nsimflags -p nsim_isa_family=av2hs -p nsim_isa_core=1 \
         -on nsim_isa_ll64_option -p nsim_isa_mpy_option=9 \
         -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
 } else {
-    set xarchflags "$xarchflags -p nsim_isa_family=av2em -p nsim_isa_core=1 \
+    set nsimflags "$nsimflags -p nsim_isa_family=av2em -p nsim_isa_core=1 \
         -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
 }
 
 # Allow user to specify additional options, like JIT, etc.
 if { [info exists env(ARC_NSIM_OPTS) ] } {
-    set xarchflags "$xarchflags $env(ARC_NSIM_OPTS)"
+    set nsimflags "$nsimflags $env(ARC_NSIM_OPTS)"
 }
 
 # Setup the MetaWare simulator.
-set_board_info sim "$::env(NSIM_HOME)/bin/nsimdrv ${xarchflags}"
+set_board_info sim "$::env(NSIM_HOME)/bin/nsimdrv $nsimflags"
 set_board_info sim_time_limit 120
 # is_simulator should be set already by 'load_generic_config "sim"'. Do it here
 # to be safe.
