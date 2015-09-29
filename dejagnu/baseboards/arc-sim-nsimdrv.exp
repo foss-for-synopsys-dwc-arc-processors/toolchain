@@ -78,6 +78,7 @@ if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
 } else {
     # Use nSIM GNU IO hostlink, instead of MetaWare compatible one
     set nsimflags "$nsimflags -on nsim_emt"
+    set xldflags "$xldflags --specs=nsim.specs"
 }
 
 # Big-endian?
