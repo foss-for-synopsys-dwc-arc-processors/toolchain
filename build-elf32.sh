@@ -262,10 +262,11 @@ build_dir_init newlib
 (
 PATH=$INSTALLDIR/bin:$PATH
 configure_elf32 newlib
-make_target building all-target-newlib
-make_target installing install-target-newlib
+make_target building all
+make_target installing install
 if [ "$DO_PDF" = "--pdf" ]
 then
+    # Cannot use install-pdf because libgloss/doc does not support this target.
     make_target "generating PDF documentation" install-pdf-target-newlib
 fi
 )
@@ -326,8 +327,8 @@ if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
 	    --enable-newlib-global-atexit         \
 	    --enable-newlib-nano-formatted-io     \
 	    --disable-newlib-multithread
-	make_target building all-target-newlib
-	make_target installing install-target-newlib
+	make_target building all
+	make_target installing install
 
 	# Now copy multilibs. Code has been borrowed from ARM toolchain
 	# build-common.sh file found at https://launchpad.net/gcc-arm-embedded
