@@ -70,9 +70,9 @@ proc nsim_open { portnum } {
 
     # Use either TCF or props file. TCF has higher priority.
     if [info exists env(ARC_NSIM_TCF)] {
-	spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -tcf $env(ARC_NSIM_TCF) -reconnect >/dev/null 2>/dev/null"
+	spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -tcf $env(ARC_NSIM_TCF) -reconnect -on nsim_download_elf_sections >/dev/null 2>/dev/null"
     } else {
-	spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -propsfile $env(ARC_NSIM_PROPS) -reconnect >/dev/null 2>/dev/null"
+	spawn sh -c "$env(NSIM_HOME)/bin/nsimdrv -gdb -port $portnum -propsfile $env(ARC_NSIM_PROPS) -reconnect -on nsim_download_elf_sections >/dev/null 2>/dev/null"
     }
     unset_board_info nsim_id
     set_board_info nsim_id $spawn_id

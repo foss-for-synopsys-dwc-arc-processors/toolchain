@@ -40,6 +40,9 @@ set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
 set nsimflags "-on nsim_isa_spfp -on nsim_isa_dpfp -on nsim_isa_atomic_option \
     -on nsim_isa_enable_timer_0 -on nsim_isa_enable_timer_1"
 
+# Avoid performance penalty of useless initialization of heap and stack sections.
+set nsimflags "$nsimflags -on nsim_download_elf_sections"
+
 # Hostlink library support
 if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
     set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) \
