@@ -204,7 +204,9 @@ be required to provide corresponding compiler options except for the `-mcpu`.
 Option `--target-cflags` sets C[XX]FLAGS_FOR_TARGET. Those two variables
 override default C[XX]FLAGS of standard libraries which are "-O2 -g". Hence to
 specify custom architecture flags, but preserve optimizations it is required to
-pass optimization flags to --target-cflags as well.
+pass optimization flags to --target-cflags as well. Libraries optimized for
+size will override any -Ox flag passed via --target-cflags, while other flags
+will not be overridden.
 
 
 ### Build options examples

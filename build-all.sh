@@ -206,7 +206,10 @@
 #     will be set.  This can be used for example to make more compact
 #     libraries, by specifying "-Os -g". Note that this will override default
 #     "-O2 -g", therefore to append a flag to default one, for example -mll64,
-#     value of <flags> would be like "-O2 -g -mll64".
+#     value of <flags> would be like "-O2 -g -mll64".  Libraries optimized for
+#     size use a set of their own CFLAGS and --target-cflags may override those
+#     flags if desired, with the sole exception of -Os, which is always
+#     enforced in size optimized libraries.
 
 # --multilib | --no-multilib
 

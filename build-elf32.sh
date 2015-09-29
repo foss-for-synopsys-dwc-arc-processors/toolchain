@@ -290,8 +290,14 @@ fi
 
 # Compiler flags which tend to produce best code size results for ARC.
 # CFLAGS_FOR_TARGET will be used after this optsize_flags, therefore one still
-# can override default flags using --target-cflags.
-optsize_flags="-Os -g -ffunction-sections -fdata-sections \
+# can override default flags using --target-cflags. An exception is -Os - this
+# flag is not in this variables and overrides C[XX]FLAGS_FOR_TARGET values of
+# -Ox. This is done because for the general purpose library we let
+# --target-cflags to override library flags completely, including -Ox value and
+# hence in general --target-cflags should always contain some -Ox value (except
+# for -O0, where it is not needed). But that would override -Os that is needed
+# to size optimized libraries. Hence -Os is enforced.
+optsize_flags="-g -ffunction-sections -fdata-sections \
     -fno-branch-count-reg -fira-loop-pressure -fira-region=all \
     -fno-sched-spec-insn-heuristic -fno-move-loop-invariants -mindexed-loads \
     -mauto-modify-reg -fno-delayed-branch"
@@ -307,7 +313,7 @@ if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
 	orig_install_dir=$INSTALLDIR
 	PATH=$INSTALLDIR/bin:$PATH
 	INSTALLDIR=$optsize_install_dir
-	export CFLAGS_FOR_TARGET="$optsize_flags $CFLAGS_FOR_TARGET"
+	export CFLAGS_FOR_TARGET="$optsize_flags $CFLAGS_FOR_TARGET -Os"
 
 	configure_elf32 newlib_name newlib        \
 	    --enable-newlib-reent-small           \
@@ -334,7 +340,7 @@ if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
 	    cp -f $src_dir/libg.a $dst_dir/libg_nano.a
 	    cp -f $src_dir/libm.a $dst_dir/libm_nano.a
 	    # Copy nano.specs. That one really should come from libgloss, not
-	    # from "extras" but ARC doesn't support libgloss yet.
+	    # from "extras" but ARC does not support libgloss yet.
 	    cp "$ARC_GNU/toolchain/extras/nano.specs" $dst_dir/
 	done
     )
@@ -365,7 +371,7 @@ if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
     (
 	INSTALLDIR=$optsize_install_dir
         configure_elf32 libstdc++_optsize gcc --with-newlib $pch_opt \
-	CXXFLAGS_FOR_TARGET="$optsize_flags -fno-exceptions $CXXFLAGS_FOR_TARGET"
+	CXXFLAGS_FOR_TARGET="$optsize_flags -fno-exceptions $CXXFLAGS_FOR_TARGET -Os"
     )
     make_target building all-target-libstdc++-v3
     make_target installing install-target-libstdc++-v3
