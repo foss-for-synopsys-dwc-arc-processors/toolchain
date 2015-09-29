@@ -80,7 +80,10 @@ if { [info exists env(ARC_NSIM_OPTS) ] } {
 
 # Setup the MetaWare simulator.
 set_board_info sim "$::env(NSIM_HOME)/bin/nsimdrv $nsimflags"
-set_board_info sim_time_limit 120
+# newlib.string/strcmp-1.c may run at around 2 minutes without JIT on nSIM and
+# a bit more under heavy load on machine.  Hence to avoid false timeouts limit
+# should be more than 2 minutes.
+set_board_info sim_time_limit 150
 # is_simulator should be set already by 'load_generic_config "sim"'. Do it here
 # to be safe.
 set_board_info is_simulator 1
