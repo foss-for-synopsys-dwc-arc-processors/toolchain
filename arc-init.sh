@@ -503,7 +503,7 @@ configure_for_arc() {
     if ! $srcdir/configure --prefix=/usr --host=$triplet \
 	    --with-pkgversion="$UCLIBC_TOOLS_VERSION"\
 	    --with-bugurl="$ARC_COMMON_BUGURL" \
-	    $cflags $cxxflags $* \
+	    "$cflags" "$cxxflags" $* \
 	    >> "$logfile" 2>&1
     then
 	echo "ERROR: failed while configuring."
