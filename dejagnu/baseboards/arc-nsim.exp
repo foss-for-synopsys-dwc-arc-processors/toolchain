@@ -27,6 +27,9 @@
 
 # This board specification is for use with the ARC nSim simulator.
 
+# TODO: This board has some shared code with arc-sim-nsim.exp - it should be
+# extracted into separate file.
+
 # This is a list of toolchains that are supported on this board.
 set_board_info target_install ${target_triplet}
 
@@ -58,6 +61,39 @@ set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 
 # No linker script needed.
 set_board_info ldscript ""
+
+set_board_info nsim_exe $env(NSIM_HOME)/bin/nsimdrv
+
+set nsim_flags {}
+# Run nSIM as gdbserver
+lappend nsim_flags -gdb
+# Do not exit after client disconnects
+lappend nsim_flags -reconnect
+# Do not initialize sections with zeroes
+lappend nsim_flags "-on nsim_download_elf_sections"
+
+# Detect if nSIM Turbo is available and libstdc++ is being tested.  Most of the
+# Dejagnu tests do not benefit from Turbo mode, because they are extremely
+# small, hence they finish before Turbo can kick in.  However there is two
+# certain floating point tests in libstdc++ that take quite a lot of time to
+# execute with soft-FP - around 15 minutes on Xeon@3.5GHz host.  Enabling Turbo
+# reduces this time to mere 1 minute.
+if { $tool == "libstdc++" } {
+    spawn [board_info $::board nsim_exe] -on nsim_fast
+    expect {
+	"Download failed: no file name specified" {
+	    verbose "nSIM Turbo is available"
+	    lappend nsim_flags "-on nsim_fast"
+	}
+	default {
+	    # nSIM would spit out an error message if Turbo is not supported.
+	    verbose "nSIM Turbo is not available, increasing timeout"
+	    set_board_info sim_time_limit 1200
+	}
+    }
+}
+
+set_board_info nsim_flags [join $nsim_flags]
 
 # nSIM is an exclusive resource -- only one client can connect at a time. For
 # this we cannot use get-ip.sh from arc-linux-nsim.exp, as it doesn't treat
