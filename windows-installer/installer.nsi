@@ -57,8 +57,8 @@ CRCCheck on
 
 # Compression
 SetCompress force
-SetCompressor zlib
-#SetCompressor /FINAL lzma
+# SetCompressor zlib
+SetCompressor /FINAL lzma
 
 # Our registry key for uninstallation
 !define uninstreg "Software\Microsoft\Windows\CurrentVersion\Uninstall\${entry_name}"
