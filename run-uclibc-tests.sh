@@ -123,12 +123,12 @@ status=0
 # binutils
 if [ "x${DO_BINUTILS}" = "xyes" ]
 then
-    run_check ${bd_uclibc} \
+    run_check ${bd_uclibc}/binutils \
 	binutils \
 	"${logfile_uclibc}" \
 	${ARC_TEST_BOARD_UCLIBC} \
 	|| status=1
-    save_res  ${bd_uclibc} \
+    save_res  ${bd_uclibc}/binutils \
 	${res_uclibc} \
 	binutils/binutils \
 	"${logfile_uclibc}" \
@@ -137,11 +137,11 @@ fi
 # gas
 if [ "x${DO_GAS}" = "xyes" ]
 then
-    run_check ${bd_uclibc} \
+    run_check ${bd_uclibc}/binutils \
 	gas "${logfile_uclibc}" \
 	${ARC_TEST_BOARD_UCLIBC} \
 	|| status=1
-    save_res  ${bd_uclibc} \
+    save_res  ${bd_uclibc}/binutils \
 	${res_uclibc} \
 	gas/testsuite/gas \
 	"${logfile_uclibc}" \
@@ -150,11 +150,11 @@ fi
 # ld
 if [ "x${DO_LD}" = "xyes" ]
 then
-    run_check ${bd_uclibc} \
+    run_check ${bd_uclibc}/binutils \
 	ld "${logfile_uclibc}" \
 	${ARC_TEST_BOARD_UCLIBC} \
 	|| status=1
-    save_res  ${bd_uclibc} \
+    save_res  ${bd_uclibc}/binutils \
 	${res_uclibc} \
 	ld/ld \
 	"${logfile_uclibc}" \
@@ -163,18 +163,18 @@ fi
 # gcc and g++
 if [ "x${DO_GCC}" = "xyes" ]
 then
-    run_check ${bd_uclibc} \
+    run_check ${bd_uclibc}/gcc-stage2 \
 	gcc \
 	"${logfile_uclibc}" \
 	${ARC_TEST_BOARD_UCLIBC} \
 	|| status=1
-    save_res  ${bd_uclibc} \
+    save_res  ${bd_uclibc}/gcc-stage2 \
 	${res_uclibc} \
 	gcc/testsuite/gcc/gcc \
 	"${logfile_uclibc}" \
 	|| status=1
     echo "Testing g++..."
-    save_res  ${bd_uclibc} \
+    save_res  ${bd_uclibc}/gcc-stage2 \
 	${res_uclibc} \
 	gcc/testsuite/g++/g++ \
 	"${logfile_uclibc}" \
@@ -183,12 +183,12 @@ fi
 # libgcc
 if [ "x${DO_LIBGCC}" = "xyes" ]
 then
-    run_check ${bd_uclibc} \
+    run_check ${bd_uclibc}/gcc-stage2 \
 	target-libgcc \
 	"${logfile_uclibc}" \
 	${ARC_TEST_BOARD_UCLIBC} \
 	|| status=1
-    save_res ${bd_uclibc} \
+    save_res ${bd_uclibc}/gcc-stage2 \
 	${res_uclibc} \
 	${target_dir}/libgcc/testsuite/libgcc \
 	"${logfile_uclibc}" \
@@ -197,12 +197,12 @@ fi
 # libstdc++
 if [ "x${DO_LIBSTDCPP}" = "xyes" ]
 then
-    run_check ${bd_uclibc} \
+    run_check ${bd_uclibc}/gcc-stage2 \
 	target-libstdc++-v3 \
 	"${logfile_uclibc}" \
 	${ARC_TEST_BOARD_UCLIBC} \
 	|| status=1
-    save_res  ${bd_uclibc} \
+    save_res  ${bd_uclibc}/gcc-stage2 \
 	${res_uclibc} \
 	${target_dir}/libstdc++-v3/testsuite/libstdc++ \
 	"${logfile_uclibc}" \
@@ -211,11 +211,11 @@ fi
 # gdb
 if [ "x${DO_GDB}" = "xyes" ]
 then
-    run_check ${bd_uclibc} \
+    run_check ${bd_uclibc}/gdb \
 	gdb "${logfile_uclibc}" \
 	${ARC_TEST_BOARD_UCLIBC} \
 	|| status=1
-    save_res  ${bd_uclibc} \
+    save_res  ${bd_uclibc}/gdb \
 	${res_uclibc} \
 	gdb/testsuite/gdb \
 	"${logfile_uclibc}" \

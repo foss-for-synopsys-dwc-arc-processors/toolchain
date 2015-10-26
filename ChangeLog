@@ -1,3 +1,10 @@
+2015-10-26  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* run-elf32-tests.sh: Use gcc-stage2 directory for gcc related
+	testing.
+	* run-uclibc-tests.sh: Use correct directory for running all
+	tests.
+
 2015-02-27  Anton Kolesov  <Anton.Kolesov@synopsys.com>
 
 	* tag-releas.sh: Tag Linux repository.
