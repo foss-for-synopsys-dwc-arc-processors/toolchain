@@ -315,31 +315,6 @@ been added to the PATH:
     $ export PATH=$INSTALL_ROOT/bin:$PATH
 
 
-### Using CGEN simulator to run bare metal ARCompact applications
-
-Build application:
-
-    $ arc-elf32-gcc hello_world.c -marc700 -g
-
-To run it on CGEN-based simulator without debugger:
-
-    $ arc-elf32-run a.out
-    hello world
-
-To debug it in the GDB using simulator (GDB output omitted):
-
-    $ arc-elf32-gdb --quiet a.out
-    (gdb) target sim
-    (gdb) load
-    (gdb) start
-    (gdb) list
-    (gdb) continue
-    hello world
-    (gdb) quit
-
-CGEN simulator supports only ARC 600 and ARC 700.
-
-
 ### Using nSIM simulator to run bare metal ARC applications
 
 nSIM simulator supports GNU IO hostlink used by the libc library of bare metal
@@ -352,7 +327,7 @@ To start nSIM in gdbserver mode for ARC EM6:
 
 And in second console (GDB output is omitted):
 
-    $ arc-elf32-gcc -marcem -g hello_world.c
+    $ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs hello_world.c
     $ arc-elf32-gdb --quiet a.out
     (gdb) target remote :51000
     (gdb) load
@@ -388,6 +363,46 @@ When application is simulated on nSIM gdbserver all input and output happens on
 the side of host that runs gdbserver, so in "hello world" example string will
 be printed in the console that runs nSIM gdbserver.
 
+Note the usage of `nsim.specs` specification file. This file specifies that
+applications should be linked with nSIM IO hostlink library libnsim.a, which is
+implemented in libgloss - part of newlib project. libnsim provides several
+functions that are required to link C applications - those functions a
+considered board/OS specific, hence are not part of the normal libc.a. To link
+application without nSIM IO hostlink support use `nosys.specs` file - note that
+in this case system calls are either not available or have stub
+implementations. One reason to prefer `nsim.specs` over `nosys.specs` even when
+developing for hardware platform which doesn't have hostlink support is that
+`nsim` will halt target core on call to function "exit" and on many errors,
+while `exit` functions `nosys.specs` is an infinite loop.
+
+
+### Using CGEN simulator to run bare metal ARCompact applications
+
+Build application:
+
+    $ arc-elf32-gcc -marc700 -g --specs=nsim.specs hello_world.c
+
+To run it on CGEN-based simulator without debugger:
+
+    $ arc-elf32-run a.out
+    hello world
+
+To debug it in the GDB using simulator (GDB output omitted):
+
+    $ arc-elf32-gdb --quiet a.out
+    (gdb) target sim
+    (gdb) load
+    (gdb) start
+    (gdb) list
+    (gdb) continue
+    hello world
+    (gdb) quit
+
+CGEN simulator supports only ARC 600 and ARC 700. CGEN hostlink is mostly
+compatible with nSIM hostlink - basic functions, like console IO are
+implemented in  the same manner, but some other system calls like, `times` are
+not available in CGEN.
+
 
 ### Using EM Starter Kit to run bare metal ARC EM application
 
@@ -404,7 +419,7 @@ To run OpenOCD:
 
 Compile test application and run:
 
-    $ arc-elf32-gcc -marcem -g simple.c
+    $ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs simple.c
     $ arc-elf32-gdb --quiet a.out
     (gdb) target remote :3333
     (gdb) load
@@ -415,6 +430,9 @@ Compile test application and run:
     (gdb) break exit
     (gdb) continue
     (gdb) quit
+
+Note that since there is no hostlink support in OpenOCD applications, so IO
+functions will not work properly.
 
 
 ### Using Ashling Opella-XD debug probe to debug bare metal applications
@@ -459,7 +477,7 @@ Then connect to the target as with the OpenOCD/Linux gdbserver. For example a
 full session with an Opella-XD controlling an ARC EM target could start as
 follows:
 
-    $ arc-elf32-gcc -mEM -g simple.c
+    $ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs simple.c
     $ arc-elf32-gdb --quiet a.out
     (gdb) set tdesc filename toolchain/extras/opella-xd/opella-arcem-tdesc.xml
     (gdb) set target remote :2331
@@ -469,6 +487,8 @@ follows:
     (gdb) break exit
     (gdb) continue
     (gdb) quit
+
+Similar to OpenOCD hostlink is not available in GDB with Ashling Opella-XD.
 
 
 ### Debugging applications on Linux for ARC
