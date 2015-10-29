@@ -37,11 +37,16 @@ set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
 # Set common defaults
-set nsimflags "-on nsim_isa_spfp -on nsim_isa_dpfp -on nsim_isa_atomic_option \
-    -on nsim_isa_enable_timer_0 -on nsim_isa_enable_timer_1"
+set nsim_flags {}
+lappend nsim_flags \
+	-on nsim_isa_spfp \
+	-on nsim_isa_dpfp \
+	-on nsim_isa_atomic_option \
+	-on nsim_isa_enable_timer_0 \
+	-on nsim_isa_enable_timer_1
 
 # Avoid performance penalty of useless initialization of heap and stack sections.
-set nsimflags "$nsimflags -on nsim_download_elf_sections"
+lappend nsim_flags -on nsim_download_elf_sections
 
 set nsim_bin "$::env(NSIM_HOME)/bin/nsimdrv"
 
@@ -61,7 +66,7 @@ if { $tool == "libstdc++" } {
     expect {
 	"Download failed: no file name specified" {
 	    verbose "nSIM Turbo is available"
-	    set nsimflags "$nsimflags -on nsim_fast"
+	    lappend nsim_flags -on nsim_fast
 	}
 	default {
 	    # nSIM would spit out an error message if Turbo is not supported.
@@ -76,39 +81,52 @@ if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
     set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) \
         -Wl,--no-whole-archive"
 } else {
-    # Use nSIM GNU IO hostlink, instead of MetaWare compatible one
-    set nsimflags "$nsimflags -on nsim_emt"
+    # Use nSIM GNU IO hostlink, instead of a MetaWare compatible one.
+    lappend nsim_flags -on nsim_emt
     set xldflags "$xldflags --specs=nsim.specs"
 }
 
 # Big-endian?
 if [ string match arceb-* $target_triplet ] {
-    set nsimflags "$nsimflags -on nsim_isa_big_endian"
+    lappend nsim_flags -on nsim_isa_big_endian
 }
 
 # ARC EM is default
 if { [string first arc700 "$multilib_opts"] == 0 } {
-    set nsimflags "$nsimflags -p nsim_isa_family=a700 -on nsim_isa_sat \
-        -on nsim_isa_mpy32"
+    lappend nsim_flags \
+	    -p nsim_isa_family=a700 \
+	    -on nsim_isa_sat \
+	    -on nsim_isa_mpy32
 } elseif { [string first arc600 "$multilib_opts"] == 0 } {
-    set nsimflags "$nsimflags -p nsim_isa_family=a600 -p nsim_isa_core=6 \
-        -on nsim_isa_sat -on nsim_isa_mult32"
+    lappend nsim_flags \
+	    -p nsim_isa_family=a600 \
+	    -p nsim_isa_core=6 \
+	    -on nsim_isa_sat \
+	    -on nsim_isa_mult32
 } elseif { [string first archs "$multilib_opts"] == 0 } {
-    set nsimflags "$nsimflags -p nsim_isa_family=av2hs -p nsim_isa_core=1 \
-        -on nsim_isa_ll64_option -p nsim_isa_mpy_option=9 \
-        -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
+    lappend nsim_flags \
+	    -p nsim_isa_family=av2hs \
+	    -p nsim_isa_core=1 \
+	    -on nsim_isa_ll64_option \
+	    -p nsim_isa_mpy_option=9 \
+	    -p nsim_isa_div_rem_option=2 \
+	    -on nsim_isa_sat
 } else {
-    set nsimflags "$nsimflags -p nsim_isa_family=av2em -p nsim_isa_core=1 \
-        -p nsim_isa_mpy_option=9 -p nsim_isa_div_rem_option=2 -on nsim_isa_sat"
+    lappend nsim_flags \
+	    -p nsim_isa_family=av2em \
+	    -p nsim_isa_core=1 \
+	    -p nsim_isa_mpy_option=9 \
+	    -p nsim_isa_div_rem_option=2 \
+	    -on nsim_isa_sat
 }
 
 # Allow user to specify additional options, like JIT, etc.
 if { [info exists env(ARC_NSIM_OPTS) ] } {
-    set nsimflags "$nsimflags $env(ARC_NSIM_OPTS)"
+    lappend nsim_flags $env(ARC_NSIM_OPTS)
 }
 
-# Setup the MetaWare simulator.
-set_board_info sim "$nsim_bin $nsimflags"
+# Setup nSIM.
+set_board_info sim "$nsim_bin [join $nsim_flags]"
 # is_simulator should be set already by 'load_generic_config "sim"'. Do it here
 # to be safe.
 set_board_info is_simulator 1
