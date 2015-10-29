@@ -23,38 +23,11 @@
 # Make sure we look in the right place for the board description files. Add
 # our local boards directories
 if ![info exists boards_dir] {
-    lappend boards_dir "[file dirname $env(DEJAGNU)]/dejagnu"
-    lappend boards_dir "[file dirname $env(DEJAGNU)]/dejagnu/baseboards"
-} else {
-    set boards_dir "[file dirname $env(DEJAGNU)]/dejagnu"
-    lappend boards_dir "[file dirname $env(DEJAGNU)]/dejagnu/baseboards"
+    set boards_dir {}
 }
 
-# $target_list is set by the --target_board option. If it is not set, then we
-# should use $target_triplet to set a single target board in ${target_list}.
-global target_list
-
-case "$target_triplet" in {
-
-    { "arc*-*-elf32" } {
-	if {! [info exists target_list]} {
-	    # Default is to test on the CGEN simulator
-	    set target_list { "arc-sim" }
-	}
-    }
-
-    { "arc*-linux-uclibc" } {
-	if {! [info exists target_list]} {
-	    # Default is to test on AA4
-	    set target_list { "arc-linux-aa4" }
-	}
-    }
-    
-    default {
-	# Any other triplet is an error.
-	error "Unknown target $target_triplet in site.exp."
-    }
-}
+lappend boards_dir "[file dirname $env(DEJAGNU)]/dejagnu"
+lappend boards_dir "[file dirname $env(DEJAGNU)]/dejagnu/baseboards"
 
 # Some GCC tests requires HOST{CC,CFLAGS}, however those variables are not
 # defined by test_installed. Thus set them here.
@@ -64,21 +37,5 @@ if ![ info exists HOSTCC ] {
 if ![ info exists HOSTCFLAGS ] {
     set HOSTCFLAGS "-g -O2"
 }
-
-#    set TORTURE_OPTIONS [list \
-#        { -O0 -mARC700 -mdpfp } \
-#        { -O0 -mARC700 -mdpfp -mno-dpfp-lrsr } \
-#        { -O1 -mARC700 -mdpfp } \
-#        { -O2 -mARC700 -mdpfp -mno-dpfp-lrsr } \
-#        { -O3 -fomit-frame-pointer -mARC700 -mdpfp } \
-#        { -O3 -fomit-frame-pointer -mARC700 -mdpfp -mno-dpfp-lrsr } \
-#        { -O3 -fomit-frame-pointer -funroll-loops -mARC700 -mdpfp } \
-#        { -O3 -fomit-frame-pointer -funroll-loops -mARC700 -mdpfp -mno-dpfp-lrsr } \
-#        { -O3 -fomit-frame-pointer -funroll-all-loops -finline-functions -mARC700 -mdpfp } \
-#        { -O3 -fomit-frame-pointer -funroll-all-loops -finline-functions -mARC700 -mdpfp -mno-dpfp-lrsr } \
-#        { -O3 -g -mARC700 -mdpfp } \
-#        { -O3 -g -mARC700 -mdpfp -mno-dpfp-lrsr } \
-#        { -Os -mARC700 -mdpfp } \
-#        { -Os -mARC700 -mdpfp -mno-dpfp-lrsr } ]
 
 # vim: noexpandtab sts=4 ts=8:
