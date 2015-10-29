@@ -1,0 +1,48 @@
+# REPLACEME
+# set srcdir "/home/user/arc_gnu/gcc/gcc/testsuite"
+# set arc_exec_prefix "/home/user/arc_gnu/INSTALL/bin/arc-elf32"
+
+set target_alias    "arc-elf32"
+set target_triplet  "arc-default-elf32"
+set rootme	    "."
+set tmpdir	    "./temp"
+set CFLAGS	    ""
+set CXXFLAGS	    ""
+set SIM		    "${arc_exec_prefix}-run"
+set GDB		    "${arc_exec_prefix}-gdb"
+# Binutils
+set NM		    "${arc_exec_prefix}-nm"
+set SIZE	    "${arc_exec_prefix}-size"
+set OBJDUMP	    "${arc_exec_prefix}-objdump"
+set OBJCOPY	    "${arc_exec_prefix}-objcopy"
+set AR		    "${arc_exec_prefix}-ar"
+set STRIP	    "${arc_exec_prefix}-strip"
+set READELF	    "${arc_exec_prefix}-readelf"
+set ELFEDIT	    "${arc_exec_prefix}-elfedit"
+# ld
+set LD		    "${arc_exec_prefix}-ld"
+
+set CC_FOR_TARGET   "${arc_exec_prefix}-gcc"
+set CXX_FOR_TARGET  "${arc_exec_prefix}-g++"
+
+if { $tool == "gcc" || $tool == "g++" } {
+    set GCC_UNDER_TEST  "${arc_exec_prefix}-gcc"
+    set GXX_UNDER_TEST  "${arc_exec_prefix}-g++"
+} else {
+    set CC		"${arc_exec_prefix}-gcc"
+    set CXX		"${arc_exec_prefix}-g++"
+}
+
+switch $tool {
+    libstdc++ {
+	set baseline_subdir_switch "--print-multi-directory"
+    }
+    gdb {
+	source $srcdir/lib/append_gdb_boards_dir.exp
+	if {[string match arc*-linux-uclibc $target_triplet]} {
+	    set gdb_server_prog "/usr/bin/gdbserver"
+	    # REPLACEME
+	    # set toolchain_sysroot_dir "/home/user/arc_gnu/INSTALL/arc-snps-linux-uclibc/sysroot"
+	}
+    }
+}
