@@ -45,9 +45,6 @@ lappend nsim_flags \
 	-on nsim_isa_enable_timer_0 \
 	-on nsim_isa_enable_timer_1
 
-# Avoid performance penalty of useless initialization of heap and stack sections.
-lappend nsim_flags -on nsim_download_elf_sections
-
 set nsim_bin "$::env(NSIM_HOME)/bin/nsimdrv"
 
 # newlib.string/strcmp-1.c may run for around 2 minutes without Turbo on nSIM
@@ -74,6 +71,26 @@ if { $tool == "libstdc++" } {
 	    set_board_info sim_time_limit 1200
 	}
     }
+}
+
+# Check if nsim_download_elf_sections option is required - whether nSIM version
+# is > 2015.06. If revision.txt doesn't exist - this is a private verification
+# build of nSIM, so assume that this is the latest version.
+set nsim_version_path "$::env(NSIM_HOME)/revision.txt"
+if [file exists $nsim_version_path] {
+    set nsim_version_fid [open $nsim_version_path r]
+    set nsim_version_text [read $nsim_version_fid]
+    close $nsim_version_fid
+    regexp "Version : (\\d+)\.(\\d+)" $nsim_version_text -> \
+	nsim_version_year nsim_version_month
+    if { $nsim_version_year > 2015 || \
+	($nsim_version_year == 2015 && $nsim_version_month > 6) } {
+	# Avoid performance penalty of useless initialization of heap and stack
+	# sections.
+	lappend nsim_flags "-on nsim_download_elf_sections"
+    }
+} else {
+    lappend nsim_flags "-on nsim_download_elf_sections"
 }
 
 # Hostlink library support
