@@ -1,3 +1,7 @@
+2015-11-12  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	* extras/arc-tcf-gcc (processXML): Parse the C_defines field.
+
 2015-10-26  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	* run-elf32-tests.sh: Use gcc-stage2 directory for gcc related
