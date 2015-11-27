@@ -5,7 +5,12 @@
 set target_alias    "arc-elf32"
 set target_triplet  "arc-default-elf32"
 set rootme	    "."
-set tmpdir	    "./temp"
+# GCC dump-noaddr.x test passes to gcc options that cause it to create "dump"
+# files in $tmpdir/dump{1,2}/ directories. GCC doesn't create directories
+# itself, therefore dump-noaddr.x has to do that. But it does this in a wrong
+# way - it omits the "tmpdir" and creates directories in $PWD. Consequently for
+# this test to pass it is required that $tmpdir == $PWD.
+set tmpdir	    "."
 set CFLAGS	    ""
 set CXXFLAGS	    ""
 set SIM		    "${arc_exec_prefix}-run"
@@ -38,6 +43,11 @@ switch $tool {
 	set baseline_subdir_switch "--print-multi-directory"
     }
     gdb {
+	# By default GDB is called with -data-directory option. This wreaks
+	# havoc when using an installed GDB, because pass data-directory value
+	# is invalid. To fix the problem it is needed to override
+	# INTERNAL_GDBFLAGS variable.
+	set ::INTERNAL_GDBFLAGS "-nw -nx"
 	source $srcdir/lib/append_gdb_boards_dir.exp
 	if {[string match arc*-linux-uclibc $target_triplet]} {
 	    set gdb_server_prog "/usr/bin/gdbserver"
