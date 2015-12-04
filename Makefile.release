@@ -61,7 +61,7 @@ TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_linux_
 TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_linux_install
 
 # IDE: vanilla Eclipse variables
-ECLIPSE_VERSION := luna-SR2
+ECLIPSE_VERSION := mars-1
 ECLIPSE_VANILLA_ZIP_WIN := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_TGZ_LINUX := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
