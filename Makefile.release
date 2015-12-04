@@ -32,7 +32,8 @@
 #
 
 BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
---no-auto-checkout --config-extra '--with-python=no LDFLAGS=-static'
+--no-auto-checkout --config-extra '--with-python=no LDFLAGS=-static' \
+--elf32-strip-target-libs
 
 #
 # Output artifacts

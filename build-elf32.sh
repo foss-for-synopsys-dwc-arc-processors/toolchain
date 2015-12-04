@@ -98,6 +98,10 @@
 
 #     Build libstdc++ libraries optimized for size in addition to normal ones.
 
+# DO_STRIP_TARGET_LIBRARIES
+
+#     See build-all.sh --elf32-strip-target-libs option.
+
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
@@ -423,6 +427,27 @@ ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 
 # Copy TCF handler.
 cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gcc"
+
+# Strip files from debug symbols
+if [ "$DO_STRIP_TARGET_LIBRARIES" != no ]; then
+    # Note that in case lib/gcc/arc-elf32 contains files for some another GCC
+    # version - those will be stripped as well.
+    files=$(find $INSTALLDIR/${arch}-elf32/lib \
+	$INSTALLDIR/lib/gcc/${arch}-elf32 -name \*.a -o -name \*.o)
+    # Using `strip` instead of `objcopy` would render archives usable - linker
+    # would complain about missing index in .a files. As of note - libgmon.h
+    # includes a header file libgcc_tm.h so `objcopy` would emit an error
+    # message that this file has "unrecognizable format". Whether header file
+    # is included in archive by purpose or by mistake is not known to me,
+    # however this is done in the generic part of libgcc.
+    for f in $files ; do
+	$INSTALLDIR/bin/${arch}-elf32-objcopy -R .comment -R .note \
+	    -R .debug_info -R .debug_aranges -R .debug_pubnames \
+	    -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str \
+	    -R .debug_ranges -R .debug_loc \
+	    $f >> "$logfile" 2>&1 || true
+    done
+fi
 
 echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 

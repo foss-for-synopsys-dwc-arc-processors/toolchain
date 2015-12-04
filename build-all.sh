@@ -325,6 +325,15 @@
 #    enabling this option might cause big increase in build time of the
 #    toolchain. Default is --optsize-libstdc++.
 
+# --elf32-strip-target-libs | --no-elf32-strip-target-libs
+
+#    Whether to strip target libraries from debug symbols (except for
+#    .debug_frame section). Debug information contains absolute paths to source
+#    files, so when toolchain is moved to another system it is required to
+#    configure GDB to translate paths on a build host to paths on a runtime
+#    hosts, otherwise GDB would complain about missing source files. Default is
+#    to not strip libraries.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -397,6 +406,7 @@ CHECKOUT_CONFIG=
 TOOLCHAIN_HOST=
 SYSTEM_EXPAT=yes
 DO_ELF32_GCC_STAGE1=yes
+DO_STRIP_TARGET_LIBRARIES=no
 BUILD_OPTSIZE_NEWLIB=yes
 BUILD_OPTSIZE_LIBSTDCXX=yes
 
@@ -632,6 +642,14 @@ case ${opt} in
 	DO_ELF32_GCC_STAGE1=no
 	;;
 
+    --elf32-strip-target-libs)
+	DO_STRIP_TARGET_LIBRARIES=yes
+	;;
+
+    --no-elf32-strip-target-libs)
+	DO_STRIP_TARGET_LIBRARIES=no
+	;;
+
     --optsize-newlib)
 	BUILD_OPTSIZE_NEWLIB=yes
 	;;
@@ -684,6 +702,7 @@ case ${opt} in
 	echo "                      [--native-gdb | --no-native-gdb]"
 	echo "                      [--system-expat | --no-system-expat]"
 	echo "                      [--elf32-gcc-stage1 | --no-elf32-gcc-stage1]"
+	echo "                      [--elf32-strip-target-libs | --no-elf32-strip-target-libs]"
 	echo "                      [--optsize-newlib | --no-optsize-newlib]"
 	echo "                      [--optsize-libstdc++ | --no-optsize-libstdc++]"
 	exit 1
