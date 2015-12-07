@@ -336,7 +336,7 @@ if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
 
 	# Now copy multilibs. Code has been borrowed from ARM toolchain
 	# build-common.sh file found at https://launchpad.net/gcc-arm-embedded
-	multilibs=($($orig_install_dir/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null))
+	multilibs=$(get_multilibs)
 	for multilib in "${multilibs[@]}" ; do
 	    multi_dir="${arch}-elf32/lib/${multilib%%;*}"
 	    src_dir=$optsize_install_dir/$multi_dir
@@ -383,7 +383,7 @@ if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
 
     # Now copy multilibs. Code has been borrowed from ARM toolchain
     # build-common.sh file found at https://launchpad.net/gcc-arm-embedded
-    multilibs=($($INSTALLDIR/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null))
+    multilibs=$(get_multilibs)
     for multilib in "${multilibs[@]}" ; do
 	multi_dir="${arch}-elf32/lib/${multilib%%;*}"
 	src_dir=$optsize_install_dir/$multi_dir

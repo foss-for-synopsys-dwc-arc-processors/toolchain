@@ -545,6 +545,18 @@ make_target_ordered() {
     fi
 }
 
+get_multilibs() {
+    # We can invoke compiler only when (built == host). When
+    # cross-compiling has to use multilib of compiler in the PATH. So when
+    # cross-compiling native compiler should be identical to the target
+    # one.
+    if [ $IS_CROSS_COMPILING = yes ]; then
+	echo $($orig_install_dir/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
+    else
+	echo $(${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
+    fi
+}
+
 # Create a common log directory for all logs in this and sub-scripts
 LOGDIR="$ARC_GNU/logs"
 mkdir -p "$LOGDIR"
