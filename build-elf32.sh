@@ -240,7 +240,7 @@ fi
 # step. Perhaps, more sustainable solution would be to make a step back with
 # regards of unified tree usage and make newlib part of the unified source tree
 # for baremetal builds.
-if [ "$TOOLCHAIN_HOST" ]; then
+if [ $IS_CROSS_COMPILING ]; then
     pch_opt=--disable-libstdcxx-pch
 else
     pch_opt=

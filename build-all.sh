@@ -859,6 +859,13 @@ else
     UCLIBC_TOOLS_VERSION="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
 fi
 
+# Convenience variable: IS_CROSS_COMPILING=(build != host)
+if [ "$TOOLCHAIN_HOST" ]; then
+    IS_CROSS_COMPILING=yes
+else
+    IS_CROSS_COMPILING=no
+fi
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
@@ -894,6 +901,7 @@ export SYSTEM_EXPAT
 export DO_ELF32_GCC_STAGE1
 export BUILD_OPTSIZE_NEWLIB
 export BUILD_OPTSIZE_LIBSTDCXX
+export IS_CROSS_COMPILING
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"

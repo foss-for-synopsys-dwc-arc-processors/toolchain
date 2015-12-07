@@ -324,7 +324,7 @@ configure_elf32() {
 	config_path="$(calcConfigPath "$ARC_GNU/$src")"
     fi
 
-    if [ "$TOOLCHAIN_HOST" ]; then
+    if [ $IS_CROSS_COMPILING = yes ]; then
 	host_opt="--host=$TOOLCHAIN_HOST"
     else
 	host_opt=
