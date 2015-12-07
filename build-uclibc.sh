@@ -311,10 +311,10 @@ fi
 cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
 
 # Patch defconfig with the temporary install directories used.
-${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
-       -e "s#%RUNTIME_PREFIX%#/#" \
-       -e "s#%DEVEL_PREFIX%#/usr/#" \
-       -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
+${SED} -e "s@%KERNEL_HEADERS%@${SYSROOTDIR}/usr/include@" \
+       -e "s@%RUNTIME_PREFIX%@/@" \
+       -e "s@%DEVEL_PREFIX%@/usr/@" \
+       -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
        -i ${TEMP_DEFCFG}
 
 # Patch defconfig for big or little endian.
@@ -414,10 +414,10 @@ fi
 cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
 
 # Patch defconfig with the temporary install directories used.
-${SED} -e "s#%KERNEL_HEADERS%#${SYSROOTDIR}/usr/include#" \
-       -e "s#%RUNTIME_PREFIX%#/#" \
-       -e "s#%DEVEL_PREFIX%#/usr/#" \
-       -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"${triplet}-\"#" \
+${SED} -e "s@%KERNEL_HEADERS%@${SYSROOTDIR}/usr/include@" \
+       -e "s@%RUNTIME_PREFIX%@/@" \
+       -e "s@%DEVEL_PREFIX%@/usr/@" \
+       -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
        -i ${TEMP_DEFCFG}
 
 # At this step we also disable HARDWIRED_ABSPATH to avoid absolute
