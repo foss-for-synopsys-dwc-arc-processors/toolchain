@@ -225,7 +225,13 @@ fi
 echo "Installing in ${INSTALLDIR}" | tee -a ${logfile}
 
 # Setup vars
-SYSROOTDIR=${INSTALLDIR}/${triplet}/sysroot
+if [ $IS_NATIVE = yes ]; then
+    SYSROOTDIR=$INSTALLDIR
+    install_prefix=
+else
+    SYSROOTDIR=$INSTALLDIR/$triplet/sysroot
+    install_prefix=/usr
+fi
 DEFCFG_DIR=extra/Configs/defconfigs/arc/
 
 # Purge old build dir if there is any and create a new one.
@@ -268,7 +274,7 @@ fi
 
 # Wherever linux has been configured in or out of tree, at this stage we are in
 # the directory with .config file.
-if make ARCH=arc INSTALL_HDR_PATH=${SYSROOTDIR}/usr \
+if make ARCH=arc INSTALL_HDR_PATH=$SYSROOTDIR$install_prefix \
     headers_install >> "${logfile}" 2>&1
 then
     echo "  finished installing Linux headers"
@@ -311,9 +317,9 @@ fi
 cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
 
 # Patch defconfig with the temporary install directories used.
-${SED} -e "s@%KERNEL_HEADERS%@${SYSROOTDIR}/usr/include@" \
+${SED} -e "s@%KERNEL_HEADERS%@$SYSROOTDIR$install_prefix/include@" \
        -e "s@%RUNTIME_PREFIX%@/@" \
-       -e "s@%DEVEL_PREFIX%@/usr/@" \
+       -e "s@%DEVEL_PREFIX%@$install_prefix/@" \
        -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
        -i ${TEMP_DEFCFG}
 
@@ -360,18 +366,38 @@ else
     thread_flags="--disable-threads --disable-tls"
 fi
 
+if [ $IS_CROSS_COMPILING = yes ]; then
+    # install-sh doesn't know anything about our cross-compiling things, so it
+    # always uses "strip" by default. But {binutils,gdb}/Makefiles do set STRIPPROG
+    # variable apropriately to arc-linux-strip, and install-sh uses this variable.
+    # However it seems that in some cases STRIPPROG is not set, which causes a
+    # failure, because "strip" on host system is not aware of ARC. For example in
+    # binutils/binutils most targets are stripped correctly (objdump, objcopy to
+    # name a few), but c++filt is not stripped - STRIPPROG is not set. To avoid
+    # problems with cross-compilation STRIPPROG has to be explicitly set to
+    # everyone. This is needed only for binutils and gdb.
+    stripprog_opt="STRIPPROG=${triplet}-strip"
+
+    # See build-elf32.sh for explanation of --disable-libstdcxx-pch
+    pch_opt=--disable-libstdcxx-pch
+else
+    stripprog_opt=
+    pch_opt=
+fi
+
 # -----------------------------------------------------------------------------
 # Build Binutils - will be used by both state 1 and stage2
 build_dir_init binutils
 configure_uclibc_stage2 binutils
 make_target building all-binutils all-ld all-gas
+
 # Gas requires opcodes to be installed, LD requires BFD to be installed.
 # However those dependencies are not described in the Makefiles, instead if
 # required components is not yet installed, then dummy as-new and ld-new will
 # be installed. Both libraries are installed by install-binutils. Therefore it
 # is required that binutils is installed before ld and gas.
 make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
-  ${HOST_INSTALL}-gas
+  ${HOST_INSTALL}-gas $stripprog_opt
 if [ $DO_PDF = --pdf ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
@@ -381,18 +407,22 @@ fi
 # -----------------------------------------------------------------------------
 # Add tool chain to the path for now, since binutils is required to build
 # libgcc, while GCC stage 1 will be required to build uClibc, but remember the
-# old path for restoring later.
-oldpath=${PATH}
-PATH=${INSTALLDIR}/bin:$PATH
-export PATH
+# old path for restoring later. Not needed when cross compiling.
+if [ $IS_CROSS_COMPILING != yes ]; then
+    oldpath=${PATH}
+    PATH=${INSTALLDIR}/bin:$PATH
+    export PATH
+fi
 
 # -----------------------------------------------------------------------------
-# Build stage 1 GCC
-build_dir_init gcc-stage1
-configure_uclibc_stage1 gcc
-make_target building all-gcc all-target-libgcc
-make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
-# No need for PDF docs for stage 1.
+# Build stage 1 GCC (not needed when cross compiling).
+if [ $IS_CROSS_COMPILING != yes ]; then
+    build_dir_init gcc-stage1
+    configure_uclibc_stage1 gcc
+    make_target building all-gcc all-target-libgcc
+    make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
+    # No need for PDF docs for stage 1.
+fi
 
 # -----------------------------------------------------------------------------
 # Build uClibc using the stage 1 compiler.
@@ -414,9 +444,9 @@ fi
 cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
 
 # Patch defconfig with the temporary install directories used.
-${SED} -e "s@%KERNEL_HEADERS%@${SYSROOTDIR}/usr/include@" \
+${SED} -e "s@%KERNEL_HEADERS%@$SYSROOTDIR$install_prefix/include@" \
        -e "s@%RUNTIME_PREFIX%@/@" \
-       -e "s@%DEVEL_PREFIX%@/usr/@" \
+       -e "s@%DEVEL_PREFIX%@$install_prefix/@" \
        -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
        -i ${TEMP_DEFCFG}
 
@@ -478,14 +508,16 @@ else
     exit 1
 fi
 
-# Restore the search path
-PATH=${oldpath}
-unset oldpath
+if [ $IS_CROSS_COMPILING != yes ]; then
+    # Restore the search path
+    PATH=$oldpath
+    unset oldpath
+fi
 
 # -----------------------------------------------------------------------------
 # GCC stage 2
 build_dir_init gcc-stage2
-configure_uclibc_stage2 gcc
+configure_uclibc_stage2 gcc gcc $pch_opt
 make_target building all-gcc all-target-libgcc all-target-libstdc++-v3
 make_target installing ${HOST_INSTALL}-gcc install-target-libgcc \
   install-target-libstdc++-v3
@@ -503,17 +535,22 @@ fi
 # find libstdc++ headers in sysroot, they should be where they've been
 # installed - that shouldn't be a problem as long as multiple sysroots differ
 # only in binary parts, while headers are identical.
-mv $INSTALLDIR/$triplet/lib/libgcc_s* $SYSROOTDIR/lib/
-mv $INSTALLDIR/$triplet/lib/libstdc++*.so* $SYSROOTDIR/usr/lib
-mv $INSTALLDIR/$triplet/lib/libstdc++*.{a,la} $SYSROOTDIR/usr/lib
-mv $INSTALLDIR/$triplet/lib/libsupc++.{a,la} $SYSROOTDIR/usr/lib
+# This is not needed for native toolchain, which doesn't have sysroot.
+if [ $IS_NATIVE != yes ]; then
+    mv $INSTALLDIR/$triplet/lib/libgcc_s* $SYSROOTDIR/lib/
+    mv $INSTALLDIR/$triplet/lib/libstdc++*.so* $SYSROOTDIR/usr/lib
+    mv $INSTALLDIR/$triplet/lib/libstdc++*.{a,la} $SYSROOTDIR/usr/lib
+    mv $INSTALLDIR/$triplet/lib/libsupc++.{a,la} $SYSROOTDIR/usr/lib
 
-mv $INSTALLDIR/lib/gcc/$triplet/*/*.o $SYSROOTDIR/usr/lib
-mv $INSTALLDIR/lib/gcc/$triplet/*/*.a $SYSROOTDIR/usr/lib
+    mv $INSTALLDIR/lib/gcc/$triplet/*/*.o $SYSROOTDIR/usr/lib
+    mv $INSTALLDIR/lib/gcc/$triplet/*/*.a $SYSROOTDIR/usr/lib
+fi
 
 # Add the newly created tool chain to the path
-PATH=${INSTALLDIR}/bin:$PATH
-export PATH
+if [ $IS_CROSS_COMPILING != yes ]; then
+    PATH=${INSTALLDIR}/bin:$PATH
+    export PATH
+fi
 
 # -----------------------------------------------------------------------------
 # Build and install GDB
@@ -539,7 +576,7 @@ fi
 build_dir_init gdb
 configure_uclibc_stage2 gdb
 make_target building all-gdb
-make_target installing ${HOST_INSTALL}-gdb
+make_target installing ${HOST_INSTALL}-gdb $stripprog_opt
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb
@@ -598,14 +635,9 @@ if [ $DO_NATIVE_GDB = yes ]; then
     configure_for_arc "$config_path" $triplet \
 	--disable-gas --disable-ld --disable-binutils
     make_target building
-    # For reasons I do not know arc-linux-strip is ignored by install-sh, even
-    # though gdb/Makefile sets STRIPPROG. But it installs it in some
-    # funny/complex way, which perhaps is source of an issue. To avoid any
-    # troubles just set STRIPPROG to arc-linux-strip. Note: STRIP is Makefile
-    # variable; STRIPPROG is variable used by install-sh; STRIP is already set
-    # correctly, but STRIPPROG is not.
-    # Unforunately strip will strip complete symbol table, instead of just
-    # debug symbols.
+
+    # See comment for stripprog_opt for an explanation why this is needed.
+    # Strip will strip complete symbol table, not just debug symbols.
     make_target_ordered installing install-strip-gdb DESTDIR=$SYSROOTDIR \
 	STRIPPROG=${triplet}-strip
 else
@@ -623,9 +655,9 @@ else
     # gdbserver Makefile to install stripped binary by setting INSTAL_PROGRAM
     # Makefile variable to 'install -c -s', however this way gdbserver would be
     # stripped from all symbols, not just debug symbols.
-    # Note that $SYSROOTDIR/usr/bin might not exist yet.
-    mkdir -p $SYSROOTDIR/usr/bin
-    ${triplet}-objcopy -g gdbserver $SYSROOTDIR/usr/bin/gdbserver
+    # Note that $SYSROOTDIR/bin might not exist yet.
+    mkdir -p $SYSROOTDIR$install_prefix/bin
+    ${triplet}-objcopy -g gdbserver $SYSROOTDIR$install_prefix/bin/gdbserver
 fi
 
 echo "DONE  UCLIBC: $(date)" | tee -a "${logfile}"

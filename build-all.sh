@@ -56,6 +56,7 @@
 #                  [--elf32-strip-target-libs | --no-elf32-strip-target-libs]
 #                  [--optsize-newlib | --no-optsize-newlib]
 #                  [--optsize-libstdc++ | --no-optsize-libstdc++]
+#                  [--native | --no-native]
 
 # --source-dir <source_dir>
 
@@ -335,6 +336,12 @@
 #    hosts, otherwise GDB would complain about missing source files. Default is
 #    to not strip libraries.
 
+# --native | --no-native
+
+#    Whether this is a native/self-hosting toolchain, IOW toolchain that would run on
+#    ARC Linux or it is a cross-toolchain, that would run on other host but
+#    would compile for ARC. Makes sense only for uClibc/Linux toolchain.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -393,7 +400,7 @@ ISA_CPU="arc700"
 UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
-DO_NATIVE_GDB=yes
+DO_NATIVE_GDB=maybe
 rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
@@ -410,6 +417,7 @@ DO_ELF32_GCC_STAGE1=yes
 DO_STRIP_TARGET_LIBRARIES=no
 BUILD_OPTSIZE_NEWLIB=yes
 BUILD_OPTSIZE_LIBSTDCXX=yes
+IS_NATIVE=no
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -667,6 +675,14 @@ case ${opt} in
 	BUILD_OPTSIZE_LIBSTDCXX=no
 	;;
 
+    --native)
+	IS_NATIVE=yes
+	;;
+
+    --no-native)
+	IS_NATIVE=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -706,6 +722,7 @@ case ${opt} in
 	echo "                      [--elf32-strip-target-libs | --no-elf32-strip-target-libs]"
 	echo "                      [--optsize-newlib | --no-optsize-newlib]"
 	echo "                      [--optsize-libstdc++ | --no-optsize-libstdc++]"
+	echo "                      [--native | --no-native]"
 	exit 1
 	;;
 
@@ -867,6 +884,19 @@ else
     IS_CROSS_COMPILING=no
 fi
 
+# Not possible to build native GDB with cross-build toolchain
+if [ $IS_CROSS_COMPILING = yes ]; then
+    if [ $DO_NATIVE_GDB = yes ]; then
+	echo "WARNING: It is not possible to build native GDB with"\
+	    "cross-compiled tools. Ignoring --native-gdb option."
+    fi
+    DO_NATIVE_GDB=no
+else
+    if [ $DO_NATIVE_GDB = maybe ]; then
+	DO_NATIVE_GDB=yes
+    fi
+fi
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
@@ -904,6 +934,7 @@ export BUILD_OPTSIZE_NEWLIB
 export BUILD_OPTSIZE_LIBSTDCXX
 export DO_STRIP_TARGET_LIBRARIES
 export IS_CROSS_COMPILING
+export IS_NATIVE
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
