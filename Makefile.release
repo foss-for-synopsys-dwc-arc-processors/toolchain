@@ -84,9 +84,29 @@ OOCD_SRC_DIR_LINUX := ../openocd
 # md5sum
 MD5SUM_FILE := md5.sum
 
+#
+# Check prerequisite variables
+#
 ifeq ($(RELEASE),)
 $(error RELEASE variable can not be empty)
 endif
+
+ifneq ($(filter upload create-tag push-tag, $(MAKECMDGOALS)),)
+ifeq ($(RELEASE_TAG),)
+$(error RELEASE_TAG variable can not be empty for this target)
+endif
+endif
+
+ifneq ($(filter upload, $(MAKECMDGOALS)),)
+ifeq ($(RELEASE_NAME),)
+$(error RELEASE_NAME variable can not be empty for "upload" target)
+endif
+endif
+
+#
+# Configuration
+#
+PYTHON = /depot/Python-3.4.3/bin/python
 
 #
 # Human friendly aliases
@@ -322,21 +342,22 @@ $O/$(OOCD_DIR_WIN).tar.gz: $O/$(OOCD_DIR_WIN)
 	tar -C $O -caf $O/$(OOCD_DIR_WIN).tar.gz $(OOCD_DIR_WIN)/
 
 #
+# Create tag
+#
+create-tag:
+	./tag-release.sh $(RELEASE_TAG)
+
+#
+# Push tag
+#
+push-tag:
+	./push-release.sh $(RELEASE_TAG)
+
+#
 # Upload
 #
 # This is not a part of a default target. Upload should be triggered manually.
 # RELEASE_TAG and RELEASE_NAME mustbe set to something
-PYTHON = /depot/Python-3.4.3/bin/python
-
-ifneq ($(filter upload, $(MAKECMDGOALS)),)
-ifeq ($(RELEASE_TAG),)
-$(error RELEASE_TAG variable can not be empty for "upload" target)
-endif
-ifeq ($(RELEASE_NAME),)
-$(error RELEASE_NAME variable can not be empty for "upload" target)
-endif
-endif
-
 upload:
 	 $(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
 	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
