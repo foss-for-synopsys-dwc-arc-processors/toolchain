@@ -274,14 +274,14 @@ $O/.stamp_ide_linux_tar: \
 	$O/.stamp_ide_linux_eclipse \
 	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
 	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
-	cp -ad $O/$(TOOLS_ELFLE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -ad $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -ad $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -ad $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(TOOLS_ELFLE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	mkdir $O/$(IDE_INSTALL_LINUX)/eclipse/jre
 	tar xaf $O/jre-*-linux-x64.tar.gz -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
-	cp -ad $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	tar caf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
 	touch $@
 
