@@ -494,18 +494,22 @@ then
     make_target "generating PDF documentation" install-pdf-gcc
 fi
 
-# Despite "--with-sysroot" libgcc and libstdc++ will be installed to default
-# directory. Copy them manually. It also looks like that buildroot will work
-# properly even without this change and will copy libraries to the target
-# system appropriately in any way. However Buildroot does this step with its
-# internal toolchain and I'm mimicking this. Also this might help if one want
-# to have multiple sysroots. In that latter case I suppose that libraries
-# outside of sysroots should be removed to avoid unintentional mixing. Also my
-# experiments showed that G++ can't find libstdc++ headers in sysroot, they
-# should be where they've been installed.
-cp -dpf ${INSTALLDIR}/${triplet}/lib/libgcc_s* ${SYSROOTDIR}/lib/
-cp -dpf ${INSTALLDIR}/${triplet}/lib/libstdc++*.so* ${SYSROOTDIR}/usr/lib
-cp -dpf ${INSTALLDIR}/${triplet}/lib/libstdc++*.a ${SYSROOTDIR}/usr/lib
+# Despite usage of "--with-sysroot" crt, libgcc and libstdc++ will be installed
+# to different non-sysroot directories. So they has to be moved manually - GCC
+# would find them in the sysroot without problems. Original files should be
+# removed to enable "multiple sysroots" case, otherwise files in lib/gcc and
+# $triplet/lib would have priority over the sysroot - that would negate the
+# whole purpose of using sysroot. Also my experiments showed that G++ can't
+# find libstdc++ headers in sysroot, they should be where they've been
+# installed - that shouldn't be a problem as long as multiple sysroots differ
+# only in binary parts, while headers are identical.
+mv $INSTALLDIR/$triplet/lib/libgcc_s* $SYSROOTDIR/lib/
+mv $INSTALLDIR/$triplet/lib/libstdc++*.so* $SYSROOTDIR/usr/lib
+mv $INSTALLDIR/$triplet/lib/libstdc++*.{a,la} $SYSROOTDIR/usr/lib
+mv $INSTALLDIR/$triplet/lib/libsupc++.{a,la} $SYSROOTDIR/usr/lib
+
+mv $INSTALLDIR/lib/gcc/$triplet/*/*.o $SYSROOTDIR/usr/lib
+mv $INSTALLDIR/lib/gcc/$triplet/*/*.a $SYSROOTDIR/usr/lib
 
 # Add the newly created tool chain to the path
 PATH=${INSTALLDIR}/bin:$PATH
