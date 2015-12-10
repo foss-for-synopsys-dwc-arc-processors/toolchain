@@ -198,9 +198,11 @@ $O/.stamp_linux_le_700_built: $O/.stamp_checked_out
 	    --no-elf32 --release-name $(RELEASE) --cpu arc700
 	touch $@
 
-$O/.stamp_linux_le_hs_built: $O/.stamp_checked_out
+$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --cpu archs
+	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
 	touch $@
 
 $O/.stamp_linux_be_700_built: $O/.stamp_checked_out
@@ -208,9 +210,11 @@ $O/.stamp_linux_be_700_built: $O/.stamp_checked_out
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu arc700
 	touch $@
 
-$O/.stamp_linux_be_hs_built: $O/.stamp_checked_out
+$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu archs
+	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
 	touch $@
 
 $O/.stamp_linux_le_700_tarball: $O/.stamp_linux_le_700_built
