@@ -36,7 +36,7 @@ tag.
 Prerequisites
 -------------
 
-Linux like environment is required to build GNU tool chain for ARC. To build a
+Linux-like environment is required to build GNU tool chain for ARC. To build a
 tool chain for Windows, it is recommended to cross-compile it using MinGW on
 Linux. Refer to "Building tool chain on Windows" section of this document.
 
@@ -83,8 +83,8 @@ Latest stable release from https://kernel.org/ is recommended, only versions >=
 3.9 are supported. Linux sources should be located in the directory named
 `linux` that is the sibling of this `toolchain` directory. For example:
 
-    $ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.13.11.tar.xz
-    $ tar xaf linux-3.13.11.tar.xz --transform=s/linux-3.13.11/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.24.tar.xz
+    $ tar xaf linux-3.18.24.tar.xz --transform=s/linux-3.18.24/linux/
 
 ### Using Git repositories
 
@@ -95,26 +95,12 @@ the tool chain. These should be peers of this `toolchain` directory.
     $ mkdir arc_gnu
     $ cd arc_gnu
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
-
-After this `toolchain` repository has been checked out, then the following
-commands will clone all the remaining components into the right place.
-
-    $ cd toolchain
-    $ ./arc-clone-all.sh [-f | --force] [-d | --dev]
-
-Option --force or -f will replace any existing cloned version of the
-components (use with care). Option --dev or -d will attempt to clone writable
-clones using the SSH version of the remote URL, suitable for developers
-contributing back to this repository.
-
-Alternatively remaining repositories can be cloned manually using following
-commands:
-
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git binutils
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git \
+        binutils
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
     $ git clone --reference binutils \
-      https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
+        https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
@@ -126,7 +112,7 @@ binutils and gdb repository. This will greatly reduce amount of disk space
 consumed and time to clone the repository.
 
 By default `toolchain` repository will be checked out to the current
-development branch `arc-dev`.
+release branch `arc-release`.
 
 If current working directory is not a "toolchain" directory, then change to it:
 
@@ -137,10 +123,10 @@ Following command will check out repository to the latest release:
     $ git checkout arc-releases
 
 This repository can be checked out to a specific GNU Tool chain for ARC release
-by specifying a particular release tag, for example for 2015.06 release that
+by specifying a particular release tag, for example for 2015.12 release that
 would be:
 
-    $ git checkout arc-2015.06
+    $ git checkout arc-2015.12
 
 
 Building the Tool chain
