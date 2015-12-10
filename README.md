@@ -1,19 +1,19 @@
 ARC GNU Tool Chain
 ==================
 
-This is the main Git repository for the ARC GNU tool chain. It contains just
-the scripts required to build the entire tool chain.
+This is the main Git repository for the ARC GNU toolchain. It contains just
+the scripts required to build the entire toolchain.
 
 Branches in this repository are:
-* `arc-releases` is the stable branch for the tool chain release. Head of
+* `arc-releases` is the stable branch for the toolchain release. Head of
   this branch is a latest stable release. It is a branch recommended for most
   users
-* `arc-staging` is the semi-stable branch for the tool chain release
+* `arc-staging` is the semi-stable branch for the toolchain release
   candidates. Head of this branch is either a latest stable release or latest
   release candidate for the upcoming release
-* `arc-dev` is the development branch for the current tool chain release
-* `arc-4.8-dev` is the development branch for the 4.8 tool chain release
-* `arc-4.4-dev` is the development branch for the 4.4 tool chain release
+* `arc-dev` is the development branch for the current toolchain release
+* `arc-4.8-dev` is the development branch for the 4.8 toolchain release
+* `arc-4.4-dev` is the development branch for the 4.4 toolchain release
 * `arc-mainline-dev` is the mainline development branch (deprecated).
 
 While the top of *development* branches should build and run reliably, there
@@ -36,12 +36,12 @@ tag.
 Prerequisites
 -------------
 
-Linux-like environment is required to build GNU tool chain for ARC. To build a
-tool chain for Windows, it is recommended to cross-compile it using MinGW on
-Linux. Refer to "Building tool chain on Windows" section of this document.
+Linux-like environment is required to build GNU toolchain for ARC. To build a
+toolchain for Windows, it is recommended to cross-compile it using MinGW on
+Linux. Refer to "Building toolchain on Windows" section of this document.
 
-GNU tool chain for ARC has same standard prerequisites as an upstream GNU tool
-chain as documented in the GNU tool chain user guide or on the [GCC
+GNU toolchain for ARC has same standard prerequisites as an upstream GNU tool
+chain as documented in the GNU toolchain user guide or on the [GCC
 website](http://gcc.gnu.org/install/prerequisites.html)
 
 On Ubuntu 12.04/14.04 LTS those can be installed with following command (as root):
@@ -66,7 +66,7 @@ availability of those packages on the RHEL/CentOS 6 systems (packages has too
 old versions or not available at all). To avoid this problem our build script
 will download sources of those packages from the official web-sites.  If option
 `--no-download-external` is passed to the `build-all.sh` script, when building
-tool chain, then those dependencies will not be downloaded automatically,
+toolchain, then those dependencies will not be downloaded automatically,
 instead versions of those libraries installed on the build host will be used.
 In most cases this is not required.
 
@@ -76,9 +76,9 @@ Getting sources
 
 ###  Using source tarball
 
-GNU tool chain source tarball already contains all of the necessary sources
+GNU toolchain source tarball already contains all of the necessary sources
 except for Linux which is a separate product. Linux sources are required only
-for Linux tool chain, they are not required for bare metal elf32 tool chain.
+for Linux toolchain, they are not required for bare metal elf32 toolchain.
 Latest stable release from https://kernel.org/ is recommended, only versions >=
 3.9 are supported. Linux sources should be located in the directory named
 `linux` that is the sibling of this `toolchain` directory. For example:
@@ -88,9 +88,9 @@ Latest stable release from https://kernel.org/ is recommended, only versions >=
 
 ### Using Git repositories
 
-Repositories for each of the tool chain components (its not all one big
+Repositories for each of the toolchain components (its not all one big
 repository), including the linux repository, should be cloned before building
-the tool chain. These should be peers of this `toolchain` directory.
+the toolchain. These should be peers of this `toolchain` directory.
 
     $ mkdir arc_gnu
     $ cd arc_gnu
@@ -122,18 +122,18 @@ Following command will check out repository to the latest release:
 
     $ git checkout arc-releases
 
-This repository can be checked out to a specific GNU Tool chain for ARC release
+This repository can be checked out to a specific GNU Toolchain for ARC release
 by specifying a particular release tag, for example for 2015.12 release that
 would be:
 
     $ git checkout arc-2015.12
 
 
-Building the Tool chain
+Building the Toolchain
 -----------------------
 
 The script `build-all.sh` will build and install both _arc*-elf32-_ and
-_arc*-snps-linux-uclibc-_ tool chains. The comments at the head of this script
+_arc*-snps-linux-uclibc-_ toolchains. The comments at the head of this script
 explain how it works and the parameters to use.
 
 The script `arc-versions.sh` checks out each component Git repository to a
@@ -146,35 +146,35 @@ release candidate. Default choice of `config` file can be overridden with
 
 After checking out correct branches  `build-all.sh` in turn uses
 `build-elf32.sh` and `build-uclibc.sh`. These build respectively the
-_arc*-elf32_ and _arc*-snps-linux-uclibc_ tool chains. Details of the operation
+_arc*-elf32_ and _arc*-snps-linux-uclibc_ toolchains. Details of the operation
 are provided as comments in each script file. Both these scripts use a common
 initialization script, `arc-init.sh`.
 
 The most important options of `build-all.sh` are:
 
- * `--install-dir <dir>` - define where tool chain will be installed. Unless
+ * `--install-dir <dir>` - define where toolchain will be installed. Unless
    option `--rel-rpaths` is specified to the `build-all.sh` then once tool
    chain is installed, it cannot be moved to another location, however it can
    be moved to another system and used from the same location (this is a
-   limitation of upstream tool chain implementation and is not specific to
+   limitation of upstream toolchain implementation and is not specific to
    ARC).
- * `--no-elf32` and `--no-uclibc` - choose type of tool chain to build. By
+ * `--no-elf32` and `--no-uclibc` - choose type of toolchain to build. By
    default both are built. Specify `--no-uclibc` if you intend to work
    exclusively with bare metal applications, specify `--no-elf32` of you intend
    to work exclusively with Linux applications. Linux kernel is built with
-   uClibc tool chain.
+   uClibc toolchain.
  * `--no-multilib` - do not build multilib standard libraries. Use it when you
    are going to work with bare metal applications for a particular core. This
-   option does not affect uClibc tool chain.
- * `--cpu <cpu>` - configure GNU tool chain to use specific core as a default
+   option does not affect uClibc toolchain.
+ * `--cpu <cpu>` - configure GNU toolchain to use specific core as a default
    choice (default core is a core for which GCC will compile for when `-mcpu=`
    option is not passed). Default is arc700 for both bare metal and Linux tool
    chains. Combined with `--no-multilib` this options allows to build GNU tool
    chain that supports only one specific core. Valid values include `arc600`,
    `arc700`, `arcem` and `archs`, however `arc600` and `arcem` are valid for
-   bare metal tool chain only.
- * `--host <triplet>` - option to set host triplet of tool chain. That allows to
-   do Canadian cross-compilation, where tool chain for ARC processors
+   bare metal toolchain only.
+ * `--host <triplet>` - option to set host triplet of toolchain. That allows to
+   do Canadian cross-compilation, where toolchain for ARC processors
    (`--target`) will run on Windows hosts (`--host`) but will be built on Linux
    host (`--build`).
 
@@ -197,30 +197,30 @@ will not be overridden.
 
 ### Build options examples
 
-Build default tool chain, bare metal tool chain will support all ARC cores,
-while Linux tool chain will support ARC 700:
+Build default toolchain, bare metal toolchain will support all ARC cores,
+while Linux toolchain will support ARC 700:
 
     $ ./build-all.sh --install-dir $INSTALL_ROOT
 
-Build tool chain for ARC 700 Linux development:
+Build toolchain for ARC 700 Linux development:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT
 
-Build tool chain for ARC HS Linux development:
+Build toolchain for ARC HS Linux development:
 
     $ ./build-all.sh --no-elf32 --cpu archs --install-dir $INSTALL_ROOT
 
-Build bare metal tool chain for ARC EM cores:
+Build bare metal toolchain for ARC EM cores:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu arcem --no-multilib
 
-Build bare metal tool chain for ARC EM5D in the ARC EM Starter Kit 2.0:
+Build bare metal toolchain for ARC EM5D in the ARC EM Starter Kit 2.0:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu arcem --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap -mnorm \
       -mmpy-option=6 -mbarrel-shifter"
 
-Build bare metal tool chain for ARC EM7D in the ARC EM Starter Kit 2.0
+Build bare metal toolchain for ARC EM7D in the ARC EM Starter Kit 2.0
 (EM7D_FPU is similiar, but with -mfpu=fpuda):
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
@@ -228,35 +228,35 @@ Build bare metal tool chain for ARC EM7D in the ARC EM Starter Kit 2.0
       -mnorm -mmpy-option=6 -mbarrel-shifter \
       --param l1-cache-size=16384 --param l1-cache-line-size=32"
 
-Build bare metal tool chain for ARC EM4 in the ARC EM Starter Kit 1.1:
+Build bare metal toolchain for ARC EM4 in the ARC EM Starter Kit 1.1:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu arcem --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
       -mnorm -mmpy-option=6 -mbarrel-shifter"
 
-Build bare metal tool chain for ARC EM6 in the ARC EM Starter Kit 1.1:
+Build bare metal toolchain for ARC EM6 in the ARC EM Starter Kit 1.1:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu arcem --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
       -mnorm -mmpy-option=6 -mbarrel-shifter \
       --param l1-cache-size=32768 --param l1-cache-line-size=128"
 
-### Building tool chain on Windows
+### Building toolchain on Windows
 
-To build tool chain for Windows hosts it is recommended to do a "Canadian
-cross-compilation" on Linux, that is tool chain for ARC targets that runs on
+To build toolchain for Windows hosts it is recommended to do a "Canadian
+cross-compilation" on Linux, that is toolchain for ARC targets that runs on
 Windows hosts is built on Linux host. Build scripts expect to be run in
-Unix-like environment, so it is often faster and easier to build tool chain on
+Unix-like environment, so it is often faster and easier to build toolchain on
 Linux, than do this on Windows using environments like Cygwin and MSYS. While
-those allow tool chain to be built on Windows natively this way is not
+those allow toolchain to be built on Windows natively this way is not
 officially supported and not recommended by Synopsys, due to severe performance
 penalty of those environments on build time and possible compatibility issue.
 
 Some limitation apply:
 - CGEN simulator is not supported on Windows hosts, thus should be disabled
   with `--no-sim` option.
-- Only bare metal (elf32) tool chain can be built this way.
-- It is required to have tool chain for Linux hosts in the `PATH` for Canadian
+- Only bare metal (elf32) toolchain can be built this way.
+- It is required to have toolchain for Linux hosts in the `PATH` for Canadian
   cross-build to succeed - it will be used to compile standard library of tool
   chain.
 - Expat library is required for GDB to parse XML target description files. This
@@ -264,7 +264,7 @@ Some limitation apply:
   let `build-all.sh` script to build Expat by passing option
   `--no-system-expat`.
 
-To cross-compile tool chain on Linux, Mingw tool chain should be installed. On
+To cross-compile toolchain on Linux, Mingw toolchain should be installed. On
 Ubuntu that can be done with `mingw-w64` package:
 
     # apt-get install mingw-w64
@@ -286,16 +286,16 @@ After prerequisites are installed and Linux tools are in the `PATH`, do:
     $ ./build-all.sh --no-uclibc --no-sim --host i686-w64-mingw32 \
       --no-system-expat
 
-Note that value of host triplet depends on what mingw tool chain is being used.
-Triplet `i686-w64-mingw32` is valid for mingw tool chain currently used in
-Ubuntu and EPEL, but, for example, mingw tool chain in standard RHEL 6 has
+Note that value of host triplet depends on what mingw toolchain is being used.
+Triplet `i686-w64-mingw32` is valid for mingw toolchain currently used in
+Ubuntu and EPEL, but, for example, mingw toolchain in standard RHEL 6 has
 triplet `i686-pc-mingw32`.
 
 
 Usage examples
 --------------
 
-In all of the following examples it is expected that GNU tool chain for ARC has
+In all of the following examples it is expected that GNU toolchain for ARC has
 been added to the PATH:
 
     $ export PATH=$INSTALL_ROOT/bin:$PATH
@@ -304,7 +304,7 @@ been added to the PATH:
 ### Using nSIM simulator to run bare metal ARC applications
 
 nSIM simulator supports GNU IO hostlink used by the libc library of bare metal
-GNU tool chain for ARC. nSIM option `nsim_emt=1` enables GNU IO hostlink.
+GNU toolchain for ARC. nSIM option `nsim_emt=1` enables GNU IO hostlink.
 
 To start nSIM in gdbserver mode for ARC EM6:
 
@@ -340,7 +340,7 @@ cores:
       -tcf $NSIM_HOME/etc/tcf/templates/em6_gp.tcf -on nsim_emt \
       -on nsim_isa_big_endian
 
-Default linker script of GNU Tool chain for ARC is not compatible with memory
+Default linker script of GNU Toolchain for ARC is not compatible with memory
 maps of cores that only has CCM memory (EM4, EM5D, HS34), thus to run
 application on nSIM with those TCFs it is required to link application with
 linker script appropriate for selected core.
@@ -499,11 +499,11 @@ Start GDB on the host:
     (gdb) quit
 
 
-Testing the tool chain
+Testing the toolchain
 ----------------------
 
 The script `run-tests.sh` will run the regression test suites against all the
-main tool chain components. The comments at the head of this script explain
+main toolchain components. The comments at the head of this script explain
 how it works and the parameters to use. It in turn uses the run-elf32-tests.sh
 and run-uclibc-tests.sh scripts.
 
