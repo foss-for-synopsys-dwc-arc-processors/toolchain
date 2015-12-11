@@ -85,7 +85,7 @@ chmod +x tmp/eclipse/eclipse/eclipsec.exe
 chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
 # Install ARC plugins
 mkdir tmp/arc_gnu_ide_plugins
-unzip packages/arc_gnu_2015.06_ide_plugins.zip -d tmp/arc_gnu_ide_plugins
+unzip packages/arc_gnu_${RELEASE}_ide_plugins.zip -d tmp/arc_gnu_ide_plugins
 # Same as in Makefile.release
 echo "Installing ARC plugins into Eclipse..."
 tmp/eclipse/eclipse/eclipsec.exe \
