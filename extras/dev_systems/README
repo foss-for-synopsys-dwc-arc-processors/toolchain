@@ -1,6 +1,6 @@
 This directory contains memory maps for different variants of ARC processors in
-EM Starter Kit. To use memory maps rename desired file to `memory.x` and copy
-it to the build directory. More info can be found at:
+EM Starter Kit and AXS SDP. To use memory maps rename desired file to
+`memory.x` and copy it to the build directory. More info can be found at:
 
 https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
 
