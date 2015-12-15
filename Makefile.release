@@ -279,7 +279,7 @@ $O/$(ECLIPSE_VANILLA_TGZ_LINUX):
 $O/$(ECLIPSE_VANILLA_ZIP_WIN):
 	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_ZIP_WIN)&r=1'
 
-$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX)
+$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_DIR)
 	mkdir -p $O/$(IDE_INSTALL_LINUX)
 	tar xaf $< -C $O/$(IDE_INSTALL_LINUX)
 	$O/$(IDE_INSTALL_LINUX)/eclipse/eclipse \
