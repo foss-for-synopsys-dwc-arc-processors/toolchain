@@ -1,9 +1,10 @@
-/* ARC EM Starter Kit v1 EM6GP */
+/* ARC EM Starter Kit v2.1 EM7D */
 
 MEMORY
 {
     ICCM : ORIGIN = 0x00000000, LENGTH = 32K
     DRAM : ORIGIN = 0x10000000, LENGTH = 128M
+    DCCM : ORIGIN = 0x80000000, LENGTH = 32K
 }
 
 REGION_ALIAS("startup", ICCM)
