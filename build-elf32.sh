@@ -430,6 +430,14 @@ cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gc
 
 # Strip files from debug symbols
 if [ "$DO_STRIP_TARGET_LIBRARIES" != no ]; then
+
+    if [ $IS_CROSS_COMPILING = yes ]; then
+	# Use cross tools in the PATH
+	objcopy=${arch}-elf32-objcopy
+    else
+	objcopy=$INSTALLDIR/bin/${arch}-elf32-objcopy
+    fi
+
     # Note that in case lib/gcc/arc-elf32 contains files for some another GCC
     # version - those will be stripped as well.
     files=$(find $INSTALLDIR/${arch}-elf32/lib \
@@ -441,7 +449,7 @@ if [ "$DO_STRIP_TARGET_LIBRARIES" != no ]; then
     # is included in archive by purpose or by mistake is not known to me,
     # however this is done in the generic part of libgcc.
     for f in $files ; do
-	$INSTALLDIR/bin/${arch}-elf32-objcopy -R .comment -R .note \
+	$objcopy -R .comment -R .note \
 	    -R .debug_info -R .debug_aranges -R .debug_pubnames \
 	    -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str \
 	    -R .debug_ranges -R .debug_loc \
