@@ -106,7 +106,7 @@ endif
 #
 # Configuration
 #
-PYTHON = /depot/Python-3.4.3/bin/python
+PYTHON = /depot/Python-3.4.3/bin/python3
 
 #
 # Human friendly aliases
