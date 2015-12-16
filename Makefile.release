@@ -31,9 +31,22 @@
 # OpenOCD, however this also requires additional preparations.
 #
 
+#
+# Configuration
+#
+CONFIG_STATIC_TOOLCHAIN := n
+
+#
+# Build flags common to all toolchains
+#
+EXTRA_CONFIG_FLAGS += --with-python=no
+ifeq ($(CONFIG_STATIC_TOOLCHAIN),y)
+EXTRA_CONFIG_FLAGS += LDFLAGS=-static
+endif
+BUILDALLFLAGS += --config-extra '$(EXTRA_CONFIG_FLAGS)'
+
 BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
---no-auto-checkout --config-extra '--with-python=no LDFLAGS=-static' \
---elf32-strip-target-libs
+--no-auto-checkout --elf32-strip-target-libs
 
 #
 # Output artifacts
@@ -240,12 +253,31 @@ $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
 #
 # Windows build
 #
+
+WINDOWS_TRIPLET := i686-w64-mingw32
+WINDOWS_SYSROOT := /usr/$(WINDOWS_TRIPLET)/sys-root/mingw
+
+# Helper function to copy mingw .dll files to installation directories with
+# executable files. There are several directories and for simplicity all .dlls
+# are copied to all target location.
+#
+# :param $1 - toolchain installation directory, e.g. $O/$(TOOLS_ELFLE_DIR_WIN).
+# :param $2 - toolchain triplet, e.g. arc-elf32, arceb-elf32, etc.
+ifneq ($(CONFIG_STATIC_TOOLCHAIN),y)
+define copy_mingw_dlls
+	for t in $(addprefix $1/,bin $2/bin libexec/gcc/$2/*/); do\
+		cp -a $(WINDOWS_SYSROOT)/bin/* $$t ; \
+	done
+endef
+endif
+
 $O/.stamp_elf_le_windows_built: $O/.stamp_checked_out $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
-	     --release-name $(RELEASE) --host i686-w64-mingw32 --no-system-expat \
+	     --release-name $(RELEASE) --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
+	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_DIR_WIN),arc-elf32)
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
@@ -253,8 +285,9 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
-	     --release-name $(RELEASE) --host i686-w64-mingw32 --no-system-expat \
+	     --release-name $(RELEASE) --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
+	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_DIR_WIN),arceb-elf32)
 	touch $@
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
