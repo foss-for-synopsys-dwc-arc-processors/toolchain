@@ -193,6 +193,8 @@ Section "Eclipse IDE for ARC" SecEclipse
     SetOutPath "$INSTDIR"
     File /r tmp\eclipse\*
 
+    SetShellVarContext all
+
     # Desktop shortcut
     CreateShortCut "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk" \
 	"$INSTDIR\eclipse\eclipse.exe"
@@ -203,6 +205,7 @@ Section "Eclipse IDE for ARC" SecEclipse
 SectionEnd
 
 Section un.SecEclipse
+    SetShellVarContext all
     !include "section_eclipse_uninstall.nsi"
 
     # Desktop shortcut
