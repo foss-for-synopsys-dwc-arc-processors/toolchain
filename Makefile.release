@@ -84,6 +84,7 @@ ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
 # IDE: output related variables
 IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
+IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win32_install.exe
 IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
 IDE_PLUGINS_DIR := arc_gnu_$(RELEASE)_ide_plugins
 IDE_PLUGINS_ZIP := $(IDE_PLUGINS_DIR).zip
@@ -394,7 +395,7 @@ push-tag:
 # This is not a part of a default target. Upload should be triggered manually.
 # RELEASE_TAG and RELEASE_NAME mustbe set to something
 upload:
-	 $(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
+	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
 	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
 	    --name="$(RELEASE_NAME)" \
 	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
@@ -406,6 +407,13 @@ upload:
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
 	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
 	    $O/$(TOOLS_SOURCE_DIR)$(TAR_EXT)
+	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
+	    --project=arc_gnu_eclipse --tag=$(RELEASE_TAG) --draft \
+	    --name="$(RELEASE_NAME)" \
+	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
+	    $O/$(IDE_PLUGINS_ZIP) \
+	    $O/$(IDE_TGZ_LINUX) \
+	    $O/$(IDE_EXE_WIN)
 
 #
 # Clean
