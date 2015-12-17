@@ -177,13 +177,11 @@ $O:
 	mkdir -p $@
 
 # Checkout sources
-.NOTPARALLEL: $O/.stamp_checked_out
 $O/.stamp_checked_out: | $O
 	./build-all.sh --auto-pull --auto-checkout --no-elf32 --no-uclibc
 	touch $@
 
 # Create source tarball
-.NOTPARALLEL: $O/.stamp_source_tarball
 $O/.stamp_source_tarball: $O/.stamp_checked_out
 	tar --exclude-vcs -c -z -f $(TOOLS_SOURCE_DIR)$(TAR_EXT) --exclude=$O \
 	    --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(TOOLS_SOURCE_CONTENTS)
