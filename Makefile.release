@@ -292,12 +292,10 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
 	cd $O && tar czf $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT) $(TOOLS_ELFLE_DIR_WIN)/
-	cd $O && zip -q -r $(TOOLS_ELFLE_DIR_WIN).zip $(TOOLS_ELFLE_DIR_WIN)/
 	touch $@
 
 $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 	cd $O && tar czf $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT) $(TOOLS_ELFBE_DIR_WIN)/
-	cd $O && zip -q -r $(TOOLS_ELFBE_DIR_WIN).zip $(TOOLS_ELFBE_DIR_WIN)/
 	touch $@
 
 #
