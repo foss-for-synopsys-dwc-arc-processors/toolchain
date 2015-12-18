@@ -39,14 +39,15 @@ CONFIG_STATIC_TOOLCHAIN := n
 #
 # Build flags common to all toolchains
 #
+
+BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
+--no-auto-checkout --elf32-strip-target-libs
+
 EXTRA_CONFIG_FLAGS += --with-python=no
 ifeq ($(CONFIG_STATIC_TOOLCHAIN),y)
 EXTRA_CONFIG_FLAGS += LDFLAGS=-static
 endif
 BUILDALLFLAGS += --config-extra '$(EXTRA_CONFIG_FLAGS)'
-
-BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
---no-auto-checkout --elf32-strip-target-libs
 
 #
 # Output artifacts
