@@ -183,7 +183,7 @@ LangString DESC_SecToolchain ${LANG_ENGLISH} \
     "Baremetal GNU Toolchain for ARC processors (little endian)"
 
 # Toolchain big-endian
-Section "GNU Toolchain for ARC (big endian)" SecToolchainBE
+Section /o "GNU Toolchain for ARC (big endian)" SecToolchainBE
     SetOutPath "$INSTDIR"
     File /r tmp\toolchain_be\*
 
