@@ -405,11 +405,7 @@ upload:
 	    $O/$(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT) \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
 	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
-	    $O/$(TOOLS_SOURCE_DIR)$(TAR_EXT)
-	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
-	    --project=arc_gnu_eclipse --tag=$(RELEASE_TAG) --draft \
-	    --name="$(RELEASE_NAME)" \
-	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
+	    $O/$(TOOLS_SOURCE_DIR)$(TAR_EXT) \
 	    $O/$(IDE_PLUGINS_ZIP) \
 	    $O/$(IDE_TGZ_LINUX) \
 	    $O/$(IDE_EXE_WIN)
