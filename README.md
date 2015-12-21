@@ -47,13 +47,13 @@ website](http://gcc.gnu.org/install/prerequisites.html)
 On Ubuntu 12.04/14.04 LTS those can be installed with following command (as root):
 
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev libx11-dev texlive build-essential git wget
+      libexpat1-dev texlive build-essential git wget
 
 On RHEL 6/7 those can be installed with following command (as root):
 
     # yum groupinstall "Development Tools"
     # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
-      libX11-devel git texlive-\* wget
+      git texlive-\* wget
 
 It's necessary to install a full `texlive` set in RHEL 6/7 (`texlive-*`) to
 prevent errors due to missing TeX fonts while building a documentation. Since
