@@ -85,7 +85,7 @@ chmod +x tmp/eclipse/eclipse/eclipsec.exe
 chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
 # Install ARC plugins
 mkdir tmp/arc_gnu_ide_plugins
-unzip packages/arc_gnu_2015.06_ide_plugins.zip -d tmp/arc_gnu_ide_plugins
+unzip packages/arc_gnu_${RELEASE}_ide_plugins.zip -d tmp/arc_gnu_ide_plugins
 # Same as in Makefile.release
 echo "Installing ARC plugins into Eclipse..."
 tmp/eclipse/eclipse/eclipsec.exe \
@@ -93,6 +93,10 @@ tmp/eclipse/eclipse/eclipsec.exe \
     -noSplash \
     -repository ${ECLIPSE_REPO},file://$(cygpath -w -a tmp/arc_gnu_ide_plugins) \
     -installIU ${ECLIPSE_PREREQ},com.arc.cdt.feature.feature.group
+# Eclipse will create a bunch of repos with local paths, that will not work for
+# end-users, hence those repos must be manually removed.
+sed -i -e "/$(echo "$(cygpath -w -a tmp)" | tr \\ _ | sed 's/[A-Z]://')/ d" \
+    tmp/eclipse/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/eclipse eclipse
 
 # Copy Java runtime environment:

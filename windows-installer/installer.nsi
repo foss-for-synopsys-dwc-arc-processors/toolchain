@@ -57,8 +57,8 @@ CRCCheck on
 
 # Compression
 SetCompress force
-SetCompressor zlib
-#SetCompressor /FINAL lzma
+# SetCompressor zlib
+SetCompressor /FINAL lzma
 
 # Our registry key for uninstallation
 !define uninstreg "Software\Microsoft\Windows\CurrentVersion\Uninstall\${entry_name}"
@@ -151,7 +151,6 @@ section ""
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\${arctitle} ${arcver} Command Prompt.lnk" \
 	'%comspec%' '/k "$INSTDIR\arcshell.bat"'
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\Documentation.lnk" "$INSTDIR\share\doc"
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Wiki on GitHub.lnk" \
       "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki"
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Releases on GitHub.lnk" \
@@ -166,23 +165,39 @@ SectionEnd
 Section "GNU Toolchain for ARC" SecToolchain
     SetOutPath "$INSTDIR"
     File /r tmp\toolchain_le\*
+
+    # Create shortcuts
+    SetShellVarContext all
+    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\Documentation.lnk" "$INSTDIR\share\doc"
 SectionEnd
 
 Section un.SecToolchain
     !include "section_toolchain_le_uninstall.nsi"
+
+    # Remove shortcuts
+    SetShellVarContext all
+    Delete "$SMPROGRAMS\${startmenu_dir}\Documentation.lnk"
 SectionEnd
 
 LangString DESC_SecToolchain ${LANG_ENGLISH} \
     "Baremetal GNU Toolchain for ARC processors (little endian)"
 
 # Toolchain big-endian
-Section "GNU Toolchain for ARC (big endian)" SecToolchainBE
+Section /o "GNU Toolchain for ARC (big endian)" SecToolchainBE
     SetOutPath "$INSTDIR"
     File /r tmp\toolchain_be\*
+
+    # Create shortcuts (dup of little-endian)
+    SetShellVarContext all
+    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\Documentation.lnk" "$INSTDIR\share\doc"
 SectionEnd
 
 Section un.SecToolchainBE
     !include "section_toolchain_be_uninstall.nsi"
+
+    # Remove shortcuts (dup of little-endian)
+    SetShellVarContext all
+    Delete "$SMPROGRAMS\${startmenu_dir}\Documentation.lnk"
 SectionEnd
 
 LangString DESC_SecToolchainBE ${LANG_ENGLISH} \
@@ -192,6 +207,8 @@ LangString DESC_SecToolchainBE ${LANG_ENGLISH} \
 Section "Eclipse IDE for ARC" SecEclipse
     SetOutPath "$INSTDIR"
     File /r tmp\eclipse\*
+
+    SetShellVarContext all
 
     # Desktop shortcut
     CreateShortCut "$DESKTOP\${arctitle} ${arcver} Eclipse.lnk" \
@@ -203,6 +220,7 @@ Section "Eclipse IDE for ARC" SecEclipse
 SectionEnd
 
 Section un.SecEclipse
+    SetShellVarContext all
     !include "section_eclipse_uninstall.nsi"
 
     # Desktop shortcut

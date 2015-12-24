@@ -31,8 +31,23 @@
 # OpenOCD, however this also requires additional preparations.
 #
 
+#
+# Configuration
+#
+CONFIG_STATIC_TOOLCHAIN := n
+
+#
+# Build flags common to all toolchains
+#
+
 BUILDALLFLAGS := --disable-werror --strip --rel-rpaths --no-auto-pull \
---no-auto-checkout --config-extra '--with-python=no LDFLAGS=-static'
+--no-auto-checkout --elf32-strip-target-libs
+
+EXTRA_CONFIG_FLAGS += --with-python=no
+ifeq ($(CONFIG_STATIC_TOOLCHAIN),y)
+EXTRA_CONFIG_FLAGS += LDFLAGS=-static
+endif
+BUILDALLFLAGS += --config-extra '$(EXTRA_CONFIG_FLAGS)'
 
 #
 # Output artifacts
@@ -60,16 +75,17 @@ TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_linux_
 TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_linux_install
 
 # IDE: vanilla Eclipse variables
-ECLIPSE_VERSION := luna-SR2
+ECLIPSE_VERSION := mars-1
 ECLIPSE_VANILLA_ZIP_WIN := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_TGZ_LINUX := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
 ECLIPSE_REPO := http://download.eclipse.org/releases/luna
 # Coma separated list
 ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
-ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR2
+ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
 # IDE: output related variables
 IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
+IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win32_install.exe
 IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
 IDE_PLUGINS_DIR := arc_gnu_$(RELEASE)_ide_plugins
 IDE_PLUGINS_ZIP := $(IDE_PLUGINS_DIR).zip
@@ -83,9 +99,29 @@ OOCD_SRC_DIR_LINUX := ../openocd
 # md5sum
 MD5SUM_FILE := md5.sum
 
+#
+# Check prerequisite variables
+#
 ifeq ($(RELEASE),)
 $(error RELEASE variable can not be empty)
 endif
+
+ifneq ($(filter upload create-tag push-tag, $(MAKECMDGOALS)),)
+ifeq ($(RELEASE_TAG),)
+$(error RELEASE_TAG variable can not be empty for this target)
+endif
+endif
+
+ifneq ($(filter upload, $(MAKECMDGOALS)),)
+ifeq ($(RELEASE_NAME),)
+$(error RELEASE_NAME variable can not be empty for "upload" target)
+endif
+endif
+
+#
+# Configuration
+#
+PYTHON = /depot/Python-3.4.3/bin/python3
 
 #
 # Human friendly aliases
@@ -175,9 +211,11 @@ $O/.stamp_linux_le_700_built: $O/.stamp_checked_out
 	    --no-elf32 --release-name $(RELEASE) --cpu arc700
 	touch $@
 
-$O/.stamp_linux_le_hs_built: $O/.stamp_checked_out
+$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --cpu archs
+	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
 	touch $@
 
 $O/.stamp_linux_be_700_built: $O/.stamp_checked_out
@@ -185,9 +223,11 @@ $O/.stamp_linux_be_700_built: $O/.stamp_checked_out
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu arc700
 	touch $@
 
-$O/.stamp_linux_be_hs_built: $O/.stamp_checked_out
+$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $O/.stamp_checked_out
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu archs
+	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
 	touch $@
 
 $O/.stamp_linux_le_700_tarball: $O/.stamp_linux_le_700_built
@@ -213,11 +253,31 @@ $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
 #
 # Windows build
 #
+
+WINDOWS_TRIPLET := i686-w64-mingw32
+WINDOWS_SYSROOT := /usr/$(WINDOWS_TRIPLET)/sys-root/mingw
+
+# Helper function to copy mingw .dll files to installation directories with
+# executable files. There are several directories and for simplicity all .dlls
+# are copied to all target location.
+#
+# :param $1 - toolchain installation directory, e.g. $O/$(TOOLS_ELFLE_DIR_WIN).
+# :param $2 - toolchain triplet, e.g. arc-elf32, arceb-elf32, etc.
+ifneq ($(CONFIG_STATIC_TOOLCHAIN),y)
+define copy_mingw_dlls
+	for t in $(addprefix $1/,bin $2/bin libexec/gcc/$2/*/); do\
+		cp -a $(WINDOWS_SYSROOT)/bin/* $$t ; \
+	done
+endef
+endif
+
 $O/.stamp_elf_le_windows_built: $O/.stamp_checked_out $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
-	     --release-name $(RELEASE) --host i686-w64-mingw32 --no-system-expat
+	     --release-name $(RELEASE) --host $(WINDOWS_TRIPLET) --no-system-expat \
+	     --no-elf32-gcc-stage1
+	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_DIR_WIN),arc-elf32)
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
@@ -225,17 +285,17 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
-	     --release-name $(RELEASE) --host i686-w64-mingw32 --no-system-expat
+	     --release-name $(RELEASE) --host $(WINDOWS_TRIPLET) --no-system-expat \
+	     --no-elf32-gcc-stage1
+	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_DIR_WIN),arceb-elf32)
 	touch $@
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
 	cd $O && tar czf $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT) $(TOOLS_ELFLE_DIR_WIN)/
-	cd $O && zip -q -r $(TOOLS_ELFLE_DIR_WIN).zip $(TOOLS_ELFLE_DIR_WIN)/
 	touch $@
 
 $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 	cd $O && tar czf $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT) $(TOOLS_ELFBE_DIR_WIN)/
-	cd $O && zip -q -r $(TOOLS_ELFBE_DIR_WIN).zip $(TOOLS_ELFBE_DIR_WIN)/
 	touch $@
 
 #
@@ -250,7 +310,7 @@ $O/$(ECLIPSE_VANILLA_TGZ_LINUX):
 $O/$(ECLIPSE_VANILLA_ZIP_WIN):
 	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_ZIP_WIN)&r=1'
 
-$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX)
+$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_DIR)
 	mkdir -p $O/$(IDE_INSTALL_LINUX)
 	tar xaf $< -C $O/$(IDE_INSTALL_LINUX)
 	$O/$(IDE_INSTALL_LINUX)/eclipse/eclipse \
@@ -258,6 +318,10 @@ $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX)
 	    -noSplash \
 	    -repository $(ECLIPSE_REPO),file://$(realpath $O/$(IDE_PLUGINS_DIR)) \
 	    -installIU $(ECLIPSE_PREREQ),com.arc.cdt.feature.feature.group
+	# Eclipse will create a bunch of repos with local paths, that will not
+	# work for end-users, hence those repos must be manually removed.
+	sed -i -e "/$(subst /,_,$O)/ d" \
+	    $O/$(IDE_INSTALL_LINUX)/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
 	touch $@
 
 $O/.stamp_ide_linux_tar: \
@@ -265,14 +329,14 @@ $O/.stamp_ide_linux_tar: \
 	$O/.stamp_ide_linux_eclipse \
 	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
 	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
-	cp -ad $O/$(TOOLS_ELFLE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -ad $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -ad $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -ad $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(TOOLS_ELFLE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	mkdir $O/$(IDE_INSTALL_LINUX)/eclipse/jre
 	tar xaf $O/jre-*-linux-x64.tar.gz -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
-	cp -ad $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	tar caf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
 	touch $@
 
@@ -311,6 +375,40 @@ $O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
 
 $O/$(OOCD_DIR_WIN).tar.gz: $O/$(OOCD_DIR_WIN)
 	tar -C $O -caf $O/$(OOCD_DIR_WIN).tar.gz $(OOCD_DIR_WIN)/
+
+#
+# Create tag
+#
+create-tag:
+	./tag-release.sh $(RELEASE_TAG)
+
+#
+# Push tag
+#
+push-tag:
+	./push-release.sh $(RELEASE_TAG)
+
+#
+# Upload
+#
+# This is not a part of a default target. Upload should be triggered manually.
+# RELEASE_TAG and RELEASE_NAME mustbe set to something
+upload:
+	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
+	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
+	    --name="$(RELEASE_NAME)" \
+	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
+	    --md5sum-file=$O/$(MD5SUM_FILE) \
+	    $O/$(TOOLS_ELFLE_DIR_LINUX)$(TAR_EXT) \
+	    $O/$(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT) \
+	    $O/$(TOOLS_LINUXLE_700_DIR_LINUX)$(TAR_EXT) \
+	    $O/$(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT) \
+	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
+	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
+	    $O/$(TOOLS_SOURCE_DIR)$(TAR_EXT) \
+	    $O/$(IDE_PLUGINS_ZIP) \
+	    $O/$(IDE_TGZ_LINUX) \
+	    $O/$(IDE_EXE_WIN)
 
 #
 # Clean

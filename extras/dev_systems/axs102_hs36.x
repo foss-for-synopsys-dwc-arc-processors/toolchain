@@ -1,0 +1,15 @@
+/* ARC AXS102 SDP - HS36 */
+
+MEMORY
+{
+    SRAM : ORIGIN = 0x20000000, LENGTH = 256K
+    DRAM : ORIGIN = 0x80000000, LENGTH = 1024M
+}
+
+REGION_ALIAS("startup", DRAM)
+REGION_ALIAS("text", DRAM)
+REGION_ALIAS("data", DRAM)
+REGION_ALIAS("sdata", DRAM)
+
+PROVIDE (__stack_top = (0xBFFFFFFF & -4) );
+PROVIDE (__end_heap = (0xBFFFFFFF) );

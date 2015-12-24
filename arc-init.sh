@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Copyright (C) 2007-2015 Synopsys Inc.
 
@@ -324,12 +324,16 @@ configure_elf32() {
 	config_path="$(calcConfigPath "$ARC_GNU/$src")"
     fi
 
-    if [ "$TOOLCHAIN_HOST" ]; then
+    if [ $IS_CROSS_COMPILING = yes ]; then
 	host_opt="--host=$TOOLCHAIN_HOST"
     else
 	host_opt=
     fi
 
+    # Options --with-gnu-as --with-gnu-ld should be set explicitly, because gcc
+    # is built separately from bintuils and hence "configure" cannot determine
+    # if this is GNU as and ld or not.  As a result it would assume that they
+    # are not and some features will be disabled.
     if ! "$config_path/configure" \
 	--target=${arch}-elf32 \
 	--with-cpu=$ISA_CPU \
@@ -340,12 +344,16 @@ configure_elf32() {
 	--with-endian=$ARC_ENDIAN \
 	$DISABLEWERROR \
 	--enable-languages=c,c++ \
+	--disable-shared \
+	--disable-tls \
+	--disable-threads \
 	--prefix="$INSTALLDIR" \
-	--with-headers="$ARC_GNU/newlib/newlib/libc/include" \
+	--with-gnu-as \
+	--with-gnu-ld \
 	$host_opt \
 	$sim_config \
 	$CONFIG_EXTRA \
-	$* \
+	"$@" \
 	>> "$logfile" 2>&1
     then
 	echo "ERROR: failed while configuring."
@@ -370,6 +378,11 @@ configure_uclibc_stage1() {
     fi
     echo "  configuring..."
     config_path="$(calcConfigPath "$ARC_GNU/$src")"
+
+    # Options --with-gnu-as --with-gnu-ld should be set explicitly, because gcc
+    # is built separately from bintuils and hence "configure" cannot determine
+    # if this is GNU as and ld or not.  As a result it would assume that they
+    # are not and some features will be disabled.
     if ! "$config_path/configure" \
 	--target=$triplet \
 	--with-cpu=$ISA_CPU \
@@ -389,6 +402,8 @@ configure_uclibc_stage1() {
 	--disable-libgomp \
 	--with-pkgversion="$UCLIBC_TOOLS_VERSION" \
 	--with-bugurl="$ARC_COMMON_BUGURL" \
+	--with-gnu-as \
+	--with-gnu-ld \
 	$CONFIG_EXTRA \
 	--with-sysroot="$SYSROOTDIR" \
 	$* \
@@ -423,6 +438,11 @@ configure_uclibc_stage2() {
     else
 	config_path="$(calcConfigPath "$ARC_GNU/$src")"
     fi
+
+    # Options --with-gnu-as --with-gnu-ld should be set explicitly, because gcc
+    # is built separately from bintuils and hence "configure" cannot determine
+    # if this is GNU as and ld or not.  As a result it would assume that they
+    # are not and some features will be disabled.
     if ! "$config_path/configure" \
 	--target=$triplet \
 	--with-cpu=${ISA_CPU} \
@@ -437,6 +457,8 @@ configure_uclibc_stage2() {
 	--enable-shared \
 	--without-newlib \
 	--disable-libgomp \
+	--with-gnu-as \
+	--with-gnu-ld \
 	$CONFIG_EXTRA \
 	--with-sysroot="$SYSROOTDIR" \
 	$* \
@@ -464,9 +486,11 @@ configure_for_arc() {
     # Cannto do a simple "CFLAGS=$CFLAGS_FOR_TARGET, because if latter is empty
     # that would reset CFLAGS unnecessarily.
     local cflags=
+    local cxxflags=
     if [ "$CFLAGS_FOR_TARGET" ]
     then
 	cflags="CFLAGS=$CFLAGS_FOR_TARGET"
+	cxxflags="CXXFLAGS=$CXXFLAGS_FOR_TARGET"
     fi
     shift 2
 
@@ -479,7 +503,7 @@ configure_for_arc() {
     if ! $srcdir/configure --prefix=/usr --host=$triplet \
 	    --with-pkgversion="$UCLIBC_TOOLS_VERSION"\
 	    --with-bugurl="$ARC_COMMON_BUGURL" \
-	    $cflags $* \
+	    "$cflags" "$cxxflags" $* \
 	    >> "$logfile" 2>&1
     then
 	echo "ERROR: failed while configuring."
@@ -518,6 +542,18 @@ make_target_ordered() {
 	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
 	exit 1
+    fi
+}
+
+get_multilibs() {
+    # We can invoke compiler only when (built == host). When
+    # cross-compiling has to use multilib of compiler in the PATH. So when
+    # cross-compiling native compiler should be identical to the target
+    # one.
+    if [ $IS_CROSS_COMPILING = yes ]; then
+	echo $($orig_install_dir/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
+    else
+	echo $($INSTALLDIR/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
     fi
 }
 

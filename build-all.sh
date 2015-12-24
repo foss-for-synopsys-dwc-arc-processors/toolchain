@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Copyright (C) 2012-2015 Synopsys Inc.
 
@@ -52,14 +52,10 @@
 #                  [--host <triplet>]
 #                  [--native-gdb | --no-native-gdb]
 #                  [--system-expat | --no-system-expat]
-
-# This script is a convenience wrapper to build the ARC GNU 4.4 tool
-# chains. It utilizes Joern Rennecke's build-elf32.sh script and Bendan
-# Kehoe/Jeremy Bennett's build-uclibc.sh script. The arguments have the
-# following meanings:
-
-# This version is modified to work with the source tree as organized in
-# GitHub.
+#                  [--elf32-gcc-stage1 | --no-elf32-gcc-stage1]
+#                  [--elf32-strip-target-libs | --no-elf32-strip-target-libs]
+#                  [--optsize-newlib | --no-optsize-newlib]
+#                  [--optsize-libstdc++ | --no-optsize-libstdc++]
 
 # --source-dir <source_dir>
 
@@ -205,9 +201,16 @@
 
 # --target-cflags <flags>
 
-#     Use <flags> as the value of CFLAGS_FOR_TARGET when configuring. This can
-#     be used for example to make more compact libraries, by specifying "-Os
-#     -g".
+#     <flags> value will be used as CFLAGS/CXXFLAGS when building target
+#     packages. Depending on a particular type of software either
+#     CFLAGSS/CXXFLAGS will be set, or CFLAGS_FOR_TARGET/CXXFLAGS_FOR_TARGET
+#     will be set.  This can be used for example to make more compact
+#     libraries, by specifying "-Os -g". Note that this will override default
+#     "-O2 -g", therefore to append a flag to default one, for example -mll64,
+#     value of <flags> would be like "-O2 -g -mll64".  Libraries optimized for
+#     size use a set of their own CFLAGS and --target-cflags may override those
+#     flags if desired, with the sole exception of -Os, which is always
+#     enforced in size optimized libraries.
 
 # --multilib | --no-multilib
 
@@ -299,14 +302,41 @@
 #    version. Notable use case for --no-system-expat is mingw32 build, if mingw
 #    installation lacks expat. Default value is to use system expat.
 
+# --elf32-gcc-stage1 | --no-elf32-gcc-stage1
+
+#     Whether to build or not to build gcc-stage1 for elf32 targets. It may
+#     may be useful to turn off building gcc-stage1 if toolchain is already
+#     presented in PATH thus newlib may be built by precompiled GCC. Default
+#     is --elf32-gcc-stage1.
+
+# --optsize-newlib | --no-optsize-newlib
+
+#    Whether to build an optimized for code size second set of newlib libc and
+#    libm archives. Generated files will have _nano prefix, for example
+#    libc_nano.a. This affects only elf32/baremetal toolchain. Default is
+#    --optsize-libs.
+
+# --optsize-libstdc++ | --no-optsize-libstdc++
+
+#    Whether to build an optimized for code size libcstdc++ archive. Generated
+#    files will have _nano prefix, for example libctdc++_nano.a. This change
+#    affects only elf32/baremetal toolchain. Note that due to quirks of
+#    libstdc++ configure script, enabling this option will cause GCC to be
+#    built one more time (specifically for code size libcstdc++), therefore
+#    enabling this option might cause big increase in build time of the
+#    toolchain. Default is --optsize-libstdc++.
+
+# --elf32-strip-target-libs | --no-elf32-strip-target-libs
+
+#    Whether to strip target libraries from debug symbols (except for
+#    .debug_frame section). Debug information contains absolute paths to source
+#    files, so when toolchain is moved to another system it is required to
+#    configure GDB to translate paths on a build host to paths on a runtime
+#    hosts, otherwise GDB would complain about missing source files. Default is
+#    to not strip libraries.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
-
-# We do not recognize the ARC_GNU_ONLY_CONFIGURE and ARC_GNU_CONTINUE
-# environment variables, which were used in previous versions of this
-# script. If you are using this script, you need to run the whole thing. If
-# you want to redo bits, use the underlying scripts, or go into the relevant
-# directories and do it by hand!
 
 # ------------------------------------------------------------------------------
 # Unset variables, which if inherited as environment variables from the caller
@@ -367,6 +397,7 @@ DO_NATIVE_GDB=yes
 rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
+CXXFLAGS_FOR_TARGET=""
 HOST_INSTALL=install
 SED=sed
 RELEASE_NAME=
@@ -375,6 +406,10 @@ NPTL_SUPPORT="yes"
 CHECKOUT_CONFIG=
 TOOLCHAIN_HOST=
 SYSTEM_EXPAT=yes
+DO_ELF32_GCC_STAGE1=yes
+DO_STRIP_TARGET_LIBRARIES=no
+BUILD_OPTSIZE_NEWLIB=yes
+BUILD_OPTSIZE_LIBSTDCXX=yes
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -517,7 +552,10 @@ case ${opt} in
 
     --target-cflags)
 	shift
+	# libstdc++ uses CXXFLAGS instead of CFLAGS, therefore both should be
+	# set.
 	CFLAGS_FOR_TARGET="$1"
+	CXXFLAGS_FOR_TARGET="$1"
 	;;
 
     --multilib | --enable-multilib)
@@ -597,6 +635,38 @@ case ${opt} in
 	SYSTEM_EXPAT=no
 	;;
 
+    --elf32-gcc-stage1)
+	DO_ELF32_GCC_STAGE1=yes
+	;;
+
+    --no-elf32-gcc-stage1)
+	DO_ELF32_GCC_STAGE1=no
+	;;
+
+    --elf32-strip-target-libs)
+	DO_STRIP_TARGET_LIBRARIES=yes
+	;;
+
+    --no-elf32-strip-target-libs)
+	DO_STRIP_TARGET_LIBRARIES=no
+	;;
+
+    --optsize-newlib)
+	BUILD_OPTSIZE_NEWLIB=yes
+	;;
+
+    --no-optsize-newlib)
+	BUILD_OPTSIZE_NEWLIB=no
+	;;
+
+    --optsize-libstdc++)
+	BUILD_OPTSIZE_LIBSTDCXX=yes
+	;;
+
+    --no-optsize-libstdc++)
+	BUILD_OPTSIZE_LIBSTDCXX=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -632,6 +702,10 @@ case ${opt} in
 	echo "                      [--host <triplet>]"
 	echo "                      [--native-gdb | --no-native-gdb]"
 	echo "                      [--system-expat | --no-system-expat]"
+	echo "                      [--elf32-gcc-stage1 | --no-elf32-gcc-stage1]"
+	echo "                      [--elf32-strip-target-libs | --no-elf32-strip-target-libs]"
+	echo "                      [--optsize-newlib | --no-optsize-newlib]"
+	echo "                      [--optsize-libstdc++ | --no-optsize-libstdc++]"
 	exit 1
 	;;
 
@@ -786,6 +860,13 @@ else
     UCLIBC_TOOLS_VERSION="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
 fi
 
+# Convenience variable: IS_CROSS_COMPILING=(build != host)
+if [ "$TOOLCHAIN_HOST" ]; then
+    IS_CROSS_COMPILING=yes
+else
+    IS_CROSS_COMPILING=no
+fi
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
@@ -808,6 +889,7 @@ export HOST_INSTALL
 if [ "x${CFLAGS_FOR_TARGET}" != "x" ]
 then
     export CFLAGS_FOR_TARGET
+    export CXXFLAGS_FOR_TARGET
 fi
 export SED
 export RELEASE_NAME
@@ -817,6 +899,11 @@ export CHECKOUT_CONFIG
 export TOOLCHAIN_HOST
 export UCLIBC_TOOLS_VERSION
 export SYSTEM_EXPAT
+export DO_ELF32_GCC_STAGE1
+export BUILD_OPTSIZE_NEWLIB
+export BUILD_OPTSIZE_LIBSTDCXX
+export DO_STRIP_TARGET_LIBRARIES
+export IS_CROSS_COMPILING
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"

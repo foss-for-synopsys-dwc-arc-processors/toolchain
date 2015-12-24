@@ -157,19 +157,19 @@ fi
 # gcc and g++
 if [ "x${DO_GCC}" = "xyes" ]
 then
-    run_check ${bd_elf}/gcc \
+    run_check ${bd_elf}/gcc-stage2 \
 	gcc \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
     save_res \
-	${bd_elf}/gcc \
+	${bd_elf}/gcc-stage2 \
 	${res_elf} \
 	gcc/testsuite/gcc/gcc \
 	"${logfile_elf}" \
 	|| status=1
     echo "Testing g++..."
-    save_res ${bd_elf}/gcc \
+    save_res ${bd_elf}/gcc-stage2 \
 	${res_elf} \
 	gcc/testsuite/g++/g++ \
 	"${logfile_elf}" \
@@ -178,12 +178,12 @@ fi
 # libgcc
 if [ "x${DO_LIBGCC}" = "xyes" ]
 then
-    run_check ${bd_elf}/gcc \
+    run_check ${bd_elf}/gcc-stage2 \
 	target-libgcc \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf}/gcc \
+    save_res ${bd_elf}/gcc-stage2 \
 	${res_elf} \
 	${target_dir}/libgcc/testsuite/libgcc \
 	"${logfile_elf}" \
@@ -220,12 +220,12 @@ fi
 # libstdc++
 if [ "x${DO_LIBSTDCPP}" = "xyes" ]
 then
-    run_check ${bd_elf}/gcc \
+    run_check ${bd_elf}/gcc-stage2 \
 	target-libstdc++-v3 \
 	"${logfile_elf}" \
 	${ARC_TEST_BOARD_ELF32} \
 	|| status=1
-    save_res ${bd_elf}/gcc \
+    save_res ${bd_elf}/gcc-stage2 \
 	${res_elf} \
 	${target_dir}/libstdc++-v3/testsuite/libstdc++ \
 	"${logfile_elf}" \

@@ -45,6 +45,7 @@ process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
 
 # Extra link flags specific to ARC
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
+set xldflags "$xldflags --specs=nsim.specs"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.

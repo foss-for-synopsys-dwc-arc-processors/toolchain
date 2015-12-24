@@ -121,11 +121,21 @@ sub processXML
 
     my $parser = XML::LibXML->new();
     my $tcf    = $parser->parse_file($filename);
+
+    # Parse the linker file
     my $sn = '/config_list/configuration[@name="gnu_linker_command_file"]';
     parseXML ($tcf, $sn);
     my $cmdline = " -Wl,-marcv2elfb -L" . $dirname . " ";
+
+
+    # Parse the compiler options
     $sn = '/config_list/configuration[@name="gcc_compiler"]';
     $cmdline .= " @" . parseXML ($tcf, $sn);
+
+    # Parse the C defines file
+    $sn = '/config_list/configuration[@name="C_defines"]';
+    $cmdline .= " -include " . parseXML ($tcf, $sn);
+
     return $cmdline;
 }
 

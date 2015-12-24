@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Copyright (C) 2009, 2011, 2012, 2013 Embecosm Limited
 # Copyright (C) 2012-2015 Synopsys Inc.
@@ -69,6 +69,7 @@
 #     Additional flags for use with configuration.
 
 # CFLAGS_FOR_TARGET
+# CXXFLAGS_FOR_TARGET
 
 #     Additional flags used when building the target libraries (e.g. for
 #     compact libraries) picked up automatically by make. This variable is used
@@ -88,6 +89,18 @@
 
 #     Make target prefix to install host application. Should be either
 #     "install" or "install-strip".
+
+# BUILD_OPTSIZE_NEWLIB
+
+#     Build newlib libraries optimized for size in addition to normal ones.
+
+# BUILD_OPTSIZE_LIBSTDCXX
+
+#     Build libstdc++ libraries optimized for size in addition to normal ones.
+
+# DO_STRIP_TARGET_LIBRARIES
+
+#     See build-all.sh --elf32-strip-target-libs option.
 
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
@@ -166,6 +179,9 @@ echo "Installing in ${INSTALLDIR}" | tee -a "$logfile"
 rm -rf "$build_dir"
 mkdir -p "$build_dir"
 
+# Location for toolchain with libs optimized for size.
+optsize_install_dir=$build_dir/optsize_libs_install
+
 # Binutils
 build_dir_init binutils
 configure_elf32 binutils
@@ -179,6 +195,17 @@ make_target building all-binutils all-gas all-ld
 # patch is applied to baremetal toolchain.
 make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
     ${HOST_INSTALL}-gas
+
+# To play safe, libstdc++ is not built separately, but with the whole gcc,
+# because it might not behave properly if it will be built by external
+# compiler. Thus it is requried to install binutils to dummy installation dir
+# for optsize libs. Cannot use "make DESTDIR=..." install, because prefix is !=
+# /. Perhaps it makes sense to do prefix=/ and install everything with properly
+# set DESTDIR.
+if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
+    cp -a $INSTALLDIR $optsize_install_dir
+fi
+
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
@@ -213,15 +240,52 @@ fi
 # step. Perhaps, more sustainable solution would be to make a step back with
 # regards of unified tree usage and make newlib part of the unified source tree
 # for baremetal builds.
-if [ "$TOOLCHAIN_HOST" ]; then
+if [ $IS_CROSS_COMPILING ]; then
     pch_opt=--disable-libstdcxx-pch
 else
     pch_opt=
 fi
 
-# GCC + configure of libstdc++
-build_dir_init gcc
-configure_elf32 gcc gcc --with-newlib $pch_opt
+# GCC must be built in 2 stages. First minimal GCC build is for building
+# newlib and second stage is a complete GCC with newlib headers. See:
+# http://www.ifp.illinois.edu/~nakazato/tips/xgcc.html
+# When building in Canadian cross stage 1  toolchain is useless, because it is
+# not runnable on a build host, hence toolchain that can run on host should be
+# already present in PATH and stage 1 may be skipped.
+if [ "$DO_ELF32_GCC_STAGE1" = "yes" ]; then
+    build_dir_init gcc-stage1
+    configure_elf32 gcc gcc --without-headers --with-newlib
+    make_target building all-gcc
+    make_target installing ${HOST_INSTALL}-gcc
+fi
+
+#
+# Newlib (build in sub-shell with new tools added to the PATH)
+#
+build_dir_init newlib
+(
+PATH=$INSTALLDIR/bin:$PATH
+configure_elf32 newlib
+make_target building all
+make_target installing install
+if [ "$DO_PDF" = "--pdf" ]
+then
+    # Cannot use install-pdf because libgloss/doc does not support this target.
+    make_target "generating PDF documentation" install-pdf-target-newlib
+fi
+)
+
+# GCC + configure of libstdc++ with newly installed newlib headers
+build_dir_init gcc-stage2
+# -f{function,data}-sections is passed for libgcc. This is especially
+# beneficial when generic software floating point implementation is used - it
+# is all in one file, so using one function will pull in whole file, which can
+# be as big as some smaller applications. Note that this will make sense only
+# if final application is linked with --gc-sections.
+configure_elf32 gcc gcc --with-newlib \
+    --with-headers="$INSTALLDIR/${arch}-elf32/include" \
+    --with-libs="$INSTALLDIR/${arch}-elf32/lib" $pch_opt \
+    CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections $CFLAGS_FOR_TARGET"
 make_target building all-gcc all-target-libgcc
 make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
 if [ "$DO_PDF" = "--pdf" ]
@@ -229,18 +293,60 @@ then
     make_target "generating PDF documentation" install-pdf-gcc
 fi
 
-# Newlib (build in sub-shell with new tools added to the PATH)
-build_dir_init newlib
-(
-PATH=$INSTALLDIR/bin:$PATH
-configure_elf32 newlib
-make_target building all-target-newlib
-make_target installing install-target-newlib
-if [ "$DO_PDF" = "--pdf" ]
-then
-    make_target "generating PDF documentation" install-pdf-target-newlib
+# Compiler flags which tend to produce best code size results for ARC.
+# CFLAGS_FOR_TARGET will be used after this optsize_flags, therefore one still
+# can override default flags using --target-cflags. An exception is -Os - this
+# flag is not in this variables and overrides C[XX]FLAGS_FOR_TARGET values of
+# -Ox. This is done because for the general purpose library we let
+# --target-cflags to override library flags completely, including -Ox value and
+# hence in general --target-cflags should always contain some -Ox value (except
+# for -O0, where it is not needed). But that would override -Os that is needed
+# to size optimized libraries. Hence -Os is enforced.
+optsize_flags="-g -ffunction-sections -fdata-sections \
+    -fno-branch-count-reg -fira-loop-pressure -fira-region=all \
+    -fno-sched-spec-insn-heuristic -fno-move-loop-invariants -mindexed-loads \
+    -mauto-modify-reg -fno-delayed-branch"
+
+#
+# Newlib optimized for size (build in sub-shell with new tools added to the PATH)
+#
+if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
+    build_dir_init newlib_optsize
+    (
+	PATH=$INSTALLDIR/bin:$PATH
+	INSTALLDIR=$optsize_install_dir
+	export CFLAGS_FOR_TARGET="$optsize_flags $CFLAGS_FOR_TARGET -Os"
+
+	configure_elf32 newlib_name newlib        \
+	    --enable-newlib-reent-small           \
+	    --disable-newlib-fvwrite-in-streamio  \
+	    --disable-newlib-fseek-optimization   \
+	    --disable-newlib-wide-orient          \
+	    --enable-newlib-nano-malloc           \
+	    --disable-newlib-unbuf-stream-opt     \
+	    --enable-lite-exit                    \
+	    --enable-newlib-global-atexit         \
+	    --enable-newlib-nano-formatted-io     \
+	    --disable-newlib-multithread
+	make_target building all
+	make_target installing install
+    )
+
+    # Now copy multilibs. Code has been borrowed from ARM toolchain
+    # build-common.sh file found at https://launchpad.net/gcc-arm-embedded
+    multilibs=$(get_multilibs)
+    for multilib in ${multilibs[@]} ; do
+	multi_dir="${arch}-elf32/lib/${multilib%%;*}"
+	src_dir=$optsize_install_dir/$multi_dir
+	dst_dir=$INSTALLDIR/$multi_dir
+	cp -f $src_dir/libc.a $dst_dir/libc_nano.a
+	cp -f $src_dir/libg.a $dst_dir/libg_nano.a
+	cp -f $src_dir/libm.a $dst_dir/libm_nano.a
+	# Copy nano.specs. That one really should come from libgloss, not
+	# from "extras" but ARC does not support libgloss yet.
+	cp "$ARC_GNU/toolchain/extras/nano.specs" $dst_dir/
+    done
 fi
-)
 
 # libstdc++
 # It is built in the build tree of GCC to avoid nasty problems which might
@@ -253,11 +359,36 @@ fi
 # GCC before that.
 
 echo "Building libstdc++ ..." | tee -a "$logfile"
-cd $build_dir/gcc
+cd $build_dir/gcc-stage2
 make_target building all-target-libstdc++-v3
 make_target installing install-target-libstdc++-v3
 # Don't build libstdc++ documentation because it requires additional software
 # on build host.
+
+#
+# libstdc++ optimized for size
+#
+if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
+    build_dir_init libstdcxx_optsize
+    (
+	INSTALLDIR=$optsize_install_dir
+        configure_elf32 libstdc++_optsize gcc --with-newlib $pch_opt \
+	CXXFLAGS_FOR_TARGET="$optsize_flags -fno-exceptions $CXXFLAGS_FOR_TARGET -Os"
+    )
+    make_target building all-target-libstdc++-v3
+    make_target installing install-target-libstdc++-v3
+
+    # Now copy multilibs. Code has been borrowed from ARM toolchain
+    # build-common.sh file found at https://launchpad.net/gcc-arm-embedded
+    multilibs=$(get_multilibs)
+    for multilib in ${multilibs[@]} ; do
+	multi_dir="${arch}-elf32/lib/${multilib%%;*}"
+	src_dir=$optsize_install_dir/$multi_dir
+	dst_dir=$INSTALLDIR/$multi_dir
+	cp -f $src_dir/libstdc++.a $dst_dir/libstdc++_nano.a
+	cp -f $src_dir/libsupc++.a $dst_dir/libsupc++_nano.a
+    done
+fi
 
 # Expat if requested
 if [ "$SYSTEM_EXPAT" = no ]
@@ -293,6 +424,35 @@ ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 
 # Copy TCF handler.
 cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gcc"
+
+# Strip files from debug symbols
+if [ "$DO_STRIP_TARGET_LIBRARIES" = yes ]; then
+
+    if [ $IS_CROSS_COMPILING = yes ]; then
+	# Use cross tools in the PATH
+	objcopy=${arch}-elf32-objcopy
+    else
+	objcopy=$INSTALLDIR/bin/${arch}-elf32-objcopy
+    fi
+
+    # Note that in case lib/gcc/arc-elf32 contains files for some another GCC
+    # version - those will be stripped as well.
+    files=$(find $INSTALLDIR/${arch}-elf32/lib \
+	$INSTALLDIR/lib/gcc/${arch}-elf32 -name \*.a -o -name \*.o)
+    # Using `strip` instead of `objcopy` would render archives usable - linker
+    # would complain about missing index in .a files. As of note - libgmon.h
+    # includes a header file libgcc_tm.h so `objcopy` would emit an error
+    # message that this file has "unrecognizable format". Whether header file
+    # is included in archive by purpose or by mistake is not known to me,
+    # however this is done in the generic part of libgcc.
+    for f in $files ; do
+	$objcopy -R .comment -R .note \
+	    -R .debug_info -R .debug_aranges -R .debug_pubnames \
+	    -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str \
+	    -R .debug_ranges -R .debug_loc \
+	    $f >> "$logfile" 2>&1 || true
+    done
+fi
 
 echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 
