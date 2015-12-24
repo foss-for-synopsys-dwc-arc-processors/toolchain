@@ -53,6 +53,7 @@
 #                  [--native-gdb | --no-native-gdb]
 #                  [--system-expat | --no-system-expat]
 #                  [--elf32-gcc-stage1 | --no-elf32-gcc-stage1]
+#                  [--elf32-strip-target-libs | --no-elf32-strip-target-libs]
 #                  [--optsize-newlib | --no-optsize-newlib]
 #                  [--optsize-libstdc++ | --no-optsize-libstdc++]
 
@@ -901,6 +902,7 @@ export SYSTEM_EXPAT
 export DO_ELF32_GCC_STAGE1
 export BUILD_OPTSIZE_NEWLIB
 export BUILD_OPTSIZE_LIBSTDCXX
+export DO_STRIP_TARGET_LIBRARIES
 export IS_CROSS_COMPILING
 
 # Set up a logfile

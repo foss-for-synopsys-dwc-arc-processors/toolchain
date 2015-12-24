@@ -429,7 +429,7 @@ ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
 cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gcc"
 
 # Strip files from debug symbols
-if [ "$DO_STRIP_TARGET_LIBRARIES" != no ]; then
+if [ "$DO_STRIP_TARGET_LIBRARIES" = yes ]; then
 
     if [ $IS_CROSS_COMPILING = yes ]; then
 	# Use cross tools in the PATH
