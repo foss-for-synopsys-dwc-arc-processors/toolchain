@@ -313,9 +313,6 @@ optsize_flags="-g -ffunction-sections -fdata-sections \
 if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
     build_dir_init newlib_optsize
     (
-	# Original install dir is needed to know where to copy multilib files
-	# to, and where to get GCC executable.
-	orig_install_dir=$INSTALLDIR
 	PATH=$INSTALLDIR/bin:$PATH
 	INSTALLDIR=$optsize_install_dir
 	export CFLAGS_FOR_TARGET="$optsize_flags $CFLAGS_FOR_TARGET -Os"
@@ -333,22 +330,22 @@ if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
 	    --disable-newlib-multithread
 	make_target building all
 	make_target installing install
-
-	# Now copy multilibs. Code has been borrowed from ARM toolchain
-	# build-common.sh file found at https://launchpad.net/gcc-arm-embedded
-	multilibs=$(get_multilibs)
-	for multilib in "${multilibs[@]}" ; do
-	    multi_dir="${arch}-elf32/lib/${multilib%%;*}"
-	    src_dir=$optsize_install_dir/$multi_dir
-	    dst_dir=$orig_install_dir/$multi_dir
-	    cp -f $src_dir/libc.a $dst_dir/libc_nano.a
-	    cp -f $src_dir/libg.a $dst_dir/libg_nano.a
-	    cp -f $src_dir/libm.a $dst_dir/libm_nano.a
-	    # Copy nano.specs. That one really should come from libgloss, not
-	    # from "extras" but ARC does not support libgloss yet.
-	    cp "$ARC_GNU/toolchain/extras/nano.specs" $dst_dir/
-	done
     )
+
+    # Now copy multilibs. Code has been borrowed from ARM toolchain
+    # build-common.sh file found at https://launchpad.net/gcc-arm-embedded
+    multilibs=$(get_multilibs)
+    for multilib in ${multilibs[@]} ; do
+	multi_dir="${arch}-elf32/lib/${multilib%%;*}"
+	src_dir=$optsize_install_dir/$multi_dir
+	dst_dir=$INSTALLDIR/$multi_dir
+	cp -f $src_dir/libc.a $dst_dir/libc_nano.a
+	cp -f $src_dir/libg.a $dst_dir/libg_nano.a
+	cp -f $src_dir/libm.a $dst_dir/libm_nano.a
+	# Copy nano.specs. That one really should come from libgloss, not
+	# from "extras" but ARC does not support libgloss yet.
+	cp "$ARC_GNU/toolchain/extras/nano.specs" $dst_dir/
+    done
 fi
 
 # libstdc++
@@ -384,7 +381,7 @@ if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
     # Now copy multilibs. Code has been borrowed from ARM toolchain
     # build-common.sh file found at https://launchpad.net/gcc-arm-embedded
     multilibs=$(get_multilibs)
-    for multilib in "${multilibs[@]}" ; do
+    for multilib in ${multilibs[@]} ; do
 	multi_dir="${arch}-elf32/lib/${multilib%%;*}"
 	src_dir=$optsize_install_dir/$multi_dir
 	dst_dir=$INSTALLDIR/$multi_dir

@@ -553,7 +553,7 @@ get_multilibs() {
     if [ $IS_CROSS_COMPILING = yes ]; then
 	echo $($orig_install_dir/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
     else
-	echo $(${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
+	echo $($INSTALLDIR/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
     fi
 }
 
