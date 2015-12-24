@@ -76,20 +76,26 @@ Getting sources
 
 ###  Using source tarball
 
+GNU Toolchain for ARC source tarball can be downloaded from project GitHub
+page https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases.
+
 GNU toolchain source tarball already contains all of the necessary sources
 except for Linux which is a separate product. Linux sources are required only
-for Linux toolchain, they are not required for bare metal elf32 toolchain.
+for Linux toolchain, they are not required for bare-metal elf32 toolchain.
 Latest stable release from https://kernel.org/ is recommended, only versions >=
 3.9 are supported. Linux sources should be located in the directory named
 `linux` that is the sibling of this `toolchain` directory. For example:
 
-    $ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.24.tar.xz
-    $ tar xaf linux-3.18.24.tar.xz --transform=s/linux-3.18.24/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.3.3.tar.xz
+    $ tar xaf linux-4.3.3.tar.xz --transform=s/linux-4.3.3/linux/
 
 ### Using Git repositories
 
+Source tarballs are available only for releases of GNU Toolchain. To build
+toolchain from different components versions (for example from current trunk)
+it is recommended to use Git.
 Repositories for each of the toolchain components (its not all one big
-repository), including the linux repository, should be cloned before building
+repository), including the Linux repository, should be cloned before building
 the toolchain. These should be peers of this `toolchain` directory.
 
     $ mkdir arc_gnu
