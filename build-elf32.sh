@@ -342,9 +342,6 @@ if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
 	cp -f $src_dir/libc.a $dst_dir/libc_nano.a
 	cp -f $src_dir/libg.a $dst_dir/libg_nano.a
 	cp -f $src_dir/libm.a $dst_dir/libm_nano.a
-	# Copy nano.specs. That one really should come from libgloss, not
-	# from "extras" but ARC does not support libgloss yet.
-	cp "$ARC_GNU/toolchain/extras/nano.specs" $dst_dir/
     done
 fi
 
