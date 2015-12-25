@@ -85,7 +85,7 @@ ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
 # IDE: output related variables
 IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
-IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win32_install.exe
+IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
 IDE_PLUGINS_DIR := arc_gnu_$(RELEASE)_ide_plugins
 IDE_PLUGINS_ZIP := $(IDE_PLUGINS_DIR).zip
