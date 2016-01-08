@@ -1,0 +1,62 @@
+proc check_target_arc { arg } {
+    global target_alias
+    global board
+    global board_info
+
+    if {[info exists board]} {
+	set target_board $board
+    } else {
+	set target_board [target_info name]
+    }
+
+    if { [board_info $target_board exists compiler] } {
+	set compiler [board_info $target_board compiler]
+    } else {
+	set compiler [find_gcc]
+    }
+
+    if { $compiler == "" } {
+	return ""
+    }
+
+    regexp "/.* " $compiler compiler
+    set compiler [string trimright $compiler " "]
+    verbose "compiler is $compiler"
+
+    if { [which $compiler] == 0 } {
+	return ""
+    }
+
+    if { [board_info $target_board exists multilib_flags] } {
+	set opts [board_info $target_board multilib_flags]
+    } else {
+	set opts ""
+    }
+
+    set result [eval exec $compiler $opts -dM -E - < /dev/null]
+    verbose "Default defines : $result"
+    return [regexp "$arg" "$result"]
+}
+
+proc check_target_archs { } {
+    return [check_target_arc "__ARCHS__"]
+}
+
+# Return 1 if this is a compiler supporting ARCv2 EM as default processor
+proc check_target_arcem { } {
+    return [check_target_arc "__ARCEM__"]
+}
+
+# Return 1 if we compile for ARC700
+proc check_target_arc700 { } {
+    return [check_target_arc "__ARC700__"]
+}
+
+# Return 1 if we compile for ARC6xx
+proc check_target_arc6xx { } {
+    if { [check_target_arc "__ARC600__"]
+	 || [check_target_arc "__ARC601__"] } {
+	return 1
+    }
+    return 0
+}
