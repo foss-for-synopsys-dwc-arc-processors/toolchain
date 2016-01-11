@@ -118,15 +118,11 @@ binutils and gdb repository. This will greatly reduce amount of disk space
 consumed and time to clone the repository.
 
 By default `toolchain` repository will be checked out to the current
-release branch `arc-release`.
+release branch `arc-releases`.
 
 If current working directory is not a "toolchain" directory, then change to it:
 
     $ cd toolchain
-
-Following command will check out repository to the latest release:
-
-    $ git checkout arc-releases
 
 This repository can be checked out to a specific GNU Toolchain for ARC release
 by specifying a particular release tag, for example for 2015.12 release that
