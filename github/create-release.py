@@ -2,8 +2,6 @@
 
 # Copyright (C) 2015 Synopsys Inc.
 #
-# This file is a master script for building ARC tool chains.
-#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 3 of the License, or (at your option)
