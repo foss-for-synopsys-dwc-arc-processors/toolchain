@@ -30,8 +30,15 @@ load_generic_config "sim"
 load_base_board_description "basic-sim"
 
 # Any multilib options are set in an environment variable.
-set multilib_opts "$env(ARC_MULTILIB_OPTIONS)"
+if { [ info exists env(ARC_MULTILIB_OPTIONS) ] } {
+    set multilib_opts "$env(ARC_MULTILIB_OPTIONS)"
+} else {
+    set multilib_opts ""
+}
 process_multilib_options "$multilib_opts"
+
+# We need extra procedures to determine for which cpu we simulate.
+search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
 
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
@@ -108,33 +115,36 @@ if [ string match arceb-* $target_triplet ] {
     lappend nsim_flags -on nsim_isa_big_endian
 }
 
-# ARC EM is default
-if { [string first arc700 "$multilib_opts"] == 0 } {
+if { [check_target_arc700] } {
     lappend nsim_flags \
-	    -p nsim_isa_family=a700 \
-	    -on nsim_isa_sat \
-	    -on nsim_isa_mpy32
-} elseif { [string first arc600 "$multilib_opts"] == 0 } {
+	-p nsim_isa_family=a700 \
+	-on nsim_isa_sat \
+	-on nsim_isa_mpy32
+} elseif { [check_target_arc6xx] } {
     lappend nsim_flags \
-	    -p nsim_isa_family=a600 \
-	    -p nsim_isa_core=6 \
-	    -on nsim_isa_sat \
-	    -on nsim_isa_mult32
-} elseif { [string first archs "$multilib_opts"] == 0 } {
+	-p nsim_isa_family=a600 \
+	-p nsim_isa_core=6 \
+	-on nsim_isa_sat \
+	-on nsim_isa_mult32
+} elseif { [check_target_archs] } {
     lappend nsim_flags \
-	    -p nsim_isa_family=av2hs \
-	    -p nsim_isa_core=1 \
-	    -on nsim_isa_ll64_option \
-	    -p nsim_isa_mpy_option=9 \
-	    -p nsim_isa_div_rem_option=2 \
-	    -on nsim_isa_sat
+	-p nsim_isa_family=av2hs \
+	-p nsim_isa_core=1 \
+	-on nsim_isa_ll64_option \
+	-p nsim_isa_mpy_option=9 \
+	-p nsim_isa_div_rem_option=2 \
+	-on nsim_isa_sat
+} elseif { [check_target_arcem] } {
+    lappend nsim_flags \
+	-p nsim_isa_family=av2em \
+	-p nsim_isa_core=1 \
+	-p nsim_isa_mpy_option=9 \
+	-p nsim_isa_div_rem_option=2 \
+	-on nsim_isa_sat \
+	-p nsim_isa_code_density_option=2 \
+	-p nsim_isa_fpus_option=1
 } else {
-    lappend nsim_flags \
-	    -p nsim_isa_family=av2em \
-	    -p nsim_isa_core=1 \
-	    -p nsim_isa_mpy_option=9 \
-	    -p nsim_isa_div_rem_option=2 \
-	    -on nsim_isa_sat
+    perror "Unknown CPU configuration"
 }
 
 # Allow user to specify additional options, like JIT, etc.
