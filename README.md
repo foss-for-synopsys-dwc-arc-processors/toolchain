@@ -447,9 +447,6 @@ the box, as order of some registers changed. To use Ashling GDB server with GDB
 starting from 2015.06 release it is required to use modified files that can be
 found in this `toolchain` repository in `extras/opella-xd` directory.
 
-The Ashling gdbserver might emit error messages like "Error: Core is running".
-Those messages are harmless and do not affect the debugging experience.
-
 *Before* connecting GDB to an Opella-XD gdbserver it is essential to specify
 path to XML target description file that is aligned to `<core.xml>` file passed
 to GDB server. All registers described in `<core.xml>` also must be described
