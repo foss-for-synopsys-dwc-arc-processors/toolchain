@@ -128,16 +128,22 @@ if { [check_target_arc700] } {
 	-on nsim_isa_ll64_option \
 	-p nsim_isa_mpy_option=9 \
 	-p nsim_isa_div_rem_option=2 \
-	-on nsim_isa_sat
+	-p nsim_isa_sat=1 \
+	-p nsim_isa_fpud_option=1 \
+	-p nsim_isa_fpud_div_option=1 \
+	-p nsim_isa_fpu_mac_option=1
 } elseif { [check_target_arcem] } {
     lappend nsim_flags \
 	-p nsim_isa_family=av2em \
 	-p nsim_isa_core=1 \
 	-p nsim_isa_mpy_option=9 \
 	-p nsim_isa_div_rem_option=2 \
-	-on nsim_isa_sat \
+	-p nsim_isa_sat=1 \
 	-p nsim_isa_code_density_option=2 \
-	-p nsim_isa_fpus_option=1
+	-p nsim_isa_fpus_option=1 \
+	-p nsim_isa_fpus_div_option=1 \
+	-p nsim_isa_fpu_mac_option=1 \
+	-p nsim_isa_fpuda_option=1
 } else {
     perror "Unknown CPU configuration"
 }
