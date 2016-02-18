@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Copyright (C) 2009, 2011, 2012, 2013 Embecosm Limited
-# Copyright (C) 2012-2015 Synopsys Inc.
+# Copyright (C) 2012-2016 Synopsys Inc.
 
 # Contributor Joern Rennecke <joern.rennecke@embecosm.com>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>

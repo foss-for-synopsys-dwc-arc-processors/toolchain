@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2007-2015 Synopsys Inc.
+# Copyright (C) 2007-2016 Synopsys Inc.
 
 # This file is a common initialization script for ARC tool chains.
 
