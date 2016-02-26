@@ -243,6 +243,20 @@ Build bare metal toolchain for ARC EM6 in the ARC EM Starter Kit 1.1:
       -mnorm -mmpy-option=6 -mbarrel-shifter \
       --param l1-cache-size=32768 --param l1-cache-line-size=128"
 
+To build native ARC Linux toolchain (toolchain that runs on same system as for
+which it compiles, so host == target) it is required first to build a normal
+cross toolchain for this system. Then it should be added it to the PATH, after
+that `build-all.sh` can be run:
+
+    $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT_NATIVE \
+      --cpu archs --native --host arc-snps-linux-uclibc
+
+In this command line, argument to `--cpu` option must correspond to the target
+CPU and argument to `--host` options depends on whether this is a big or little
+endian target. Install directory must be different than the one where
+cross-toolchain is installed.
+
+
 ### Building toolchain on Windows
 
 To build toolchain for Windows hosts it is recommended to do a "Canadian
