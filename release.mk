@@ -101,8 +101,7 @@ ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/tech
 IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
 IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
-IDE_PLUGINS_DIR := arc_gnu_$(RELEASE)_ide_plugins
-IDE_PLUGINS_ZIP := $(IDE_PLUGINS_DIR).zip
+IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE)_ide_plugins.zip
 
 # OpenOCD
 OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
@@ -311,22 +310,22 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 #
 # IDE related targets
 #
-$O/$(IDE_PLUGINS_ZIP): $O/$(IDE_PLUGINS_DIR)
-	cd $O/$(IDE_PLUGINS_DIR) && zip -q -r ../$(IDE_PLUGINS_ZIP) *
-
 $O/$(ECLIPSE_VANILLA_TGZ_LINUX):
 	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_TGZ_LINUX)&r=1'
 
 $O/$(ECLIPSE_VANILLA_ZIP_WIN):
 	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_ZIP_WIN)&r=1'
 
-$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_DIR)
+# Install ARC plugins from .zip file and install prerequisites in Eclipse.
+# Similar invocation is in windows/build-release.sh. Those invocations must be
+# in sync.
+$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_ZIP)
 	mkdir -p $O/$(IDE_INSTALL_LINUX)
 	tar xaf $< -C $O/$(IDE_INSTALL_LINUX)
 	$O/$(IDE_INSTALL_LINUX)/eclipse/eclipse \
 	    -application org.eclipse.equinox.p2.director \
 	    -noSplash \
-	    -repository $(ECLIPSE_REPO),file://$(realpath $O/$(IDE_PLUGINS_DIR)) \
+	    -repository $(ECLIPSE_REPO),jar:file:$(realpath $O/$(IDE_PLUGINS_ZIP))\!/ \
 	    -installIU $(ECLIPSE_PREREQ),com.arc.cdt.feature.feature.group
 	# Eclipse will create a bunch of repos with local paths, that will not
 	# work for end-users, hence those repos must be manually removed.
