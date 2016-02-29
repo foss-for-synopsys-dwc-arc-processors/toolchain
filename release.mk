@@ -36,6 +36,8 @@
 #
 CONFIG_STATIC_TOOLCHAIN := n
 
+ROOT := $(realpath ..)
+
 # Include overriding configuration
 -include release.config
 
@@ -71,6 +73,8 @@ O := ../release_output
 TAR_EXT := .tar.gz
 
 # Toolchain: source tarball
+# This variable should use .. instead of $(ROOT) so that tar will auto-remove
+# .. from file paths. Perhaps this ugliness can be fixed with --transform?
 TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils cgen gcc gdb newlib toolchain uClibc)
 TOOLS_SOURCE_DIR := $O/arc_gnu_$(RELEASE)_sources
 
@@ -97,6 +101,7 @@ ECLIPSE_REPO := http://download.eclipse.org/releases/luna
 # Coma separated list
 ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
+
 # IDE: output related variables
 IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
 IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win_install.exe
@@ -107,7 +112,20 @@ IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE)_ide_plugins.zip
 OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
 OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_linux_install
 # Should be created and checked out manually before running this Makefile.
-OOCD_SRC_DIR_LINUX := ../openocd
+OOCD_SRC_DIR_LINUX := $(ROOT)/openocd
+
+# List of files that will be uploaded to GitHub Release.
+UPLOAD_ARTIFACTS = \
+    $(TOOLS_SOURCE_DIR)$(TAR_EXT) \
+    $(TOOLS_ELFLE_DIR_LINUX)$(TAR_EXT) \
+    $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT) \
+    $(TOOLS_LINUXLE_700_DIR_LINUX)$(TAR_EXT) \
+    $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT) \
+    $(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
+    $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
+    $(IDE_TGZ_LINUX) \
+    $(IDE_EXE_WIN) \
+    $(IDE_PLUGINS_ZIP)
 
 # md5sum
 MD5SUM_FILE := md5.sum
@@ -164,7 +182,7 @@ $O/$(MD5SUM_FILE): \
     $O/$(OOCD_DIR_WIN).zip $O/$(OOCD_DIR_WIN).tar.gz \
     $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP) \
     $O/$(OOCD_DIR_LINUX).tar.gz
-	cd $O && md5sum *linux_install.tar.gz *sources.tar.gz *win_install.zip *plugins.zip > $@
+	cd $O && md5sum $(UPLOAD_ARTIFACTS) > $@
 
 
 checkout: $O/.stamp_checked_out
@@ -185,7 +203,7 @@ ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
 
 
 #
-# Real targets
+# Build targets
 #
 $O:
 	mkdir -p $@
@@ -385,6 +403,7 @@ $O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
 $O/$(OOCD_DIR_WIN).tar.gz: $O/$(OOCD_DIR_WIN)
 	tar -C $O -caf $O/$(OOCD_DIR_WIN).tar.gz $(OOCD_DIR_WIN)/
 
+
 #
 # Create tag
 #
@@ -402,22 +421,13 @@ push-tag:
 #
 # This is not a part of a default target. Upload should be triggered manually.
 # RELEASE_TAG and RELEASE_NAME mustbe set to something
-upload:
+upload: $O/$(MD5SUM_FILE)
 	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
 	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
 	    --name="$(RELEASE_NAME)" \
 	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
 	    --md5sum-file=$O/$(MD5SUM_FILE) \
-	    $O/$(TOOLS_ELFLE_DIR_LINUX)$(TAR_EXT) \
-	    $O/$(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT) \
-	    $O/$(TOOLS_LINUXLE_700_DIR_LINUX)$(TAR_EXT) \
-	    $O/$(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT) \
-	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
-	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
-	    $O/$(TOOLS_SOURCE_DIR)$(TAR_EXT) \
-	    $O/$(IDE_PLUGINS_ZIP) \
-	    $O/$(IDE_TGZ_LINUX) \
-	    $O/$(IDE_EXE_WIN)
+	    $(addprefix $O/,$(UPLOAD_ARTIFACTS))
 
 #
 # Clean
