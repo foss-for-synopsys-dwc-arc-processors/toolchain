@@ -17,18 +17,11 @@
 ##############################################################################
 
 #
-# How to use:
+# Toolchain "release" makefile that does all of the steps required to make a
+# GitHub release of toolchain.
 #
-# This is a script to create prebuilt packages of GNU Toolchain
-#
-# 1. Checkout toolchain directory to desired branch. Create tags if needed.
-#
-# 2. Run "make -f release.mk RELEASE=<release> toolchain". If you do not
-# want build-all.sh to checkout directories, then do "touch
-# ../release_output/.stamp_checked_out before running makefile.  Note that
-# "toolchain" target will build only toolchain prebuilts, nothing else, but it
-# also doesn't have other prerequisites. Target "build" will also build IDE and
-# OpenOCD, however this also requires additional preparations.
+# Please refer to doc/release.rst for documentation on how to use this
+# makefile.
 #
 
 #
