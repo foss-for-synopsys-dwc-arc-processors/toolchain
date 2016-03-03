@@ -491,12 +491,16 @@ $O/$(OOCD_DIR_WIN).tar.gz: $O/$(OOCD_DIR_WIN)
 #
 create-tag:
 	./tag-release.sh $(RELEASE_TAG)
+	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
+	$(GIT) --git-dir=$(OOCD_SRC_DIR_LINUX)/.git checkout arc-0.9-dev-$(RELEASE)
+	$(GIT) --git-dir=$(OOCD_SRC_DIR_LINUX)/.git tag $(RELEASE_TAG)
 
 #
 # Push tag
 #
 push-tag:
 	./push-release.sh $(RELEASE_TAG)
+	$(GIT) --git-dir=$(OOCD_SRC_DIR_LINUX)/.git push origin $(RELEASE_TAG)
 
 #
 # Upload
