@@ -52,6 +52,10 @@ ROOT := $(realpath ..)
 
 THIRD_PARTY_SOFTWARE_LOCATION :=
 
+# Must be a folder available to Windows host, e.g. Linux folder shared via
+# Samba.
+WINDOWS_WORKSPACE := $(ROOT)/windows_workspace
+
 # Include overriding configuration
 -include release.config
 
@@ -484,6 +488,31 @@ $O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
 
 $O/$(OOCD_DIR_WIN).tar.gz: $O/$(OOCD_DIR_WIN)
 	tar -C $O -caf $O/$(OOCD_DIR_WIN).tar.gz $(OOCD_DIR_WIN)/
+
+
+#
+# Create workspace for Windows script
+#
+.PHONY: windows-workspace
+windows-workspace: $O/.stamp_windows_workspace
+
+$(WINDOWS_WORKSPACE):
+	mkdir -p $@/packages
+
+$O/.stamp_windows_workspace: $O/.stamp_elf_le_windows_tarball \
+    $O/.stamp_elf_be_windows_tarball | $(WINDOWS_WORKSPACE)
+ifeq ($(THIRD_PARTY_SOFTWARE_LOCATION),)
+	$(error THIRD_PARTY_SOFTWARE_LOCATION must be set to create windows workspace)
+endif
+	$(CP) $O/$(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT) \
+	      $O/$(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT) \
+	      $O/$(IDE_PLUGINS_ZIP) \
+	      $O/$(OOCD_DIR_WIN)$(TAR_EXT) \
+	      $O/$(ECLIPSE_VANILLA_ZIP_WIN) \
+	      $O/$(JRE_TGZ_WIN) \
+	      $(addprefix $(THIRD_PARTY_SOFTWARE_LOCATION)/,make coreutils) \
+	      $(WINDOWS_WORKSPACE)/packages/
+	$(CP) $(ROOT)/toolchain $(WINDOWS_WORKSPACE)/
 
 
 #
