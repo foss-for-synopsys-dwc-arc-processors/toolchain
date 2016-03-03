@@ -36,9 +36,13 @@
 #
 CONFIG_STATIC_TOOLCHAIN := n
 
+IDE_PLUGIN_LOCATION :=
+
 JAVA_VERSION := 8u66
 
 ROOT := $(realpath ..)
+
+THIRD_PARTY_SOFTWARE_LOCATION :=
 
 # Include overriding configuration
 -include release.config
@@ -158,6 +162,7 @@ endif
 #
 # Configuration
 #
+CP = rsync -a
 PYTHON = /depot/Python-3.4.3/bin/python3
 
 #
@@ -207,6 +212,42 @@ windows: $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
 
 ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
 
+#
+# Initial preparations
+#
+
+.PHONY: copy-external
+copy-external: | $O
+ifeq ($(IDE_PLUGIN_LOCATION),)
+	$(error IDE_PLUGIN_LOCATION must be set to do copy-external)
+endif
+ifeq ($(THIRD_PARTY_SOFTWARE_LOCATION),)
+	$(error THIRD_PARTY_SOFTWARE_LOCATION must be set to do copy-external)
+endif
+ifeq ($(OPENOCD_WINDOWS_LOCATION),)
+	$(error OPENOCD_WINDOWS_LOCATION must be set to do copy-external)
+endif
+	# Copy IDE plugin
+	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
+	# Copy JRE. Original tarballs from Oracle do not have .tar in filenames.
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_LINUX:.tar.gz=.gz) \
+	    $O/$(JRE_TGZ_LINUX)
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_WIN:.tar.gz=.gz) \
+	    $O/$(JRE_TGZ_WIN)
+	# Copy Eclipse
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_TGZ_LINUX) $O
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_ZIP_WIN) $O
+	# Copy OpenOCD for Windows
+	$(CP) $(OPENOCD_WINDOWS_LOCATION)/$(OOCD_DIR_WIN)$(TAR_EXT) $O
+
+.PHONY: prerequisites
+prerequisites: copy-external
+
+
+.PHONY: distclean
+distclean: clean
+	rm -rf $(ROOT)/{binutils,cgen,gcc,gdb,newlib,linux,uClibc}
+	rm -rf $(ROOT)/openocd
 
 #
 # Build targets
