@@ -36,6 +36,8 @@
 #
 CONFIG_STATIC_TOOLCHAIN := n
 
+DEPLOY_DESTINATION =
+
 # URL base for git repositories.
 GIT_URL_BASE := git@github.com:foss-for-synopsys-dwc-arc-processors
 
@@ -63,6 +65,10 @@ WINDOWS_WORKSPACE := $(ROOT)/windows_workspace
 #
 # Helpers
 #
+
+define create_dir
+	mkdir -p $@
+endef
 
 # Create tarball for release
 # :param $1 - name of directory to tar. Directory must be in the $O.
@@ -162,6 +168,15 @@ UPLOAD_ARTIFACTS = \
     $(IDE_TGZ_LINUX) \
     $(IDE_EXE_WIN) \
     $(IDE_PLUGINS_ZIP)
+
+# List of files that will be deployed internally. Is a superset of "upload"
+# artifacts.
+DEPLOY_ARTIFACTS = \
+    $(UPLOAD_ARTIFACTS) \
+    $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT) \
+    $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT) \
+    $(OOCD_DIR_WIN).zip \
+    $(OOCD_DIR_LINUX)$(TAR_EXT)
 
 # md5sum
 MD5SUM_FILE := md5.sum
@@ -483,11 +498,14 @@ $O/$(OOCD_DIR_LINUX).tar.gz: $O/$(OOCD_DIR_LINUX)/bin/openocd
 # Make OpenOCD for Windows zip file.
 openocd-win: $O/$(OOCD_DIR_WIN).zip $O/$(OOCD_DIR_WIN).tar.gz
 
-$O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
-	cd $O && zip -q -r $(OOCD_DIR_WIN).zip $(OOCD_DIR_WIN)/
+#  Tarball is an order-only dependency, because untarred directory will
+#  preserve original timestamps, therefore it would be _older_ then the
+#  tarball, thus each time make would try to untar it again.
+$O/$(OOCD_DIR_WIN): | $O/$(OOCD_DIR_WIN)$(TAR_EXT)
+	tar -C $(dir $@) -xaf $|
 
-$O/$(OOCD_DIR_WIN).tar.gz: $O/$(OOCD_DIR_WIN)
-	tar -C $O -caf $O/$(OOCD_DIR_WIN).tar.gz $(OOCD_DIR_WIN)/
+$O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
+	cd $O && zip -q -r $(notdir $@) $(OOCD_DIR_WIN)/
 
 
 #
@@ -532,6 +550,17 @@ push-tag:
 	$(GIT) --git-dir=$(OOCD_SRC_DIR_LINUX)/.git push origin $(RELEASE_TAG)
 
 #
+# Deploy to shared file system
+#
+.PHONY: deploy
+deploy: $O/$(MD5SUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
+ifeq ($(DEPLOY_DESTINATION),)
+	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
+endif
+	$(CP) $^ $(DEPLOY_DESTINATION)/
+
+
+#
 # Upload
 #
 # This is not a part of a default target. Upload should be triggered manually.
@@ -543,6 +572,14 @@ upload: $O/$(MD5SUM_FILE)
 	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
 	    --md5sum-file=$O/$(MD5SUM_FILE) \
 	    $(addprefix $O/,$(UPLOAD_ARTIFACTS))
+
+#
+# Generic directory creator
+#
+ifneq ($(DIRS),)
+$(DIRS):
+	$(create_dir)
+endif
 
 #
 # Clean
