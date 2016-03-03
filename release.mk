@@ -36,6 +36,14 @@
 #
 CONFIG_STATIC_TOOLCHAIN := n
 
+# URL base for git repositories.
+GIT_URL_BASE := git@github.com:foss-for-synopsys-dwc-arc-processors
+
+# Whether there is a directory that contains already cloned git repositories
+# that can be used as a git reference. If specified than it *must* contain
+# copies of all repositories that will be used.
+GIT_REFERENCE_ROOT :=
+
 IDE_PLUGIN_LOCATION :=
 
 JAVA_VERSION := 8u66
@@ -57,6 +65,20 @@ THIRD_PARTY_SOFTWARE_LOCATION :=
 define create_tar
        cd $O && tar caf $1$(TAR_EXT) $1/
 endef
+
+# Clone git repository
+# $1 - tool name
+# $2 - directory name
+ifeq ($(GIT_REFERENCE_ROOT),)
+define git_clone
+	$(GIT) clone -q $(GIT_URL_BASE)/$1.git $(ROOT)/$2
+endef
+else
+define git_clone
+	$(GIT) clone -q --reference=$(GIT_REFERENCE_ROOT)/$2 \
+	    $(GIT_URL_BASE)/$1.git $(ROOT)/$2
+endef
+endif
 
 #
 # Build flags common to all toolchains
@@ -163,6 +185,7 @@ endif
 # Configuration
 #
 CP = rsync -a
+GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
 
 #
@@ -216,6 +239,18 @@ ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
 # Initial preparations
 #
 
+.PHONY: clone
+clone:
+	$(call git_clone,binutils-gdb,binutils)
+	$(call git_clone,cgen,cgen)
+	$(call git_clone,gcc,gcc)
+	$(call git_clone,binutils-gdb,gdb)
+	$(call git_clone,newlib,newlib)
+	$(call git_clone,linux,linux)
+	$(call git_clone,uClibc,uClibc)
+	$(call git_clone,openocd,openocd)
+
+
 .PHONY: copy-external
 copy-external: | $O
 ifeq ($(IDE_PLUGIN_LOCATION),)
@@ -241,7 +276,7 @@ endif
 	$(CP) $(OPENOCD_WINDOWS_LOCATION)/$(OOCD_DIR_WIN)$(TAR_EXT) $O
 
 .PHONY: prerequisites
-prerequisites: copy-external
+prerequisites: clone copy-external
 
 
 .PHONY: distclean
