@@ -532,6 +532,15 @@ endif
 	      $(WINDOWS_WORKSPACE)/packages/
 	$(CP) $(ROOT)/toolchain $(WINDOWS_WORKSPACE)/
 
+#
+# Retrieve Windows installer
+#
+.PHONY: copy-windows-installer
+copy-windows-installer: $O/$(IDE_EXE_WIN)
+
+$O/$(IDE_EXE_WIN): $(WINDOWS_WORKSPACE)/$(IDE_EXE_WIN)
+	$(CP) $< $@
+
 
 #
 # Create tag
