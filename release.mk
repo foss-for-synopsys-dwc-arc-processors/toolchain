@@ -36,6 +36,8 @@
 #
 CONFIG_STATIC_TOOLCHAIN := n
 
+JAVA_VERSION := 8u66
+
 ROOT := $(realpath ..)
 
 # Include overriding configuration
@@ -101,6 +103,10 @@ ECLIPSE_REPO := http://download.eclipse.org/releases/luna
 # Coma separated list
 ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
+
+# Java.
+JRE_TGZ_LINUX := jre-$(JAVA_VERSION)-linux-x64.tar.gz
+JRE_TGZ_WIN   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
 
 # IDE: output related variables
 IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
@@ -361,7 +367,7 @@ $O/.stamp_ide_linux_tar: \
 	cp -al $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	cp -al $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	mkdir $O/$(IDE_INSTALL_LINUX)/eclipse/jre
-	tar xaf $O/jre-*-linux-x64.tar.gz -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
+	tar xaf $O/$(JRE_TGZ_LINUX) -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
 	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	tar caf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
