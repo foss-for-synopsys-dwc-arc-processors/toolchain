@@ -36,6 +36,10 @@
 #
 CONFIG_STATIC_TOOLCHAIN := n
 
+# Include overriding configuration
+-include release.config
+
+
 #
 # Helpers
 #
