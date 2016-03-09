@@ -135,12 +135,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         </field>
     </register>
 
-    <register name="DEBUGI" description="Debug register, interrupts/register banks" number="0xF" access="RW">
+    <register name="DEBUGI" description="Debug register, interrupts/register banks" number="0x1F" access="RW">
         <field name="E"  size="1" offset="0" access="RW"
                description="Enable exception or int vector functionality" />
         <field name="RB" size="3" offset="16" access="RW"
                 description="Register Bank" />
-        <field name="RBE" siz="1" offset="19" access="RW" description="Register Bank Enable" />
+        <field name="RBE" size="1" offset="19" access="RW" description="Register Bank Enable" />
+        <field name="EDC" size="1" offset="31" access="RW"
+               description="Enable encryption of memory accesses by the debugger" />
     </register>
 
     <!-- Timer 0 -->
@@ -215,8 +217,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     </register>
     <register name="DC_FLSH" number="0x4B" mask="0x1" access="WO"
               description="Flush Data Cache" />	
-    <register name="AUX_CACHE_LIMIT" number="0x5C" mask="0xFFFFFFFF" access="RW"
-              description="Start address of the first non-cached data region" />	
+    <register name="AUX_CACHE_LIMIT" number="0x209" mask="0xFFFFFFFF" access="RW"
+              description="Start address of the first non-cached data region" />
     <register name="DC_LDL" number="0x49" mask="0xFFFFFFFF" access="WO"
               description="Lock Data Line" />	
     <register name="DC_IVDL" number="0x4A" mask="0xFFFFFFFF" access="WO"
