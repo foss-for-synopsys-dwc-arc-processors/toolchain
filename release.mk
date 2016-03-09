@@ -27,7 +27,7 @@
 # want build-all.sh to checkout directories, then do "touch
 # ../release_output/.stamp_checked_out before running makefile.  Note that
 # "toolchain" target will build only toolchain prebuilts, nothing else, but it
-# also doesn't have other prerequisites. Target "all" will also build IDE and
+# also doesn't have other prerequisites. Target "build" will also build IDE and
 # OpenOCD, however this also requires additional preparations.
 #
 
@@ -210,33 +210,32 @@ PYTHON = /depot/Python-3.4.3/bin/python3
 #
 # Human friendly aliases
 #
-.PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be all \
+.PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be \
     windows ide openocd-win \
-    openocd openocd-tar openocd-build openocd-install openocd-configure openocd-bootstrap \
-    toolchain
+    openocd openocd-tar openocd-build openocd-install openocd-configure openocd-bootstrap
 
-all: $O/$(MD5SUM_FILE)
-	@echo "MD5 sums:"
-	@cat $<
-
-toolchain: \
+BUILD_DEPS += \
     $O/.stamp_source_tarball \
-    $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
-    $O/.stamp_linux_le_700_tarball $O/.stamp_linux_be_700_tarball \
-    $O/.stamp_linux_le_hs_tarball $O/.stamp_linux_be_hs_tarball \
-    $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
-
-$O/$(MD5SUM_FILE): \
-    $O/.stamp_source_tarball \
-    $O/.stamp_elf_le_tarball $O/.stamp_elf_be_tarball \
-    $O/.stamp_linux_le_700_tarball $O/.stamp_linux_be_700_tarball \
-    $O/.stamp_linux_le_hs_tarball $O/.stamp_linux_be_hs_tarball \
-    $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball \
-    $O/$(OOCD_DIR_WIN).zip $O/$(OOCD_DIR_WIN).tar.gz \
-    $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP) \
+    $O/.stamp_elf_le_tarball \
+    $O/.stamp_elf_be_tarball \
+    $O/.stamp_linux_le_700_tarball \
+    $O/.stamp_linux_be_700_tarball \
+    $O/.stamp_linux_le_hs_tarball \
+    $O/.stamp_linux_be_hs_tarball \
+    $O/.stamp_elf_le_windows_tarball \
+    $O/.stamp_elf_be_windows_tarball \
+    $O/$(OOCD_DIR_WIN).zip \
+    $O/$(OOCD_DIR_WIN).tar.gz \
+    $O/.stamp_ide_linux_tar \
+    $O/$(IDE_PLUGINS_ZIP) \
     $O/$(OOCD_DIR_LINUX).tar.gz
-	cd $O && md5sum $(UPLOAD_ARTIFACTS) > $@
 
+# Build all components that can be built on Linux hosts.
+.PHONY: build
+build: $(BUILD_DEPS)
+
+$O/$(MD5SUM_FILE): $(BUILD_DEPS) $O/$(IDE_EXE_WIN)
+	cd $O && md5sum $(UPLOAD_ARTIFACTS) > $@
 
 checkout: $O/.stamp_checked_out
 
