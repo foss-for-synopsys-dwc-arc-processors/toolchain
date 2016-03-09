@@ -305,8 +305,7 @@ distclean: clean
 #
 # Build targets
 #
-$O:
-	mkdir -p $@
+DIRS += $O
 
 # Checkout sources
 $O/.stamp_checked_out: | $O
