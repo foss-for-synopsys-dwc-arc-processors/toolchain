@@ -23,7 +23,7 @@
 #
 # 1. Checkout toolchain directory to desired branch. Create tags if needed.
 #
-# 2. Run "make -f Makefile.release RELEASE=<release> toolchain". If you do not
+# 2. Run "make -f release.mk RELEASE=<release> toolchain". If you do not
 # want build-all.sh to checkout directories, then do "touch
 # ../release_output/.stamp_checked_out before running makefile.  Note that
 # "toolchain" target will build only toolchain prebuilts, nothing else, but it
