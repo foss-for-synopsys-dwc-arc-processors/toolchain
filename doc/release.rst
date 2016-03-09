@@ -164,6 +164,25 @@ Invocation
 Release process consists of several sequential steps that should be done in the
 specified order. Some custom modifications can be done in between those steps.
 
+First, create directory-workspace::
+
+    $ mkdir arc-2016.03
+    $ cd arc-2016.03
+
+Clone the ``toolchain`` repository::
+
+    $ git clone -b arc-dev \
+      https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
+
+That command uses an HTTPS protocol to do Git clone - other protocols may be
+used as well. This documentation assumes the default case where ``arc-dev``
+branch is the base for the release.
+
+.. note::
+   Currently ``tag-release.sh`` script used in the release process has a check
+   that ensures that current branch is a developemnt branch by checking that
+   branch name ends in ``-dev``.
+
 First setup required make variables in the ``release.config`` file that will be
 sourced by ``release.mk`` (``...`` must be replaced with an actual paths)::
 
