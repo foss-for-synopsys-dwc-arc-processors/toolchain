@@ -146,7 +146,6 @@ IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE)_ide_plugins.zip
 # OpenOCD
 OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
 OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_linux_install
-# Should be created and checked out manually before running this Makefile.
 OOCD_SRC_DIR_LINUX := $(ROOT)/openocd
 
 # List of files that will be uploaded to GitHub Release.
@@ -203,7 +202,7 @@ PYTHON = /depot/Python-3.4.3/bin/python3
 #
 # Human friendly aliases
 #
-.PHONY: checkout source-tarball elf-le-build elf-be-build elf-le elf-be \
+.PHONY: source-tarball elf-le-build elf-be-build elf-le elf-be \
     windows ide openocd-win \
     openocd openocd-tar openocd-build openocd-install openocd-configure openocd-bootstrap
 
@@ -229,8 +228,6 @@ build: $(BUILD_DEPS)
 
 $O/$(MD5SUM_FILE): $(BUILD_DEPS) $O/$(IDE_EXE_WIN)
 	cd $O && md5sum $(UPLOAD_ARTIFACTS) > $@
-
-checkout: $O/.stamp_checked_out
 
 source-tarball: $O/.stamp_source_tarball
 
@@ -300,23 +297,18 @@ distclean: clean
 #
 DIRS += $O
 
-# Checkout sources
-$O/.stamp_checked_out: | $O
-	./build-all.sh --auto-pull --auto-checkout --no-elf32 --no-uclibc
-	touch $@
-
 # Create source tarball
-$O/.stamp_source_tarball: $O/.stamp_checked_out
+$O/.stamp_source_tarball:
 	tar --exclude-vcs -c -z -f $O/$(TOOLS_SOURCE_DIR)$(TAR_EXT) --exclude=$O \
 	    --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(TOOLS_SOURCE_CONTENTS)
 	touch $@
 
-$O/.stamp_elf_le_built: $O/.stamp_checked_out
+$O/.stamp_elf_le_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_DIR_LINUX) \
 	    --no-uclibc --release-name $(RELEASE)
 	touch $@
 
-$O/.stamp_elf_be_built: $O/.stamp_checked_out
+$O/.stamp_elf_be_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_DIR_LINUX) \
 	    --no-uclibc --release-name $(RELEASE) --big-endian
 	touch $@
@@ -329,24 +321,24 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 	$(call create_tar,$(TOOLS_ELFBE_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_le_700_built: $O/.stamp_checked_out
+$O/.stamp_linux_le_700_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --cpu arc700
 	touch $@
 
-$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_checked_out
+$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --cpu archs
 	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
 	touch $@
 
-$O/.stamp_linux_be_700_built: $O/.stamp_checked_out
+$O/.stamp_linux_be_700_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu arc700
 	touch $@
 
-$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $O/.stamp_checked_out
+$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
 	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu archs
 	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
@@ -390,7 +382,7 @@ define copy_mingw_dlls
 endef
 endif
 
-$O/.stamp_elf_le_windows_built: $O/.stamp_checked_out $O/.stamp_elf_le_built
+$O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
@@ -399,7 +391,7 @@ $O/.stamp_elf_le_windows_built: $O/.stamp_checked_out $O/.stamp_elf_le_built
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_DIR_WIN),arc-elf32)
 	touch $@
 
-$O/.stamp_elf_be_windows_built: $O/.stamp_checked_out $O/.stamp_elf_be_built
+$O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
 	# Install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
