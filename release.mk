@@ -114,7 +114,7 @@ TAR_EXT := .tar.gz
 # This variable should use .. instead of $(ROOT) so that tar will auto-remove
 # .. from file paths. Perhaps this ugliness can be fixed with --transform?
 TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils cgen gcc gdb newlib toolchain uClibc)
-TOOLS_SOURCE_DIR := $O/arc_gnu_$(RELEASE)_sources
+TOOLS_SOURCE_DIR := arc_gnu_$(RELEASE)_sources
 
 # Toolchain: baremetal for Linux hosts
 TOOLS_ELFLE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_le_linux_install
@@ -316,7 +316,7 @@ $O/.stamp_checked_out: | $O
 
 # Create source tarball
 $O/.stamp_source_tarball: $O/.stamp_checked_out
-	tar --exclude-vcs -c -z -f $(TOOLS_SOURCE_DIR)$(TAR_EXT) --exclude=$O \
+	tar --exclude-vcs -c -z -f $O/$(TOOLS_SOURCE_DIR)$(TAR_EXT) --exclude=$O \
 	    --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(TOOLS_SOURCE_CONTENTS)
 	touch $@
 
