@@ -7,7 +7,7 @@ Welcome to GNU Toolchain for ARC internal docs's documentation!
 ===============================================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    release
 

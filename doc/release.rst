@@ -30,7 +30,60 @@ or :option:`upload` to use only this limited set of files (there is always an
 option to modify ``release.mk`` to get desired results).
 
 
-Environment variables
+Building Prerequisites
+----------------------
+
+Eclipse plugin for ARC
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. warning:: This section doesn't cover a ``build/Makefile`` file in
+   ``arc_gnu_eclipse`` repository which automates build process with ant.
+
+Build Eclipse plugin for ARC following those guidelines:
+https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki/Creating-Eclipse-plugins-release-zip-file
+Create and push respective git tag::
+
+    $ pushd arc_gnu_eclipse
+    $ git tag arc-2016.03
+    $ git push -u origin arc-2016.03
+    $ popd
+
+
+OpenOCD for Windows
+^^^^^^^^^^^^^^^^^^^
+
+OpenOCD for Windows cannot be linked with MinGW tools from EPEL, instead they
+should be built on Ubuntu::
+
+    $ sudo apt-get install libtool git-core build-essential autoconf automake \
+      texinfo texlive pkg-config gcc-mingw-w64
+    $ mkdir openocd_build
+    $ cd openocd_build
+
+Copy here extracted FTD2xx drivers, like::
+
+    $ mv ~/tmp/CDM\ v2.12.00\ WHQL\ Certified/ ftd2xx
+
+Get Makefile.openocd from toolchain repository::
+
+    $ wget https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/\
+      blob/arc-dev/windows-installer/Makefile.openocd
+
+Get source and checkout to tag::
+
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/openocd.git
+    $ pushd openocd
+    $ git checkout arc-2016.03
+    $ popd
+
+Build. :envvar:`INSTALL_DIR` is a destination where OpenOCD for Windows will be
+installed::
+
+    $ make -f Makefile.openocd \
+      INSTALL_DIR=/media/sf_akolesov/pub/arc_gnu_2016.03_openocd_win_install
+
+
+Environment Variables
 ---------------------
 
 .. envvar:: DEPLOY_DESTINATION
