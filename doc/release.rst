@@ -102,6 +102,19 @@ Environment Variables
    Default value
       ``y``
 
+.. envvar:: ENABLE_OPENOCD
+
+   Whether to build and upload OpenOCD distributable package. IDE targets will
+   not work if OpenOCD is disabled. Therefore if this is ``n``, then
+   :envvar:``ENABLE_IDE`` and :envvar:`ENABLE_WINDOWS_INSTALLER`` also must be
+   ``n``.
+
+   Possible values:
+      ``y`` and ``n``
+
+   Default value:
+      ``y``
+
 .. envvar:: ENABLE_WINDOWS_INSTALLER
 
    Whether to build and upload Windows installer for toolchain and IDE. While
@@ -315,4 +328,4 @@ Finally, upload assets to GitHub Releases::
 
     $ make -f release.mk upload
 
-.. vim: set tw=80:
+.. vim: set tw=80 expandtab sts=3 sw=3 ts=3: 

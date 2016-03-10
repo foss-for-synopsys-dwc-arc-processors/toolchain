@@ -35,6 +35,9 @@ DEPLOY_DESTINATION =
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
+# Whether to buidl and upload OpenOCD
+ENABLE_OPENOCD := y
+
 # Whether to build and upload windows installer.
 ENABLE_WINDOWS_INSTALLER := y
 
@@ -166,17 +169,17 @@ UPLOAD_ARTIFACTS = \
     $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
     $(UPLOAD_ARTIFACTS-y)
 
-UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_EXE_WIN)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
+UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_EXE_WIN)
 
 # List of files that will be deployed internally. Is a superset of "upload"
 # artifacts.
 DEPLOY_ARTIFACTS = \
     $(UPLOAD_ARTIFACTS) \
-    $(DEPLOY_ARTIFACTS-y) \
-    $(OOCD_DIR_LINUX)$(TAR_EXT)
+    $(DEPLOY_ARTIFACTS-y)
 
+DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_DIR_LINUX)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(OOCD_DIR_WIN).zip
@@ -228,12 +231,13 @@ BUILD_DEPS += \
     $(BUILD_DEPS-y) \
     $O/$(OOCD_DIR_LINUX).tar.gz
 
+BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
+BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
+BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_DIR_LINUX).tar.gz
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(OOCD_DIR_WIN).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(OOCD_DIR_WIN).tar.gz
-BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
-BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
 
 
 # Build all components that can be built on Linux hosts.
@@ -270,7 +274,9 @@ clone:
 	$(call git_clone,newlib,newlib)
 	$(call git_clone,linux,linux)
 	$(call git_clone,uClibc,uClibc)
+ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
+endif
 
 
 .PHONY: copy-external
@@ -484,6 +490,8 @@ endif
 #
 # OpenOCD
 #
+ifeq ($(ENABLE_OPENOCD),y)
+
 openocd: $(OOCD_SRC_DIR_LINUX)/src/openocd
 openocd-bootstrap: $(OOCD_SRC_DIR_LINUX)/configure
 openocd-configure: $(OOCD_SRC_DIR_LINUX)/Makefile
@@ -519,6 +527,8 @@ $O/$(OOCD_DIR_WIN): | $O/$(OOCD_DIR_WIN)$(TAR_EXT)
 
 $O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
 	cd $O && zip -q -r $(notdir $@) $(OOCD_DIR_WIN)/
+
+endif
 
 
 #
