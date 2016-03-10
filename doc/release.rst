@@ -91,6 +91,17 @@ Environment Variables
    Where to copy release distributables. Location is in format
    ``[hostname:]/path``.
 
+.. envvar:: ENABLE_IDE
+
+   Whether to build and upload IDE distributable package.  Note that build
+   script for Windows installer always assumes presence of IDE, therefore it is
+   not possible to build it when this option is ``n``.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
 .. envvar:: ENABLE_WINDOWS_INSTALLER
 
    Whether to build and upload Windows installer for toolchain and IDE. While

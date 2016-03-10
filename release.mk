@@ -32,6 +32,9 @@ CONFIG_STATIC_TOOLCHAIN := n
 
 DEPLOY_DESTINATION =
 
+# Whether to build and upload IDE
+ENABLE_IDE := y
+
 # Whether to build and upload windows installer.
 ENABLE_WINDOWS_INSTALLER := y
 
@@ -161,11 +164,11 @@ UPLOAD_ARTIFACTS = \
     $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
-    $(IDE_TGZ_LINUX) \
-    $(UPLOAD_ARTIFACTS-y) \
-    $(IDE_PLUGINS_ZIP)
+    $(UPLOAD_ARTIFACTS-y)
 
 UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_EXE_WIN)
+UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
+UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
 
 # List of files that will be deployed internally. Is a superset of "upload"
 # artifacts.
@@ -222,8 +225,6 @@ BUILD_DEPS += \
     $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball \
     $O/.stamp_linux_be_hs_tarball \
-    $O/.stamp_ide_linux_tar \
-    $O/$(IDE_PLUGINS_ZIP) \
     $(BUILD_DEPS-y) \
     $O/$(OOCD_DIR_LINUX).tar.gz
 
@@ -231,6 +232,9 @@ BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(OOCD_DIR_WIN).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(OOCD_DIR_WIN).tar.gz
+BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
+BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
+
 
 # Build all components that can be built on Linux hosts.
 .PHONY: build
@@ -271,17 +275,18 @@ clone:
 
 .PHONY: copy-external
 copy-external: | $O
+ifeq ($(ENABLE_IDE),y)
+
 ifeq ($(IDE_PLUGIN_LOCATION),)
 	$(error IDE_PLUGIN_LOCATION must be set to do copy-external)
 endif
 ifeq ($(THIRD_PARTY_SOFTWARE_LOCATION),)
 	$(error THIRD_PARTY_SOFTWARE_LOCATION must be set to do copy-external)
 endif
-ifeq ($(OPENOCD_WINDOWS_LOCATION),)
-	$(error OPENOCD_WINDOWS_LOCATION must be set to do copy-external)
-endif
+
 	# Copy IDE plugin
 	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
+
 	# Copy JRE. Original tarballs from Oracle do not have .tar in filenames.
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_LINUX:.tar.gz=.gz) \
 	    $O/$(JRE_TGZ_LINUX)
@@ -289,11 +294,19 @@ ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_WIN:.tar.gz=.gz) \
 	    $O/$(JRE_TGZ_WIN)
 endif
+
 	# Copy Eclipse
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_TGZ_LINUX) $O
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_ZIP_WIN) $O
+endif
+endif
+
 	# Copy OpenOCD for Windows
+ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
+ifeq ($(OPENOCD_WINDOWS_LOCATION),)
+	$(error OPENOCD_WINDOWS_LOCATION must be set to do copy-external)
+endif
 	$(CP) $(OPENOCD_WINDOWS_LOCATION)/$(OOCD_DIR_WIN)$(TAR_EXT) $O
 endif
 
@@ -426,6 +439,8 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 #
 # IDE related targets
 #
+ifeq ($(ENABLE_IDE),y)
+
 $O/$(ECLIPSE_VANILLA_TGZ_LINUX):
 	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_TGZ_LINUX)&r=1'
 
@@ -464,6 +479,7 @@ $O/.stamp_ide_linux_tar: \
 	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	tar caf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
 	touch $@
+endif
 
 #
 # OpenOCD
@@ -582,7 +598,7 @@ endif
 upload: $O/$(MD5SUM_FILE)
 	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
 	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
-	    --name=$(RELEASE_NAME) \
+	    --name="$(RELEASE_NAME)" \
 	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
 	    --md5sum-file=$O/$(MD5SUM_FILE) \
 	    $(addprefix $O/,$(UPLOAD_ARTIFACTS))
