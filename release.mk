@@ -27,9 +27,13 @@
 #
 # Configuration
 #
+
 CONFIG_STATIC_TOOLCHAIN := n
 
 DEPLOY_DESTINATION =
+
+# Whether to build and upload windows installer.
+ENABLE_WINDOWS_INSTALLER := y
 
 # URL base for git repositories.
 GIT_URL_BASE := git@github.com:foss-for-synopsys-dwc-arc-processors
@@ -158,17 +162,21 @@ UPLOAD_ARTIFACTS = \
     $(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
     $(IDE_TGZ_LINUX) \
-    $(IDE_EXE_WIN) \
+    $(UPLOAD_ARTIFACTS-y) \
     $(IDE_PLUGINS_ZIP)
+
+UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_EXE_WIN)
 
 # List of files that will be deployed internally. Is a superset of "upload"
 # artifacts.
 DEPLOY_ARTIFACTS = \
     $(UPLOAD_ARTIFACTS) \
-    $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT) \
-    $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT) \
-    $(OOCD_DIR_WIN).zip \
+    $(DEPLOY_ARTIFACTS-y) \
     $(OOCD_DIR_LINUX)$(TAR_EXT)
+
+DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(OOCD_DIR_WIN).zip
 
 # md5sum
 MD5SUM_FILE := md5.sum
@@ -214,13 +222,15 @@ BUILD_DEPS += \
     $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball \
     $O/.stamp_linux_be_hs_tarball \
-    $O/.stamp_elf_le_windows_tarball \
-    $O/.stamp_elf_be_windows_tarball \
-    $O/$(OOCD_DIR_WIN).zip \
-    $O/$(OOCD_DIR_WIN).tar.gz \
     $O/.stamp_ide_linux_tar \
     $O/$(IDE_PLUGINS_ZIP) \
+    $(BUILD_DEPS-y) \
     $O/$(OOCD_DIR_LINUX).tar.gz
+
+BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
+BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
+BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(OOCD_DIR_WIN).zip
+BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(OOCD_DIR_WIN).tar.gz
 
 # Build all components that can be built on Linux hosts.
 .PHONY: build
@@ -275,13 +285,17 @@ endif
 	# Copy JRE. Original tarballs from Oracle do not have .tar in filenames.
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_LINUX:.tar.gz=.gz) \
 	    $O/$(JRE_TGZ_LINUX)
+ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_WIN:.tar.gz=.gz) \
 	    $O/$(JRE_TGZ_WIN)
+endif
 	# Copy Eclipse
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_TGZ_LINUX) $O
+ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_ZIP_WIN) $O
 	# Copy OpenOCD for Windows
 	$(CP) $(OPENOCD_WINDOWS_LOCATION)/$(OOCD_DIR_WIN)$(TAR_EXT) $O
+endif
 
 .PHONY: prerequisites
 prerequisites: clone copy-external
@@ -494,6 +508,8 @@ $O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
 #
 # Create workspace for Windows script
 #
+ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
+
 .PHONY: windows-workspace
 windows-workspace: $O/.stamp_windows_workspace
 
@@ -515,14 +531,20 @@ endif
 	      $(WINDOWS_WORKSPACE)/packages/
 	$(CP) $(ROOT)/toolchain $(WINDOWS_WORKSPACE)/
 
+endif
+
 #
 # Retrieve Windows installer
 #
+ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
+
 .PHONY: copy-windows-installer
 copy-windows-installer: $O/$(IDE_EXE_WIN)
 
 $O/$(IDE_EXE_WIN): $(WINDOWS_WORKSPACE)/$(IDE_EXE_WIN)
 	$(CP) $< $@
+
+endif
 
 
 #
@@ -560,7 +582,7 @@ endif
 upload: $O/$(MD5SUM_FILE)
 	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
 	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
-	    --name="$(RELEASE_NAME)" \
+	    --name=$(RELEASE_NAME) \
 	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
 	    --md5sum-file=$O/$(MD5SUM_FILE) \
 	    $(addprefix $O/,$(UPLOAD_ARTIFACTS))

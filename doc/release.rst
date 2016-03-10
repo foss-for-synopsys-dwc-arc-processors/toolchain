@@ -91,6 +91,20 @@ Environment Variables
    Where to copy release distributables. Location is in format
    ``[hostname:]/path``.
 
+.. envvar:: ENABLE_WINDOWS_INSTALLER
+
+   Whether to build and upload Windows installer for toolchain and IDE. While
+   building of installer can be also skipped simply by not invoking respective
+   make targets, installer files still will be in the list of files that should
+   be deployed and uploaded to GitHub, therefore this variable should be set to
+   ``n`` for installer to be completely skipped. This variable also disables
+   build of the toolchain for Windows as well.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
 .. envvar:: GIT_REFERENCE_ROOT
 
    Root location of existing source tree with all toolchain components Git
