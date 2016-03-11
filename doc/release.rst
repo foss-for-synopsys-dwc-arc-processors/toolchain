@@ -89,7 +89,10 @@ Environment Variables
 .. envvar:: DEPLOY_DESTINATION
 
    Where to copy release distributables. Location is in format
-   ``[hostname:]/path``.
+   ``[hostname:]/path``. A directory named ``$(RELEASE_TAG:arc-%=%)`` will be
+   created in the target path and will contain all deploy artifacts. So for
+   ``RELEASE_TAG = arc-2016.03-alpha1`` directory will be ``2016.03-alpha1``, while
+   for ``RELEASE_TAG = arc-2016.03`` it will be ``2016.03``.
 
 .. envvar:: ENABLE_IDE
 

@@ -597,7 +597,7 @@ deploy: $O/$(MD5SUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
 ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
-	$(CP) $^ $(DEPLOY_DESTINATION)/
+	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE_TAG:arc-%=%)
 
 
 #
