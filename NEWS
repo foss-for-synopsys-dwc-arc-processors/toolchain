@@ -1,5 +1,112 @@
+Major changes in 2015.12 release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* GCC v4.8.5
+* Binutils v2.23
+* newlib v2.3
+* uclibc (upstream HEAD at the moment of release)
+* GDB 7.10
+* Eclipse Mars (4.5.1) with CDT 8.8.0
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+New Features and Enhancements
+----------------------------------------------
+
+* GCC
+    * Source update to v4.8.5
+    * New preprocessor defines for processor optional features, like -mnorm,
+      -mll64, etc.
+    * Fast interrupt (FIRQ) function attribute support
+    * Naked function attribute support
+* GDB
+    * Updated to upstream 7.10 release.
+* Pre-built binaries
+    * Baremetal toolchain now contains additional set of libc/libstdc++ binaries
+      compiled with optimization for code size. Can be selected by passing
+      `--specs=nano.specs` to gcc.
+    * Standard libraries in baremetal toolchain are now stripped of debug
+      information, except for `.debug_frame` section.
+    * Linux toolchain for ARC HS now contains sysroot for ARC 700. It is now
+      possible to build ARC 700 application using ARC HS toolchain, by passing
+      an option `--sysroot=$INSTALLDIR/arc-snps-linux-uclibc/sysroot-arc700` to
+      arc-linux-gcc, where `$INSTALLDIR` is a path to toolchain installation
+      folder. This is implemented for both little end big endian toolchains.
+    * Toolchain binaries are linked dynamically
+* Eclipse IDE
+    * Removed redundant "hostname" text field from debugger configuration when
+      locally started gdbserver are used.
+    * ARC template projects have been reorganized. They are now grouped by
+      target ARC development system.
+    * Added validation for text fields in debugger configuration.
+    * TCF support to build configurations
+    * Debugger configuration UI now has a full support of Synopsys ARC
+      development systems for OpenOCD
+    * Reworked template projects for Synopsys ARC development systems
+    * Updated processor option in compiler pluging to adhere to GCC in this
+      release
+* Newlib
+    * Updated to upstream 2.3 release
+    * Added support for newlib-nano
+* OpenOCD
+    * Support for the actionpoints. OpenOCD will automatically detect actions
+      points in ARC EM and ARC HS targets. Hardware breakpoints are set via GDB
+      command `hbreak`, while hardware watchpoints via GDB command `watch`.
+* Toolchain build scripts
+    * 2-stage build process for baremetal toolchain
+    * Can now build libc and libstdc++ optimized for size along the "normal" set
+      of libraries.
+    * Support for Linux toolchains with multiple sysroots. Buildscripts
+      themselves can build a toolchain with only one sysroot, however that
+      arc-snps-linux-uclibc/sysroot folder may be now freely used with other
+      toolchains. That wasn't possible with previous releases, because some
+      libraries were outside of the sysroot.
+    * New options of build-all.sh script:
+	* `--[no-]elf32-gcc-stage1` - defines whether to build of stage 1
+	  compiler for baremetal toolchain. Means that runnable ARC compiler
+	  should be already in the PATH to build newlib. Disable first stage
+	  compiler is needed for canadian cross builds. Default is
+	  `--elf32-gcc-stage1`.
+	* `--[no-]optsze-newlib` - defines whether to build newlib optimized for
+	  code size. Default is `--optsize-newlib`.
+	* `--[no-]optsze-libstdc++` - defines whether to build libstdc++
+	  optimized for code size. Default is `--optsize-libstdc++`. This is
+	  independent from newlib option, however nano.specs will be copied to
+	  target toolchain installation only when `--optsize-newlib` is used.
+	* `--[no-]elf32-strip-target-libs` - defines whether to string target
+	  libraries of the debug symbols (except for .debug_frame section).
+	  Default is off `--no-elf32-strip-target-libs`.
+
+
+Bugs Fixed  in This Release (Summary)
+----------------------------------------
+
+* Pre-built binaries
+    * Fixed broken shortcut to documentation folder in installer for Windows
+    * Fixed a bug where uninstaller for Windows wouldn't remove some shortcuts
+* Eclipse IDE
+    * Fixed compatibility with Ashling Opella-XD gdbserver
+    * Fixed an case where in C++ projects standard library functions were
+      highlighted as unknown by Eclipse syntax checker.
+    * Fix crash in IDE on Linux when connecting to target UART
+    * Fixed: IDE template projects for C++ were not linking
+    * Fixed: printf() is highlighted by Eclipse as an unknown function in C++
+      project, but projects builds without error
+* Newlib
+    * Fixed an issue with string and memory routines using instructions which
+      are not available for selected ARC processor configuration.
+* OpenOCD
+    * Fixed support of EM7DFPU image in EM Starter Kit 2.1: JTAG frequency was
+      too high.
+* Toolchain build scripts
+    * Fixed an issue where custom baremetal toolchain built with -mnorm option
+      wouldn't link C++ applications
+
+
 Major changes in 2015.06 release
---------------------------------
+================================
 
 Build process:
 - Added NPTL Support (--nptl/--no-nptl options of build-all.sh). NPTL is now
