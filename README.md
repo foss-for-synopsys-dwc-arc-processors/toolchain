@@ -171,10 +171,14 @@ The most important options of `build-all.sh` are:
  * `--cpu <cpu>` - configure GNU toolchain to use specific core as a default
    choice (default core is a core for which GCC will compile for when `-mcpu=`
    option is not passed). Default is arc700 for both bare metal and Linux tool
-   chains. Combined with `--no-multilib` this options allows to build GNU tool
-   chain that supports only one specific core. Valid values include `arc600`,
-   `arc700`, `arcem` and `archs`, however `arc600` and `arcem` are valid for
-   bare metal toolchain only.
+   chains. Combined with `--no-multilib` this option allows to build GNU
+   toolhain that supports only one specific core. Valid values depend on what
+   is available in GCC As of version 2016.03 values available in ARC GCC are:
+   em, arcem, em4, em4_dmips, em4_fpus, em4_fpuda, quarkse, hs, archs, hs34,
+   hs38, hs38_linux, arc600, arc600_norm, arc600_mul64, arc600_mul32x16,
+   arc601, arc601_norm, arc601_mul64, arc601_mul32x16, arc700. Note that only
+   ARC 700 and ARC HS can be selected as a default core for Linux/uClibc
+   toolchain.
  * `--host <triplet>` - option to set host triplet of toolchain. That allows to
    do Canadian cross-compilation, where toolchain for ARC processors
    (`--target`) will run on Windows hosts (`--host`) but will be built on Linux
@@ -210,36 +214,36 @@ Build toolchain for ARC 700 Linux development:
 
 Build toolchain for ARC HS Linux development:
 
-    $ ./build-all.sh --no-elf32 --cpu archs --install-dir $INSTALL_ROOT
+    $ ./build-all.sh --no-elf32 --cpu hs38 --install-dir $INSTALL_ROOT
 
 Build bare metal toolchain for ARC EM cores:
 
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu arcem --no-multilib
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu em4_dmips --no-multilib
 
 Build bare metal toolchain for ARC EM5D in the ARC EM Starter Kit 2.0:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu arcem --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap -mnorm \
+      --cpu em4_dmips --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap -mnorm \
       -mmpy-option=6 -mbarrel-shifter"
 
 Build bare metal toolchain for ARC EM7D in the ARC EM Starter Kit 2.0
 (EM7D_FPU is similiar, but with -mfpu=fpuda):
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu arcem --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap \
+      --cpu em4_dmips --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap \
       -mnorm -mmpy-option=6 -mbarrel-shifter \
       --param l1-cache-size=16384 --param l1-cache-line-size=32"
 
 Build bare metal toolchain for ARC EM4 in the ARC EM Starter Kit 1.1:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu arcem --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
+      --cpu em4_dmips --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
       -mnorm -mmpy-option=6 -mbarrel-shifter"
 
 Build bare metal toolchain for ARC EM6 in the ARC EM Starter Kit 1.1:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu arcem --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
+      --cpu em4_dmips --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
       -mnorm -mmpy-option=6 -mbarrel-shifter \
       --param l1-cache-size=32768 --param l1-cache-line-size=128"
 
@@ -249,7 +253,7 @@ cross toolchain for this system. Then it should be added it to the PATH, after
 that `build-all.sh` can be run:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT_NATIVE \
-      --cpu archs --native --host arc-snps-linux-uclibc
+      --cpu hs38 --native --host arc-snps-linux-uclibc
 
 In this command line, argument to `--cpu` option must correspond to the target
 CPU and argument to `--host` options depends on whether this is a big or little

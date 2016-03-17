@@ -36,7 +36,7 @@
 #                  [--comment-install <comment>]
 #                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
-#                  [--cpu arc600 | arc700 | arcem | archs]
+#                  [--cpu <cpu name>]
 #                  [--uclibc-defconfig <defconfig>]
 #                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
@@ -177,10 +177,13 @@
 #     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
 #     whatever the load average.
 
-# --cpu arc600 | arc700 | arcem | archs
+# --cpu <cpu name>
 
-#    Specify default family of CPU for tool chain. Possible values are: arc600,
-#    arc700, arcem and archs.
+#    Specify default family of CPU for tool chain. Possible values: depend on
+#    what values are available in GCC. As of version 2016.03 values available
+#    in ARC GCC are: em arcem em4 em4_dmips em4_fpus em4_fpuda quarkse hs archs
+#    hs34 hs38 hs38_linux arc600 arc600_norm arc600_mul64 arc600_mul32x16
+#    arc601 arc601_norm arc601_mul64 arc601_mul32x16 arc700.
 
 # --uclibc-defconfig <defconfig>
 
@@ -701,7 +704,7 @@ case ${opt} in
 	echo "                      [--big-endian | --little-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
-        echo "                      [--cpu arc600 | arc700 | arcem | archs]"
+        echo "                      [--cpu <cpu name>]"
 	echo "                      [--uclibc-defconfig <defconfig>]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
@@ -790,25 +793,6 @@ then
              "be \`linux'. For more details read README.md file, section"\
              "\"Getting sources/Using source tarball\"."
 	     exit 1
-    fi
-fi
-
-if [ "x${ISA_CPU}" != "xarc600" -a "x${ISA_CPU}" != "xarc700" -a \
-     "x${ISA_CPU}" != "xarcem" -a "x${ISA_CPU}" != "xarchs" ]
-then
-    echo "ERROR: Invalid CPU family specified. Only arc600, arc700, arcem and archs"\
-         "are suported."
-    exit 1
-fi
-
-if [ "x${uclibc}" = "x--uclibc" ]
-then
-    if [ "x${ISA_CPU}" = "xarc600" -o "x${ISA_CPU}" = "xarcem" ]
-    then
-        echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
-             "Choose either arc700 or archs CPU family or disable building of"\
-             "uClibc tool chain with option --no-uclibc."
-        exit 1
     fi
 fi
 
@@ -981,6 +965,44 @@ then
     echo "ERROR: Failed to checkout GIT versions of tools"
     echo "- see ${logfile}"
     exit 1
+fi
+
+# There used to be a check for validity of --cpu value, and that check was done
+# before any actions were taken - that makes sense to do it that way, to fail
+# as quickly as possible.  However now that GCC accepts much more of those it
+# became relatively ridicolous to list them here - and it is possible that
+# users might want to add new custom ones. Instead to check cpu value it is
+# required to get possible value from gcc/gcc/config/arc/arc-cpus.def file. For
+# compatibility with older GCC (before 2016.03, if arc-cpus.def doesn't exist,
+# then an old check for four fixed values is used.
+
+cpus_def=$ARC_GNU/gcc/gcc/config/arc/arc-cpus.def
+if [ -f $cpus_def ]; then
+    # New GCC (2016.03 and later).
+    # allowed_cpus should be a string wil values delimited by spaces.
+    allowed_cpus=$(awk -v FS="[(, ]+" '/^ARC/{printf " "$2}' $cpus_def)
+    allowed_linux_cpus=$(awk -v FS="[(, ]+" \
+	'/^ARC/{if($3=="hs"||$3=="700")printf " "$2}' $cpus_def)
+else
+    # Old GCC (2015.12 and earlier)
+    allowed_cpus="arc600 arc700 arcem archs"
+    allowed_linux_cpus="arc700 archs"
+fi
+
+if [[ " ${allowed_cpus[*]} " != *" $ISA_CPU "* ]]; then
+    echo "ERROR: Invalid CPU family specified."\
+         "Supported values are: $allowed_cpus."
+    exit 1
+fi
+
+if [ "x${uclibc}" = "x--uclibc" ]; then
+    if [[ " ${allowed_linux_cpus[*]} " != *" $ISA_CPU "* ]]; then
+	echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
+	     "Choose one of the supprted CPU familes or disable building of"\
+	     "uClibc tool chain with option --no-uclibc."\
+	     "Supported values are: $allowed_linux_cpus."
+	exit 1
+    fi
 fi
 
 # Downloading external dependencies
