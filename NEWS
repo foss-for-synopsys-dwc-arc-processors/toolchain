@@ -1,3 +1,61 @@
+Major Changes in 2016.03 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* Binutils v2.26+ (upstream commit id 202ac19 with additional ARC patches)
+* GCC v4.8.5
+* GDB 7.11
+* newlib v2.3
+* uclibc (upstream commit 94340ce with backported patches from uClibc-ng)
+* Eclipse Mars (4.5.1) with CDT 8.8.0
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
+generator) version 1.0.53.
+
+
+New Features and Enhancements
+-----------------------------
+
+* Binutils
+    * Binutils for ARC has been rewritten from the scratch, based on upstream
+      release 2.26.
+* GCC
+    * New values for -mcpu option and new set of multilib libraries built for
+      those processor configurations.
+    * Support for text values of -mmpy-option, same as in hardware IP
+      libraries.
+    * Fixed runtime issues on 32-bit hosts.
+* GDB
+    * Updated to upstream 7.11 release.
+* Eclipse IDE
+    * Support for new GCC -mcpu option values.
+    * IF TCF is used, then options in GUI are now synchronize with it.
+* OpenOCD
+    * Added a separate configuration file for ARC EM Starter Kit v2.2, which
+      requries reduced JTAG Frequency of 5 MHz, compared to 7.5 MHz that has
+      been used for versions 2.0 and 2.1.
+* Toolchain build scripts
+    * Support for building of native (self-hosting) Linux/uClibc toolchain.
+
+
+Bugs Fixed in This Release (Summary)
+------------------------------------
+
+* GCC
+    * There was no multilib configuration without multiplier for ARC 700, EM
+      and HS processors.
+* Eclipse IDE
+    * Path to standard headers was calculaated impropery for big-endian
+      projects.
+* OpenOCD
+    * OpenOCD didn't worked with HS36 in AXS103.
+* Toolchain build scripts
+    * XML files for Ashling Opella-XD GDBserver were broken for Windows systems.
+
+
 Major changes in 2015.12 release
 ================================
 
