@@ -187,9 +187,11 @@
 
 # --uclibc-defconfig <defconfig>
 
-#     If specified, the defconfig used to build uClibc will be
-#     <defconfig>. The default is defconfig for v1 ISA and arcv2_defconfig for
-#     v2 ISA.
+#     If specified, the defconfig used to build uClibc will be <defconfig>. The
+#     default is defconfig for ARC 700 and arcv2_defconfig for ARC HS - this is
+#     decided based on value of --cpu option. If CPU is "arc700", then
+#     defconfig for ARC 700 will be used. In all other cases defconfig for ARC
+#     HS will be used.
 
 # --sim | --no-sim
 
@@ -825,11 +827,10 @@ fi
 # Default defconfig for uClibc, only if it has not already been set
 if [ "x${UCLIBC_DEFCFG}" = "x" ]
 then
-    if [ "xarchs" = "x${ISA_CPU}" ]
-    then
-        UCLIBC_DEFCFG=arcv2_defconfig
-    else
+    if [ "$ISA_CPU" = arc700 ]; then
         UCLIBC_DEFCFG=defconfig
+    else
+        UCLIBC_DEFCFG=arcv2_defconfig
     fi
 fi
 
