@@ -23,22 +23,30 @@ New Features and Enhancements
     * Binutils for ARC has been rewritten from the scratch, based on upstream
       release 2.26.
 * GCC
-    * New values for -mcpu option and new set of multilib libraries built for
+    * New values for `-mcpu` option and new set of multilib libraries built for
       those processor configurations.
-    * Support for text values of -mmpy-option, same as in hardware IP
+    * Support for text values of `-mmpy-option`, same as in hardware IP
       libraries.
     * Fixed runtime issues on 32-bit hosts.
 * GDB
     * Updated to upstream 7.11 release.
 * Eclipse IDE
-    * Support for new GCC -mcpu option values.
+    * Support for new GCC `-mcpu` option values.
     * IF TCF is used, then options in GUI are now synchronize with it.
 * OpenOCD
     * Added a separate configuration file for ARC EM Starter Kit v2.2, which
       requries reduced JTAG Frequency of 5 MHz, compared to 7.5 MHz that has
       been used for versions 2.0 and 2.1.
 * Toolchain build scripts
+    * Option `--cpu` now accepts different values that are supported by GCC as
+      values for `-mcpu` option. List of supported values is dynamic and
+      evaluated based on GCC configuration.
     * Support for building of native (self-hosting) Linux/uClibc toolchain.
+    * New option of build-all.sh script:
+	* `--native` - specifies whether script is building native
+	  (self-hosting) toolchain. That affects location of header files and
+	  standard library archvies. It is still required to pass `--host`
+	  option to specify cross-toolchain to build native toolchain.
 
 
 Bugs Fixed in This Release (Summary)
