@@ -6,7 +6,7 @@ Toolchain and IDE Components Versions
 
 * Binutils v2.26+ (upstream commit id 202ac19 with additional ARC patches)
 * GCC v4.8.5
-* GDB 7.11
+* GDB 7.10
 * newlib v2.3
 * uclibc (upstream commit 94340ce with backported patches from uClibc-ng)
 * Eclipse Mars (4.5.1) with CDT 8.8.0
@@ -28,8 +28,6 @@ New Features and Enhancements
     * Support for text values of `-mmpy-option`, same as in hardware IP
       libraries.
     * Fixed runtime issues on 32-bit hosts.
-* GDB
-    * Updated to upstream 7.11 release.
 * Eclipse IDE
     * Support for new GCC `-mcpu` option values.
     * IF TCF is used, then options in GUI are now synchronize with it.
