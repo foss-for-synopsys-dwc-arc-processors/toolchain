@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2007-2015 Synopsys Inc.
+# Copyright (C) 2007-2016 Synopsys Inc.
 
 # This file is a common initialization script for ARC tool chains.
 
@@ -379,6 +379,13 @@ configure_uclibc_stage1() {
     echo "  configuring..."
     config_path="$(calcConfigPath "$ARC_GNU/$src")"
 
+    if [ $IS_NATIVE = yes ]; then
+	local native_sys_header_opt=--with-native-system-header-dir="$INSTALLDIR/include/"
+    else
+	local sysroot_opt=--with-sysroot="$SYSROOTDIR"
+    fi
+
+
     # Options --with-gnu-as --with-gnu-ld should be set explicitly, because gcc
     # is built separately from bintuils and hence "configure" cannot determine
     # if this is GNU as and ld or not.  As a result it would assume that they
@@ -405,7 +412,8 @@ configure_uclibc_stage1() {
 	--with-gnu-as \
 	--with-gnu-ld \
 	$CONFIG_EXTRA \
-	--with-sysroot="$SYSROOTDIR" \
+	$sysroot_opt \
+	$native_sys_header_opt \
 	$* \
 	>> "$logfile" 2>&1
     then
@@ -439,6 +447,16 @@ configure_uclibc_stage2() {
 	config_path="$(calcConfigPath "$ARC_GNU/$src")"
     fi
 
+    if [ $IS_CROSS_COMPILING = yes ]; then
+	local host_opt="--host=$TOOLCHAIN_HOST"
+    fi
+
+    if [ $IS_NATIVE = yes ]; then
+	local native_sys_header_opt=--with-native-system-header-dir="$INSTALLDIR/include/"
+    else
+	local sysroot_opt=--with-sysroot="$SYSROOTDIR"
+    fi
+
     # Options --with-gnu-as --with-gnu-ld should be set explicitly, because gcc
     # is built separately from bintuils and hence "configure" cannot determine
     # if this is GNU as and ld or not.  As a result it would assume that they
@@ -459,8 +477,10 @@ configure_uclibc_stage2() {
 	--disable-libgomp \
 	--with-gnu-as \
 	--with-gnu-ld \
+	$host_opt \
 	$CONFIG_EXTRA \
-	--with-sysroot="$SYSROOTDIR" \
+	$sysroot_opt \
+	$native_sys_header_opt \
 	$* \
 	>> "$logfile" 2>&1
     then

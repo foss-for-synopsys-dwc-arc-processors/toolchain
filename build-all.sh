@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2012-2015 Synopsys Inc.
+# Copyright (C) 2012-2016 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
@@ -36,7 +36,7 @@
 #                  [--comment-install <comment>]
 #                  [--big-endian | --little-endian]
 #                  [--jobs <count>] [--load <load>] [--single-thread]
-#                  [--cpu arc600 | arc700 | arcem | archs]
+#                  [--cpu <cpu name>]
 #                  [--uclibc-defconfig <defconfig>]
 #                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
@@ -56,6 +56,7 @@
 #                  [--elf32-strip-target-libs | --no-elf32-strip-target-libs]
 #                  [--optsize-newlib | --no-optsize-newlib]
 #                  [--optsize-libstdc++ | --no-optsize-libstdc++]
+#                  [--native | --no-native]
 
 # --source-dir <source_dir>
 
@@ -176,10 +177,13 @@
 #     Equivalent to --jobs 1 --load 1000. Only run one job at a time, but run
 #     whatever the load average.
 
-# --cpu arc600 | arc700 | arcem | archs
+# --cpu <cpu name>
 
-#    Specify default family of CPU for tool chain. Possible values are: arc600,
-#    arc700, arcem and archs.
+#    Specify default family of CPU for tool chain. Possible values: depend on
+#    what values are available in GCC. As of version 2016.03 values available
+#    in ARC GCC are: em arcem em4 em4_dmips em4_fpus em4_fpuda quarkse hs archs
+#    hs34 hs38 hs38_linux arc600 arc600_norm arc600_mul64 arc600_mul32x16
+#    arc601 arc601_norm arc601_mul64 arc601_mul32x16 arc700.
 
 # --uclibc-defconfig <defconfig>
 
@@ -335,6 +339,12 @@
 #    hosts, otherwise GDB would complain about missing source files. Default is
 #    to not strip libraries.
 
+# --native | --no-native
+
+#    Whether this is a native/self-hosting toolchain, IOW toolchain that would run on
+#    ARC Linux or it is a cross-toolchain, that would run on other host but
+#    would compile for ARC. Makes sense only for uClibc/Linux toolchain.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -393,7 +403,7 @@ ISA_CPU="arc700"
 UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
-DO_NATIVE_GDB=yes
+DO_NATIVE_GDB=maybe
 rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
@@ -410,6 +420,7 @@ DO_ELF32_GCC_STAGE1=yes
 DO_STRIP_TARGET_LIBRARIES=no
 BUILD_OPTSIZE_NEWLIB=yes
 BUILD_OPTSIZE_LIBSTDCXX=yes
+IS_NATIVE=no
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -667,6 +678,14 @@ case ${opt} in
 	BUILD_OPTSIZE_LIBSTDCXX=no
 	;;
 
+    --native)
+	IS_NATIVE=yes
+	;;
+
+    --no-native)
+	IS_NATIVE=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -685,7 +704,7 @@ case ${opt} in
 	echo "                      [--big-endian | --little-endian]"
         echo "                      [--jobs <count>] [--load <load>]"
         echo "                      [--single-thread]"
-        echo "                      [--cpu arc600 | arc700 | arcem | archs]"
+        echo "                      [--cpu <cpu name>]"
 	echo "                      [--uclibc-defconfig <defconfig>]"
         echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
@@ -706,6 +725,7 @@ case ${opt} in
 	echo "                      [--elf32-strip-target-libs | --no-elf32-strip-target-libs]"
 	echo "                      [--optsize-newlib | --no-optsize-newlib]"
 	echo "                      [--optsize-libstdc++ | --no-optsize-libstdc++]"
+	echo "                      [--native | --no-native]"
 	exit 1
 	;;
 
@@ -773,25 +793,6 @@ then
              "be \`linux'. For more details read README.md file, section"\
              "\"Getting sources/Using source tarball\"."
 	     exit 1
-    fi
-fi
-
-if [ "x${ISA_CPU}" != "xarc600" -a "x${ISA_CPU}" != "xarc700" -a \
-     "x${ISA_CPU}" != "xarcem" -a "x${ISA_CPU}" != "xarchs" ]
-then
-    echo "ERROR: Invalid CPU family specified. Only arc600, arc700, arcem and archs"\
-         "are suported."
-    exit 1
-fi
-
-if [ "x${uclibc}" = "x--uclibc" ]
-then
-    if [ "x${ISA_CPU}" = "xarc600" -o "x${ISA_CPU}" = "xarcem" ]
-    then
-        echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
-             "Choose either arc700 or archs CPU family or disable building of"\
-             "uClibc tool chain with option --no-uclibc."
-        exit 1
     fi
 fi
 
@@ -867,6 +868,19 @@ else
     IS_CROSS_COMPILING=no
 fi
 
+# Not possible to build native GDB with cross-build toolchain
+if [ $IS_CROSS_COMPILING = yes ]; then
+    if [ $DO_NATIVE_GDB = yes ]; then
+	echo "WARNING: It is not possible to build native GDB with"\
+	    "cross-compiled tools. Ignoring --native-gdb option."
+    fi
+    DO_NATIVE_GDB=no
+else
+    if [ $DO_NATIVE_GDB = maybe ]; then
+	DO_NATIVE_GDB=yes
+    fi
+fi
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
@@ -904,6 +918,7 @@ export BUILD_OPTSIZE_NEWLIB
 export BUILD_OPTSIZE_LIBSTDCXX
 export DO_STRIP_TARGET_LIBRARIES
 export IS_CROSS_COMPILING
+export IS_NATIVE
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
@@ -950,6 +965,44 @@ then
     echo "ERROR: Failed to checkout GIT versions of tools"
     echo "- see ${logfile}"
     exit 1
+fi
+
+# There used to be a check for validity of --cpu value, and that check was done
+# before any actions were taken - that makes sense to do it that way, to fail
+# as quickly as possible.  However now that GCC accepts much more of those it
+# became relatively ridicolous to list them here - and it is possible that
+# users might want to add new custom ones. Instead to check cpu value it is
+# required to get possible value from gcc/gcc/config/arc/arc-cpus.def file. For
+# compatibility with older GCC (before 2016.03, if arc-cpus.def doesn't exist,
+# then an old check for four fixed values is used.
+
+cpus_def=$ARC_GNU/gcc/gcc/config/arc/arc-cpus.def
+if [ -f $cpus_def ]; then
+    # New GCC (2016.03 and later).
+    # allowed_cpus should be a string wil values delimited by spaces.
+    allowed_cpus=$(awk -v FS="[(, ]+" '/^ARC/{printf " "$2}' $cpus_def)
+    allowed_linux_cpus=$(awk -v FS="[(, ]+" \
+	'/^ARC/{if($3=="hs"||$3=="700")printf " "$2}' $cpus_def)
+else
+    # Old GCC (2015.12 and earlier)
+    allowed_cpus="arc600 arc700 arcem archs"
+    allowed_linux_cpus="arc700 archs"
+fi
+
+if [[ " ${allowed_cpus[*]} " != *" $ISA_CPU "* ]]; then
+    echo "ERROR: Invalid CPU family specified."\
+         "Supported values are: $allowed_cpus."
+    exit 1
+fi
+
+if [ "x${uclibc}" = "x--uclibc" ]; then
+    if [[ " ${allowed_linux_cpus[*]} " != *" $ISA_CPU "* ]]; then
+	echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
+	     "Choose one of the supprted CPU familes or disable building of"\
+	     "uClibc tool chain with option --no-uclibc."\
+	     "Supported values are: $allowed_linux_cpus."
+	exit 1
+    fi
 fi
 
 # Downloading external dependencies

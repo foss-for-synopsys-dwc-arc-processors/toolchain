@@ -1,8 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2013-2015 Synopsys Inc.
-
-# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
+# Copyright (C) 2013-2016 Synopsys Inc.
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free

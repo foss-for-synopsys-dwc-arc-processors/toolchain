@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# Copyright (C) 2014-2015 Synopsys Inc.
+# Copyright (C) 2014-2016 Synopsys Inc.
 
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
@@ -34,7 +34,7 @@ if [ -z "$RELEASE" ]; then
     exit 1
 fi
 
-rm -rf tmp packages/arc_gnu_ide_plugins *.nsi *.nsh *.bmp
+rm -rf tmp *.nsi *.nsh *.bmp
 mkdir tmp
 
 echo "Preparing common files..."
@@ -77,6 +77,7 @@ tar -C tmp/toolchain_be -xaf packages/arc_gnu_*_prebuilt_elf32_be_win_install.ta
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/toolchain_be toolchain_be
 
 echo "Preparing Eclipse..."
+IDE_PLUGINS_ZIP=packages/arc_gnu_${RELEASE}_ide_plugins.zip
 mkdir tmp/eclipse
 unzip packages/eclipse-cpp-*-win32.zip -d tmp/eclipse
 # For some reason some of important exec files don't have exec bit set by the 
@@ -84,14 +85,12 @@ unzip packages/eclipse-cpp-*-win32.zip -d tmp/eclipse
 chmod +x tmp/eclipse/eclipse/eclipsec.exe
 chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
 # Install ARC plugins
-mkdir tmp/arc_gnu_ide_plugins
-unzip packages/arc_gnu_${RELEASE}_ide_plugins.zip -d tmp/arc_gnu_ide_plugins
 # Same as in Makefile.release
 echo "Installing ARC plugins into Eclipse..."
 tmp/eclipse/eclipse/eclipsec.exe \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
-    -repository ${ECLIPSE_REPO},file://$(cygpath -w -a tmp/arc_gnu_ide_plugins) \
+    -repository ${ECLIPSE_REPO},jar:file:$(cygpath -w -a $IDE_PLUGINS_ZIP)\!/ \
     -installIU ${ECLIPSE_PREREQ},com.arc.cdt.feature.feature.group
 # Eclipse will create a bunch of repos with local paths, that will not work for
 # end-users, hence those repos must be manually removed.

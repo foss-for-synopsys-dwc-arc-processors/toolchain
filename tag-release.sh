@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2012-2015 Synopsys Inc.
+# Copyright (C) 2012-2016 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
@@ -147,7 +147,7 @@ if ! git checkout arc-staging ; then
     exit 1
 fi
 
-if ! git merge $branch ; then
+if ! git merge $branch </dev/null ; then
     echo "Failed to merge arc-staging with $branch"
     exit 1
 fi
