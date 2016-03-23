@@ -60,10 +60,16 @@ Bugs Fixed in This Release (Summary)
 * Eclipse IDE
     * Path to standard headers was calculated improperly for big-endian
       projects.
+    * Fixed an inconsistency where if toolchain is present both in the PATH and
+      relatively to eclipse installation, compiler plugin would use one
+      toolchain from ../bin to build project, but would use toolchain from the
+      PATH to get information about standard headers.
 * OpenOCD
     * OpenOCD didn't worked with HS36 in AXS103.
 * Toolchain build scripts
     * XML files for Ashling Opella-XD GDBserver were broken for Windows systems.
+    * Memory maps for AXS10x boards were broken - there was a link error when
+      using them.
 
 
 Major changes in 2015.12 release
