@@ -46,18 +46,14 @@ libusb_install/lib/libusb-1.0.a: libusb-$(LIBUSB_VERSION)
 	$(MAKE) && \
 	$(MAKE) install \
 
-# ftd2xx directory must contains FTD2XX drivers. Process of their preparation
-# is not automated yet.
 openocd-config: openocd/Makefile
 
-openocd/Makefile: libusb_install/lib/libusb-1.0.a ftd2xx openocd
+openocd/Makefile: libusb_install/lib/libusb-1.0.a openocd
 	cd openocd && ./bootstrap
 	cd openocd && \
 	PKG_CONFIG_PATH=$(abspath libusb_install)/lib/pkgconfig \
 	./configure --enable-ftdi --host=$(HOST) --disable-werror \
 	    --disable-shared --enable-static \
-	    --enable-legacy-ft2232_ftd2xx \
-	    --with-ftd2xx-win32-zipdir=$(abspath ftd2xx) \
 	    --prefix=$(INSTALL_DIR) \
 	    PKG_CONFIG=pkg-config
 
@@ -68,7 +64,6 @@ openocd/src/openocd.exe: openocd/Makefile
 
 openocd-install: openocd-build
 	$(MAKE) -C openocd install install-pdf
-	cp -a ftd2xx/i386/*.dll $(INSTALL_DIR)/bin
 
 #
 # Clean
