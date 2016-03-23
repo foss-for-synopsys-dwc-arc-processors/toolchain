@@ -30,7 +30,8 @@ New Features and Enhancements
     * Fixed runtime issues on 32-bit hosts.
 * Eclipse IDE
     * Support for new GCC `-mcpu` option values.
-    * IF TCF is used, then options in GUI are now synchronize with it.
+    * If TCF is used, then options in GUI are now synchronized with it.
+    * Now it is possible to select current working directory when using nSIM.
 * OpenOCD
     * Added a separate configuration file for ARC EM Starter Kit v2.2, which
       requries reduced JTAG Frequency of 5 MHz, compared to 7.5 MHz that has
@@ -53,8 +54,11 @@ Bugs Fixed in This Release (Summary)
 * GCC
     * There was no multilib configuration without multiplier for ARC 700, EM
       and HS processors.
+* Newlib
+    * Fixed a bug in crt0.S file that was using optional ASR a,b,u6 instruction
+      without checking if barrel shifter is enabled.
 * Eclipse IDE
-    * Path to standard headers was calculaated impropery for big-endian
+    * Path to standard headers was calculated improperly for big-endian
       projects.
 * OpenOCD
     * OpenOCD didn't worked with HS36 in AXS103.
