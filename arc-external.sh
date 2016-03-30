@@ -24,9 +24,9 @@
 #
 
 urls='
-https://gmplib.org/download/gmp/gmp-5.1.3.tar.bz2
-http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.bz2
-http://www.multiprecision.org/mpc/download/mpc-1.0.1.tar.gz
+https://ftp.gnu.org/gnu/gmp/gmp-5.1.3.tar.bz2
+https://ftp.gnu.org/gnu/mpfr/mpfr-3.1.2.tar.bz2
+https://ftp.gnu.org/gnu/mpc/mpc-1.0.1.tar.gz
 '
 
 for url in ${urls} ; do
