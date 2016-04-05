@@ -476,12 +476,14 @@ follows:
     $ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs simple.c
     $ arc-elf32-gdb --quiet a.out
     (gdb) set tdesc filename toolchain/extras/opella-xd/opella-arcem-tdesc.xml
-    (gdb) set target remote :2331
+    (gdb) target remote :2331
     (gdb) load
     (gdb) break main
     (gdb) continue
     (gdb) break exit
     (gdb) continue
+    # Register R0 contains exit code of function main()
+    (gtb) info reg r0
     (gdb) quit
 
 Similar to OpenOCD hostlink is not available in GDB with Ashling Opella-XD.
