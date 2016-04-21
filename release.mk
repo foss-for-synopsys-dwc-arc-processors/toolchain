@@ -74,9 +74,20 @@ define create_dir
 endef
 
 # Create tarball for release
+#
 # :param $1 - name of directory to tar. Directory must be in the $O.
 define create_tar
        cd $O && tar caf $1$(TAR_EXT) $1/
+endef
+
+# Create windows tarball for release. Difference with standard `create_tar` is
+# that hard links are dereferenced, because they are notsupported in 7-zip -
+# hard links are turned into 0-byte files.
+#
+# :param $1 - name of directory to tar. Directory must
+# be in the $O.
+define create_windows_tar
+       cd $O && tar caf $1$(TAR_EXT) --hard-dereference $1/
 endef
 
 # Clone git repository
@@ -435,11 +446,11 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
 	touch $@
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
-	$(call create_tar,$(TOOLS_ELFLE_DIR_WIN))
+	$(call create_windows_tar,$(TOOLS_ELFLE_DIR_WIN))
 	touch $@
 
 $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
-	$(call create_tar,$(TOOLS_ELFBE_DIR_WIN))
+	$(call create_windows_tar,$(TOOLS_ELFBE_DIR_WIN))
 	touch $@
 
 #
