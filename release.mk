@@ -224,6 +224,14 @@ CP = rsync -a
 GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
 
+# Unfortunately it is not possible to have `,' or `#' in this string - binutils
+# configure sub-scripts will fail due to that.
+ifneq ($(BUILD_NUMBER),)
+  GNU_VERSION_STRING := $(RELEASE) build $(BUILD_NUMBER)
+else
+  GNU_VERSION_STRING := $(RELEASE)
+endif
+
 #
 # Human friendly aliases
 #
@@ -349,12 +357,15 @@ $O/.stamp_source_tarball:
 
 $O/.stamp_elf_le_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_DIR_LINUX) \
-	    --no-uclibc --release-name $(RELEASE)
+	    --release-name "$(GNU_VERSION_STRING)" \
+	    --no-uclibc
 	touch $@
 
 $O/.stamp_elf_be_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_DIR_LINUX) \
-	    --no-uclibc --release-name $(RELEASE) --big-endian
+	    --release-name "$(GNU_VERSION_STRING)" \
+	    --big-endian \
+	    --no-uclibc
 	touch $@
 
 $O/.stamp_elf_le_tarball: $O/.stamp_elf_le_built
@@ -367,24 +378,34 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 
 $O/.stamp_linux_le_700_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_DIR_LINUX) \
-	    --no-elf32 --release-name $(RELEASE) --cpu arc700
+	    --release-name "$(GNU_VERSION_STRING)" \
+	    --cpu arc700 \
+	    --no-elf32
 	touch $@
 
 $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
-	    --no-elf32 --release-name $(RELEASE) --cpu archs
+	    --release-name "$(GNU_VERSION_STRING)" \
+	    --cpu archs \
+	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
 	touch $@
 
 $O/.stamp_linux_be_700_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_DIR_LINUX) \
-	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu arc700
+	    --release-name "$(GNU_VERSION_STRING)" \
+	    --big-endian \
+	    --cpu arc700 \
+	    --no-elf32
 	touch $@
 
 $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
-	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu archs
+	    --release-name "$(GNU_VERSION_STRING)" \
+	    --big-endian \
+	    --cpu archs \
+	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
 	touch $@
@@ -430,7 +451,8 @@ $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
-	     --release-name $(RELEASE) --host $(WINDOWS_TRIPLET) --no-system-expat \
+	     --release-name "$(GNU_VERSION_STRING)" \
+	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_DIR_WIN),arc-elf32)
 	touch $@
@@ -440,7 +462,8 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
-	     --release-name $(RELEASE) --host $(WINDOWS_TRIPLET) --no-system-expat \
+	     --release-name "$(GNU_VERSION_STRING)" \
+	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_DIR_WIN),arceb-elf32)
 	touch $@
