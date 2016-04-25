@@ -1,3 +1,5 @@
+.. highlightlang:: shell
+
 Creating Toolchain Release
 ==========================
 
