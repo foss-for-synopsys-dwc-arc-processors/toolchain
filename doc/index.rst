@@ -10,6 +10,7 @@ Welcome to GNU Toolchain for ARC documentation!
    :maxdepth: 3
 
    release
+   maintainer/index
 
 
 Indices and tables
