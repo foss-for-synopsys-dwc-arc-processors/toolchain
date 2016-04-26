@@ -30,7 +30,11 @@ load_generic_config "sim"
 load_base_board_description "basic-sim"
 
 # Any multilib options are set in an environment variable.
-process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
+if { [ info exists env(ARC_MULTILIB_OPTIONS) ] } {
+    process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
+} else {
+    process_multilib_options ""
+}
 
 # We need extra procedures to determine for which cpu we simulate.
 search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
@@ -39,7 +43,9 @@ set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
 # Set common defaults
-set nsim_flags {}
+f ![info exists nsim_flags] {
+    set nsim_flags {}
+}
 lappend nsim_flags \
 	-on nsim_isa_spfp \
 	-on nsim_isa_dpfp \
