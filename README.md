@@ -82,9 +82,9 @@ page https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases.
 GNU toolchain source tarball already contains all of the necessary sources
 except for Linux which is a separate product. Linux sources are required only
 for Linux toolchain, they are not required for bare-metal elf32 toolchain.
-Latest stable release from https://kernel.org/ is recommended, only versions >=
-3.9 are supported. Linux sources should be located in the directory named
-`linux` that is the sibling of this `toolchain` directory. For example:
+Latest stable release from https://kernel.org/ is recommended, and only
+versions >= 3.9 are supported. Linux sources should be located in the directory
+named `linux` that is the sibling of this `toolchain` directory. For example:
 
     $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.3.3.tar.xz
     $ tar xaf linux-4.3.3.tar.xz --transform=s/linux-4.3.3/linux/
@@ -109,13 +109,35 @@ the toolchain. These should be peers of this `toolchain` directory.
         https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git
+    $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
 
 The binutils and gdb share the same repository, but must be in separate
 directories, because they use different branches. Option `--reference` passed
 when cloning gdb repository will tell Git to share internal Git files between
 binutils and gdb repository. This will greatly reduce amount of disk space
 consumed and time to clone the repository.
+
+Note that it is possible to save disk space and time to fetch sources by using
+Git option `--depth=1` - Git will not fetch the whole history of repository and
+will instead only fetch the current state. This option should be accompanied by
+the valid `-b <branch>` option so that Git will fetch a state of required
+branch or a tag. If branch is used, then current branches can be found in the
+config/arc-dev.sh file, which at the moment of this writing are:
+
+* cgen - arc-1.0-dev
+* binutils - arc-2.26-dev
+* gcc - arc-4.8-dev
+* gdb - arc-7.10
+* newlib - arc-2.3
+* uClibc - arc-mainline-dev
+* Linux - linux-4.5.y
+
+Note, however that if `build-all.sh` will try to checkout repositories to their
+latest state, which is a default behaviour, then it will anyway fetch
+additional branches and tags, due to usage of `git fetch --all --tags`. To
+avoid this problem, pass `--no-auto-pull --no-auto-checkout` to `build-all.sh`
+- in this case it will leave Git repositories alone, leaving control in the
+hands of the user.
 
 By default `toolchain` repository will be checked out to the current
 release branch `arc-releases`.

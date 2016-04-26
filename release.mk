@@ -91,18 +91,25 @@ define create_windows_tar
 endef
 
 # Clone git repository
-# $1 - tool name
+# $1 - Git URL
 # $2 - directory name
 ifeq ($(GIT_REFERENCE_ROOT),)
-define git_clone
-	$(GIT) clone -q $(GIT_URL_BASE)/$1.git $(ROOT)/$2
+define git_clone_url
+	$(GIT) clone -q $1 $(ROOT)/$2
 endef
 else
-define git_clone
+define git_clone_url
 	$(GIT) clone -q --reference=$(GIT_REFERENCE_ROOT)/$2 \
-	    $(GIT_URL_BASE)/$1.git $(ROOT)/$2
+	    $1 $(ROOT)/$2
 endef
 endif
+
+# Clone git repository
+# $1 - tool name
+# $2 - directory name
+define git_clone
+    $(call git_clone_url,$(GIT_URL_BASE)/$1.git,$2)
+endef
 
 #
 # Build flags common to all toolchains
@@ -291,7 +298,7 @@ clone:
 	$(call git_clone,gcc,gcc)
 	$(call git_clone,binutils-gdb,gdb)
 	$(call git_clone,newlib,newlib)
-	$(call git_clone,linux,linux)
+	$(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
 	$(call git_clone,uClibc,uClibc)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
