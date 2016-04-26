@@ -125,10 +125,10 @@ If current working directory is not a "toolchain" directory, then change to it:
     $ cd toolchain
 
 This repository can be checked out to a specific GNU Toolchain for ARC release
-by specifying a particular release tag, for example for 2015.12 release that
+by specifying a particular release tag, for example for 2016.03 release that
 would be:
 
-    $ git checkout arc-2015.12
+    $ git checkout arc-2016.03
 
 
 Building the Toolchain
