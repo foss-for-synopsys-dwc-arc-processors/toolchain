@@ -43,7 +43,7 @@ set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
 # Set common defaults
-f ![info exists nsim_flags] {
+if ![info exists nsim_flags] {
     set nsim_flags {}
 }
 lappend nsim_flags \
