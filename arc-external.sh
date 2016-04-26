@@ -20,13 +20,15 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #
-# Download some external dependencies. Return non-zero status if there is an error.
+# Download some external dependencies. Return non-zero status if there is an
+# error. This script will not work on RHEL 5, because its tar doesn't support
+# .tar..xz and -a.
 #
 
 urls='
-https://ftp.gnu.org/gnu/gmp/gmp-5.1.3.tar.bz2
-https://ftp.gnu.org/gnu/mpfr/mpfr-3.1.2.tar.bz2
-https://ftp.gnu.org/gnu/mpc/mpc-1.0.1.tar.gz
+https://ftp.gnu.org/gnu/gmp/gmp-6.1.0.tar.xz
+https://ftp.gnu.org/gnu/mpfr/mpfr-3.1.4.tar.xz
+https://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
 '
 
 for url in ${urls} ; do
@@ -34,18 +36,12 @@ for url in ${urls} ; do
     dirname="$(echo "${filename}" | sed 's/\.tar\..*$//')"
     toolname="$(echo "${dirname}" | cut -d- -f1)"
 
-    if echo "${filename}" | grep -q .tar.bz2 ; then
-        tar="tar xjf"
-    else
-        tar="tar xzf"
-    fi
-
     if [ ! -d "${toolname}" ]; then
         if [ ! -d "${dirname}" ]; then
             if [ ! -f "${filename}" ]; then
                 wget -nv "${url}"
             fi
-            ${tar} "${filename}"
+            tar xaf "${filename}"
         fi
         mv "${dirname}" "${toolname}"
     fi
