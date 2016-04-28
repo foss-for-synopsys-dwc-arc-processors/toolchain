@@ -15,19 +15,19 @@ of the work. List of prerequisites to build toolchain is list in toolchain
 for Windows hosts, in addition to those that are required to build toolchain for
 Linux hosts. To build IDE distributables, both for Windows and for Linux, a zip
 file with Eclipse CDT plugins for ARC is required (see
-:envvar:`IDE_PLUGIN_LOCATION`). To create Windows installer a distributable of
-OpenOCD for Windwos is required (see :envvar:`OPENOCD_WINDOWS_LOCATION`) and
-several MinGW and MSYS components are required (path set by
+:envvar:`IDE_PLUGIN_LOCATION`). To create Windows installer several MinGW and
+MSYS components are required (path set by
 :envvar:`THIRD_PARTY_SOFTWARE_LOCATION`). For a list of MinGW and MSYS packages,
 please refer to `windows-installer/README.md` section "Prerequisites".
 
-Currently ``release.mk`` doesn't properly support ability to select particular
-release packages to build, so, for example, it is not possible to select that
-only toolchain for Linux distributalbes are required. While it is possible to
-invoke particular Make targets directly to get only a limited set of
-distributales, it is not possible to make further targets like :option:`deploy`
-or :option:`upload` to use only this limited set of files (there is always an
-option to modify ``release.mk`` to get desired results).
+There are several variables that can be set to disable particular components,
+like Windows installer or OpenOCD, however those are not specifically tested, so
+may not really work. By default ``release.mk`` will build all of the possible
+components.  It is also possible to invoke particular Make targets directly to
+get only a limited set of distributales, however it is not possible to make
+further targets like :option:`deploy` or :option:`upload` to use only this
+limited set of files (there is always an option to modify ``release.mk`` to get
+desired results).
 
 
 Building Prerequisites
@@ -49,41 +49,22 @@ Create and push respective git tag::
     $ popd
 
 
-OpenOCD for Windows
-^^^^^^^^^^^^^^^^^^^
-
-OpenOCD for Windows cannot be linked with MinGW tools from EPEL, instead they
-should be built on Ubuntu::
-
-    $ sudo apt-get install libtool git-core build-essential autoconf automake \
-      texinfo texlive pkg-config gcc-mingw-w64
-    $ mkdir openocd_build
-    $ cd openocd_build
-
-Copy here extracted FTD2xx drivers, like::
-
-    $ mv ~/tmp/CDM\ v2.12.00\ WHQL\ Certified/ ftd2xx
-
-Get Makefile.openocd from toolchain repository::
-
-    $ wget https://raw.githubusercontent.com/foss-for-synopsys-dwc-arc-processors/toolchain/arc-dev/windows-installer/Makefile.openocd
-
-Get source and checkout to tag::
-
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/openocd.git
-    $ pushd openocd
-    $ git checkout arc-2016.03
-    $ popd
-
-Build. :envvar:`INSTALL_DIR` is a destination where OpenOCD for Windows will be
-installed::
-
-    $ make -f Makefile.openocd \
-      INSTALL_DIR=/media/sf_akolesov/pub/arc_gnu_2016.03_openocd_win_install
-
-
 Environment Variables
 ---------------------
+
+Those are make variables which can be set either as a parameters to make, like
+``make PARAM=VALUE`` or they can be specified in the ``release.config`` file
+that will be sourced by ``release.mk``.
+
+.. envvar:: CONFIG_STATIC_TOOLCHAIN
+
+   Whether to build toolchain linked dynamically or statically. Note this
+   affects the toolchain executable files, not the target libraries.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``n``
 
 .. envvar:: DEPLOY_DESTINATION
 
@@ -106,16 +87,29 @@ Environment Variables
 
 .. envvar:: ENABLE_OPENOCD
 
-   Whether to build and upload OpenOCD distributable package. IDE targets will
-   not work if OpenOCD is disabled. Therefore if this is ``n``, then
-   :envvar:``ENABLE_IDE`` and :envvar:`ENABLE_WINDOWS_INSTALLER`` also must be
-   ``n``.
+   Whether to build and upload OpenOCD distributable package for Linux. IDE
+   targets will not work if OpenOCD is disabled. Therefore if this is ``n``,
+   then :envvar:``ENABLE_IDE`` and :envvar:`ENABLE_WINDOWS_INSTALLER`` also must
+   be ``n``.
 
    Possible values:
       ``y`` and ``n``
 
    Default value:
       ``y``
+
+.. envvar:: ENABLE_OPENOCD_WIN
+
+   Whether to build and upload OpenOCD for Windows. This target currently
+   depends on :envvar:`ENABLE_OPENOCD`, which causes source code to be cloned
+   for OpenOCD. OpenOCD for Windows build will download and build libusb library
+   and is a prerequisite for IDE for Windows build.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
 
 .. envvar:: ENABLE_WINDOWS_INSTALLER
 
@@ -146,6 +140,15 @@ Environment Variables
    with rsync therefore location may be prefixed with hostname separated by
    semicolon, as in ``host:/path``.
 
+
+.. envvar:: LIBUSB_VERSION
+
+   Version of Libusb used for OpenOCD build for Windows.
+
+   Default value
+      1.0.20
+
+
 .. envvar:: OPENOCD_WINDOWS_LOCATION
 
    Location of OpenOCD build for Windows. Similar to
@@ -172,6 +175,15 @@ Environment Variables
 
    Location of 3rd party software, namely Java Runtime Environment (JRE) and
    Eclipse tarballs.
+
+
+.. envvar:: WINDOWS_TRIPLET
+
+   Triplet of MinGW toolchain to do a cross-build of toolchain for Windows.
+
+   Default value
+      i686-w64-mingw32
+
 
 .. envvar:: WINDOWS_WORKSPACE
 
