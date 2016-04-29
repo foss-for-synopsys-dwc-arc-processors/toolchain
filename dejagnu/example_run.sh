@@ -22,10 +22,10 @@
 # Set tool to dejagnu tool name: gcc, gdb, g++, etc
 # tool=SET ME
 
-# Set sim to simulator name: cgen or nsim
+# Set sim to simulator name: cgen, nsim, nsim-gdb
 # sim=SET ME
 
-# Set processor to the processor name: arc600, arc700, arcem, archs
+# Set processor to the processor name (value of -mcpu= option).
 # processor=SET ME
 
 # Toolchain source directory root.
@@ -45,12 +45,15 @@ rm -rf {gdb,gcc}.{sum,log}
 rm -f *.x? *.x *.i *.gcda *.ira
 rm -f *.s *.o *.cl zzz-gdbscript *.baz bps tracecommandsscript
 
-export ARC_MULTILIB_OPTIONS="$processor"
+export ARC_MULTILIB_OPTIONS="cpu=$processor"
 export DEJAGNU=$tools_src/toolchain/site.exp
 export PATH=$tools_bin:$PATH
 
 case $sim in
     nsim)
+	board=arc-sim-nsimdrv
+	;;
+    nsim-gdb)
 	export ARC_NSIM_PROPS=$nsim_props_root/$processor.props
 	board=arc-nsim
 	;;
