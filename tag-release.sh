@@ -135,11 +135,6 @@ done
 
 branch=`git symbolic-ref -q HEAD --short`
 
-if [[ $branch != *-dev ]] ; then
-    echo 'Current branch is not a *-dev branch! Cannot create a tag from it'
-    exit 1
-fi
-
 # Merge with a releases branch
 if ! git checkout arc-staging ; then
     echo "Failed to checkout branch arc-staging"
