@@ -1,3 +1,77 @@
+Major Changes in 2016.03 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* Binutils v2.26+ (upstream commit id 202ac19 with additional ARC patches)
+* GCC v4.8.5
+* GDB 7.10
+* newlib v2.3
+* uclibc (upstream commit 94340ce with backported patches from uClibc-ng)
+* Eclipse Mars (4.5.1) with CDT 8.8.0
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
+generator) version 1.0.53.
+
+
+New Features and Enhancements
+-----------------------------
+
+* Binutils
+    * Binutils for ARC has been rewritten from the scratch, based on upstream
+      release 2.26.
+* GCC
+    * New values for `-mcpu` option and new set of multilib libraries built for
+      those processor configurations.
+    * Support for text values of `-mmpy-option`, same as in hardware IP
+      libraries.
+    * Fixed runtime issues on 32-bit hosts.
+* Eclipse IDE
+    * Support for new GCC `-mcpu` option values.
+    * If TCF is used, then options in GUI are now synchronized with it.
+    * Now it is possible to select current working directory when using nSIM.
+* OpenOCD
+    * Added a separate configuration file for ARC EM Starter Kit v2.2, which
+      requries reduced JTAG Frequency of 5 MHz, compared to 7.5 MHz that has
+      been used for versions 2.0 and 2.1.
+* Toolchain build scripts
+    * Option `--cpu` now accepts different values that are supported by GCC as
+      values for `-mcpu` option. List of supported values is dynamic and
+      evaluated based on GCC configuration.
+    * Support for building of native (self-hosting) Linux/uClibc toolchain.
+    * New option of build-all.sh script:
+	* `--native` - specifies whether script is building native
+	  (self-hosting) toolchain. That affects location of header files and
+	  standard library archvies. It is still required to pass `--host`
+	  option to specify cross-toolchain to build native toolchain.
+
+
+Bugs Fixed in This Release (Summary)
+------------------------------------
+
+* GCC
+    * There was no multilib configuration without multiplier for ARC 700, EM
+      and HS processors.
+* Newlib
+    * Fixed a bug in crt0.S file that was using optional ASR a,b,u6 instruction
+      without checking if barrel shifter is enabled.
+* Eclipse IDE
+    * Path to standard headers was calculated improperly for big-endian
+      projects.
+    * Fixed an inconsistency where if toolchain is present both in the PATH and
+      relatively to eclipse installation, compiler plugin would use one
+      toolchain from ../bin to build project, but would use toolchain from the
+      PATH to get information about standard headers.
+* OpenOCD
+    * OpenOCD didn't worked with HS36 in AXS103.
+* Toolchain build scripts
+    * XML files for Ashling Opella-XD GDBserver were broken for Windows systems.
+    * Memory maps for AXS10x boards were broken - there was a link error when
+      using them.
+
+
 Major changes in 2015.12 release
 ================================
 

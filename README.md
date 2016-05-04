@@ -125,10 +125,10 @@ If current working directory is not a "toolchain" directory, then change to it:
     $ cd toolchain
 
 This repository can be checked out to a specific GNU Toolchain for ARC release
-by specifying a particular release tag, for example for 2015.12 release that
+by specifying a particular release tag, for example for 2016.03 release that
 would be:
 
-    $ git checkout arc-2015.12
+    $ git checkout arc-2016.03
 
 
 Building the Toolchain
@@ -203,49 +203,42 @@ will not be overridden.
 
 ### Build options examples
 
-Build default toolchain, bare metal toolchain will support all ARC cores,
-while Linux toolchain will support ARC 700:
+This command will build default toolchain - bare metal toolchain will support
+all ARC cores, while Linux toolchain will support ARC 700:
 
     $ ./build-all.sh --install-dir $INSTALL_ROOT
 
-Build toolchain for ARC 700 Linux development:
+This command will build bare metal toolchain for ARC 700 Linux development:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT
 
-Build toolchain for ARC HS Linux development:
+This command will build bare metal toolchain for ARC HS Linux development:
 
-    $ ./build-all.sh --no-elf32 --cpu hs38 --install-dir $INSTALL_ROOT
 
-Build bare metal toolchain for ARC EM cores:
+    $ ./build-all.sh --no-elf32 --cpu hs38_linux --install-dir $INSTALL_ROOT
 
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --cpu em4_dmips --no-multilib
-
-Build bare metal toolchain for ARC EM5D in the ARC EM Starter Kit 2.0:
+This command will build bare metal toolchain for ARC EM7D in the ARC EM Starter
+Kit 2.2:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_dmips --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap -mnorm \
-      -mmpy-option=6 -mbarrel-shifter"
+      --cpu em4_dmips
 
-Build bare metal toolchain for ARC EM7D in the ARC EM Starter Kit 2.0
-(EM7D_FPU is similiar, but with -mfpu=fpuda):
-
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_dmips --target-cflags "-O2 -g -mcode-density -mno-div-rem -mswap \
-      -mnorm -mmpy-option=6 -mbarrel-shifter \
-      --param l1-cache-size=16384 --param l1-cache-line-size=32"
-
-Build bare metal toolchain for ARC EM4 in the ARC EM Starter Kit 1.1:
+This command will build bare metal toolchain for ARC EM9D in the ARC EM Starter
+Kit 2.2:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_dmips --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
-      -mnorm -mmpy-option=6 -mbarrel-shifter"
+      --cpu em4_fpus --target-cflags "-O2 -g -mfpu=fpus_all"
 
-Build bare metal toolchain for ARC EM6 in the ARC EM Starter Kit 1.1:
+This command will build bare metal toolchain for ARC EM11D in the ARC EM Starter
+Kit 2.2:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_dmips --target-cflags "-O2 -g -mcode-density -mdiv-rem -mswap \
-      -mnorm -mmpy-option=6 -mbarrel-shifter \
-      --param l1-cache-size=32768 --param l1-cache-line-size=128"
+      --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
+
+Build bare metal toolchain for ARC EM4 and EM6 in the ARC EM Starter Kit 1.1:
+
+    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
+      --cpu em4_dmips
 
 To build native ARC Linux toolchain (toolchain that runs on same system as for
 which it compiles, so host == target) it is required first to build a normal
@@ -253,7 +246,7 @@ cross toolchain for this system. Then it should be added it to the PATH, after
 that `build-all.sh` can be run:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT_NATIVE \
-      --cpu hs38 --native --host arc-snps-linux-uclibc
+      --cpu hs38_linux --native --host arc-snps-linux-uclibc
 
 In this command line, argument to `--cpu` option must correspond to the target
 CPU and argument to `--host` options depends on whether this is a big or little
@@ -483,12 +476,14 @@ follows:
     $ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs simple.c
     $ arc-elf32-gdb --quiet a.out
     (gdb) set tdesc filename toolchain/extras/opella-xd/opella-arcem-tdesc.xml
-    (gdb) set target remote :2331
+    (gdb) target remote :2331
     (gdb) load
     (gdb) break main
     (gdb) continue
     (gdb) break exit
     (gdb) continue
+    # Register R0 contains exit code of function main()
+    (gtb) info reg r0
     (gdb) quit
 
 Similar to OpenOCD hostlink is not available in GDB with Ashling Opella-XD.

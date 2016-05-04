@@ -66,8 +66,7 @@ Copy here extracted FTD2xx drivers, like::
 
 Get Makefile.openocd from toolchain repository::
 
-    $ wget https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/\
-      blob/arc-dev/windows-installer/Makefile.openocd
+    $ wget https://raw.githubusercontent.com/foss-for-synopsys-dwc-arc-processors/toolchain/arc-dev/windows-installer/Makefile.openocd
 
 Get source and checkout to tag::
 
