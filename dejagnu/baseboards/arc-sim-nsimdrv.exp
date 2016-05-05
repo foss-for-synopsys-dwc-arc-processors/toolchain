@@ -47,9 +47,6 @@ if ![info exists nsim_flags] {
     set nsim_flags {}
 }
 lappend nsim_flags \
-	-on nsim_isa_spfp \
-	-on nsim_isa_dpfp \
-	-on nsim_isa_atomic_option \
 	-on nsim_isa_enable_timer_0 \
 	-on nsim_isa_enable_timer_1
 
@@ -116,7 +113,9 @@ if [ string match arceb-* $target_triplet ] {
     lappend nsim_flags -on nsim_isa_big_endian
 }
 
+# Select processor family. Also set nsim_isa_sat, which is mandatory for GCC.
 if { [check_target_arc700] } {
+    # GCC requires multiplier for ARC 700.
     lappend nsim_flags \
 	-p nsim_isa_family=a700 \
 	-on nsim_isa_sat \
@@ -125,33 +124,70 @@ if { [check_target_arc700] } {
     lappend nsim_flags \
 	-p nsim_isa_family=a600 \
 	-p nsim_isa_core=6 \
-	-on nsim_isa_sat \
-	-on nsim_isa_mult32
+	-on nsim_isa_sat
 } elseif { [check_target_archs] } {
     lappend nsim_flags \
 	-p nsim_isa_family=av2hs \
 	-p nsim_isa_core=1 \
-	-on nsim_isa_ll64_option \
-	-p nsim_isa_mpy_option=9 \
-	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_sat=1 \
-	-p nsim_isa_fpud_option=1 \
-	-p nsim_isa_fpud_div_option=1 \
-	-p nsim_isa_fpu_mac_option=1
+	-on nsim_isa_sat
 } elseif { [check_target_arcem] } {
     lappend nsim_flags \
 	-p nsim_isa_family=av2em \
 	-p nsim_isa_core=1 \
-	-p nsim_isa_mpy_option=9 \
-	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_sat=1 \
-	-p nsim_isa_code_density_option=2 \
-	-p nsim_isa_fpus_option=1 \
-	-p nsim_isa_fpus_div_option=1 \
-	-p nsim_isa_fpu_mac_option=1 \
-	-p nsim_isa_fpuda_option=1
+	-on nsim_isa_sat
 } else {
     perror "Unknown CPU configuration"
+}
+
+# Probe if GCC options require various hardware features.  For example, option
+# -mll64 requires that nsim_isa_ll64_option=1 in nSIM properties. This is done
+# via GCC C defines, where same -mll64, for example, sets __ARC_LL64__. Various
+# -mcpu values also can have different features selected and different processor
+# families can have common features, however many optional features of ARC EM
+# are mandatory for ARC HS. Here, in DejaGNU board we are trying to avoid
+# duplicating the logic of which cores has which options, so there would be no
+# need to maintain those dependencies. Instead we simply probe for C defines and
+# if they are set - add an nSIM option.
+# Most nSIM options are disabled by default, therefore property should be passed
+# to nSIM if C define is present. However a few options (bitscan and
+# barrel-shifter in particular) are enabled by default, thus we should set an
+# nSIM property that disable option if there is no C define. Second column in a
+# table specifies that - if it is 1, then nSIM property is set only if C define
+# is present and this property, presumably, enabled optional feature; but if
+# value in second column is 0, then nSIM property is set only of C define is not
+# present and, presuambly, that nSIM property disable optional feature.
+set nsim_gcc_mapping {
+    "__ARC_ATOMIC__"		1	nsim_isa_atomic_option=1
+    "__ARC_BARREL_SHIFTER__"	0	nsim_isa_shift_option=0
+    "__ARC_CODE_DENSITY__"	1	nsim_isa_code_density_option=2
+    "__ARC_DIVREM__"		1	nsim_isa_div_rem_option=2
+    "__ARC_FPU_ASSIST__ "	1	nsim_isa_fpuda_option=1
+    "__ARC_FPU_DP__"		1	nsim_isa_fpud_option=1
+    "__ARC_FPU_DP_DIV__"	1	nsim_isa_fpud_div_option=1
+    "__ARC_FPU_DP_FMA__"	1	nsim_isa_fpu_mac_option=1
+    "__ARC_FPU_SP__"		1	nsim_isa_fpus_option=1
+    "__ARC_FPU_SP_DIV__"	1	nsim_isa_fpus_div_option=1
+    "__ARC_FPU_SP_FMA__"	1	nsim_isa_fpu_mac_option=1
+    "__ARC_FPX_SP__"		1	nsim_isa_spfp=fast
+    "__ARC_FPX_DP__"		1	nsim_isa_dpfp=fast
+    "__ARC_LL64__"		1	nsim_isa_ll64_option=1
+    "__ARC_MPY_WLH1__"		1	nsim_isa_mpy_option=2
+    "__ARC_MPY_WLH2__"		1	nsim_isa_mpy_option=3
+    "__ARC_MPY_WLH3__"		1	nsim_isa_mpy_option=4
+    "__ARC_MPY_WLH4__"		1	nsim_isa_mpy_option=5
+    "__ARC_MPY_WLH5__"		1	nsim_isa_mpy_option=6
+    "__ARC_MPY_DMPY__"		1	nsim_isa_mpy_option=7
+    "__ARC_MPY_MACD__"		1	nsim_isa_mpy_option=8
+    "__ARC_MPY_QMACW__"		1	nsim_isa_mpy_option=9
+    "__ARC_MULT32__"		1	nsim_isa_mult32=1
+    "__ARC_MUL32BY16__"		1	nsim_isa_mul32x16=1
+    "__ARC_NORM__"		0	nsim_isa_bitscan_option=0
+}
+
+foreach {gcc_define set_if_defined nsim_prop} $nsim_gcc_mapping {
+    if { [check_target_arc $gcc_define] == $set_if_defined } {
+	lappend nsim_flags -p $nsim_prop
+    }
 }
 
 # Allow user to specify additional options, like JIT, etc.
