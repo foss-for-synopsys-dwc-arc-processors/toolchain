@@ -120,9 +120,14 @@ if { [check_target_arc700] } {
 	-p nsim_isa_family=a700 \
 	-on nsim_isa_sat \
 	-on nsim_isa_mpy32
-} elseif { [check_target_arc6xx] } {
+} elseif { [check_target_arc600] } {
     lappend nsim_flags \
 	-p nsim_isa_family=a600 \
+	-p nsim_isa_core=6 \
+	-on nsim_isa_sat
+} elseif { [check_target_arc601] } {
+    lappend nsim_flags \
+	-p nsim_isa_family=a601 \
 	-p nsim_isa_core=6 \
 	-on nsim_isa_sat
 } elseif { [check_target_archs] } {

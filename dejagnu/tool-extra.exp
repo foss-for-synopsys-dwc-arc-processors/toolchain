@@ -78,3 +78,13 @@ proc check_target_arc6xx { } {
     }
     return 0
 }
+
+# Return 1 if we compile for ARC600
+proc check_target_arc600 { } {
+    return [check_target_arc "__ARC600__"]
+}
+
+# Return 1 if we compile for ARC601
+proc check_target_arc601 { } {
+    return [check_target_arc "__ARC601__"]
+}
