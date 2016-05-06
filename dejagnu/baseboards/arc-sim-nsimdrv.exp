@@ -50,6 +50,12 @@ lappend nsim_flags \
 	-on nsim_isa_enable_timer_0 \
 	-on nsim_isa_enable_timer_1
 
+# Disable memory and instruction exceptions - execution will halt on error,
+# instead of generating exception that may not be properly handled.
+lappend nsim_flags \
+    -off invalid_instruction_interrupt \
+    -off memory_exception_interrupt
+
 set nsim_bin "$::env(NSIM_HOME)/bin/nsimdrv"
 
 # newlib.string/strcmp-1.c may run for around 2 minutes without Turbo on nSIM
