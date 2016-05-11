@@ -33,7 +33,7 @@ proc check_target_arc { arg } {
     }
 
     if { $compiler == "" } {
-	return ""
+	return 0
     }
 
     regexp "/.* " $compiler compiler
@@ -41,7 +41,7 @@ proc check_target_arc { arg } {
     verbose "compiler is $compiler"
 
     if { [which $compiler] == 0 } {
-	return ""
+	return 0
     }
 
     if { [board_info $target_board exists multilib_flags] } {
