@@ -32,7 +32,11 @@
 # tools_src = SET ME
 
 # Toolchain installation path
-# tools_bin = SET ME
+# Example: /opt/arcgnu/arc_gnu_2016.03_prebuilt_elf32_le_linux_install
+# tools_installation=SET ME
+
+# Triplet, like arc-elf32 or arc-linux-uclibc
+# triplet=SET ME
 
 # Root location with nSIM properties files
 # TODO: Better to use TCFs...
@@ -47,7 +51,7 @@ rm -f *.s *.o *.cl zzz-gdbscript *.baz bps tracecommandsscript
 
 export ARC_MULTILIB_OPTIONS="cpu=$processor"
 export DEJAGNU=$tools_src/toolchain/site.exp
-export PATH=$tools_bin:$PATH
+export PATH=$tools_installation/bin:$PATH
 
 case $sim in
     nsim)
@@ -67,6 +71,11 @@ case $tool in
 	testsuite=$tool_src/gdb/gdb/testsuite
 	mkdir $(ls -1d $testsuite/gdb.* | grep -Po '(?<=\/)[^\/]+$')
 	;;
+    newlib)
+	# Newlib requires that targ-include/newlib.h is present in object
+	# directory to run regressions.
+	mkdir -p targ-include
+	cp -a $tools_installation/$triplet/include/newlib.h targ-include
 esac
 
 runtest --tool=$tool --target_board=$board --target=arc-default-elf32
