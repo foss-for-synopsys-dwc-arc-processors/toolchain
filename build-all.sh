@@ -882,6 +882,12 @@ else
     fi
 fi
 
+# Let user override default wget via WGET environment variable.
+if [ -z "$WGET" ]; then
+    WGET="wget -nv"
+    export WGET
+fi
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 

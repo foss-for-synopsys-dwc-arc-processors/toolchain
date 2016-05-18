@@ -39,7 +39,7 @@ for url in ${urls} ; do
     if [ ! -d "${toolname}" ]; then
         if [ ! -d "${dirname}" ]; then
             if [ ! -f "${filename}" ]; then
-                wget -nv "${url}"
+                $WGET "${url}"
             fi
             tar xaf "${filename}"
         fi

@@ -587,7 +587,7 @@ build_expat() {
     expat_version=2.1.0
     expat_tar=expat-${expat_version}.tar.gz
     if [ ! -s $1/$expat_tar ]; then
-	wget -nv -O $1/$expat_tar \
+	$WGET -O $1/$expat_tar \
 	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
     fi
 

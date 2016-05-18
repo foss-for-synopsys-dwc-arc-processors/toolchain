@@ -598,7 +598,7 @@ if [ $DO_NATIVE_GDB = yes ]; then
     mkdir -p $toolchain_build_dir/_download_tmp
     cd $toolchain_build_dir/_download_tmp
     if [ ! -s $ncurses_tar ]; then
-	wget -nv -O $ncurses_tar $ncurses_url
+	$WGET -O $ncurses_tar $ncurses_url
     fi
 
     build_dir_init ncurses
