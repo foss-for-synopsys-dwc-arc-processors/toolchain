@@ -232,4 +232,18 @@ set_board_info gdb,nosignals 1
 set_board_info gdb,noresults 1
 set_board_info gdb,noinferiorio 1
 
+# Turn on support of compat.exp tests from GCC testsuite if environment
+# variable ARC_GCC_COMPAT_SUITE == 1.
+if { [info exists env(ARC_GCC_COMPAT_SUITE)] } {
+    set is_gcc_compat_suite $env(ARC_GCC_COMPAT_SUITE)
+} else {
+    if { ![info exists is_gcc_compat_suite] } {
+	set is_gcc_compat_suite 0
+    }
+}
+
+if { $is_gcc_compat_suite } {
+    fix_gcc_compat_multilib_flags
+}
+
 # vim: noexpandtab sts=4 ts=8:
