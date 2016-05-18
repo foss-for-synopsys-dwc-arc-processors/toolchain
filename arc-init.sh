@@ -577,6 +577,27 @@ get_multilibs() {
     fi
 }
 
+# Helper function to build expat, used by both uclibc and elf32 toolchains.
+# Arguments:
+#   $1 - download directory.
+#   $2 - configure type. Basically an XXX part of `configure_XXX` call.
+#        Examples: elf32, uclibc_stage2.
+build_expat() {
+    mkdir -p $1
+    expat_version=2.1.0
+    expat_tar=expat-${expat_version}.tar.gz
+    if [ ! -s $1/$expat_tar ]; then
+	wget -nv -O $1/$expat_tar \
+	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
+    fi
+
+    build_dir_init expat
+    tar xzf $1/$expat_tar --strip-components=1
+    configure_$2 expat $PWD
+    make_target building all
+    make_target installing install
+}
+
 # Create a common log directory for all logs in this and sub-scripts
 LOGDIR="$ARC_GNU/logs"
 mkdir -p "$LOGDIR"
