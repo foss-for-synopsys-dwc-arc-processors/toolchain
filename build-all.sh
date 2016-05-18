@@ -888,6 +888,13 @@ if [ -z "$WGET" ]; then
     export WGET
 fi
 
+if hash pv 2>/dev/null; then
+    PV='pv -p --timer'
+else
+    PV='tee'
+fi
+export PV
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
