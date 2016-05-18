@@ -540,7 +540,7 @@ make_target() {
     local step="$1"
     shift
     echo "  $step..."
-    if ! make $PARALLEL $* >> "$logfile" 2>&1
+    if ! make $PARALLEL $* 2>&1 | $PV >> "$logfile"
     then
 	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
@@ -557,7 +557,7 @@ make_target_ordered() {
     local step="$1"
     shift
     echo "  $step..."
-    if ! make $* >> "$logfile" 2>&1
+    if ! make $*  2>&1 | $PV >> "$logfile"
     then
 	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
