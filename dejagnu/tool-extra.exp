@@ -88,3 +88,45 @@ proc check_target_arc600 { } {
 proc check_target_arc601 { } {
     return [check_target_arc "__ARC601__"]
 }
+
+# Fix multilib flags for compat.exp tests of GCC testsuite. This function
+# removes all multilib flags from board info and appends them to testglues's
+# flags. It is necessary because compat.exp uses alternate compiler which
+# may not support GCC's multilib flags (they must be passed manually to each
+# compiler). However testglue must be compiled with those multilib flags so
+# this function also appends them to testglue's flags using wrap_compile_flags
+# variable. This function must be called last to let check_target_arc
+# function detect ARC core by multilib flags correctly.
+proc fix_gcc_compat_multilib_flags { } {
+    global board
+    global board_info
+
+    if { [info exists board] } {
+	set target_board $board
+    } else {
+	set target_board [target_info name]
+    }
+
+    # Get multilib flags if they exist.
+    if { [board_info $target_board exists multilib_flags] } {
+	set multilib_flags [board_info $target_board multilib_flags]
+    } else {
+	set multilib_flags ""
+    }
+
+    # Set flags for testglue.
+    set_board_info wrap_compile_flags "$multilib_flags"
+
+    # Erase multilib flags to prevent errors when alternative compiler
+    # is used in compat.exp tests of GCC testsuite.
+    unset_board_info multilib_flags
+    set_board_info multilib_flags ""
+
+    # Tests from compat.exp are short but sometimes some failing tests may
+    # lead to hanging of nSIM. So it is better to set a small time limit for
+    # the simulator.
+    unset_board_info sim_time_limit
+    set_board_info sim_time_limit 30
+}
+
+# vim: noexpandtab sts=4 ts=8:
