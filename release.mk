@@ -35,6 +35,9 @@ DEPLOY_DESTINATION =
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
+# Whether to build native toolchain for ARC HS Linux.
+ENABLE_NATIVE_TOOLS := y
+
 # Whether to build and upload OpenOCD for Linux.
 ENABLE_OPENOCD := y
 
@@ -200,6 +203,10 @@ TOOLS_LINUXLE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_linu
 TOOLS_LINUXBE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_linux_install
 TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_linux_install
 TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_linux_install
+ARC_LINUX_TRIPLET := arc-snps-linux-uclibc
+
+# Toolchain: native linux toolchain
+TOOLS_LINUXLE_HS_DIR_NATIVE := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
 
 # IDE: vanilla Eclipse variables
 ECLIPSE_VERSION := mars-1
@@ -243,6 +250,7 @@ UPLOAD_ARTIFACTS = \
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
+UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_DIR_NATIVE)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_EXE_WIN)
 
 # List of files that will be deployed internally. Is a superset of "upload"
@@ -279,6 +287,7 @@ BUILD_DEPS += \
 
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
+BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_linux_le_hs_native_tarball
 BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_DIR_LINUX)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN).zip
@@ -492,6 +501,26 @@ $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
 
 $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 	$(call create_windows_tar,$(TOOLS_ELFBE_DIR_WIN))
+	touch $@
+
+
+#
+# Native toolchain build
+#
+$O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built
+	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/bin):$$PATH \
+	     ./build-all.sh $(BUILDALLFLAGS) \
+	     --no-elf32 \
+	     --cpu archs \
+	     --release-name "$(RELEASE)" \
+	     --host arc-snps-linux-uclibc \
+	     --native \
+	     --no-system-expat \
+	     --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_NATIVE)
+	touch $@
+
+$O/.stamp_linux_le_hs_native_tarball: $O/.stamp_linux_le_hs_native_built
+	$(call create_tar,$(TOOLS_LINUXLE_HS_DIR_NATIVE))
 	touch $@
 
 #

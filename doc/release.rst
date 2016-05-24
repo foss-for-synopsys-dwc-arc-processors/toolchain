@@ -85,6 +85,18 @@ that will be sourced by ``release.mk``.
    Default value
       ``y``
 
+
+.. envvar:: ENABLE_NATIVE_TOOLS
+
+   Whether to build and upload native toolchain. Currently toolchain is built
+   only for ARC HS Linux.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_OPENOCD
 
    Whether to build and upload OpenOCD distributable package for Linux. IDE
