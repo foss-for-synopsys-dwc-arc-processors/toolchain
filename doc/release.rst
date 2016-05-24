@@ -69,7 +69,7 @@ that will be sourced by ``release.mk``.
 .. envvar:: DEPLOY_DESTINATION
 
    Where to copy release distributables. Location is in format
-   ``[hostname:]/path``. A directory named ``$(RELEASE_TAG:arc-%=%)`` will be
+   ``[hostname:]/path``. A directory named ``${RELEASE_TAG##-arc}`` will be
    created in the target path and will contain all deploy artifacts. So for
    ``RELEASE_TAG = arc-2016.03-alpha1`` directory will be ``2016.03-alpha1``, while
    for ``RELEASE_TAG = arc-2016.03`` it will be ``2016.03``.
@@ -136,9 +136,9 @@ that will be sourced by ``release.mk``.
 .. envvar:: IDE_PLUGIN_LOCATION
 
    Location of ARC plugin for Eclipse. This must be a directory and plugin file
-   must have a name ``arc_gnu_${RELEASE}_ide_plugin.zip``. File will be copied
-   with rsync therefore location may be prefixed with hostname separated by
-   semicolon, as in ``host:/path``.
+   must have a name ``arc_gnu_${RELEASE_TAG##arc-}_ide_plugin.zip``. File will
+   be copied with rsync therefore location may be prefixed with hostname
+   separated by semicolon, as in ``host:/path``.
 
 
 .. envvar:: LIBUSB_VERSION
@@ -153,12 +153,8 @@ that will be sourced by ``release.mk``.
 
    Location of OpenOCD build for Windows. Similar to
    :envvar:`IDE_PLUGIN_LOCATION` that must be a directory with name of format
-   ``arc_gnu_${RELEASE}_opencd_win_install``.
+   ``arc_gnu_${RELEASE_TAG##arc-}_opencd_win_install``.
 
-.. envvar:: RELEASE
-
-   Specifies toolchain release. Can be any string, for example 2016.03,
-   2015.12, etc.
 
 .. envvar:: RELEASE_NAME
 
@@ -167,9 +163,8 @@ that will be sourced by ``release.mk``.
 .. envvar:: RELEASE_TAG
 
    Git tag for this release. Tag is used literaly and can be for example,
-   arc-2016.03-alpha1. Note that in Synopsys release candidates are created to
-   become release, therefore for 2016.03 RC1 value of :envvar:`RELEASE` is
-   ``2016.03``, while value of :envvar:`RELEASE_TAG` is ``arc-2016.03-rc1``.
+   arc-2016.03-alpha1.
+
 
 .. envvar:: THIRD_PARTY_SOFTWARE_LOCATION
 
@@ -210,7 +205,7 @@ Make targets
    * Windows installer - created on Windows hosts. This tasks would depend on
      toolchain created by :option:`build` target.
 
-   This target is affected by :envvar:`RELEASE`.
+   This target is affected by :envvar:`RELEASE_TAG`.
 
 .. option:: copy-windows-installer
 
@@ -220,8 +215,10 @@ Make targets
 .. option:: create-tag
 
    Create Git tags for released components. Required environment variables:
-   :envvar:`RELEASE`, :envvar:`RELEASE_NAME`. OpenOCD must have a branch named
-   ``arc-0.9-dev-${RELEASE}``.
+   :envvar:`RELEASE_TAG`, :envvar:`RELEASE_NAME`. OpenOCD must have a branch
+   named ``arc-0.9-dev-${RELEASE_BRANCH}``, where ``RELEASE_BRANCH`` is a bare
+   release, evaluated from the tag, so for :envvar:`RELEASE_TAG` of
+   ``arc-2016.09-eng003``, ``RELEASE_BRANCH`` would be ``2016.09``.
 
 .. option:: deploy
 
@@ -239,7 +236,7 @@ Make targets
 
    Clone sources of toolchain components from GitHub. Copy external components
    from specified locations. Is affected by following environment variables:
-   :envvar:`RELEASE`, :envvar:`GIT_REFERENCE_ROOT` (optional),
+   :envvar:`RELEASE_TAG`, :envvar:`GIT_REFERENCE_ROOT` (optional),
    :envvar:`IDE_PLUGIN_LOCATION`, :envvar:`OPENOCD_WINDOWS_LOCATION`,
    :envvar:`THIRD_PARTY_SOFTWARE_LOCATION`.
 
@@ -292,7 +289,6 @@ First setup required make variables in the ``release.config`` file that will be
 sourced by ``release.mk`` (``...`` must be replaced with an actual paths)::
 
     $ cat release.config
-    RELEASE=2016.03
     RELEASE_TAG=arc-2016.03
     IDE_PLUGIN_LOCATION=...
     OPENOCD_WINDOWS_LOCATION=...
@@ -321,7 +317,7 @@ Windows host on which installer will be built. ::
 On Windows host, build installer using ``windows-installer/build-installer.sh``
 script. Note that this script requires a basic cygwin environment. ::
 
-    $ RELEASE=2016.03 toolchain/windows-installer/build-installer.sh
+    $ RELEASE_BRANCH=2016.03 toolchain/windows-installer/build-installer.sh
 
 Copy Windows installer from :envvar:`WINDOWS_WORKSPACE` into
 ``release_output``::

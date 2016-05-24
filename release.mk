@@ -76,6 +76,35 @@ WINDOWS_WORKSPACE := $(ROOT)/windows_workspace
 # Include overriding configuration
 -include release.config
 
+#
+# Check prerequisite variables
+#
+ifeq ($(RELEASE_TAG),)
+$(error RELEASE_TAG variable can not be empty)
+endif
+
+ifneq ($(filter upload, $(MAKECMDGOALS)),)
+ifeq ($(RELEASE_NAME),)
+$(error RELEASE_NAME variable can not be empty for "upload" target)
+endif
+endif
+
+#
+# Internal variables
+#
+CP = rsync -a
+GIT = git
+PYTHON = /depot/Python-3.4.3/bin/python3
+
+# RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
+# RELEASE in this case would be 2016.09-rc1
+# RELEASE_BRANCH in this case would be 2016.09.
+RELEASE := $(shell cut -s -d- -f2- <<< $(RELEASE_TAG))
+RELEASE_BRANCH := $(shell cut -s -d- -f2 <<< $(RELEASE_TAG))
+
+ifeq ($(RELEASE_BRANCH),)
+$(error RELEASE_TAG variable must be in format xxx-YYYY.MM)
+endif
 
 #
 # Helpers
@@ -190,7 +219,9 @@ JRE_TGZ_WIN   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
 IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
 IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
-IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE)_ide_plugins.zip
+# IDE plugins are built separately, and contain only RELEASE_BRANCH in the
+# name, not the whole RELEASE.
+IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip
 
 # OpenOCD
 OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_linux_install
@@ -228,40 +259,6 @@ DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
 
 # md5sum
 MD5SUM_FILE := md5.sum
-
-#
-# Check prerequisite variables
-#
-ifeq ($(RELEASE),)
-$(error RELEASE variable can not be empty)
-endif
-
-ifneq ($(filter upload create-tag push-tag, $(MAKECMDGOALS)),)
-ifeq ($(RELEASE_TAG),)
-$(error RELEASE_TAG variable can not be empty for this target)
-endif
-endif
-
-ifneq ($(filter upload, $(MAKECMDGOALS)),)
-ifeq ($(RELEASE_NAME),)
-$(error RELEASE_NAME variable can not be empty for "upload" target)
-endif
-endif
-
-#
-# Configuration
-#
-CP = rsync -a
-GIT = git
-PYTHON = /depot/Python-3.4.3/bin/python3
-
-# Unfortunately it is not possible to have `,' or `#' in this string - binutils
-# configure sub-scripts will fail due to that.
-ifneq ($(BUILD_NUMBER),)
-  GNU_VERSION_STRING := $(RELEASE) build $(BUILD_NUMBER)
-else
-  GNU_VERSION_STRING := $(RELEASE)
-endif
 
 #
 # Human friendly aliases
@@ -379,13 +376,13 @@ $O/.stamp_source_tarball:
 
 $O/.stamp_elf_le_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_DIR_LINUX) \
-	    --release-name "$(GNU_VERSION_STRING)" \
+	    --release-name "$(RELEASE)" \
 	    --no-uclibc
 	touch $@
 
 $O/.stamp_elf_be_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_DIR_LINUX) \
-	    --release-name "$(GNU_VERSION_STRING)" \
+	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --no-uclibc
 	touch $@
@@ -400,14 +397,14 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 
 $O/.stamp_linux_le_700_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_DIR_LINUX) \
-	    --release-name "$(GNU_VERSION_STRING)" \
+	    --release-name "$(RELEASE)" \
 	    --cpu arc700 \
 	    --no-elf32
 	touch $@
 
 $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
-	    --release-name "$(GNU_VERSION_STRING)" \
+	    --release-name "$(RELEASE)" \
 	    --cpu archs \
 	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
@@ -416,7 +413,7 @@ $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built
 
 $O/.stamp_linux_be_700_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_DIR_LINUX) \
-	    --release-name "$(GNU_VERSION_STRING)" \
+	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --cpu arc700 \
 	    --no-elf32
@@ -424,7 +421,7 @@ $O/.stamp_linux_be_700_built:
 
 $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
-	    --release-name "$(GNU_VERSION_STRING)" \
+	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --cpu archs \
 	    --no-elf32
@@ -472,7 +469,7 @@ $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
-	     --release-name "$(GNU_VERSION_STRING)" \
+	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_DIR_WIN),arc-elf32)
@@ -483,7 +480,7 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
-	     --release-name "$(GNU_VERSION_STRING)" \
+	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_DIR_WIN),arceb-elf32)
@@ -710,7 +707,7 @@ endif
 create-tag:
 	./tag-release.sh $(RELEASE_TAG)
 	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
-	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git checkout arc-0.9-dev-$(RELEASE)
+	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git checkout arc-0.9-dev-$(RELEASE_BRANCH)
 	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git tag $(RELEASE_TAG)
 
 #
@@ -728,7 +725,7 @@ deploy: $O/$(MD5SUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
 ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
-	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE_TAG:arc-%=%)
+	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE)
 
 
 #
