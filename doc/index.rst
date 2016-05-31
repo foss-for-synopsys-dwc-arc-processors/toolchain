@@ -7,8 +7,9 @@ Welcome to GNU Toolchain for ARC documentation!
 ===============================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
+   baremetal/index
    release
    maintainer/index
 
