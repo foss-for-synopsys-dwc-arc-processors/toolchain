@@ -351,7 +351,6 @@ configure_elf32() {
 	--with-gnu-as \
 	--with-gnu-ld \
 	$host_opt \
-	$sim_config \
 	$CONFIG_EXTRA \
 	"$@" \
 	>> "$logfile" 2>&1

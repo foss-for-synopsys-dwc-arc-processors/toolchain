@@ -388,16 +388,15 @@ fi
 # -----------------------------------------------------------------------------
 # Build Binutils - will be used by both state 1 and stage2
 build_dir_init binutils
-configure_uclibc_stage2 binutils
-make_target building all-binutils all-ld all-gas
+configure_uclibc_stage2 binutils binutils --disable-gdb
+make_target building all
 
 # Gas requires opcodes to be installed, LD requires BFD to be installed.
 # However those dependencies are not described in the Makefiles, instead if
 # required components is not yet installed, then dummy as-new and ld-new will
 # be installed. Both libraries are installed by install-binutils. Therefore it
 # is required that binutils is installed before ld and gas.
-make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
-  ${HOST_INSTALL}-gas $stripprog_opt
+make_target_ordered installing ${HOST_INSTALL} $stripprog_opt
 if [ $DO_PDF = --pdf ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
@@ -518,9 +517,8 @@ fi
 # GCC stage 2
 build_dir_init gcc-stage2
 configure_uclibc_stage2 gcc gcc $pch_opt
-make_target building all-gcc all-target-libgcc all-target-libstdc++-v3
-make_target installing ${HOST_INSTALL}-gcc install-target-libgcc \
-  install-target-libstdc++-v3
+make_target building all
+make_target installing ${HOST_INSTALL}
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gcc
@@ -537,7 +535,10 @@ fi
 # only in binary parts, while headers are identical.
 # This is not needed for native toolchain, which doesn't have sysroot.
 if [ $IS_NATIVE != yes ]; then
+    mv $INSTALLDIR/$triplet/lib/libatomic* $SYSROOTDIR/usr/lib
     mv $INSTALLDIR/$triplet/lib/libgcc_s* $SYSROOTDIR/lib/
+    mv $INSTALLDIR/$triplet/lib/libmudflap* $SYSROOTDIR/usr/lib
+    mv $INSTALLDIR/$triplet/lib/libssp* $SYSROOTDIR/usr/lib
     mv $INSTALLDIR/$triplet/lib/libstdc++*.so* $SYSROOTDIR/usr/lib
     mv $INSTALLDIR/$triplet/lib/libstdc++*.{a,la} $SYSROOTDIR/usr/lib
     mv $INSTALLDIR/$triplet/lib/libsupc++.{a,la} $SYSROOTDIR/usr/lib
@@ -562,9 +563,9 @@ then
 fi
 
 build_dir_init gdb
-configure_uclibc_stage2 gdb
-make_target building all-gdb
-make_target installing ${HOST_INSTALL}-gdb $stripprog_opt
+configure_uclibc_stage2 gdb gdb --disable-ld --disable-gas --disable-binutils
+make_target building all
+make_target installing ${HOST_INSTALL} $stripprog_opt
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb
