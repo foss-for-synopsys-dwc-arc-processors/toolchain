@@ -192,6 +192,7 @@ trap "echo ERROR: Failed due to signal ; date ; exit 1" \
 # not effective if the result of the command is being tested for, so we can
 # still have custom error handling).
 set -e
+set -o pipefail
 
 # None of the standard scripts should fall into this failure, but better to be
 # safe.
