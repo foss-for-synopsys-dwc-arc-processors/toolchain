@@ -195,7 +195,11 @@ make_target building all
 # patch is applied to baremetal toolchain.
 # Currently we simply use "install" instead of explicit install targets for
 # each project, so it is not a problem.
-make_target_ordered installing ${HOST_INSTALL}
+# While it is possible to build with `all`, it is not possible to install with
+# `install`, because in case of `strip-install` there is an error in the
+# "readline" packet that doesn't support this target.
+make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
+     ${HOST_INSTALL}-gas
 
 # To play safe, libstdc++ is not built separately, but with the whole gcc,
 # because it might not behave properly if it will be built by external
@@ -281,7 +285,7 @@ configure_elf32 gcc gcc --with-newlib \
     --with-libs="$INSTALLDIR/${arch}-elf32/lib" $pch_opt \
     CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections $CFLAGS_FOR_TARGET"
 make_target building all
-make_target installing ${HOST_INSTALL}
+make_target installing ${HOST_INSTALL}-host install-target
 if [ "$DO_PDF" = "--pdf" ]
 then
     # Don't build libstdc++ documentation because it requires additional
@@ -379,7 +383,7 @@ fi
 build_dir_init gdb
 configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils $sim_config
 make_target building all
-make_target installing ${HOST_INSTALL}
+make_target installing ${HOST_INSTALL}-gdb $build_sim
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb

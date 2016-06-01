@@ -396,7 +396,11 @@ make_target building all
 # required components is not yet installed, then dummy as-new and ld-new will
 # be installed. Both libraries are installed by install-binutils. Therefore it
 # is required that binutils is installed before ld and gas.
-make_target_ordered installing ${HOST_INSTALL} $stripprog_opt
+# While it is possible to build with `all`, it is not possible to install with
+# `install`, because in case of `strip-install` there is an error in the
+# "readline" packet that doesn't support this target.
+make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
+    ${HOST_INSTALL}-gas $stripprog_opt
 if [ $DO_PDF = --pdf ]
 then
     make_target "generating PDF documentation" install-pdf-binutils \
@@ -518,7 +522,7 @@ fi
 build_dir_init gcc-stage2
 configure_uclibc_stage2 gcc gcc $pch_opt
 make_target building all
-make_target installing ${HOST_INSTALL}
+make_target installing ${HOST_INSTALL}-host install-target
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gcc
@@ -565,7 +569,7 @@ fi
 build_dir_init gdb
 configure_uclibc_stage2 gdb gdb --disable-ld --disable-gas --disable-binutils
 make_target building all
-make_target installing ${HOST_INSTALL} $stripprog_opt
+make_target installing ${HOST_INSTALL}-gdb $stripprog_opt
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb
