@@ -107,13 +107,35 @@
 
 # Approach is following:
 # 1. Install Linux headers
-# 2. Install uClibc headers
-# 3. Build and install Binutils
-# 4. Build and install GCC stage 1 (without C++)
-# 5. Build and install uClibc
-# 6. Build and install GCC stage 2 (with C++)
-# 7. Build and install GDB
-# 8. Build and copy GDB-server for target
+# 2. Build and install Binutils
+# 3. Build and install GCC stage 1 (without libgcc and C++)
+# 4. Install uClibc headers
+# 5. Build and install libgcc from GCC stage 1 build tree.
+# 6. Build and install uClibc
+# 7. Build and install GCC stage 2 (with C++)
+# 8. Build and install GDB
+# 9. Build and copy GDB-server for target and or native GDB.
+
+# Order of things may change, there are various guides in the Internet that
+# have some slightly different proposals. For example, this:
+#
+#   http://preshing.com/20141119/how-to-build-a-gcc-cross-compiler/
+#
+# proposes that we don't really need to build gcc and libgcc second time at
+# stage 2. That does make sense to me, however it is important to understand
+# that gcc and libgcc "configure" scripts can make different decisions based on
+# what headers and binary files are already present in the installation
+# location, therefore I'm not 100% sure that gcc and libgcc from stage 2 are
+# identical to those from stage 1. Someone should check those things out and
+# confirm or deny whether build gcc and libgcc at stage 2 is required. For now
+# I stick with tried way of building gcc and libgcc twice.
+#
+# Another guide: http://dev.gentoo.org/~vapier/CROSS-COMPILE-GUTS
+#
+# Unlike that guide, this build script installs kernel headers before doing
+# anything else, for reasons that are explained in the historical note further
+# down, and apparently that may not be needed anymore.
+#
 
 # Following after this paragraph text, is a text of historical significance
 # that described how things used to be done in the age of ARC GCC 4.4 and early
@@ -284,6 +306,76 @@ else
     exit 1
 fi
 
+if [ "x${NPTL_SUPPORT}" = "xyes" ]
+then
+    thread_flags="--enable-threads --enable-tls"
+else
+    thread_flags="--disable-threads --disable-tls"
+fi
+
+if [ $IS_CROSS_COMPILING = yes ]; then
+    # install-sh doesn't know anything about our cross-compiling things, so it
+    # always uses "strip" by default. But {binutils,gdb}/Makefiles do set STRIPPROG
+    # variable apropriately to arc-linux-strip, and install-sh uses this variable.
+    # However it seems that in some cases STRIPPROG is not set, which causes a
+    # failure, because "strip" on host system is not aware of ARC. For example in
+    # binutils/binutils most targets are stripped correctly (objdump, objcopy to
+    # name a few), but c++filt is not stripped - STRIPPROG is not set. To avoid
+    # problems with cross-compilation STRIPPROG has to be explicitly set to
+    # everyone. This is needed only for binutils and gdb.
+    stripprog_opt="STRIPPROG=${triplet}-strip"
+
+    # See build-elf32.sh for explanation of --disable-libstdcxx-pch
+    pch_opt=--disable-libstdcxx-pch
+else
+    stripprog_opt=
+    pch_opt=
+fi
+
+# -----------------------------------------------------------------------------
+# Build Binutils - will be used by both state 1 and stage2
+build_dir_init binutils
+configure_uclibc_stage2 binutils binutils --disable-gdb
+make_target building all
+
+# Gas requires opcodes to be installed, LD requires BFD to be installed.
+# However those dependencies are not described in the Makefiles, instead if
+# required components is not yet installed, then dummy as-new and ld-new will
+# be installed. Both libraries are installed by install-binutils. Therefore it
+# is required that binutils is installed before ld and gas.
+# While it is possible to build with `all`, it is not possible to install with
+# `install`, because in case of `strip-install` there is an error in the
+# "readline" packet that doesn't support this target.
+make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
+    ${HOST_INSTALL}-gas $stripprog_opt
+if [ $DO_PDF = --pdf ]
+then
+    make_target "generating PDF documentation" install-pdf-binutils \
+      install-pdf-ld install-pdf-gas
+fi
+
+# -----------------------------------------------------------------------------
+# Add tool chain to the path for now, since binutils is required to build
+# libgcc, while GCC stage 1 will be required to build uClibc, but remember the
+# old path for restoring later. Not needed when cross compiling.
+if [ $IS_CROSS_COMPILING != yes ]; then
+    oldpath=${PATH}
+    PATH=${INSTALLDIR}/bin:$PATH
+    export PATH
+fi
+
+# -----------------------------------------------------------------------------
+# Build stage 1 GCC (not needed when cross compiling).
+# Can't build libgcc yet, because libgcc depends on libc, which hasn't been
+# built yet.
+if [ $IS_CROSS_COMPILING != yes ]; then
+    build_dir_init gcc-stage1
+    configure_uclibc_stage1 gcc
+    make_target building all-gcc
+    make_target installing ${HOST_INSTALL}-gcc
+    # No need for PDF docs for stage 1.
+fi
+
 # -----------------------------------------------------------------------------
 # Install uClibc headers for the Stage 1 compiler. This needs a C compiler,
 # which we do not yet have. We get round this by using the native C
@@ -359,71 +451,13 @@ else
     exit 1
 fi
 
-if [ "x${NPTL_SUPPORT}" = "xyes" ]
-then
-    thread_flags="--enable-threads --enable-tls"
-else
-    thread_flags="--disable-threads --disable-tls"
-fi
-
-if [ $IS_CROSS_COMPILING = yes ]; then
-    # install-sh doesn't know anything about our cross-compiling things, so it
-    # always uses "strip" by default. But {binutils,gdb}/Makefiles do set STRIPPROG
-    # variable apropriately to arc-linux-strip, and install-sh uses this variable.
-    # However it seems that in some cases STRIPPROG is not set, which causes a
-    # failure, because "strip" on host system is not aware of ARC. For example in
-    # binutils/binutils most targets are stripped correctly (objdump, objcopy to
-    # name a few), but c++filt is not stripped - STRIPPROG is not set. To avoid
-    # problems with cross-compilation STRIPPROG has to be explicitly set to
-    # everyone. This is needed only for binutils and gdb.
-    stripprog_opt="STRIPPROG=${triplet}-strip"
-
-    # See build-elf32.sh for explanation of --disable-libstdcxx-pch
-    pch_opt=--disable-libstdcxx-pch
-else
-    stripprog_opt=
-    pch_opt=
-fi
-
 # -----------------------------------------------------------------------------
-# Build Binutils - will be used by both state 1 and stage2
-build_dir_init binutils
-configure_uclibc_stage2 binutils binutils --disable-gdb
-make_target building all
-
-# Gas requires opcodes to be installed, LD requires BFD to be installed.
-# However those dependencies are not described in the Makefiles, instead if
-# required components is not yet installed, then dummy as-new and ld-new will
-# be installed. Both libraries are installed by install-binutils. Therefore it
-# is required that binutils is installed before ld and gas.
-# While it is possible to build with `all`, it is not possible to install with
-# `install`, because in case of `strip-install` there is an error in the
-# "readline" packet that doesn't support this target.
-make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
-    ${HOST_INSTALL}-gas $stripprog_opt
-if [ $DO_PDF = --pdf ]
-then
-    make_target "generating PDF documentation" install-pdf-binutils \
-      install-pdf-ld install-pdf-gas
-fi
-
-# -----------------------------------------------------------------------------
-# Add tool chain to the path for now, since binutils is required to build
-# libgcc, while GCC stage 1 will be required to build uClibc, but remember the
-# old path for restoring later. Not needed when cross compiling.
+# Build stage 1 libgcc (not needed when cross compiling).
 if [ $IS_CROSS_COMPILING != yes ]; then
-    oldpath=${PATH}
-    PATH=${INSTALLDIR}/bin:$PATH
-    export PATH
-fi
-
-# -----------------------------------------------------------------------------
-# Build stage 1 GCC (not needed when cross compiling).
-if [ $IS_CROSS_COMPILING != yes ]; then
-    build_dir_init gcc-stage1
-    configure_uclibc_stage1 gcc
-    make_target building all-gcc all-target-libgcc
-    make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
+    echo "Buildring libgcc stage1..."
+    cd $build_dir/gcc-stage1
+    make_target building all-target-libgcc
+    make_target installing install-target-libgcc
     # No need for PDF docs for stage 1.
 fi
 
