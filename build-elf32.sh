@@ -416,6 +416,9 @@ if [ "$DO_STRIP_TARGET_LIBRARIES" = yes ]; then
     # message that this file has "unrecognizable format". Whether header file
     # is included in archive by purpose or by mistake is not known to me,
     # however this is done in the generic part of libgcc.
+    # It is also possible to strip target libraries, by installing them with
+    # make target `install-strip-target`. However this target doesn't strip
+    # libgcc.a.
     for f in $files ; do
 	$objcopy -R .comment -R .note \
 	    -R .debug_info -R .debug_aranges -R .debug_pubnames \
