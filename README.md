@@ -129,7 +129,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * gcc - arc-4.8-dev
 * gdb - arc-7.10
 * newlib - arc-2.3
-* uClibc - arc-mainline-dev
+* uClibc - arc-2016.09
 * Linux - linux-4.5.y
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
