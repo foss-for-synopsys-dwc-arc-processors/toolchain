@@ -135,19 +135,6 @@ Install Linux headers::
     $ make ARCH=arc INSTALL_HDR_PATH=$SYSROOTDIR/usr headers_install
     $ cd -
 
-Install uClibc headers::
-
-    $ cd uClibc
-    $ make ARCH=arc arcv2_defconfig
-    $ sed \
-        -e "s#%KERNEL_HEADERS%#$SYSROOTDIR/usr/include#" \
-        -e "s#%RUNTIME_PREFIX%#/#" \
-        -e "s#%DEVEL_PREFIX%#/usr/#" \
-        -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"arc-snps-linux-uclibc-\"#" \
-        -i .config
-    $ make ARCH=arc PREFIX=$SYSROOTDIR install_headers
-    $ cd -
-
 Build binutils::
 
     $ mkdir -p build/binutils
@@ -168,7 +155,7 @@ Build binutils::
     $ make install-{binutils,ld,gas}
     $ cd -
 
-Build Stage 1 GCC::
+Build Stage 1 GCC (without libgcc)::
 
     $ mkdir -p build/gcc-stage1
     $ cd build/gcc-stage1
@@ -189,8 +176,28 @@ Build Stage 1 GCC::
         --disable-c99 \
         --disable-libgomp \
         --with-sysroot=$SYSROOTDIR
-    $ make all-{gcc,target-libgcc}
-    $ make install-{gcc,target-libgcc}
+    $ make all-gcc
+    $ make install-gcc
+    $ cd -
+
+Install uClibc headers::
+
+    $ cd uClibc
+    $ make ARCH=arc arcv2_defconfig
+    $ sed \
+        -e "s#%KERNEL_HEADERS%#$SYSROOTDIR/usr/include#" \
+        -e "s#%RUNTIME_PREFIX%#/#" \
+        -e "s#%DEVEL_PREFIX%#/usr/#" \
+        -e "s#CROSS_COMPILER_PREFIX=\".*\"#CROSS_COMPILER_PREFIX=\"arc-snps-linux-uclibc-\"#" \
+        -i .config
+    $ make ARCH=arc PREFIX=$SYSROOTDIR install_headers
+    $ cd -
+
+Build libgcc using build tree of stage 1 GCC::
+
+    $ cd build/gcc-stage1
+    $ make all-target-libgcc
+    $ make install-target-libgcc
     $ cd -
 
 Build uClibc::
