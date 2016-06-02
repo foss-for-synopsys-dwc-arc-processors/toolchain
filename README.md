@@ -125,10 +125,10 @@ branch or a tag. If branch is used, then current branches can be found in the
 config/arc-dev.sh file, which at the moment of this writing are:
 
 * cgen - arc-1.0-dev
-* binutils - arc-2.26-dev
+* binutils - arc-2016.09
 * gcc - arc-4.8-dev
 * gdb - arc-7.10
-* newlib - arc-2.3
+* newlib - arc-2.4
 * uClibc - arc-2016.09
 * Linux - linux-4.5.y
 
