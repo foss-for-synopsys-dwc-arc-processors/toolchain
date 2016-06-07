@@ -1,5 +1,11 @@
-Baremetal toolchain
-===================
+Building baremetal applications
+===============================
+
+.. toctree::
+
+
+Debugging baremetal applications
+================================
 
 .. toctree::
 
