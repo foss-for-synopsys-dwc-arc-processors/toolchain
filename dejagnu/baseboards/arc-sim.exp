@@ -37,6 +37,8 @@ load_generic_config "sim"
 # basic-sim.exp is a basic description for the standard Cygnus simulator.
 load_base_board_description "basic-sim"
 
+search_and_load_file "library file" "arc-common.exp" ${boards_dir}
+
 # "arc" is the name of the sim subdir.
 setup_sim arc
 
@@ -45,12 +47,11 @@ process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
 
 # Extra link flags specific to ARC
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
-set xldflags "$xldflags --specs=nsim.specs"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
 set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 # No linker script needed.
 set_board_info ldscript ""

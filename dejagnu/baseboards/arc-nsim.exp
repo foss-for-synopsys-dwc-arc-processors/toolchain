@@ -45,6 +45,7 @@ search_and_load_file "library file" "nsim-extra.exp" ${boards_dir}
 # Load procedures for enabling support of compatibility tests (compat.exp
 # from GCC testsuite).
 search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
+search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 
 # GDB tests require special treatment, they ignore "gdb-comm" configuration
 # unless "monitor" GDB test suite configuration is loaded.
@@ -56,12 +57,11 @@ if { $tool == "gdb" } {
 process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
 
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
-set xldflags "$xldflags --specs=nsim.specs"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
 set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 
 # No linker script needed.

@@ -38,6 +38,7 @@ if { [ info exists env(ARC_MULTILIB_OPTIONS) ] } {
 
 # We need extra procedures to determine for which cpu we simulate.
 search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
+search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
@@ -111,7 +112,6 @@ if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
 } else {
     # Use nSIM GNU IO hostlink, instead of a MetaWare compatible one.
     lappend nsim_flags -on nsim_emt
-    set xldflags "$xldflags --specs=nsim.specs"
 }
 
 # Big-endian?
@@ -219,7 +219,7 @@ set_board_info needs_status_wrapper 1
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
 set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 
 # No linker script needed.
