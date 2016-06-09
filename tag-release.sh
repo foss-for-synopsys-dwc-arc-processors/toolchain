@@ -124,7 +124,7 @@ do
 	*) tag=$tagname
     esac
 
-    if ! git tag ${tag}
+    if ! git tag -a -m "Create tag for $tagname release" $tag
     then
 	echo "ERROR: Failed to tag ${repo}"
 	exit 1
@@ -176,7 +176,7 @@ then
 fi
 
 # Tag the commit
-if ! git tag ${tagname}
+if ! git tag -a -m "Create tag for $tagname release" $tagname
 then
     echo "ERROR: Failed to tag toolchain"
     exit 1
