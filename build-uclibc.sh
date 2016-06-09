@@ -575,7 +575,6 @@ fi
 if [ $IS_NATIVE != yes ]; then
     mv $INSTALLDIR/$triplet/lib/libatomic* $SYSROOTDIR/usr/lib
     mv $INSTALLDIR/$triplet/lib/libgcc_s* $SYSROOTDIR/lib/
-    mv $INSTALLDIR/$triplet/lib/libmudflap* $SYSROOTDIR/usr/lib
     mv $INSTALLDIR/$triplet/lib/libssp* $SYSROOTDIR/usr/lib
     mv $INSTALLDIR/$triplet/lib/libstdc++*.so* $SYSROOTDIR/usr/lib
     mv $INSTALLDIR/$triplet/lib/libstdc++*.{a,la} $SYSROOTDIR/usr/lib
