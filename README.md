@@ -14,7 +14,6 @@ Branches in this repository are:
 * `arc-dev` is the development branch for the current toolchain release
 * `arc-4.8-dev` is the development branch for the 4.8 toolchain release
 * `arc-4.4-dev` is the development branch for the 4.4 toolchain release
-* `arc-mainline-dev` is the mainline development branch (deprecated).
 
 While the top of *development* branches should build and run reliably, there
 is no guarantee of this. Users who encountered an error are welcomed to create
