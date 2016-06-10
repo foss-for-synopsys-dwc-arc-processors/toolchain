@@ -882,6 +882,19 @@ else
     fi
 fi
 
+# Let user override default wget via WGET environment variable.
+if [ -z "$WGET" ]; then
+    WGET="wget -nv"
+    export WGET
+fi
+
+if hash pv 2>/dev/null; then
+    PV='pv -p --timer'
+else
+    PV='tee'
+fi
+export PV
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 

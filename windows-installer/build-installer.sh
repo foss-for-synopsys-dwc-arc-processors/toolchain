@@ -29,10 +29,13 @@
 ECLIPSE_REPO=http://download.eclipse.org/releases/luna
 ECLIPSE_PREREQ=org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
 
-if [ -z "$RELEASE" ]; then
-    echo "RELEASE env variable must be set"
+if [ -z "$RELEASE_TAG" ]; then
+    echo "RELEASE_TAG env variable must be set"
     exit 1
 fi
+
+RELEASE=$(cut -d- -f2- <<< $RELEASE_TAG)
+RELEASE_BRANCH=$(cut -d- -f2 <<< $RELEASE_TAG)
 
 rm -rf tmp *.nsi *.nsh *.bmp
 mkdir tmp
@@ -77,7 +80,7 @@ tar -C tmp/toolchain_be -xaf packages/arc_gnu_*_prebuilt_elf32_be_win_install.ta
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/toolchain_be toolchain_be
 
 echo "Preparing Eclipse..."
-IDE_PLUGINS_ZIP=packages/arc_gnu_${RELEASE}_ide_plugins.zip
+IDE_PLUGINS_ZIP=packages/arc_gnu_${RELEASE_BRANCH}_ide_plugins.zip
 mkdir tmp/eclipse
 unzip packages/eclipse-cpp-*-win32.zip -d tmp/eclipse
 # For some reason some of important exec files don't have exec bit set by the 

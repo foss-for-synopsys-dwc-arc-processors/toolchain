@@ -184,8 +184,8 @@ optsize_install_dir=$build_dir/optsize_libs_install
 
 # Binutils
 build_dir_init binutils
-configure_elf32 binutils
-make_target building all-binutils all-gas all-ld
+configure_elf32 binutils binutils --disable-gdb
+make_target building all
 # Gas requires opcodes to be installed, LD requires BFD to be installed.
 # However those dependencies are not described in the Makefiles, instead if
 # required components is not yet installed, then dummy as-new and ld-new will
@@ -193,8 +193,13 @@ make_target building all-binutils all-gas all-ld
 # is required that binutils is installed before ld and gas. That order
 # denedency showed up only with Linux toolchain so far, but for safety same
 # patch is applied to baremetal toolchain.
+# Currently we simply use "install" instead of explicit install targets for
+# each project, so it is not a problem.
+# While it is possible to build with `all`, it is not possible to install with
+# `install`, because in case of `strip-install` there is an error in the
+# "readline" packet that doesn't support this target.
 make_target_ordered installing ${HOST_INSTALL}-binutils ${HOST_INSTALL}-ld \
-    ${HOST_INSTALL}-gas
+     ${HOST_INSTALL}-gas
 
 # To play safe, libstdc++ is not built separately, but with the whole gcc,
 # because it might not behave properly if it will be built by external
@@ -259,7 +264,16 @@ then
 fi
 )
 
-# GCC + configure of libstdc++ with newly installed newlib headers
+# GCC + libstdc++ with newly installed newlib headers
+# Historical note for whoever would want (for some reason) to build gcc-stage2
+# and libstdc++ separately: Libstdc++ is built in the build tree of GCC to
+# avoid nasty problems which might happen when libstdc++ is being built in the
+# separate directory while new compiler is in the PATH. Notably a known broken
+# situation is when new toolchain is being installed on top of the previous
+# installation and libstdc++ configure script will find some header files left
+# from previous installation and will decide that some features are present,
+# while they are not. That problem doesn't occur when libstdc++ is built in
+# same build tree as GCC before that.
 build_dir_init gcc-stage2
 # -f{function,data}-sections is passed for libgcc. This is especially
 # beneficial when generic software floating point implementation is used - it
@@ -270,10 +284,12 @@ configure_elf32 gcc gcc --with-newlib \
     --with-headers="$INSTALLDIR/${arch}-elf32/include" \
     --with-libs="$INSTALLDIR/${arch}-elf32/lib" $pch_opt \
     CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections $CFLAGS_FOR_TARGET"
-make_target building all-gcc all-target-libgcc
-make_target installing ${HOST_INSTALL}-gcc install-target-libgcc
+make_target building all
+make_target installing ${HOST_INSTALL}-host install-target
 if [ "$DO_PDF" = "--pdf" ]
 then
+    # Don't build libstdc++ documentation because it requires additional
+    # software on build host.
     make_target "generating PDF documentation" install-pdf-gcc
 fi
 
@@ -329,31 +345,17 @@ if [ $BUILD_OPTSIZE_NEWLIB = yes ]; then
     done
 fi
 
-# libstdc++
-# It is built in the build tree of GCC to avoid nasty problems which might
-# happen when libstdc++ is being built in the separate directory while new
-# compiler is in the PATH. Notably a known broken situation is when new
-# toolchain is being installed on top of the previous installation and
-# libstdc++ configure script will find some header files left from previous
-# installation and will decide that some features are present, while they are
-# not. That problem doesn't occur when libstdc++ is built in same build tree as
-# GCC before that.
-
-echo "Building libstdc++ ..." | tee -a "$logfile"
-cd $build_dir/gcc-stage2
-make_target building all-target-libstdc++-v3
-make_target installing install-target-libstdc++-v3
-# Don't build libstdc++ documentation because it requires additional software
-# on build host.
-
 #
 # libstdc++ optimized for size
 #
+# Note that it will effectively build gcc-stage2 one more time for it's purposes.
 if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
     build_dir_init libstdcxx_optsize
     (
 	INSTALLDIR=$optsize_install_dir
         configure_elf32 libstdc++_optsize gcc --with-newlib $pch_opt \
+	    --with-headers="$INSTALLDIR/${arch}-elf32/include" \
+	    --with-libs="$INSTALLDIR/${arch}-elf32/lib" $pch_opt \
 	CXXFLAGS_FOR_TARGET="$optsize_flags -fno-exceptions $CXXFLAGS_FOR_TARGET -Os"
     )
     make_target building all-target-libstdc++-v3
@@ -374,26 +376,14 @@ fi
 # Expat if requested
 if [ "$SYSTEM_EXPAT" = no ]
 then
-    mkdir -p $toolchain_build_dir/_download_tmp
-    expat_version=2.1.0
-    expat_tar=expat-${expat_version}.tar.gz
-    if [ ! -s $toolchain_build_dir/_download_tmp/$expat_tar ]; then
-	wget -nv -O $toolchain_build_dir/_download_tmp/$expat_tar \
-	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
-    fi
-
-    build_dir_init expat
-    tar xzf $toolchain_build_dir/_download_tmp/$expat_tar --strip-components=1
-    configure_elf32 expat $PWD
-    make_target building all
-    make_target installing install
+    build_expat $toolchain_build_dir/_download_tmp elf32
 fi
 
 # GDB and CGEN simulator (maybe)
 build_dir_init gdb
-configure_elf32 gdb
-make_target building all-gdb ${sim_build}
-make_target installing ${sim_install} ${HOST_INSTALL}-gdb
+configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils $sim_config
+make_target building all
+make_target installing ${HOST_INSTALL}-gdb $build_sim
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb
@@ -426,6 +416,9 @@ if [ "$DO_STRIP_TARGET_LIBRARIES" = yes ]; then
     # message that this file has "unrecognizable format". Whether header file
     # is included in archive by purpose or by mistake is not known to me,
     # however this is done in the generic part of libgcc.
+    # It is also possible to strip target libraries by installing them with
+    # make target `install-strip-target`. However this target doesn't strip
+    # libgcc.a.
     for f in $files ; do
 	$objcopy -R .comment -R .note \
 	    -R .debug_info -R .debug_aranges -R .debug_pubnames \

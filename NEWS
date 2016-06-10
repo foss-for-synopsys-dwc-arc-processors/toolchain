@@ -1,3 +1,24 @@
+Major Changes in 2016.09 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+
+
+New Features and Enhancements
+-----------------------------
+
+* Toolchain build scripts
+    * Use GNU FTP server to download GMP, MPFR and MPC, update to latest
+      versions of those libraries and download .tar.xz files of GMP and MPFR.
+
+
+Bugs Fixed in This Release (Summary)
+------------------------------------
+
+
+
 Major Changes in 2016.03 Release
 ================================
 

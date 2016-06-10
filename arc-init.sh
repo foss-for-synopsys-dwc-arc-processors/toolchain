@@ -192,6 +192,7 @@ trap "echo ERROR: Failed due to signal ; date ; exit 1" \
 # not effective if the result of the command is being tested for, so we can
 # still have custom error handling).
 set -e
+set -o pipefail
 
 # None of the standard scripts should fall into this failure, but better to be
 # safe.
@@ -351,7 +352,6 @@ configure_elf32() {
 	--with-gnu-as \
 	--with-gnu-ld \
 	$host_opt \
-	$sim_config \
 	$CONFIG_EXTRA \
 	"$@" \
 	>> "$logfile" 2>&1
@@ -540,7 +540,7 @@ make_target() {
     local step="$1"
     shift
     echo "  $step..."
-    if ! make $PARALLEL $* >> "$logfile" 2>&1
+    if ! make $PARALLEL $* 2>&1 | $PV >> "$logfile"
     then
 	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
@@ -557,7 +557,7 @@ make_target_ordered() {
     local step="$1"
     shift
     echo "  $step..."
-    if ! make $* >> "$logfile" 2>&1
+    if ! make $* 2>&1 | $PV >> "$logfile"
     then
 	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
@@ -575,6 +575,27 @@ get_multilibs() {
     else
 	echo $($INSTALLDIR/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
     fi
+}
+
+# Helper function to build expat, used by both uclibc and elf32 toolchains.
+# Arguments:
+#   $1 - download directory.
+#   $2 - configure type. Basically an XXX part of `configure_XXX` call.
+#        Examples: elf32, uclibc_stage2.
+build_expat() {
+    mkdir -p $1
+    expat_version=2.1.0
+    expat_tar=expat-${expat_version}.tar.gz
+    if [ ! -s $1/$expat_tar ]; then
+	$WGET -O $1/$expat_tar \
+	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
+    fi
+
+    build_dir_init expat
+    tar xzf $1/$expat_tar --strip-components=1
+    configure_$2 expat $PWD
+    make_target building all
+    make_target installing install
 }
 
 # Create a common log directory for all logs in this and sub-scripts
