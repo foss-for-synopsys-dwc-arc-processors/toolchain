@@ -127,7 +127,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * binutils - arc-2016.09
 * gcc - arc-4.8-dev
 * gdb - arc-7.10
-* newlib - arc-2.4
+* newlib - arc-2016.09
 * uClibc - arc-2016.09
 * Linux - linux-4.5.y
 
