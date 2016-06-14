@@ -14,6 +14,8 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 proc arc_get_cflags {} { 
+    global env
+
     set xcflags {}
 
     # Use cflags instead ldflags because lto tests of ld testsuite ignore 
@@ -21,6 +23,7 @@ proc arc_get_cflags {} {
     if { ![ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
         lappend xcflags --specs=nsim.specs
     }
+    lappend xcflags "-m$env(ARC_MULTILIB_OPTIONS)"
     return [join $xcflags]
 }
 
