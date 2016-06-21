@@ -29,16 +29,12 @@ load_generic_config "sim"
 # basic-sim.exp is a basic description for the standard Cygnus simulator.
 load_base_board_description "basic-sim"
 
-# Any multilib options are set in an environment variable.
-if { [ info exists env(ARC_MULTILIB_OPTIONS) ] } {
-    process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
-} else {
-    process_multilib_options ""
-}
-
 # We need extra procedures to determine for which cpu we simulate.
 search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
 search_and_load_file "library file" "arc-common.exp" ${boards_dir}
+
+# Any multilib options are set in an environment variable.
+process_multilib_options [arc_get_multilib_options]
 
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
@@ -106,7 +102,7 @@ if [file exists $nsim_version_path] {
 }
 
 # Hostlink library support
-if { [ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
+if { [info exists env(ARC_HOSTLINK_LIBRARY)] } {
     set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) \
         -Wl,--no-whole-archive"
 } else {
