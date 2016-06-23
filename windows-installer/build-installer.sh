@@ -26,8 +26,11 @@
 
 # Params
 # Eclipse parameters copied from Makefile.release
-ECLIPSE_REPO=http://download.eclipse.org/releases/luna
-ECLIPSE_PREREQ=org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
+ECLIPSE_REPO=http://download.eclipse.org/releases/mars
+ECLIPSE_PREREQ=org.eclipse.tm.terminal.control,\
+    org.eclipse.tm.terminal.connector.serial,\
+    org.eclipse.tm.terminal.view.core,\
+    org.eclipse.tm.terminal.view.ui
 
 if [ -z "$RELEASE_TAG" ]; then
     echo "RELEASE_TAG env variable must be set"

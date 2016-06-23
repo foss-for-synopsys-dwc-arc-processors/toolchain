@@ -213,9 +213,12 @@ ECLIPSE_VERSION := mars-1
 ECLIPSE_VANILLA_ZIP_WIN := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_TGZ_LINUX := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
-ECLIPSE_REPO := http://download.eclipse.org/releases/luna
+ECLIPSE_REPO := http://download.eclipse.org/releases/mars
 # Coma separated list
-ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
+ECLIPSE_PREREQ := org.eclipse.tm.terminal.control,\
+    org.eclipse.tm.terminal.connector.serial,\
+    org.eclipse.tm.terminal.view.core,\
+    org.eclipse.tm.terminal.view.ui
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
 
 # Java.
