@@ -59,11 +59,6 @@
 #     For use with the --with-cpu flag to specify the ISA. Can be arc700 or
 #     arcem.
 
-# DO_SIM
-
-#     Either --sim or --no-sim to control whether we build and install the
-#     CGEN simulator.
-
 # CONFIG_EXTRA
 
 #     Additional flags for use with configuration.
@@ -134,25 +129,6 @@ echo "START ELF32: $(date)" | tee -a "$logfile"
 # Initialize common variables and functions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
 toolchain_build_dir=$PWD/toolchain
-
-# variables to control whether the simulator is build. Note that we actively
-# edit in the requirement for a simulator library in case it has been left
-# commented out from a previous part-completed run of this script.
-if [ "x${DO_SIM}" = "x--sim" ]
-then
-    sim_config="--enable-sim --enable-sim-endian=no"
-    sim_build=all-sim
-    # NB: CGEN doesn't have install-strip target.
-    sim_install=install-sim
-    ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
-	   -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
-else
-    sim_config=--disable-sim
-    sim_build=
-    sim_install=
-    ${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
-	-e 's!gdb_sim=../sim/arc/libsim.a!# gdb_sim=../sim/arc/libsim.a!'
-fi
 
 # If PDF docs are enabled, then check if prerequisites are satisfied.
 if [ "x${DO_PDF}" = "x--pdf" ]
@@ -379,19 +355,15 @@ then
     build_expat $toolchain_build_dir/_download_tmp elf32
 fi
 
-# GDB and CGEN simulator (maybe)
+# GDB
 build_dir_init gdb
-configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils $sim_config
+configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils
 make_target building all
-make_target installing ${HOST_INSTALL}-gdb $build_sim
+make_target installing ${HOST_INSTALL}-gdb
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gdb
 fi
-
-# Restore GDB config for simulator (does nothing if the change was not made).
-${SED} -i "${ARC_GNU}"/gdb/gdb/configure.tgt \
-    -e 's!# gdb_sim=../sim/arc/libsim.a!gdb_sim=../sim/arc/libsim.a!'
 
 # Copy TCF handler.
 cp "$ARC_GNU/toolchain/extras/arc-tcf-gcc" "$INSTALLDIR/bin/${arch}-elf32-tcf-gcc"

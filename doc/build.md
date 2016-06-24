@@ -114,8 +114,8 @@ order, as it doesn't depend on other components.
         --enable-languages=c,c++ \
         --with-headers=../../newlib/newlib/libc/include \
 	--prefix=${INSTALLDIR}
-    make {all,pdf}-{gdb,sim}
-    make install-{,pdf-}{gdb,sim}
+    make {all,pdf}-gdb
+    make install-{,pdf-}gdb
     cd -
 
 

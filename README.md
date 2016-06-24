@@ -287,8 +287,6 @@ officially supported and not recommended by Synopsys, due to severe performance
 penalty of those environments on build time and possible compatibility issue.
 
 Some limitation apply:
-- CGEN simulator is not supported on Windows hosts, thus should be disabled
-  with `--no-sim` option.
 - Only bare metal (elf32) toolchain can be built this way.
 - It is required to have toolchain for Linux hosts in the `PATH` for Canadian
   cross-build to succeed - it will be used to compile standard library of tool
@@ -317,7 +315,7 @@ For instruction how to install EPEL on RHEL, see
 
 After prerequisites are installed and Linux tools are in the `PATH`, do:
 
-    $ ./build-all.sh --no-uclibc --no-sim --host i686-w64-mingw32 \
+    $ ./build-all.sh --no-uclibc --host i686-w64-mingw32 \
       --no-system-expat
 
 Note that value of host triplet depends on what mingw toolchain is being used.
@@ -394,34 +392,6 @@ implementations. One reason to prefer `nsim.specs` over `nosys.specs` even when
 developing for hardware platform which doesn't have hostlink support is that
 `nsim` will halt target core on call to function "exit" and on many errors,
 while `exit` functions `nosys.specs` is an infinite loop.
-
-
-### Using CGEN simulator to run bare metal ARCompact applications
-
-Build application:
-
-    $ arc-elf32-gcc -marc700 -g --specs=nsim.specs hello_world.c
-
-To run it on CGEN-based simulator without debugger:
-
-    $ arc-elf32-run a.out
-    hello world
-
-To debug it in the GDB using simulator (GDB output omitted):
-
-    $ arc-elf32-gdb --quiet a.out
-    (gdb) target sim
-    (gdb) load
-    (gdb) start
-    (gdb) list
-    (gdb) continue
-    hello world
-    (gdb) quit
-
-CGEN simulator supports only ARC 600 and ARC 700. CGEN hostlink is mostly
-compatible with nSIM hostlink - basic functions, like console IO are
-implemented in  the same manner, but some other system calls like, `times` are
-not available in CGEN.
 
 
 ### Using EM Starter Kit to run bare metal ARC EM application

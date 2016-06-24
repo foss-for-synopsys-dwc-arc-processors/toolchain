@@ -477,7 +477,7 @@ endif
 $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
+	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc \
 	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
@@ -488,7 +488,7 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
 	# Install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
+	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian \
 	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
