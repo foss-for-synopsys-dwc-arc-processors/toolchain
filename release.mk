@@ -100,9 +100,10 @@ GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
 
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
-# RELEASE in this case would be 2016.09-rc1
+# RELEASE in this case would be 2016.09-rc1. However remove -release suffix
+# that is used for final release tags.
 # RELEASE_BRANCH in this case would be 2016.09.
-RELEASE := $(shell cut -s -d- -f2- <<< $(RELEASE_TAG))
+RELEASE := $(patsubst %-release,%,$(shell cut -s -d- -f2- <<< $(RELEASE_TAG)))
 RELEASE_BRANCH := $(shell cut -s -d- -f2 <<< $(RELEASE_TAG))
 
 ifeq ($(RELEASE_BRANCH),)
