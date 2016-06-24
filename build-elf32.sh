@@ -349,7 +349,8 @@ fi
 
 # GDB
 build_dir_init gdb
-configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils
+configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils \
+    --enable-targets=arc-linux-uclibc
 make_target building all
 make_target installing ${HOST_INSTALL}-gdb
 if [ "$DO_PDF" = "--pdf" ]
