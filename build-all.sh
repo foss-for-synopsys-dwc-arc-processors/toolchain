@@ -38,7 +38,6 @@
 #                  [--jobs <count>] [--load <load>] [--single-thread]
 #                  [--cpu <cpu name>]
 #                  [--uclibc-defconfig <defconfig>]
-#                  [--sim | --no-sim]
 #                  [--config-extra <flags>]
 #                  [--target-cflags <flags>]
 #                  [--multilib | --no-multilib]
@@ -192,12 +191,6 @@
 #     decided based on value of --cpu option. If CPU is "arc700", then
 #     defconfig for ARC 700 will be used. In all other cases defconfig for ARC
 #     HS will be used.
-
-# --sim | --no-sim
-
-#     Specify whether the CGEN simulator should be built for the ELF tool
-#     chain. Default --sim unless 'uname -o' reports as 'Msys' (i.e running
-#     under MinGW).
 
 # --config-extra <flags>
 
@@ -443,16 +436,10 @@ case "x${DISABLE_MULTILIB}" in
 esac
 
 
-if [ x`uname -s` = "xMsys" ]
+if [ x`uname -s` = "xDarwin" ]
 then
-    DO_SIM="--no-sim"
-elif [ x`uname -s` = "xDarwin" ]
-then
-    DO_SIM="--no-sim"
     #You can install gsed with 'brew install gnu-sed'
     SED=gsed
-else
-    DO_SIM="--sim"
 fi
 
 # Parse options
@@ -552,10 +539,6 @@ case ${opt} in
     --cpu)
 	shift
 	ISA_CPU=$1
-	;;
-
-    --sim|--no-sim)
-	DO_SIM=$1
 	;;
 
     --config-extra)
@@ -708,7 +691,6 @@ case ${opt} in
         echo "                      [--single-thread]"
         echo "                      [--cpu <cpu name>]"
 	echo "                      [--uclibc-defconfig <defconfig>]"
-        echo "                      [--sim | --no-sim]"
         echo "                      [--config-extra <flags>]"
         echo "                      [--target-cflags <flags>]"
 	echo "                      [--multilib | --no-multilib]"
@@ -906,7 +888,6 @@ export ARC_ENDIAN
 export ELF32_DISABLE_MULTILIB
 export UCLIBC_DISABLE_MULTILIB
 export ISA_CPU
-export DO_SIM
 export CONFIG_EXTRA
 export DO_PDF
 export DO_NATIVE_GDB

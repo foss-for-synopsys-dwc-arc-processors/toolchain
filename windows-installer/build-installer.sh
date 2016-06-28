@@ -26,8 +26,8 @@
 
 # Params
 # Eclipse parameters copied from Makefile.release
-ECLIPSE_REPO=http://download.eclipse.org/releases/luna
-ECLIPSE_PREREQ=org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
+ECLIPSE_REPO=http://download.eclipse.org/releases/mars
+ECLIPSE_PREREQ=org.eclipse.tm.terminal.feature.feature.group
 
 if [ -z "$RELEASE_TAG" ]; then
     echo "RELEASE_TAG env variable must be set"
@@ -89,8 +89,11 @@ chmod +x tmp/eclipse/eclipse/eclipsec.exe
 chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
 # Install ARC plugins
 # Same as in Makefile.release
+# It is assumed that we should call eclipsec.exe when invoking eclipse from
+# command line, but I started to get error from that with Mars.2, but
+# everything works fine when using eclipse.exe.
 echo "Installing ARC plugins into Eclipse..."
-tmp/eclipse/eclipse/eclipsec.exe \
+tmp/eclipse/eclipse/eclipse.exe \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
     -repository ${ECLIPSE_REPO},jar:file:$(cygpath -w -a $IDE_PLUGINS_ZIP)\!/ \

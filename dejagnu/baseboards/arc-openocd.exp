@@ -38,6 +38,7 @@ load_generic_config "gdb-comm"
 # Some extra procs for testing with nSim. This must go after gdb-comm, as it
 # overrides one of the function in gdb-comm.
 search_and_load_file "library file" "nsim-extra.exp" ${boards_dir}
+search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 
 # GDB tests require special treatment, they ignore "gdb-comm" configuration
 # unless "monitor" GDB test suite configuration is loaded.
@@ -46,9 +47,7 @@ if { $tool == "gdb" } {
 }
 
 # Any multilib options are set in an environment variable.
-process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
-
-search_and_load_file "library file" "arc-common.exp" ${boards_dir}
+process_multilib_options [arc_get_multilib_options]
 
 set xldflags ""
 

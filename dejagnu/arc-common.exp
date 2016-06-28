@@ -13,14 +13,34 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-proc arc_get_cflags {} { 
+# Returns string value of multilib options. Function returns
+# empty string if ARC_MULTILIB_OPTIONS is not set.
+proc arc_get_multilib_options {} {
+    global env
+
+    if { [info exists env(ARC_MULTILIB_OPTIONS)] } {
+	if { [regexp "^-m" $env(ARC_MULTILIB_OPTIONS)] || \
+	    [string length [string trim $env(ARC_MULTILIB_OPTIONS)]] == 0 } {
+	    return $env(ARC_MULTILIB_OPTIONS)
+	} else {
+	    return "-m$env(ARC_MULTILIB_OPTIONS)"
+	}
+    } else {
+	return ""
+    }
+}
+
+proc arc_get_cflags {} {
+    global env
+
     set xcflags {}
 
-    # Use cflags instead ldflags because lto tests of ld testsuite ignore 
+    # Use cflags instead ldflags because lto tests of ld testsuite ignore
     # ldflags
-    if { ![ info exists env(ARC_HOSTLINK_LIBRARY) ] } {
+    if { ![info exists env(ARC_HOSTLINK_LIBRARY)] } {
         lappend xcflags --specs=nsim.specs
     }
+    lappend xcflags [arc_get_multilib_options]
     return [join $xcflags]
 }
 

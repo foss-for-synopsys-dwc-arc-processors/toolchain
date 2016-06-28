@@ -100,9 +100,10 @@ GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
 
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
-# RELEASE in this case would be 2016.09-rc1
+# RELEASE in this case would be 2016.09-rc1. However remove -release suffix
+# that is used for final release tags.
 # RELEASE_BRANCH in this case would be 2016.09.
-RELEASE := $(shell cut -s -d- -f2- <<< $(RELEASE_TAG))
+RELEASE := $(patsubst %-release,%,$(shell cut -s -d- -f2- <<< $(RELEASE_TAG)))
 RELEASE_BRANCH := $(shell cut -s -d- -f2 <<< $(RELEASE_TAG))
 
 ifeq ($(RELEASE_BRANCH),)
@@ -213,9 +214,9 @@ ECLIPSE_VERSION := mars-1
 ECLIPSE_VANILLA_ZIP_WIN := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_TGZ_LINUX := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
-ECLIPSE_REPO := http://download.eclipse.org/releases/luna
+ECLIPSE_REPO := http://download.eclipse.org/releases/mars
 # Coma separated list
-ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
+ECLIPSE_PREREQ :=  org.eclipse.tm.terminal.control,org.eclipse.tm.terminal.connector.serial,org.eclipse.tm.terminal.view.core,org.eclipse.tm.terminal.view.ui
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
 
 # Java.
@@ -477,7 +478,7 @@ endif
 $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
+	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc \
 	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
@@ -488,7 +489,7 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
 	# Install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
+	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian \
 	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1

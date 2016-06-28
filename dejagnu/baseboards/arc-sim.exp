@@ -43,7 +43,7 @@ search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 setup_sim arc
 
 # Any multilib options are set in an environment variable.
-process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
+process_multilib_options [arc_get_multilib_options]
 
 # Extra link flags specific to ARC
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"

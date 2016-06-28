@@ -4,6 +4,7 @@ Major Changes in 2016.09 Release
 Toolchain and IDE Components Versions
 -------------------------------------
 
+* GDB 7.11+
 
 
 New Features and Enhancements
@@ -12,6 +13,8 @@ New Features and Enhancements
 * Toolchain build scripts
     * Use GNU FTP server to download GMP, MPFR and MPC, update to latest
       versions of those libraries and download .tar.xz files of GMP and MPFR.
+* GDB
+    * Update to upstream master (7.11+).
 
 
 Bugs Fixed in This Release (Summary)
