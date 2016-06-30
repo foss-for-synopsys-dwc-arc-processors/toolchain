@@ -224,25 +224,6 @@ uclibc_build_dir="$(echo "${PWD}")"/uClibc
 linux_src_dir=${LINUXDIR}
 linux_build_dir=$build_dir/linux
 
-# If PDF docs are enabled, then check if prerequisites are satisfied.
-if [ "x${DO_PDF}" = "x--pdf" ]
-then
-    if ! which texi2pdf >/dev/null 2>/dev/null
-    then
-	echo "TeX is not installed. See README.md for a list of required"
-	echo "system packages. Option --no-pdf can be used to disable build"
-	echo "of PDF documentation."
-	exit 1
-    fi
-
-    # There are issues with Texinfo v4 and non-C locales.
-    # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
-    if [ 4 = `texi2dvi --version | grep -Po '(?<=Texinfo )[0-9]+'` ]
-    then
-	export LC_ALL=C
-    fi
-fi
-
 # Note stuff for the log
 echo "Installing in ${INSTALLDIR}" | tee -a ${logfile}
 
