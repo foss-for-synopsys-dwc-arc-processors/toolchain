@@ -217,7 +217,18 @@ make_target installing install
 if [ "$DO_PDF" = "--pdf" ]
 then
     # Cannot use install-pdf because libgloss/doc does not support this target.
-    make_target "generating PDF documentation" install-pdf-target-newlib
+    if [[ $TEXINFO_VERSION_MAJOR = 6 && $TEXINFO_VERSION_MINOR > 0 ]]; then
+	# There are problems with building newlib PDF documentation on Ubuntu 16.04: lib{c,m}.pdf is
+	# created but texi2pdf exits with !0 code due to:
+	# "/usr/bin/texi2dvi: pdfetex exited with bad status, quitting."
+	# Hence we have to invoke make trice - once for each PDF to be built, and then to install
+	# them. Detection is based on texinfo version instead of the OS.
+	make_target_ordered "generating PDF documentation" install-pdf-target-newlib || true
+	make_target_ordered "generating PDF documentation" install-pdf-target-newlib || true
+	make_target_ordered "generating PDF documentation" install-pdf-target-newlib
+    else
+	make_target "generating PDF documentation" install-pdf-target-newlib
+    fi
 fi
 )
 
@@ -383,4 +394,4 @@ fi
 
 echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 
-# vim: noexpandtab sts=4 ts=8:
+# vim: noexpandtab sts=4 ts=8 textwidth=100:
