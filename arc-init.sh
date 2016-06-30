@@ -358,7 +358,7 @@ configure_elf32() {
     then
 	echo "ERROR: failed while configuring."
 	echo "See \`$logfile' for details."
-	exit 1
+	return 1
     fi
 }
 
@@ -419,7 +419,7 @@ configure_uclibc_stage1() {
     then
 	echo "ERROR: failed while configuring."
 	echo "See \`$logfile' for details."
-	exit 1
+	return 1
     fi
 }
 
@@ -486,7 +486,7 @@ configure_uclibc_stage2() {
     then
 	echo "ERROR: failed while configuring."
 	echo "See \`$logfile' for details."
-	exit 1
+	return 1
     fi
 }
 
@@ -528,7 +528,7 @@ configure_for_arc() {
     then
 	echo "ERROR: failed while configuring."
 	echo "See \`$logfile' for details."
-	exit 1
+	return 1
     fi
 }
 
@@ -544,7 +544,7 @@ make_target() {
     then
 	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
-	exit 1
+	return 1
     fi
 }
 
@@ -561,7 +561,7 @@ make_target_ordered() {
     then
 	echo "ERROR: failed while $step."
 	echo "See \`$logfile' for details."
-	exit 1
+	return 1
     fi
 }
 
