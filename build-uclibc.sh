@@ -629,10 +629,7 @@ if [ $DO_NATIVE_GDB = yes ]; then
     # Ada is not supported on ARC, so it has to be disabled, otherwise dumb
     # configure script might find Ada compiler for host system and will try to
     # use it as a compiler for ARC.
-    # C++ has to be disabled because of STAR9000908736 - there is an error when
-    # linking its demo application. Otherwise there is no reason to disable C++
-    # support.
-    configure_for_arc . $triplet --without-cxx-binding --without-ada
+    configure_for_arc . $triplet --without-ada
     make_target building
     make_target_ordered installing install DESTDIR=$SYSROOTDIR
 
