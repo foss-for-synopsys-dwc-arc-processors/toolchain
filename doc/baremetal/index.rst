@@ -3,6 +3,7 @@ Building baremetal applications
 
 .. toctree::
 
+   hostlink.rst
    tcf.rst
 
 
