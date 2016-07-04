@@ -74,7 +74,8 @@ proc compile_quarkse_em_nsim_apex { } {
 	    set cxxflags "$cxxflags $HOSTCXXFLAGS"
 	}
 	set inc "-I$env(NSIM_HOME)/inc"
-	if { [info exists HOSTCXX] } {
+	if { [info exists HOSTCXX] && \
+	    [string length [string trim $HOSTCXX]] != 0 } {
 	    set cxx "$HOSTCXX"
 	} else {
 	    set cxx "g++"
