@@ -4,6 +4,7 @@ Building baremetal applications
 .. toctree::
 
    hostlink.rst
+   linker.rst
    tcf.rst
 
 
