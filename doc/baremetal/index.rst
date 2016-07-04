@@ -12,6 +12,7 @@ Debugging baremetal applications
 
 .. toctree::
 
+   em-starter-kit.rst
    openocd-axs.rst
    ashling-axs.rst
 
