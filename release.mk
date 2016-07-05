@@ -32,6 +32,9 @@ CONFIG_STATIC_TOOLCHAIN := n
 
 DEPLOY_DESTINATION =
 
+# Whether to build big endian toolchain
+ENABLE_BIG_ENDIAN := y
+
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
@@ -242,12 +245,13 @@ OOCD_BUILD_DIR_WIN := $(BUILD_DIR)/openocd_win
 UPLOAD_ARTIFACTS = \
     $(TOOLS_SOURCE_DIR)$(TAR_EXT) \
     $(TOOLS_ELFLE_DIR_LINUX)$(TAR_EXT) \
-    $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXLE_700_DIR_LINUX)$(TAR_EXT) \
-    $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
-    $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
     $(UPLOAD_ARTIFACTS-y)
+
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
@@ -279,12 +283,13 @@ MD5SUM_FILE := md5.sum
 BUILD_DEPS += \
     $O/.stamp_source_tarball \
     $O/.stamp_elf_le_tarball \
-    $O/.stamp_elf_be_tarball \
     $O/.stamp_linux_le_700_tarball \
-    $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball \
-    $O/.stamp_linux_be_hs_tarball \
     $(BUILD_DEPS-y)
+
+BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_elf_be_tarball
+BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_700_tarball
+BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_hs_tarball
 
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
