@@ -87,6 +87,16 @@ that will be sourced by ``release.mk``.
    ``RELEASE_TAG = arc-2016.03-alpha1`` directory will be ``2016.03-alpha1``, while
    for ``RELEASE_TAG = arc-2016.03`` it will be ``2016.03``.
 
+.. envvar:: ENABLE_BIG_ENDIAN
+
+   Whether to build and upload big endian toolchain builds. Big endian toolchain
+   is required for IDE targets.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
 .. envvar:: ENABLE_DOCS_PACKAGE
 
    Whether to build separate packages with just documentation PDF files.
