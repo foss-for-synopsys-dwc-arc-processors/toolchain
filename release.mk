@@ -300,12 +300,18 @@ BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
 
+# Cannot include IDE_EXE_WIN into BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER),
+# because it is generated on the Windows host, after `make build`.
 
 # Build all components that can be built on Linux hosts.
 .PHONY: build
 build: $(BUILD_DEPS)
 
-$O/$(MD5SUM_FILE): $(BUILD_DEPS) $O/$(IDE_EXE_WIN)
+ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
+$O/$(MD5SUM_FILE): $O/$(IDE_EXE_WIN)
+endif
+
+$O/$(MD5SUM_FILE): $(BUILD_DEPS)
 	cd $O && md5sum $(UPLOAD_ARTIFACTS) > $@
 
 source-tarball: $O/.stamp_source_tarball
