@@ -652,7 +652,7 @@ else
     # configure script.
     config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdb/gdbserver
     LDFLAGS="-static-libstdc++ -static-libgcc" \
-	configure_for_arc "$config_path" $triplet
+	configure_for_arc "$config_path" $triplet --disable-build-with-cxx
     make_target building
 
     # gdbserver makefile lacks install-strip target. It is possible to trick
