@@ -391,7 +391,9 @@ in this case system calls are either not available or have stub
 implementations. One reason to prefer `nsim.specs` over `nosys.specs` even when
 developing for hardware platform which doesn't have hostlink support is that
 `nsim` will halt target core on call to function "exit" and on many errors,
-while `exit` functions `nosys.specs` is an infinite loop.
+while `exit` functions `nosys.specs` is an infinite loop. For more details
+please see [our wiki
+page](https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/Building-a-baremetal-application).
 
 
 ### Using EM Starter Kit to run bare metal ARC EM application

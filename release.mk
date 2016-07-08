@@ -32,6 +32,9 @@ CONFIG_STATIC_TOOLCHAIN := n
 
 DEPLOY_DESTINATION =
 
+# Whether to build big endian toolchain
+ENABLE_BIG_ENDIAN := y
+
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
@@ -242,12 +245,13 @@ OOCD_BUILD_DIR_WIN := $(BUILD_DIR)/openocd_win
 UPLOAD_ARTIFACTS = \
     $(TOOLS_SOURCE_DIR)$(TAR_EXT) \
     $(TOOLS_ELFLE_DIR_LINUX)$(TAR_EXT) \
-    $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXLE_700_DIR_LINUX)$(TAR_EXT) \
-    $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
-    $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT) \
     $(UPLOAD_ARTIFACTS-y)
+
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
@@ -279,12 +283,13 @@ MD5SUM_FILE := md5.sum
 BUILD_DEPS += \
     $O/.stamp_source_tarball \
     $O/.stamp_elf_le_tarball \
-    $O/.stamp_elf_be_tarball \
     $O/.stamp_linux_le_700_tarball \
-    $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball \
-    $O/.stamp_linux_be_hs_tarball \
     $(BUILD_DEPS-y)
+
+BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_elf_be_tarball
+BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_700_tarball
+BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_hs_tarball
 
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
@@ -295,12 +300,18 @@ BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
 
+# Cannot include IDE_EXE_WIN into BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER),
+# because it is generated on the Windows host, after `make build`.
 
 # Build all components that can be built on Linux hosts.
 .PHONY: build
 build: $(BUILD_DEPS)
 
-$O/$(MD5SUM_FILE): $(BUILD_DEPS) $O/$(IDE_EXE_WIN)
+ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
+$O/$(MD5SUM_FILE): $O/$(IDE_EXE_WIN)
+endif
+
+$O/$(MD5SUM_FILE): $(BUILD_DEPS)
 	cd $O && md5sum $(UPLOAD_ARTIFACTS) > $@
 
 source-tarball: $O/.stamp_source_tarball
@@ -736,16 +747,20 @@ endif
 #
 create-tag:
 	./tag-release.sh $(RELEASE_TAG)
+ifeq ($(ENABLE_OPENOCD),y)
 	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
 	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git checkout arc-0.9-dev-$(RELEASE_BRANCH)
 	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git tag $(RELEASE_TAG)
+endif
 
 #
 # Push tag
 #
 push-tag:
 	./push-release.sh $(RELEASE_TAG)
+ifeq ($(ENABLE_OPENOCD),y)
 	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git push origin $(RELEASE_TAG)
+endif
 
 #
 # Deploy to shared file system

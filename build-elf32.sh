@@ -130,25 +130,6 @@ echo "START ELF32: $(date)" | tee -a "$logfile"
 . "${ARC_GNU}"/toolchain/arc-init.sh
 toolchain_build_dir=$PWD/toolchain
 
-# If PDF docs are enabled, then check if prerequisites are satisfied.
-if [ "x${DO_PDF}" = "x--pdf" ]
-then
-    if ! which texi2pdf >/dev/null 2>/dev/null
-    then
-	echo "TeX is not installed. See README.md for a list of required"
-	echo "system packages. Option --no-pdf can be used to disable build"
-	echo "of PDF documentation."
-	exit 1
-    fi
-
-    # There are issues with Texinfo v4 and non-C locales.
-    # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
-    if [ 4 = `texi2dvi --version | grep -Po '(?<=Texinfo )[0-9]+'` ]
-    then
-	export LC_ALL=C
-    fi
-fi
-
 echo "Installing in ${INSTALLDIR}" | tee -a "$logfile"
 
 # Purge old build dir if there is any and create a new one.
@@ -236,7 +217,18 @@ make_target installing install
 if [ "$DO_PDF" = "--pdf" ]
 then
     # Cannot use install-pdf because libgloss/doc does not support this target.
-    make_target "generating PDF documentation" install-pdf-target-newlib
+    if [[ $TEXINFO_VERSION_MAJOR = 6 && $TEXINFO_VERSION_MINOR > 0 ]]; then
+	# There are problems with building newlib PDF documentation on Ubuntu 16.04: lib{c,m}.pdf is
+	# created but texi2pdf exits with !0 code due to:
+	# "/usr/bin/texi2dvi: pdfetex exited with bad status, quitting."
+	# Hence we have to invoke make trice - once for each PDF to be built, and then to install
+	# them. Detection is based on texinfo version instead of the OS.
+	make_target_ordered "generating PDF documentation" install-pdf-target-newlib || true
+	make_target_ordered "generating PDF documentation" install-pdf-target-newlib || true
+	make_target_ordered "generating PDF documentation" install-pdf-target-newlib
+    else
+	make_target "generating PDF documentation" install-pdf-target-newlib
+    fi
 fi
 )
 
@@ -357,7 +349,8 @@ fi
 
 # GDB
 build_dir_init gdb
-configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils
+configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils \
+    --enable-targets=arc-linux-uclibc
 make_target building all
 make_target installing ${HOST_INSTALL}-gdb
 if [ "$DO_PDF" = "--pdf" ]
@@ -402,4 +395,4 @@ fi
 
 echo "DONE  ELF32: $(date)" | tee -a "$logfile"
 
-# vim: noexpandtab sts=4 ts=8:
+# vim: noexpandtab sts=4 ts=8 textwidth=100:

@@ -877,6 +877,32 @@ else
 fi
 export PV
 
+# If PDF docs are enabled, then check if prerequisites are satisfied.
+if [ $DO_PDF = --pdf ]; then
+    if ! which texi2pdf >/dev/null 2>/dev/null ; then
+	echo "TeX is not installed. See README.md for a list of required"
+	echo "system packages. Option --no-pdf can be used to disable build"
+	echo "of PDF documentation."
+	exit 1
+    fi
+
+    # Texi is a major source of toolchain build errors -- PDF regularly do not
+    # work with particular versions of texinfo, but work with others. To
+    # workaround those issues build scripts should be aware of texi version.
+    export TEXINFO_VERSION_MAJOR=$(texi2pdf --version | grep -Po '(?<=Texinfo )[0-9]+')
+    # Grep perl look-behind expressions must have a fixed length, so to future
+    # proof for texinfo versions 10+, we have to read variable, because that
+    # wouldn't work: (?<=Texinfo [0-9]+\.)
+    export TEXINFO_VERSION_MINOR=$(texi2pdf --version |
+	grep -Po "(?<=Texinfo $TEXINFO_VERSION_MAJOR\.)[0-9]+")
+
+    # There are issues with Texinfo v4 and non-C locales.
+    # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
+    if [ 4 = $TEXINFO_VERSION_MAJOR ]; then
+	export LC_ALL=C
+    fi
+fi
+
 # Standard setup
 . "${ARC_GNU}/toolchain/arc-init.sh"
 
