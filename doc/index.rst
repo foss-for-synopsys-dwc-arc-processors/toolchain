@@ -10,6 +10,7 @@ Welcome to GNU Toolchain for ARC documentation!
    :maxdepth: 2
 
    baremetal/index
+   linux/index
    release
    maintainer/index
 
