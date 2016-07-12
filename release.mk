@@ -101,6 +101,7 @@ endif
 CP = rsync -a
 GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
+SSH = ssh
 
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
 # RELEASE in this case would be 2016.09-rc1. However remove -release suffix
@@ -269,6 +270,23 @@ DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN).zip
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
+
+# Artifacts for unpacked builds
+DEPLOY_BUILD_ARTIFACTS = \
+    $(TOOLS_ELFLE_DIR_LINUX) \
+    $(TOOLS_LINUXLE_700_DIR_LINUX) \
+    $(TOOLS_LINUXLE_HS_DIR_LINUX) \
+    $(DEPLOY_BUILD_ARTIFACTS-y)
+
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_INSTALL_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_DIR_NATIVE)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)
 
 # md5sum
 MD5SUM_FILE := md5.sum
@@ -771,6 +789,45 @@ ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
 	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE)
+
+#
+# Deploy unpacked builds which can be used directly
+#
+
+# When copying directories, rsync doesn the "cd" to
+# DEPLOY_BUILD_ARTIFACTS/$(RELEASE), which doesn't exist yet. Hence it is
+# required to create build directory before copying into it.
+
+ifeq ($(findstring :,$(DEPLOY_BUILD_DESTINATION)),)
+  DEPLOY_BUILD_DESTINATION_CMD=mkdir -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
+  DEPLOY_BUILD_LINK_CMD=ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION)/latest
+else
+  DEPLOY_BUILD_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_BUILD_DESTINATION)")
+  DEPLOY_BUILD_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_BUILD_DESTINATION)")
+  DEPLOY_BUILD_DESTINATION_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
+    'mkdir -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE)'
+  DEPLOY_BUILD_LINK_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
+    'ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION_PATH)/latest'
+endif
+
+.PHONY: .deploy_build_destdir
+.deploy_build_destdir:
+ifeq ($(DEPLOY_BUILD_DESTINATION),)
+	$(error DEPLOY_BUILD_DESTINATION must be set to run 'deploy-build' target)
+endif
+	$(DEPLOY_BUILD_DESTINATION_CMD)
+
+
+# Cannot make "prebuilt" part of the pattern to get it stripped, because we
+# have an IDE package, which has "ide" insead of "prebuilt".
+deploy-build-%: $O/arc_gnu_$(RELEASE)_%_install .deploy_build_destdir
+	$(CP) $</ $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)/$(*:prebuilt_%=%)
+
+# Copying is done by dependency targets, while this target updates "latest" link.
+.PHONY: deploy-build
+deploy-build: $(addprefix deploy-build-,\
+$(patsubst arc_gnu_$(RELEASE)_%_install,%,$(DEPLOY_BUILD_ARTIFACTS)))
+	$(DEPLOY_BUILD_LINK_CMD)
 
 
 #
