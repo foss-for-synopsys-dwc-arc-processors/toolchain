@@ -67,7 +67,8 @@ proc compile_quarkse_em_nsim_apex { } {
     set dir $ARC_NSIM_APEX_DIR
     set files [glob -directory $dir *]
     foreach source $files {
-	regexp "$dir/(.*)\.cpp" $source source filename
+	# File name without directory and expansion.
+	set filename [file rootname [file tail $source]]
 	set dest "$tmpdir/quarkse_em_$filename.so"
 	set cxxflags "-O2 -fPIC -shared -rdynamic"
 	if { [info exists HOSTCXXFLAGS] } {
