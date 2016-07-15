@@ -32,6 +32,7 @@ proc arc_get_multilib_options {} {
 
 proc arc_get_cflags {} {
     global env
+    global tool
 
     set cflags {}
 
@@ -42,6 +43,17 @@ proc arc_get_cflags {} {
     }
 
     lappend cflags [arc_get_multilib_options]
+
+    # GCC generates improper DWARF info when frame-pointer is involved - all
+    # variables in debug information are specified relatively to FP register
+    # instead of a virtual frame base, hence this information is invalid in
+    # prologue and epilogue. Since GDB doesn't epilogue (at least as of now),
+    # some watchpoint tests fail, because they get an extra watchpoint value
+    # change even though it is not a variable that has changed, by a FP
+    # register in epilogue.
+    if { $tool == "gdb" } {
+	lappend cflags -fomit-frame-pointer
+    }
 
     return [join $cflags]
 }
