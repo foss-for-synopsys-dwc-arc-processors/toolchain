@@ -33,15 +33,17 @@ proc arc_get_multilib_options {} {
 proc arc_get_cflags {} {
     global env
 
-    set xcflags {}
+    set cflags {}
 
     # Use cflags instead ldflags because lto tests of ld testsuite ignore
     # ldflags
     if { ![info exists env(ARC_HOSTLINK_LIBRARY)] } {
-        lappend xcflags --specs=nsim.specs
+	lappend cflags --specs=nsim.specs
     }
-    lappend xcflags [arc_get_multilib_options]
-    return [join $xcflags]
+
+    lappend cflags [arc_get_multilib_options]
+
+    return [join $cflags]
 }
 
 # vim: noexpandtab sts=4 ts=8:
