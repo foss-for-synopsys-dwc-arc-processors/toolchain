@@ -67,4 +67,75 @@ proc arc_get_cflags {} {
     return [join $cflags]
 }
 
+# Kill GDBserver if it is running.
+
+proc arc_gdbserver_close {} {
+    global board
+    global errorInfo
+
+    verbose "arc: arc_gdbserver_close"
+
+    if ![board_info $board exists gdbserver_id] {
+	return
+    }
+
+    set gdbserver_id [board_info $board gdbserver_id]
+    if [catch {close -i $gdbserver_id}] {
+	verbose "openocd_close: failed to close $gdbserver_id: $errorInfo"
+    }
+
+    if [catch {wait -i $gdbserver_id}] {
+	verbose "openocd_close: failed to wait for $gdbserver_id: $errorInfo"
+    }
+
+    unset_board_info gdbserver_id
+}
+
+# Start GDBserver using properties set in the board:
+# arc,gdbserver_prog
+# arc,gdbserver_args
+
+proc arc_gdbserver_start { } {
+    global board env
+    verbose "arc_gdbserver_start"
+
+    set bin [board_info $board arc,gdbserver_prog]
+    set args [board_info $board arc,gdbserver_args]
+
+    # Cannot use spawn without eval, because otherwise $args will be treated as
+    # a single arguments instead of an argument list. I haven't found a way to
+    # explode $args into a list in a way that would work with spawn. Using
+    # [split $args] didn't helped.
+    eval "spawn $bin $args"
+
+    set_board_info gdbserver_id $spawn_id
+}
+
+# Start OpenOCD using properties set in the board:
+# arc,openocd_prog
+# arc,openocd_cfg
+# arc,openocd_log (optional)
+# arc,openocd_log_level (optional)
+
+proc arc_openocd_start { } {
+    global board env
+    verbose "arc_openocd_start"
+
+    set_board_info arc,gdbserver_prog [board_info $board arc,openocd_prog]
+
+    set args "-f [board_info $board arc,openocd_cfg]"
+    if [board_info $board exists arc,openocd_log] {
+	append args " -l [board_info $board arc,openocd_log]"
+    }
+    if [board_info $board exists arc,openocd_log_level] {
+	append args " -d[board_info $board arc,openocd_log_level]"
+    }
+
+    set_board_info arc,gdbserver_args $args
+
+    set_board_info netport ":3333"
+
+    arc_gdbserver_start
+}
+
 # vim: noexpandtab sts=4 ts=8:
