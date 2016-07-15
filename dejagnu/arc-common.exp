@@ -33,13 +33,22 @@ proc arc_get_multilib_options {} {
 proc arc_get_cflags {} {
     global env
     global tool
+    global board
 
     set cflags {}
 
     # Use cflags instead ldflags because lto tests of ld testsuite ignore
     # ldflags
     if { ![info exists env(ARC_HOSTLINK_LIBRARY)] } {
-	lappend cflags --specs=nsim.specs
+	if [board_info $board exists arc,hostlink] {
+	    if { [board_info $board arc,hostlink] == "nsim" } {
+		lappend cflags --specs=nsim.specs
+	    } else {
+		lappend cflags --specs=nosys.specs
+	    }
+	} else {
+	    lappend cflags --specs=nosys.specs
+	}
     }
 
     lappend cflags [arc_get_multilib_options]

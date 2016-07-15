@@ -46,6 +46,9 @@ if { $tool == "gdb" } {
 	load_lib "../config/monitor.exp"
 }
 
+# Don't use any hostlink (--specs=nosys.specs).
+set_board_info arc,hostlink "none"
+
 # Any multilib options are set in an environment variable.
 process_multilib_options [arc_get_multilib_options]
 

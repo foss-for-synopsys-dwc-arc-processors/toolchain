@@ -53,6 +53,9 @@ if { $tool == "gdb" } {
 	load_lib "../config/monitor.exp"
 }
 
+# Use nSIM GNU IO hostlink
+set_board_info arc,hostlink "nsim"
+
 # Any multilib options are set in an environment variable.
 process_multilib_options [arc_get_multilib_options]
 

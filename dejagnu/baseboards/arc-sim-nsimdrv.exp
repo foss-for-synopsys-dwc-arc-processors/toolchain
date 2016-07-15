@@ -108,6 +108,7 @@ if { [info exists env(ARC_HOSTLINK_LIBRARY)] } {
 } else {
     # Use nSIM GNU IO hostlink, instead of a MetaWare compatible one.
     lappend nsim_flags -on nsim_emt
+    set_board_info arc,hostlink "nsim"
 }
 
 # Big-endian?
