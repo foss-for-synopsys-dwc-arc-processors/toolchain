@@ -12,6 +12,7 @@ Welcome to GNU Toolchain for ARC documentation!
    baremetal/index
    linux/index
    release
+   other/index
    maintainer/index
 
 
