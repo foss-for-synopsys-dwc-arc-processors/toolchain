@@ -5,3 +5,4 @@ Linux applications
 
    debugging
    kernel-build
+   kgdb
