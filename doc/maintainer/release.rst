@@ -1,6 +1,6 @@
 .. highlightlang:: shell
 
-Creating Toolchain Release
+Creating toolchain release
 ==========================
 
 
@@ -32,7 +32,7 @@ limited set of files (there is always an option to modify ``release.mk`` to get
 desired results).
 
 
-Building Prerequisites
+Building prerequisites
 ----------------------
 
 Eclipse plugin for ARC
@@ -51,7 +51,7 @@ Create and push respective git tag::
     $ popd
 
 
-Environment Variables
+Environment variables
 ---------------------
 
 Those are make variables which can be set either as a parameters to make, like
@@ -380,4 +380,4 @@ Finally, upload assets to GitHub Releases::
 
     $ make -f release.mk upload
 
-.. vim: set tw=80 expandtab sts=3 sw=3 ts=3: 
+.. vim: set tw=80 expandtab sts=3 sw=3 ts=3:
