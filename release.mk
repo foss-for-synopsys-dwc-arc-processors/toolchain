@@ -35,6 +35,9 @@ DEPLOY_DESTINATION =
 # Whether to build big endian toolchain
 ENABLE_BIG_ENDIAN := y
 
+# Whether to create a separate documentation package
+ENABLE_DOCS_PACKAGE := n
+
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
@@ -242,6 +245,9 @@ OOCD_SRC_DIR := $(ROOT)/openocd
 OOCD_BUILD_DIR_LINUX := $(BUILD_DIR)/openocd_linux
 OOCD_BUILD_DIR_WIN := $(BUILD_DIR)/openocd_win
 
+# Documentation package
+DOCS_DIR := arc_gnu_$(RELEASE)_docs
+
 # List of files that will be uploaded to GitHub Release.
 UPLOAD_ARTIFACTS = \
     $(TOOLS_SOURCE_DIR)$(TAR_EXT) \
@@ -253,6 +259,8 @@ UPLOAD_ARTIFACTS = \
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT)
+
+UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
@@ -308,6 +316,8 @@ BUILD_DEPS += \
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_elf_be_tarball
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_700_tarball
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_hs_tarball
+
+BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
@@ -758,6 +768,14 @@ $O/$(IDE_EXE_WIN): $(WINDOWS_WORKSPACE)/$(IDE_EXE_WIN)
 	$(CP) $< $@
 
 endif
+
+#
+# Documentation package
+#
+DIRS += $O/$(DOCS_DIR)
+$O/$(DOCS_DIR)$(TAR_EXT): $O/.stamp_elf_le_built | $O/$(DOCS_DIR)
+	$(CP) $O/$(TOOLS_ELFLE_DIR_LINUX)/share/doc/ $O/$(DOCS_DIR)
+	$(call create_tar,$(DOCS_DIR))
 
 
 #

@@ -85,6 +85,15 @@ that will be sourced by ``release.mk``.
    ``RELEASE_TAG = arc-2016.03-alpha1`` directory will be ``2016.03-alpha1``, while
    for ``RELEASE_TAG = arc-2016.03`` it will be ``2016.03``.
 
+.. envvar:: ENABLE_DOCS_PACKAGE
+
+   Whether to build separate packages with just documentation PDF files.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``n``
+
 .. envvar:: ENABLE_IDE
 
    Whether to build and upload IDE distributable package.  Note that build
