@@ -3,3 +3,4 @@ Other
 
 .. toctree::
 
+   dejagnu
