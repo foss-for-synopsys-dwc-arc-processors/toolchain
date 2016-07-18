@@ -13,6 +13,7 @@ Welcome to GNU Toolchain for ARC documentation!
    linux/index
    other/index
    maintainer/index
+   faq
 
 
 Indices and tables
