@@ -117,7 +117,7 @@ fi
 
 # All this will go horribly wrong if you leave uncommitted changes lying
 # around or if you change the remote. Nothing then but to sort it out by hand!
-for version in ${cgen} ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
+for version in ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
 do
     tool=`echo ${version} | cut -d ':' -f 1`
     branch=`echo ${version} | cut -d ':' -f 2`
