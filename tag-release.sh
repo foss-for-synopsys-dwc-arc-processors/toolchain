@@ -93,7 +93,7 @@ fi
 echo "All repos checked out"
 
 # Sanity check that each branch has a remote
-for repo in cgen binutils gcc gdb newlib uClibc toolchain
+for repo in binutils gcc gdb newlib uClibc toolchain
 do
     cd ../${repo} > /dev/null 2>&1
     if ! branch=`git symbolic-ref -q HEAD --short`
@@ -111,7 +111,7 @@ do
 done
 
 # Tag each component
-for repo in cgen binutils gcc gdb newlib uClibc
+for repo in binutils gcc gdb newlib uClibc
 do
     cd ../${repo} > /dev/null 2>&1
 
@@ -149,7 +149,6 @@ fi
 # Create toolchain configuration file for release.
 # For Linux just copy whatever is in the arc-dev.sh at the moment.
 cat > config/$tagname.sh <<EOF
-cgen=cgen:$tagname
 binutils=binutils:$tagname
 gcc=gcc:$tagname
 gdb=gdb:$tagname-gdb

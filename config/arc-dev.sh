@@ -1,4 +1,3 @@
-cgen=cgen:arc-1.0-dev
 binutils=binutils:arc-2016.09
 gcc=gcc:arc-4.8-dev
 gdb=gdb:arc-2016.09-gdb

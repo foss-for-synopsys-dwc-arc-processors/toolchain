@@ -35,6 +35,9 @@ DEPLOY_DESTINATION =
 # Whether to build big endian toolchain
 ENABLE_BIG_ENDIAN := y
 
+# Whether to create a separate documentation package
+ENABLE_DOCS_PACKAGE := n
+
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
@@ -101,6 +104,7 @@ endif
 CP = rsync -a
 GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
+SSH = ssh
 
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
 # RELEASE in this case would be 2016.09-rc1. However remove -release suffix
@@ -191,7 +195,7 @@ BUILD_DIR = $(ROOT)/build
 # Toolchain: source tarball
 # This variable should use .. instead of $(ROOT) so that tar will auto-remove
 # .. from file paths. Perhaps this ugliness can be fixed with --transform?
-TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils cgen gcc gdb newlib toolchain uClibc)
+TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb newlib toolchain uClibc)
 TOOLS_SOURCE_DIR := arc_gnu_$(RELEASE)_sources
 
 # Toolchain: baremetal for Linux hosts
@@ -241,6 +245,9 @@ OOCD_SRC_DIR := $(ROOT)/openocd
 OOCD_BUILD_DIR_LINUX := $(BUILD_DIR)/openocd_linux
 OOCD_BUILD_DIR_WIN := $(BUILD_DIR)/openocd_win
 
+# Documentation package
+DOCS_DIR := arc_gnu_$(RELEASE)_docs
+
 # List of files that will be uploaded to GitHub Release.
 UPLOAD_ARTIFACTS = \
     $(TOOLS_SOURCE_DIR)$(TAR_EXT) \
@@ -252,6 +259,8 @@ UPLOAD_ARTIFACTS = \
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT)
+
+UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
@@ -269,6 +278,23 @@ DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN).zip
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
+
+# Artifacts for unpacked builds
+DEPLOY_BUILD_ARTIFACTS = \
+    $(TOOLS_ELFLE_DIR_LINUX) \
+    $(TOOLS_LINUXLE_700_DIR_LINUX) \
+    $(TOOLS_LINUXLE_HS_DIR_LINUX) \
+    $(DEPLOY_BUILD_ARTIFACTS-y)
+
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_INSTALL_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_DIR_NATIVE)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)
 
 # md5sum
 MD5SUM_FILE := md5.sum
@@ -290,6 +316,8 @@ BUILD_DEPS += \
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_elf_be_tarball
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_700_tarball
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_hs_tarball
+
+BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
@@ -335,7 +363,6 @@ ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
 .PHONY: clone
 clone:
 	$(call git_clone,binutils-gdb,binutils)
-	$(call git_clone,cgen,cgen)
 	$(call git_clone,gcc,gcc)
 	$(call git_clone,binutils-gdb,gdb)
 	$(call git_clone,newlib,newlib)
@@ -381,7 +408,7 @@ prerequisites: clone copy-external
 
 .PHONY: distclean
 distclean: clean
-	rm -rf $(ROOT)/{binutils,cgen,gcc,gdb,newlib,linux,uClibc}
+	rm -rf $(ROOT)/{binutils,gcc,gdb,newlib,linux,uClibc}
 	rm -rf $(ROOT)/openocd
 
 #
@@ -741,6 +768,14 @@ $O/$(IDE_EXE_WIN): $(WINDOWS_WORKSPACE)/$(IDE_EXE_WIN)
 
 endif
 
+#
+# Documentation package
+#
+DIRS += $O/$(DOCS_DIR)
+$O/$(DOCS_DIR)$(TAR_EXT): $O/.stamp_elf_le_built | $O/$(DOCS_DIR)
+	$(CP) $O/$(TOOLS_ELFLE_DIR_LINUX)/share/doc/ $O/$(DOCS_DIR)
+	$(call create_tar,$(DOCS_DIR))
+
 
 #
 # Create tag
@@ -771,6 +806,45 @@ ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
 	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE)
+
+#
+# Deploy unpacked builds which can be used directly
+#
+
+# When copying directories, rsync doesn the "cd" to
+# DEPLOY_BUILD_ARTIFACTS/$(RELEASE), which doesn't exist yet. Hence it is
+# required to create build directory before copying into it.
+
+ifeq ($(findstring :,$(DEPLOY_BUILD_DESTINATION)),)
+  DEPLOY_BUILD_DESTINATION_CMD=mkdir -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
+  DEPLOY_BUILD_LINK_CMD=ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION)/latest
+else
+  DEPLOY_BUILD_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_BUILD_DESTINATION)")
+  DEPLOY_BUILD_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_BUILD_DESTINATION)")
+  DEPLOY_BUILD_DESTINATION_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
+    'mkdir -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE)'
+  DEPLOY_BUILD_LINK_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
+    'ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION_PATH)/latest'
+endif
+
+.PHONY: .deploy_build_destdir
+.deploy_build_destdir:
+ifeq ($(DEPLOY_BUILD_DESTINATION),)
+	$(error DEPLOY_BUILD_DESTINATION must be set to run 'deploy-build' target)
+endif
+	$(DEPLOY_BUILD_DESTINATION_CMD)
+
+
+# Cannot make "prebuilt" part of the pattern to get it stripped, because we
+# have an IDE package, which has "ide" insead of "prebuilt".
+deploy-build-%: $O/arc_gnu_$(RELEASE)_%_install .deploy_build_destdir
+	$(CP) $</ $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)/$(*:prebuilt_%=%)
+
+# Copying is done by dependency targets, while this target updates "latest" link.
+.PHONY: deploy-build
+deploy-build: $(addprefix deploy-build-,\
+$(patsubst arc_gnu_$(RELEASE)_%_install,%,$(DEPLOY_BUILD_ARTIFACTS)))
+	$(DEPLOY_BUILD_LINK_CMD)
 
 
 #

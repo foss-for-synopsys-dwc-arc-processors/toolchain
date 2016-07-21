@@ -28,6 +28,8 @@ set rootme	    "."
 set tmpdir	    "."
 set CFLAGS	    ""
 set CXXFLAGS	    ""
+set HOSTCXX	    ""
+set HOSTCXXFLAGS    ""
 set SIM		    "${arc_exec_prefix}-run"
 set GDB		    "${arc_exec_prefix}-gdb"
 # Binutils

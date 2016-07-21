@@ -100,7 +100,6 @@ the toolchain. These should be peers of this `toolchain` directory.
     $ mkdir arc_gnu
     $ cd arc_gnu
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/cgen.git
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git \
         binutils
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
@@ -123,7 +122,6 @@ the valid `-b <branch>` option so that Git will fetch a state of required
 branch or a tag. If branch is used, then current branches can be found in the
 config/arc-dev.sh file, which at the moment of this writing are:
 
-* cgen - arc-1.0-dev
 * binutils - arc-2016.09
 * gcc - arc-4.8-dev
 * gdb - arc-2016.09-gdb

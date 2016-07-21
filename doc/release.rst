@@ -66,6 +66,17 @@ that will be sourced by ``release.mk``.
    Default value
       ``n``
 
+.. envvar:: DEPLOY_BUILD_DESTINATION
+
+   Where to copy unpacked engineering build. Location is in format
+   ``[hostname:]/path``. A directory named ``${RELEASE_TAG##-arc}`` will be
+   created in the target path and will contain unpacked directories. Directories
+   names are different from those that are in the tarballs - namely useless
+   cruft is avoided and verion is not mentioned as well, so that it is easier to
+   use those directories via symbolic links. For example, for tarball
+   arc_gnu_2016.09-eng006_prebuilt_elf32_le_linux_install.tar.gz build directory
+   will be elf32_le_linux.
+
 .. envvar:: DEPLOY_DESTINATION
 
    Where to copy release distributables. Location is in format
@@ -84,6 +95,14 @@ that will be sourced by ``release.mk``.
    Default value
       ``y``
 
+.. envvar:: ENABLE_DOCS_PACKAGE
+
+   Whether to build separate packages with just documentation PDF files.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``n``
 
 .. envvar:: ENABLE_IDE
 
@@ -352,6 +371,11 @@ times with different :envvar:`DEPLOY_DESTINATION` values::
 
     $ make -f release.mk deploy DEPLOY_DESTINATION=<site1:/pathA>
     $ make -f release.mk deploy DEPLOY_DESTINATION=<site2:/pathB>
+
+Similarly, unpacked builds can be deployed to multiple locations::
+
+    $ make -f release.mk deploy-build DEPLOY_BUILD_DESTINATION=<site1:/pathC>
+    $ make -f release.mk deploy-build DEPLOY_BUILD_DESTINATION=<site2:/pathD>
 
 Push tags to remote repositories::
 

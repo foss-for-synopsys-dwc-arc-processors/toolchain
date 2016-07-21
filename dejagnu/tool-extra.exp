@@ -55,6 +55,37 @@ proc check_target_arc { arg } {
     return [regexp "$arg" "$result"]
 }
 
+# Compile files from $NSIM_LIB_DIR for the nSIM extension library
+# for the floating point instructions.
+proc compile_quarkse_em_nsim_apex { } {
+    global env
+    global tmpdir
+    global HOSTCXX
+    global HOSTCXXFLAGS
+    global ARC_NSIM_APEX_DIR
+
+    set dir $ARC_NSIM_APEX_DIR
+    set files [glob -directory $dir *]
+    foreach source $files {
+	# File name without directory and expansion.
+	set filename [file rootname [file tail $source]]
+	set dest "$tmpdir/quarkse_em_$filename.so"
+	set cxxflags "-O2 -fPIC -shared -rdynamic"
+	if { [info exists HOSTCXXFLAGS] } {
+	    set cxxflags "$cxxflags $HOSTCXXFLAGS"
+	}
+	set inc "-I$env(NSIM_HOME)/inc"
+	if { [info exists HOSTCXX] && \
+	    [string length [string trim $HOSTCXX]] != 0 } {
+	    set cxx "$HOSTCXX"
+	} else {
+	    set cxx "g++"
+	}
+	set cmd "$cxx $inc $cxxflags -o $dest $source"
+	remote_exec host [concat sh -c [list "$cmd 2>&1"]] "" "/dev/null" "ld.tmp"
+    }
+}
+
 # Return 1 if we compile for ARCv2 HS
 proc check_target_archs { } {
     return [check_target_arc "__ARCHS__"]
@@ -77,6 +108,11 @@ proc check_target_arc6xx { } {
 	return 1
     }
     return 0
+}
+
+# Return 1 if we compile for QuarkSE ARC EM
+proc check_target_quarkse_em { } {
+    return [check_target_arc "__ARC_FPX_QUARK__"]
 }
 
 # Return 1 if we compile for ARC600

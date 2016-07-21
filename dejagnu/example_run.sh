@@ -91,11 +91,15 @@ case $sim in
     cgen)
 	board=arc-sim
 	;;
+    openocd)
+	board=arc-openocd
+	;;
 esac
 
 case $tool in
     gdb)
-	testsuite=$tool_src/gdb/gdb/testsuite
+	rm -rf gdb.*
+	testsuite=$tools_src/gdb/gdb/testsuite
 	mkdir $(ls -1d $testsuite/gdb.* | grep -Po '(?<=\/)[^\/]+$')
 	;;
     newlib)
@@ -104,5 +108,26 @@ case $tool in
 	mkdir -p targ-include
 	cp -a $tools_installation/$triplet/include/newlib.h targ-include
 esac
+
+# Create a memory.x file for baremetal boards that use -Wl,marcv2elfx.
+# Actual memory map depends on a particular board.
+cat > memory.x <<EOF
+/* ARC EM Starter Kit v2.2 EM7D */
+
+MEMORY
+{
+    ICCM : ORIGIN = 0x00000000, LENGTH = 256K
+    DRAM : ORIGIN = 0x10000000, LENGTH = 128M
+    DCCM : ORIGIN = 0x80000000, LENGTH = 128K
+}
+
+REGION_ALIAS("startup", ICCM)
+REGION_ALIAS("text", ICCM)
+REGION_ALIAS("data", DCCM)
+REGION_ALIAS("sdata", DCCM)
+
+PROVIDE (__stack_top = (0x8001FFFF & -4) );
+PROVIDE (__end_heap = (0x8001FFFF) );
+EOF
 
 runtest --tool=$tool --target_board=$board --target=arc-default-elf32 $runtestflags
