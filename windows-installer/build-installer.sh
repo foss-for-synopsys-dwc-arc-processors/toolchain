@@ -87,6 +87,13 @@ unzip packages/eclipse-cpp-*-win32.zip -d tmp/eclipse
 # cygwin unzip, but eclipse.exe has it.
 chmod +x tmp/eclipse/eclipse/eclipsec.exe
 chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
+
+# Copy Java runtime environment:
+echo "Preparing JRE..."
+mkdir -p tmp/jre/eclipse/jre
+tar -C tmp/jre/eclipse/jre -xaf packages/jre-*-windows-i586.tar.gz --strip-components=1
+./toolchain/windows-installer/gen-nsis-sections.sh tmp/jre jre
+
 # Install ARC plugins
 # Same as in Makefile.release
 # It is assumed that we should call eclipsec.exe when invoking eclipse from
@@ -103,12 +110,6 @@ tmp/eclipse/eclipse/eclipse.exe \
 sed -i -e "/$(echo "$(cygpath -w -a tmp)" | tr \\ _ | sed 's/[A-Z]://')/ d" \
     tmp/eclipse/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/eclipse eclipse
-
-# Copy Java runtime environment:
-echo "Preparing JRE..."
-mkdir -p tmp/jre/eclipse/jre
-tar -C tmp/jre/eclipse/jre -xaf packages/jre-*-windows-i586.tar.gz --strip-components=1
-./toolchain/windows-installer/gen-nsis-sections.sh tmp/jre jre
 
 #
 # Generate installer
