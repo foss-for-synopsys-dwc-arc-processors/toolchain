@@ -331,8 +331,12 @@ if [ $BUILD_OPTSIZE_LIBSTDCXX = yes ]; then
 
     # Now copy multilibs. Code has been borrowed from ARM toolchain
     # build-common.sh file found at https://launchpad.net/gcc-arm-embedded
+    # Default multi-lib `.' will not contain listdc++ files in case of GCC 6+.
     multilibs=$(get_multilibs)
     for multilib in ${multilibs[@]} ; do
+	if [ "${multilib%%;*}" = "." ]; then
+	    continue
+	fi
 	multi_dir="${arch}-elf32/lib/${multilib%%;*}"
 	src_dir=$optsize_install_dir/$multi_dir
 	dst_dir=$INSTALLDIR/$multi_dir
