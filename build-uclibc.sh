@@ -610,7 +610,7 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     # GDB needs ncurses (termcap to be exact).
     # Since ncurses is a separate product it is an outlier with regards of build process.
-    ncurses_version=5.9
+    ncurses_version=6.0
     ncurses_url_base=http://ftp.gnu.org/pub/gnu/ncurses
     ncurses_tar=ncurses-${ncurses_version}.tar.gz
     ncurses_url=$ncurses_url_base/$ncurses_tar
@@ -622,9 +622,6 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     build_dir_init ncurses
     tar xaf $toolchain_build_dir/_download_tmp/$ncurses_tar --strip-components=1
-
-    # Update ncurses/config.sub which is not aware of arceb-* targets
-    patch config.sub $ARC_GNU/toolchain/extras/ncurses.big-endian.patch
 
     # Ada is not supported on ARC, so it has to be disabled, otherwise dumb
     # configure script might find Ada compiler for host system and will try to
