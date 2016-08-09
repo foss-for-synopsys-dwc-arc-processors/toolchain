@@ -26,7 +26,7 @@
 #
 
 urls='
-https://ftp.gnu.org/gnu/gmp/gmp-6.1.0.tar.xz
+https://ftp.gnu.org/gnu/gmp/gmp-6.1.1.tar.xz
 https://ftp.gnu.org/gnu/mpfr/mpfr-3.1.4.tar.xz
 https://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
 '
