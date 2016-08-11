@@ -1,0 +1,63 @@
+--- ncurses-6.0/ncurses/base/MKlib_gen.sh	2015-08-07 03:48:24.000000000 +0300
++++ ncurses-6.0-20160806/ncurses/base/MKlib_gen.sh	2016-07-10 00:43:05.000000000 +0300
+@@ -2,10 +2,10 @@
+ #
+ # MKlib_gen.sh -- generate sources from curses.h macro definitions
+ #
+-# ($Id: MKlib_gen.sh,v 1.50 2015/08/07 00:48:24 tom Exp $)
++# ($Id: MKlib_gen.sh,v 1.54 2016/07/09 21:43:05 tom Exp $)
+ #
+ ##############################################################################
+-# Copyright (c) 1998-2014,2015 Free Software Foundation, Inc.                #
++# Copyright (c) 1998-2015,2016 Free Software Foundation, Inc.                #
+ #                                                                            #
+ # Permission is hereby granted, free of charge, to any person obtaining a    #
+ # copy of this software and associated documentation files (the "Software"), #
+@@ -72,7 +72,7 @@
+ # appears in gcc 5.0 and (with modification) in 5.1, making it necessary to
+ # determine if we are using gcc, and if so, what version because the proposed
+ # solution uses a nonstandard option.
+-PRG=`echo "$1" | $AWK '{ sub(/^[[:space:]]*/,""); sub(/[[:space:]].*$/, ""); print; }' || exit 0`
++PRG=`echo "$1" | $AWK '{ sub(/^[ 	]*/,""); sub(/[ 	].*$/, ""); print; }' || exit 0`
+ FSF=`"$PRG" --version 2>/dev/null || exit 0 | fgrep "Free Software Foundation" | head -n 1`
+ ALL=`"$PRG" -dumpversion 2>/dev/null || exit 0`
+ ONE=`echo "$ALL" | sed -e 's/\..*$//'`
+@@ -177,6 +177,7 @@
+ if test "$USE" = generated ; then
+ cat >$ED4 <<EOF
+ 	s/^\(.*\) \(.*\) (\(.*\))\$/NCURSES_EXPORT(\1) (\2) (\3)/
++	/attr_[sg]et.* z)/s,z),z GCC_UNUSED),
+ EOF
+ else
+ cat >$ED4 <<EOF
+@@ -230,7 +231,7 @@
+ 	} else if ( $first == "bool" || $first == "NCURSES_BOOL" ) {
+ 		returnType = "Bool";
+ 	} else if ( $second == "*" ) {
+-		returnType = "Ptr";
++		returnType = ($1 == "NCURSES_CONST") ? "CPtr" : "Ptr";
+ 	} else {
+ 		returnType = "Code";
+ 	}
+@@ -449,16 +450,16 @@
+ 			for (n = 1; n < start; ++n) {
+ 				value = calls[n];
+ 				if ( value !~ /P_POUNDC/ ) {
+-					gsub(/[[:blank:]]+/," ",value);
+-					sub(/^[[:alnum:]_]+ /,"",value);
++					gsub(/[ \t]+/," ",value);
++					sub(/^[0-9a-zA-Z_]+ /,"",value);
+ 					sub(/^\* /,"",value);
+-					gsub(/[[:alnum:]_]+ \* /,"",value);
++					gsub(/[0-9a-zA-Z_]+ \* /,"",value);
+ 					gsub(/ (const) /," ",value);
+ 					gsub(/ (int|short|attr_t|chtype|wchar_t|NCURSES_BOOL|NCURSES_OUTC|NCURSES_OUTC_sp|va_list) /," ",value);
+ 					gsub(/ void /,"",value);
+ 					sub(/^/,"call_",value);
+-					gsub(/ (a[[:digit:]]|z) /, " 0 ", value);
+-					gsub(/ int[[:blank:]]*[(][^)]+[)][(][^)]+[)]/, "0", value);
++					gsub(/ (a[0-9]|z) /, " 0 ", value);
++					gsub(/ int[ \t]*[(][^)]+[)][(][^)]+[)]/, "0", value);
+ 					printf "\t%s;\n", value;
+ 				} else {
+ 					print value;
