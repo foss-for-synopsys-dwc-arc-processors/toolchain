@@ -784,8 +784,11 @@ create-tag:
 	./tag-release.sh $(RELEASE_TAG)
 ifeq ($(ENABLE_OPENOCD),y)
 	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
-	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git checkout arc-0.9-dev-$(RELEASE_BRANCH)
-	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git tag $(RELEASE_TAG)
+	# Initially I used --git-dir, however it doesn't work properly with
+	# `checkout' - actual files were left in original state.
+	cd $(OOCD_SRC_DIR) && \
+	    $(GIT) checkout arc-0.9-dev-$(RELEASE_BRANCH) && \
+	    $(GIT) tag $(RELEASE_TAG)
 endif
 
 #
@@ -794,7 +797,8 @@ endif
 push-tag:
 	./push-release.sh $(RELEASE_TAG)
 ifeq ($(ENABLE_OPENOCD),y)
-	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git push origin $(RELEASE_TAG)
+	cd $(OOCD_SRC_DIR) && \
+	    $(GIT) push origin $(RELEASE_TAG)
 endif
 
 #
