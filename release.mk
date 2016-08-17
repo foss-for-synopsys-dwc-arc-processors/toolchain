@@ -121,8 +121,9 @@ endif
 # Helpers
 #
 
+# Ensure that group has write access.
 define create_dir
-	mkdir -p $@
+	mkdir -m775 -p $@
 endef
 
 # Create tarball for release
@@ -577,7 +578,7 @@ $O/$(ECLIPSE_VANILLA_ZIP_WIN):
 # Similar invocation is in windows/build-release.sh. Those invocations must be
 # in sync.
 $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_ZIP)
-	mkdir -p $O/$(IDE_INSTALL_LINUX)
+	mkdir -m775 -p $O/$(IDE_INSTALL_LINUX)
 	tar xaf $< -C $O/$(IDE_INSTALL_LINUX)
 	$O/$(IDE_INSTALL_LINUX)/eclipse/eclipse \
 	    -application org.eclipse.equinox.p2.director \
@@ -599,7 +600,7 @@ $O/.stamp_ide_linux_tar: \
 	cp -al $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	cp -al $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	cp -al $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	mkdir $O/$(IDE_INSTALL_LINUX)/eclipse/jre
+	mkdir -m775 $O/$(IDE_INSTALL_LINUX)/eclipse/jre
 	tar xaf $O/$(JRE_TGZ_LINUX) -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
 	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
@@ -736,7 +737,7 @@ ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 windows-workspace: $O/.stamp_windows_workspace
 
 $(WINDOWS_WORKSPACE):
-	mkdir -p $@/packages
+	mkdir -m775 -p $@/packages
 
 $O/.stamp_windows_workspace: $O/.stamp_elf_le_windows_tarball \
     $O/.stamp_elf_be_windows_tarball | $(WINDOWS_WORKSPACE)
@@ -820,13 +821,13 @@ endif
 # required to create build directory before copying into it.
 
 ifeq ($(findstring :,$(DEPLOY_BUILD_DESTINATION)),)
-  DEPLOY_BUILD_DESTINATION_CMD=mkdir -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
+  DEPLOY_BUILD_DESTINATION_CMD=mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
   DEPLOY_BUILD_LINK_CMD=ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION)/latest
 else
   DEPLOY_BUILD_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_BUILD_DESTINATION)")
   DEPLOY_BUILD_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_BUILD_DESTINATION)")
   DEPLOY_BUILD_DESTINATION_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
-    'mkdir -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE)'
+    'mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE)'
   DEPLOY_BUILD_LINK_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
     'ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION_PATH)/latest'
 endif
