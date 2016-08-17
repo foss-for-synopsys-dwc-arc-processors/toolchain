@@ -782,7 +782,7 @@ $O/$(OOCD_DIR_WIN)/bin/openocd.exe: $(OOCD_BUILD_DIR_WIN)/src/openocd.exe
 	$(call OOCD_INSTALL_CMD,WIN)
 
 
-# Create tarball for OpenOCD for Windwos.
+# Create tarball for OpenOCD for Windows.
 $O/$(OOCD_DIR_WIN)$(TAR_EXT): $O/$(OOCD_DIR_WIN)/bin/openocd.exe
 	$(call create_tar,$(OOCD_DIR_WIN))
 
