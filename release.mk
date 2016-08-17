@@ -41,6 +41,9 @@ ENABLE_DOCS_PACKAGE := n
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
+# Whether to build Linux images
+ENABLE_LINUX_IMAGES := y
+
 # Whether to build native toolchain for ARC HS Linux.
 ENABLE_NATIVE_TOOLS := y
 
@@ -239,6 +242,12 @@ IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
 # name, not the whole RELEASE.
 IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip
 
+# Linux
+LINUX_IMAGES_DIR = linux_images
+LINUX_AXS103_UIMAGE = uImage_axs103
+LINUX_AXS103_ROOTFS_CPIO = rootfs_axs103.cpio
+LINUX_AXS103_ROOTFS_TAR = rootfs_axs103.tgz
+
 # OpenOCD
 OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_linux_install
 OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
@@ -279,6 +288,10 @@ DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN).zip
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
+# Include the directory here, because it is passed to rsync, and if that would
+# be individual file name, then files would end up in deploy destination
+# directly, instead of the linux images dir.
+DEPLOY_ARTIFACTS-$(ENABLE_LINUX_IMAGES) += $(LINUX_IMAGES_DIR)
 
 # Artifacts for unpacked builds
 DEPLOY_BUILD_ARTIFACTS = \
@@ -296,6 +309,9 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_DIR_LINUX)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)
+# Linux images are not in this list, because directory names in this list are
+# processed, but linux_images doesn't conform to the convention expected by the
+# processing.
 
 # md5sum
 MD5SUM_FILE := md5.sum
@@ -328,6 +344,10 @@ BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
+
+BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
+BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
+BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 
 # Cannot include IDE_EXE_WIN into BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER),
 # because it is generated on the Windows host, after `make build`.
@@ -543,6 +563,54 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 	$(call create_windows_tar,$(TOOLS_ELFBE_DIR_WIN))
 	touch $@
 
+
+#
+# Linux
+#
+BUILDROOT_VERSION = 2016.05
+BUILDROOT_TAR = buildroot-$(BUILDROOT_VERSION).tar.bz2
+BUILDROOT_URL = https://buildroot.org/downloads/$(BUILDROOT_TAR)
+BUILDROOT_SRC_DIR = $(BUILD_DIR)/buildroot
+BUILDROOT_AXS103_BUILD_DIR = $(BUILD_DIR)/buildroot_axs103
+BUILDROOT_AXS103_DEFCONFIG := $(ROOT)/toolchain/extras/buildroot/axs103.defconfig
+BUILDROOT_AXS103_MAKEFLAGS = -C $(BUILDROOT_SRC_DIR) \
+	O=$(abspath $(BUILDROOT_AXS103_BUILD_DIR)) \
+	ARC_TOOLCHAIN_PATH=$(realpath $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)) \
+	LINUX_SRC_PATH=$(realpath $(ROOT)/linux) \
+	DEFCONFIG=$(BUILDROOT_AXS103_DEFCONFIG)
+
+# Download Buildroot
+$(BUILD_DIR)/$(BUILDROOT_TAR):
+	wget -nv -O $@ $(BUILDROOT_URL)
+
+# Prepare Buildroot source directory
+$(BUILDROOT_SRC_DIR): $(BUILD_DIR)/$(BUILDROOT_TAR) | $(BUILD_DIR)
+	mkdir -p $@
+	tar -C $@ --strip-components=1 -x -a -f $<
+
+DIRS += $O/$(LINUX_IMAGES_DIR)
+
+# Configure Buildroot for AXS103
+$(BUILDROOT_AXS103_BUILD_DIR)/.config: $(BUILDROOT_SRC_DIR)
+	$(MAKE) $(BUILDROOT_AXS103_MAKEFLAGS) distclean
+	$(MAKE) $(BUILDROOT_AXS103_MAKEFLAGS) defconfig
+
+# Build images for AXS103
+$O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE) \
+$O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO) \
+$O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR) : $(BUILDROOT_AXS103_BUILD_DIR)/.config \
+    | $O/$(LINUX_IMAGES_DIR)
+	$(MAKE) $(BUILDROOT_AXS103_MAKEFLAGS) all
+	cp -afl $(BUILDROOT_AXS103_BUILD_DIR)/images/uImage \
+	    $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
+	cp -afl $(BUILDROOT_AXS103_BUILD_DIR)/images/rootfs.cpio \
+	    $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
+	cp -afl $(BUILDROOT_AXS103_BUILD_DIR)/images/rootfs.tar.gz \
+	    $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
+
+linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
+linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
+linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 
 #
 # Native toolchain build
@@ -842,13 +910,21 @@ endif
 
 # Cannot make "prebuilt" part of the pattern to get it stripped, because we
 # have an IDE package, which has "ide" insead of "prebuilt".
-deploy-build-%: $O/arc_gnu_$(RELEASE)_%_install .deploy_build_destdir
+.deploy-toolchain-build-%: $O/arc_gnu_$(RELEASE)_%_install .deploy_build_destdir
 	$(CP) $</ $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)/$(*:prebuilt_%=%)
 
-# Copying is done by dependency targets, while this target updates "latest" link.
-.PHONY: deploy-build
-deploy-build: $(addprefix deploy-build-,\
+# Copying is done by dependency targets.
+.PHONY: .deploy-toolchain-build
+.deploy-toolchain-build: $(addprefix .deploy-toolchain-build-,\
 $(patsubst arc_gnu_$(RELEASE)_%_install,%,$(DEPLOY_BUILD_ARTIFACTS)))
+
+.PHONY: .deploy-linux-images
+.deploy-linux-images: .deploy_build_destdir
+	$(CP) $O/$(LINUX_IMAGES_DIR) $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
+
+# Create a symlink
+.PHONY: deploy-build
+deploy-build: .deploy-toolchain-build .deploy-linux-images
 	$(DEPLOY_BUILD_LINK_CMD)
 
 

@@ -106,6 +106,17 @@ that will be sourced by ``release.mk``.
       ``y``
 
 
+.. envvar:: ENABLE_LINUX_IMAGES
+
+   Whether to build and deploy Linux images built with this toolchain. This
+   targets uses Buildroot to build rootfs and uImage for AXS103.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_NATIVE_TOOLS
 
    Whether to build and upload native toolchain. Currently toolchain is built
