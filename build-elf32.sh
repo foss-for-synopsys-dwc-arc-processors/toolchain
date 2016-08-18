@@ -216,6 +216,14 @@ make_target building all
 make_target installing install
 if [ "$DO_PDF" = "--pdf" ]
 then
+    # When texinfo is not in the /usr/bin, but in the custom location, then
+    # texi2pdf will fail to grab texinfo.tex macros file from its own
+    # distribution. At the same time, newlib/lib{c,m}/Makefile.in has an error
+    # where path to the texinfo.tex, shipped with newlib is invalid - it does
+    # not have enough ".." entries in it. To avoid this problem we have to
+    # explicitly set TEXINPUTS variable to point to texinfo.tex from newlib
+    # repository.
+    export TEXINPUTS=$ARC_GNU/newlib/texinfo
     # Cannot use install-pdf because libgloss/doc does not support this target.
     if [[ $TEXINFO_VERSION_MAJOR = 6 && $TEXINFO_VERSION_MINOR > 0 ]]; then
 	# There are problems with building newlib PDF documentation on Ubuntu 16.04: lib{c,m}.pdf is
