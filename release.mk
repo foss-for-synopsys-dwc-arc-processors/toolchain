@@ -474,7 +474,7 @@ $O/.stamp_linux_le_700_built:
 $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
-	    --cpu hs38_linux \
+	    --cpu hs38 \
 	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
@@ -492,7 +492,7 @@ $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
-	    --cpu hs38_linux \
+	    --cpu hs38 \
 	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
@@ -626,7 +626,7 @@ $O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built
 	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --no-elf32 \
-	     --cpu hs38_linux \
+	     --cpu hs38 \
 	     --release-name "$(RELEASE)" \
 	     --host arc-snps-linux-uclibc \
 	     --native \
