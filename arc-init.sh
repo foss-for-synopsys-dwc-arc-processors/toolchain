@@ -523,6 +523,7 @@ configure_for_arc() {
     if ! $srcdir/configure --prefix=/usr --host=$triplet \
 	    --with-pkgversion="$UCLIBC_TOOLS_VERSION"\
 	    --with-bugurl="$ARC_COMMON_BUGURL" \
+	    $DISABLEWERROR \
 	    "$cflags" "$cxxflags" $* \
 	    >> "$logfile" 2>&1
     then

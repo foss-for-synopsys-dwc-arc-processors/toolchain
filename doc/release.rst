@@ -116,6 +116,17 @@ that will be sourced by ``release.mk``.
       ``y``
 
 
+.. envvar:: ENABLE_LINUX_IMAGES
+
+   Whether to build and deploy Linux images built with this toolchain. This
+   targets uses Buildroot to build rootfs and uImage for AXS103.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_NATIVE_TOOLS
 
    Whether to build and upload native toolchain. Currently toolchain is built
@@ -189,13 +200,6 @@ that will be sourced by ``release.mk``.
 
    Default value
       1.0.20
-
-
-.. envvar:: OPENOCD_WINDOWS_LOCATION
-
-   Location of OpenOCD build for Windows. Similar to
-   :envvar:`IDE_PLUGIN_LOCATION` that must be a directory with name of format
-   ``arc_gnu_${RELEASE_TAG##arc-}_opencd_win_install``.
 
 
 .. envvar:: RELEASE_NAME
@@ -279,7 +283,7 @@ Make targets
    Clone sources of toolchain components from GitHub. Copy external components
    from specified locations. Is affected by following environment variables:
    :envvar:`RELEASE_TAG`, :envvar:`GIT_REFERENCE_ROOT` (optional),
-   :envvar:`IDE_PLUGIN_LOCATION`, :envvar:`OPENOCD_WINDOWS_LOCATION`,
+   :envvar:`IDE_PLUGIN_LOCATION`,
    :envvar:`THIRD_PARTY_SOFTWARE_LOCATION`.
 
 .. option:: push-tag
@@ -333,7 +337,6 @@ sourced by ``release.mk`` (``...`` must be replaced with an actual paths)::
     $ cat release.config
     RELEASE_TAG=arc-2016.03
     IDE_PLUGIN_LOCATION=...
-    OPENOCD_WINDOWS_LOCATION=...
     THIRD_PARTY_SOFTWARE_LOCATION=...
     GIT_REFERENCE_ROOT=...
     WINDOWS_WORKSPACE=...

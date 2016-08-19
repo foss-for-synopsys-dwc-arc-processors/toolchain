@@ -96,11 +96,15 @@ tar -C tmp/jre/eclipse/jre -xaf packages/jre-*-windows-i586.tar.gz --strip-compo
 
 # Install ARC plugins
 # Same as in Makefile.release
-# It is assumed that we should call eclipsec.exe when invoking eclipse from
-# command line, but I started to get error from that with Mars.2, but
-# everything works fine when using eclipse.exe.
+# There is some funny stuff going on here - if eclipse is invoked directly from
+# CygWin, then installation fails with error message about not being able to do
+# a backup and remove some files. I'm not entirely sure what's the problem, but
+# it seems that invoking eclipse through the Windows cmd fixes the problem.
+# That used to work properly before Mars.2, but with Mars.2 I first tried to
+# call eclipse.exe instead of eclipsec.exe and that seemed to solve the
+# problem, but it seems I was mistaken.
 echo "Installing ARC plugins into Eclipse..."
-tmp/eclipse/eclipse/eclipse.exe \
+cmd /c tmp\\eclipse\\eclipse\\eclipsec.exe \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
     -repository ${ECLIPSE_REPO},jar:file:$(cygpath -w -a $IDE_PLUGINS_ZIP)\!/ \

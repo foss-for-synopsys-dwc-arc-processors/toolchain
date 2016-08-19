@@ -41,6 +41,9 @@ ENABLE_DOCS_PACKAGE := n
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
+# Whether to build Linux images
+ENABLE_LINUX_IMAGES := y
+
 # Whether to build native toolchain for ARC HS Linux.
 ENABLE_NATIVE_TOOLS := y
 
@@ -121,8 +124,9 @@ endif
 # Helpers
 #
 
+# Ensure that group has write access.
 define create_dir
-	mkdir -p $@
+	mkdir -m775 -p $@
 endef
 
 # Create tarball for release
@@ -238,6 +242,12 @@ IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
 # name, not the whole RELEASE.
 IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip
 
+# Linux
+LINUX_IMAGES_DIR = linux_images
+LINUX_AXS103_UIMAGE = uImage_axs103
+LINUX_AXS103_ROOTFS_CPIO = rootfs_axs103.cpio
+LINUX_AXS103_ROOTFS_TAR = rootfs_axs103.tgz
+
 # OpenOCD
 OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_linux_install
 OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
@@ -278,6 +288,10 @@ DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN).zip
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
+# Include the directory here, because it is passed to rsync, and if that would
+# be individual file name, then files would end up in deploy destination
+# directly, instead of the linux images dir.
+DEPLOY_ARTIFACTS-$(ENABLE_LINUX_IMAGES) += $(LINUX_IMAGES_DIR)
 
 # Artifacts for unpacked builds
 DEPLOY_BUILD_ARTIFACTS = \
@@ -295,6 +309,9 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_DIR_LINUX)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)
+# Linux images are not in this list, because directory names in this list are
+# processed, but linux_images doesn't conform to the convention expected by the
+# processing.
 
 # md5sum
 MD5SUM_FILE := md5.sum
@@ -327,6 +344,10 @@ BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
+
+BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
+BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
+BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 
 # Cannot include IDE_EXE_WIN into BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER),
 # because it is generated on the Windows host, after `make build`.
@@ -453,7 +474,7 @@ $O/.stamp_linux_le_700_built:
 $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
-	    --cpu hs38_linux \
+	    --cpu hs38 \
 	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
@@ -471,7 +492,7 @@ $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
-	    --cpu hs38_linux \
+	    --cpu hs38 \
 	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
@@ -544,13 +565,68 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 
 
 #
+# Linux
+#
+
+# Latest stable release is 2016.05 ATM, but it doesn't support Linux 4.7, which
+# is required for this toolchain.
+BUILDROOT_VERSION = 2016.08-rc2
+BUILDROOT_TAR = buildroot-$(BUILDROOT_VERSION).tar.bz2
+BUILDROOT_URL = https://buildroot.org/downloads/$(BUILDROOT_TAR)
+BUILDROOT_SRC_DIR = $(BUILD_DIR)/buildroot
+BUILDROOT_AXS103_BUILD_DIR = $(BUILD_DIR)/buildroot_axs103
+BUILDROOT_AXS103_DEFCONFIG := $(ROOT)/toolchain/extras/buildroot/axs103.defconfig
+BUILDROOT_AXS103_MAKEFLAGS = -C $(BUILDROOT_SRC_DIR) \
+	O=$(abspath $(BUILDROOT_AXS103_BUILD_DIR)) \
+	ARC_TOOLCHAIN_PATH=$(realpath $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)) \
+	LINUX_SRC_PATH=$(realpath $(ROOT)/linux) \
+	DEFCONFIG=$(BUILDROOT_AXS103_DEFCONFIG)
+
+# Download Buildroot
+$(BUILD_DIR)/$(BUILDROOT_TAR):
+	wget -nv -O $@ $(BUILDROOT_URL)
+
+# Prepare Buildroot source directory
+$(BUILDROOT_SRC_DIR): $(BUILD_DIR)/$(BUILDROOT_TAR) | $(BUILD_DIR)
+	mkdir -p $@
+	tar -C $@ --strip-components=1 -x -a -f $<
+
+DIRS += $O/$(LINUX_IMAGES_DIR)
+
+# Configure Buildroot for AXS103
+$(BUILDROOT_AXS103_BUILD_DIR)/.config: $(BUILDROOT_SRC_DIR) $(BUILDROOT_AXS103_DEFCONFIG)
+	$(MAKE) $(BUILDROOT_AXS103_MAKEFLAGS) distclean
+	$(MAKE) $(BUILDROOT_AXS103_MAKEFLAGS) defconfig
+
+# Build images for AXS103
+$O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE): $(BUILDROOT_AXS103_BUILD_DIR)/.config \
+    | $O/$(LINUX_IMAGES_DIR)
+	$(MAKE) $(BUILDROOT_AXS103_MAKEFLAGS) all
+	cp -afl $(BUILDROOT_AXS103_BUILD_DIR)/images/uImage \
+	    $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
+	cp -afl $(BUILDROOT_AXS103_BUILD_DIR)/images/rootfs.cpio \
+	    $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
+	cp -afl $(BUILDROOT_AXS103_BUILD_DIR)/images/rootfs.tar.gz \
+	    $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
+
+$O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO): \
+    | $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
+
+$O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR): \
+    | $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
+
+linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
+linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
+linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
+
+#
 # Native toolchain build
 #
 $O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built
 	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --no-elf32 \
-	     --cpu hs38_linux \
+	     --cpu hs38 \
 	     --release-name "$(RELEASE)" \
 	     --host arc-snps-linux-uclibc \
 	     --native \
@@ -577,7 +653,7 @@ $O/$(ECLIPSE_VANILLA_ZIP_WIN):
 # Similar invocation is in windows/build-release.sh. Those invocations must be
 # in sync.
 $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_ZIP)
-	mkdir -p $O/$(IDE_INSTALL_LINUX)
+	mkdir -m775 -p $O/$(IDE_INSTALL_LINUX)
 	tar xaf $< -C $O/$(IDE_INSTALL_LINUX)
 	$O/$(IDE_INSTALL_LINUX)/eclipse/eclipse \
 	    -application org.eclipse.equinox.p2.director \
@@ -599,7 +675,7 @@ $O/.stamp_ide_linux_tar: \
 	cp -al $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	cp -al $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	cp -al $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	mkdir $O/$(IDE_INSTALL_LINUX)/eclipse/jre
+	mkdir -m775 $O/$(IDE_INSTALL_LINUX)/eclipse/jre
 	tar xaf $O/$(JRE_TGZ_LINUX) -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
 	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
@@ -713,7 +789,7 @@ $O/$(OOCD_DIR_WIN)/bin/openocd.exe: $(OOCD_BUILD_DIR_WIN)/src/openocd.exe
 	$(call OOCD_INSTALL_CMD,WIN)
 
 
-# Create tarball for OpenOCD for Windwos.
+# Create tarball for OpenOCD for Windows.
 $O/$(OOCD_DIR_WIN)$(TAR_EXT): $O/$(OOCD_DIR_WIN)/bin/openocd.exe
 	$(call create_tar,$(OOCD_DIR_WIN))
 
@@ -736,7 +812,7 @@ ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 windows-workspace: $O/.stamp_windows_workspace
 
 $(WINDOWS_WORKSPACE):
-	mkdir -p $@/packages
+	mkdir -m775 -p $@/packages
 
 $O/.stamp_windows_workspace: $O/.stamp_elf_le_windows_tarball \
     $O/.stamp_elf_be_windows_tarball | $(WINDOWS_WORKSPACE)
@@ -784,8 +860,11 @@ create-tag:
 	./tag-release.sh $(RELEASE_TAG)
 ifeq ($(ENABLE_OPENOCD),y)
 	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
-	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git checkout arc-0.9-dev-$(RELEASE_BRANCH)
-	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git tag $(RELEASE_TAG)
+	# Initially I used --git-dir, however it doesn't work properly with
+	# `checkout' - actual files were left in original state.
+	cd $(OOCD_SRC_DIR) && \
+	    $(GIT) checkout arc-0.9-dev-$(RELEASE_BRANCH) && \
+	    $(GIT) tag $(RELEASE_TAG)
 endif
 
 #
@@ -794,7 +873,8 @@ endif
 push-tag:
 	./push-release.sh $(RELEASE_TAG)
 ifeq ($(ENABLE_OPENOCD),y)
-	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git push origin $(RELEASE_TAG)
+	cd $(OOCD_SRC_DIR) && \
+	    $(GIT) push origin $(RELEASE_TAG)
 endif
 
 #
@@ -816,13 +896,13 @@ endif
 # required to create build directory before copying into it.
 
 ifeq ($(findstring :,$(DEPLOY_BUILD_DESTINATION)),)
-  DEPLOY_BUILD_DESTINATION_CMD=mkdir -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
+  DEPLOY_BUILD_DESTINATION_CMD=mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
   DEPLOY_BUILD_LINK_CMD=ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION)/latest
 else
   DEPLOY_BUILD_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_BUILD_DESTINATION)")
   DEPLOY_BUILD_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_BUILD_DESTINATION)")
   DEPLOY_BUILD_DESTINATION_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
-    'mkdir -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE)'
+    'mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE)'
   DEPLOY_BUILD_LINK_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
     'ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION_PATH)/latest'
 endif
@@ -837,13 +917,21 @@ endif
 
 # Cannot make "prebuilt" part of the pattern to get it stripped, because we
 # have an IDE package, which has "ide" insead of "prebuilt".
-deploy-build-%: $O/arc_gnu_$(RELEASE)_%_install .deploy_build_destdir
+.deploy-toolchain-build-%: $O/arc_gnu_$(RELEASE)_%_install .deploy_build_destdir
 	$(CP) $</ $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)/$(*:prebuilt_%=%)
 
-# Copying is done by dependency targets, while this target updates "latest" link.
-.PHONY: deploy-build
-deploy-build: $(addprefix deploy-build-,\
+# Copying is done by dependency targets.
+.PHONY: .deploy-toolchain-build
+.deploy-toolchain-build: $(addprefix .deploy-toolchain-build-,\
 $(patsubst arc_gnu_$(RELEASE)_%_install,%,$(DEPLOY_BUILD_ARTIFACTS)))
+
+.PHONY: .deploy-linux-images
+.deploy-linux-images: .deploy_build_destdir
+	$(CP) $O/$(LINUX_IMAGES_DIR) $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
+
+# Create a symlink
+.PHONY: deploy-build
+deploy-build: .deploy-toolchain-build .deploy-linux-images
 	$(DEPLOY_BUILD_LINK_CMD)
 
 
