@@ -156,6 +156,18 @@ that will be sourced by ``release.mk``.
       ``y``
 
 
+.. envvar:: ENABLE_PDF_DOCS
+
+   Whether to build Toolchain PDF documentation. This affects only the
+   "toolchain" repository - PDF documents from gcc, binutils, etc are always
+   created, regardless of this option.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_WINDOWS_INSTALLER
 
    Whether to build and upload Windows installer for toolchain and IDE. While

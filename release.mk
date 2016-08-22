@@ -54,6 +54,11 @@ ENABLE_OPENOCD := y
 # Requires ENABLE_OPENOCD to be set to 'y'.
 ENABLE_OPENOCD_WIN := y
 
+# Whether to build Toolchain PDF documentation. This affects only the
+# "toolchain" repository - PDF documents from gcc, binutils, etc are always
+# created, regardless of this option.
+ENABLE_PDF_DOCS := y
+
 # Whether to build and upload windows installer.
 # Requires ENABLE_OPENOCD_WIN to be set to 'y'.
 ENABLE_WINDOWS_INSTALLER := y
@@ -219,6 +224,9 @@ ARC_LINUX_TRIPLET := arc-snps-linux-uclibc
 
 # Toolchain: native linux toolchain
 TOOLS_LINUXLE_HS_DIR_NATIVE := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
+
+# Toolchain PDF User Guide.
+PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
 
 # IDE: vanilla Eclipse variables
 ECLIPSE_VERSION := mars-1
@@ -443,17 +451,37 @@ $O/.stamp_source_tarball:
 	    --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(TOOLS_SOURCE_CONTENTS)
 	touch $@
 
-$O/.stamp_elf_le_built:
+
+# Build PDF. Do it after source tarball, so that intermediate files will not
+# slip into source tarball.
+TOOLS_ALL_DEPS-$(ENABLE_PDF_DOCS) += $(PDF_DOC_FILE)
+$(PDF_DOC_FILE): $O/.stamp_source_tarball
+	$(MAKE) -C doc clean
+	$(MAKE) -C doc latexpdf
+
+# $1 - destination directory.
+ifeq ($(ENABLE_PDF_DOCS),y)
+define copy_pdf_doc_file
+	$(CP) $(PDF_DOC_FILE) $1/share/doc/
+endef
+else
+define copy_pdf_doc_file
+endef
+endif
+
+$O/.stamp_elf_le_built: $(TOOLS_ALL_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --no-uclibc
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_DIR_LINUX))
 	touch $@
 
-$O/.stamp_elf_be_built:
+$O/.stamp_elf_be_built: $(TOOLS_ALL_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --no-uclibc
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_DIR_LINUX))
 	touch $@
 
 $O/.stamp_elf_le_tarball: $O/.stamp_elf_le_built
@@ -464,31 +492,34 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 	$(call create_tar,$(TOOLS_ELFBE_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_le_700_built:
+$O/.stamp_linux_le_700_built: $(TOOLS_ALL_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --cpu arc700 \
 	    --no-elf32
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_700_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built
+$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $(TOOLS_ALL_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38 \
 	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_be_700_built:
+$O/.stamp_linux_be_700_built: $(TOOLS_ALL_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --cpu arc700 \
 	    --no-elf32
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_700_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built
+$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $(TOOLS_ALL_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
@@ -496,6 +527,7 @@ $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built
 	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_HS_DIR_LINUX))
 	touch $@
 
 $O/.stamp_linux_le_700_tarball: $O/.stamp_linux_le_700_built
@@ -534,7 +566,7 @@ define copy_mingw_dlls
 endef
 endif
 
-$O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built
+$O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built $(TOOLS_ALL_DEPS-y)
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc \
@@ -542,9 +574,10 @@ $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_DIR_WIN),arc-elf32)
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_DIR_WIN))
 	touch $@
 
-$O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
+$O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built $(TOOLS_ALL_DEPS-y)
 	# Install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
@@ -553,6 +586,7 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_DIR_WIN),arceb-elf32)
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_DIR_WIN))
 	touch $@
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
@@ -622,7 +656,7 @@ linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 #
 # Native toolchain build
 #
-$O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built
+$O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built $(TOOLS_ALL_DEPS-y)
 	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --no-elf32 \
@@ -632,6 +666,7 @@ $O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built
 	     --native \
 	     --no-system-expat \
 	     --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_NATIVE)
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_DIR_NATIVE))
 	touch $@
 
 $O/.stamp_linux_le_hs_native_tarball: $O/.stamp_linux_le_hs_native_built
