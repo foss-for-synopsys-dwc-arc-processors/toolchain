@@ -77,7 +77,7 @@ done
 # That should be a separate variable to allow for a straightforward creation of
 # new releases, where we want default to point to release, instead of dev
 # branch.
-default_toolchain_config=arc-2016.09-eng009
+default_toolchain_config=arc-2016.09-eng010
 
 # Specify the default versions to use as a string <tool>:<branch>. Those are
 # taken from the checkout configuration file. Only actually matters if
