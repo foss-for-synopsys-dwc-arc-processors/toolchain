@@ -1,0 +1,47 @@
+#!/bin/sh -xe
+
+# Environment variables:
+#   DOXYGEN - path to doxygen binary.
+
+# Nasty Sphinx 1.4 uses some stuff that causes an error on my CentOS 6 host
+# when building PDF (tex never works same on two machines). Has to use
+# Sphinx 1.3.5 to avoid triggering an error.
+
+if ! pip3 show Sphinx ; then
+    # PIP will always download file at URL, hence it is required to explicitly
+    # check if package has been already installed to avoid unnecessary
+    # download.
+    pip3 install --user \
+	https://github.com/sphinx-doc/sphinx/archive/1.3.5.tar.gz
+fi
+
+pip3 install --user \
+    pygments \
+    breathe \
+    sphinx_rtd_theme
+
+# Clone embARC if it doesn't exist yet
+if [ ! -d embARC ]; then
+    git clone --depth 1 \
+	-b develop_next \
+	git@github.com:foss-for-synopsys-dwc-arc-processors/arc_open_platform.git \
+	embARC
+elif [ -d embARC/.git ]; then
+    git --git-dir=embARC/.git pull
+fi
+
+# Enable XML output in embARC doxygen
+pushd embARC/doc
+sed -i -e 's/^GENERATE_XML\s*=.*$/GENERATE_XML = YES/' embARC.doxyfile
+
+# Generate doxygen XML files
+${DOXYGEN:-doxygen} embARC.doxyfile
+
+# Copy image files that are reuired for PDF output
+cp -a embARC_Document/html/*.jpg embARC_Document/xml/
+popd
+
+make clean
+make html
+make latexpdf
+
