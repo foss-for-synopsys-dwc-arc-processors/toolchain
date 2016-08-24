@@ -353,7 +353,9 @@ if [ $IS_CROSS_COMPILING != yes ]; then
     build_dir_init gcc-stage1
     configure_uclibc_stage1 gcc
     make_target building all-gcc
-    make_target installing ${HOST_INSTALL}-gcc
+    # It looks like that libssp install target is not parallel-friendly - I had
+    # occassional issues, when installing it's header.
+    make_target_ordered installing ${HOST_INSTALL}-gcc
     # No need for PDF docs for stage 1.
 fi
 
@@ -537,7 +539,9 @@ fi
 build_dir_init gcc-stage2
 configure_uclibc_stage2 gcc gcc $pch_opt
 make_target building all
-make_target installing ${HOST_INSTALL}-host install-target
+# It looks like that libssp install target is not parallel-friendly - I had
+# occassional issues, when installing it's header.
+make_target_ordered installing ${HOST_INSTALL}-host install-target
 if [ "$DO_PDF" = "--pdf" ]
 then
     make_target "generating PDF documentation" install-pdf-gcc
