@@ -1,6 +1,0 @@
-build:
-    script:
-        - export PATH=/depot/Python-3.5.0/bin:$PATH
-        - export PATH=~/.local/bin:$PATH
-        - cd doc
-        - ./generate
