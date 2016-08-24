@@ -225,7 +225,17 @@ then
     # not have enough ".." entries in it. To avoid this problem we have to
     # explicitly set TEXINPUTS variable to point to texinfo.tex from newlib
     # repository.
-    export TEXINPUTS=$ARC_GNU/newlib/texinfo
+    # In theory it should be good enough to just set TEXINPUTS to a path with
+    # newlib texinfo.tex and that would work regardless of whether there is a
+    # file in the /usr/share. But texinfo always has a turd up in its sleeve and
+    # on Ubuntu 16.04 it doesns't work - work on other distros, though. So to
+    # avoid the problem, I've made usage of this variable only when it is
+    # needed. It doesn't really address the problem that it doesn't work on
+    # Ubuntu 16.04, but in practice the only case where this hack was needed is
+    # a Synopsys environment, which is based on RHEL
+    if [ ! -f /usr/share/texmf/tex/texinfo/texinfo.tex ]; then
+	export TEXINPUTS=$ARC_GNU/newlib/texinfo
+    fi
     # Cannot use install-pdf because libgloss/doc does not support this target.
     if [[ $TEXINFO_VERSION_MAJOR = 6 && $TEXINFO_VERSION_MINOR > 0 ]]; then
 	# There are problems with building newlib PDF documentation on Ubuntu 16.04: lib{c,m}.pdf is
