@@ -202,7 +202,9 @@ if [ "$DO_ELF32_GCC_STAGE1" = "yes" ]; then
     build_dir_init gcc-stage1
     configure_elf32 gcc gcc --without-headers --with-newlib
     make_target building all-gcc
-    make_target installing ${HOST_INSTALL}-gcc
+    # It looks like that libssp install target is not parallel-friendly - I had
+    # occassional issues, when installing it's header.
+    make_target_ordered installing ${HOST_INSTALL}-gcc
 fi
 
 #
@@ -261,7 +263,9 @@ configure_elf32 gcc gcc --with-newlib \
     --with-libs="$INSTALLDIR/${arch}-elf32/lib" $pch_opt \
     CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections $CFLAGS_FOR_TARGET"
 make_target building all
-make_target installing ${HOST_INSTALL}-host install-target
+# It looks like that libssp install target is not parallel-friendly - I had
+# occassional issues, when installing it's header.
+make_target_ordered installing ${HOST_INSTALL}-host install-target
 if [ "$DO_PDF" = "--pdf" ]
 then
     # Don't build libstdc++ documentation because it requires additional
