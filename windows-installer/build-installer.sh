@@ -17,12 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-# It is assumed that current directory is directory where with script is
-# located. It is also assumed that all prerequisites are downloaded to the
-# "tars" directory. Eclipse in the "tars" should be already unpacked and has
-# all plug-ins installed. This is a "quick and dirty" script, thus it have
-# such strict requirements.
+# This script requires 'unzip' cygwin package.
 
 # Params
 # Eclipse parameters copied from Makefile.release
