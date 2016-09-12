@@ -21,6 +21,10 @@ search_and_load_file "library file" "arc-elf32-generic.exp" $boards_dir
 # EM Starter Kit is presumed.
 set_board_info arc,openocd_cfg "board/snps_em_sk_v2.2.cfg"
 set_board_info arc,openocd_prog openocd
+set_board_info arc,openocd_log_level 0
+
+# Assume that this is a CCM design (should be evaluated dynamically, somehow).
+set_board_info arc,has_executable_stack 0
 
 proc arc-openocd_reboot { cfg } {
     puts "Reboot is forbidden for this board - it means that test suite is "
