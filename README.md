@@ -208,11 +208,11 @@ all ARC cores, while Linux toolchain will support ARC 700:
 
     $ ./build-all.sh --install-dir $INSTALL_ROOT
 
-This command will build bare metal toolchain for ARC 700 Linux development:
+This command will build toolchain for ARC 700 Linux development:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT
 
-This command will build bare metal toolchain for ARC HS Linux development:
+This command will build toolchain for ARC HS Linux development:
 
 
     $ ./build-all.sh --no-elf32 --cpu hs38_linux --install-dir $INSTALL_ROOT
