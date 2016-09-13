@@ -311,6 +311,7 @@ Section "Uninstall"
     Delete "$SMPROGRAMS\${startmenu_dir}\Documentation.lnk"
     Delete "$SMPROGRAMS\${startmenu_dir}\IDE Wiki on GitHub.lnk"
     Delete "$SMPROGRAMS\${startmenu_dir}\IDE Releases on GitHub.lnk"
+    Delete "$SMPROGRAMS\${startmenu_dir}\GNU Toolchain User Guide.lnk"
     RmDir "$SMPROGRAMS\${startmenu_dir}"
     RmDir "$SMPROGRAMS\${snps_startmenu_dir}"
 
