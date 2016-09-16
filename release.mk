@@ -371,6 +371,9 @@ endif
 $O/$(MD5SUM_FILE): $(BUILD_DEPS)
 	cd $O && md5sum $(UPLOAD_ARTIFACTS) > $@
 
+.PHONY: md5sum
+md5sum: $O/$(MD5SUM_FILE)
+
 source-tarball: $O/.stamp_source_tarball
 
 elf-le-build: $O/.stamp_elf_le_built
