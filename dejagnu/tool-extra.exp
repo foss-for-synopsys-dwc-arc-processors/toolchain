@@ -115,6 +115,11 @@ proc check_target_quarkse_em { } {
     return [check_target_arc "__ARC_FPX_QUARK__"]
 }
 
+# Return 1 if we compile for QuarkSE2 ARC EM
+proc check_target_quarkse2_em { } {
+    return [check_target_arc "__ARC_FPU_QUARK2__"]
+}
+
 # Return 1 if we compile for ARC600
 proc check_target_arc600 { } {
     return [check_target_arc "__ARC600__"]
