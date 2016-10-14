@@ -437,7 +437,7 @@ fi
 # -----------------------------------------------------------------------------
 # Build stage 1 libgcc (not needed when cross compiling).
 if [ $IS_CROSS_COMPILING != yes ]; then
-    echo "Buildring libgcc stage1..."
+    echo "Building libgcc stage1..."
     cd $build_dir/gcc-stage1
     make_target building all-target-libgcc
     make_target installing install-target-libgcc
