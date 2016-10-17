@@ -17,11 +17,15 @@ Prerequisites
 -------------
 
 * Host OS:
+
   * RHEL 6 or later
   * Ubuntu 14.04 LTS or later
+
 * GNU tool chain for ARC:
+
   * 2014.12 or later for Linux for ARC HS
   * 4.8 or later for Linux for ARC 700
+
 * make version at least 3.81
 * rsync version at least 3.0
 * git
