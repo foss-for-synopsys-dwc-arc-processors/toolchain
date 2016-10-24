@@ -60,6 +60,10 @@ prevent errors due to missing TeX fonts while building a documentation. Since
 possible to omit `texlive-*` in `yum install` and instead pass `--no-pdf`
 option to the `build-all.sh` script if the documentation is not required.
 
+`git` package is required only if toolchain is being built from git
+repositories. If it is built from the source tarball, then `git` is not
+required.
+
 GCC depends on the GMP, MPFR and MPC packages, however there are problems with
 availability of those packages on the RHEL/CentOS 6 systems (packages has too
 old versions or not available at all). To avoid this problem our build script
