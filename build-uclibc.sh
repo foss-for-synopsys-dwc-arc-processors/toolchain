@@ -666,8 +666,16 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     build_dir_init native_gdb
 
+    # Due to STAR 9001066513 GDB crashes when throwing an exception.  Due to a
+    # poor design GDB uses exceptions as a part of a normal execution flow to
+    # verify user input (for example it throws exception when file path is
+    # invalid or when typed symbol doesn't exist).  Therefore for 2016.09
+    # release it is required to disable build of GDB as a C++ application.
+    # This will not work for future releases, because GDB will stop supporting
+    # C builds.
     config_path=$(calcConfigPath "${ARC_GNU}")/gdb
     configure_for_arc "$config_path" $triplet \
+	--disable-build-with-cxx \
 	--disable-gas --disable-ld --disable-binutils
     make_target building
 
@@ -681,6 +689,7 @@ else
     build_dir_init gdbserver
     # Static options are same as when gdbserver is configured by the top-level
     # configure script.
+    # See commment for native GDB about build-with-cxx.
     config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdb/gdbserver
     LDFLAGS="-static-libstdc++ -static-libgcc" \
 	configure_for_arc "$config_path" $triplet --disable-build-with-cxx

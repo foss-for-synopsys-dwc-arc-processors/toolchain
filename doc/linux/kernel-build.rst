@@ -17,11 +17,15 @@ Prerequisites
 -------------
 
 * Host OS:
+
   * RHEL 6 or later
   * Ubuntu 14.04 LTS or later
+
 * GNU tool chain for ARC:
+
   * 2014.12 or later for Linux for ARC HS
   * 4.8 or later for Linux for ARC 700
+
 * make version at least 3.81
 * rsync version at least 3.0
 * git
@@ -303,3 +307,33 @@ Now it is possible to mount some NFS share and run applications from it::
     [arclinux] # mount -t nfs public-nfs:/home/arc_user/pub /mnt
     [arclinux] # /mnt/hello_world
 
+
+Linux for AXS103 SDP
+--------------------
+
+Build process using Buildroot is the same as for standalone nSIM. Buildroot
+defconfig is::
+
+    BR2_arcle=y
+    BR2_archs38=y
+    BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2016.09/arc_gnu_2016.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_GCC_6=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_8=y
+    BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
+    BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
+    BR2_TOOLCHAIN_EXTERNAL_INET_RPC=y
+    BR2_TOOLCHAIN_EXTERNAL_CXX=y
+    BR2_LINUX_KERNEL=y
+    BR2_LINUX_KERNEL_DEFCONFIG="axs103_smp"
+    BR2_PACKAGE_GDB=y
+    BR2_PACKAGE_GDB_SERVER=y
+    BR2_PACKAGE_GDB_DEBUGGER=y
+    BR2_TARGET_ROOTFS_INITRAMFS=y
+    # BR2_TARGET_ROOTFS_TAR is not set
+
+This defconfig will create a uImage file instead of vmlinux. Please refer to
+`ARC Linux wiki
+<https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki/Getting-Started-with-Linux-on-ARC-AXS103-Software-Development-Platform-(SDP)>`
+for more details on using u-boot with AXS103.
