@@ -235,7 +235,7 @@ else
     SYSROOTDIR=$INSTALLDIR/$triplet/sysroot
     install_prefix=/usr
 fi
-DEFCFG_DIR=extra/Configs/defconfigs/arc/
+DEFCFG_DIR=$ARC_GNU/uClibc/extra/Configs/defconfigs/arc/
 
 # Purge old build dir if there is any and create a new one.
 rm -rf "$build_dir"
@@ -367,20 +367,14 @@ fi
 echo "Installing uClibc headers ..." | tee -a "${logfile}"
 echo "=============================" >> "${logfile}"
 
-# uClibc builds in place, so if ${ARC_GNU} is set (to a different location) we
-# have to create the directory and copy the source across.
-mkdir -p ${uclibc_build_dir}
-cd ${uclibc_build_dir}
-
-if [ ! -f Makefile.in ]
-then
-    echo Copying over uClibc sources
-    tar -C "${ARC_GNU}"/uClibc --exclude=.svn --exclude='*.o' \
-	--exclude='*.a' -cf - . | tar -xf -
-fi
+# Create a build directory for uClibc. uClibc doesn't use GNU autotools, so
+# process is different from the rest of the tools.
+mkdir -p $build_dir/uclibc
+# Make command to operate on uClibc.
+MAKE_UCLIBC="make -C $ARC_GNU/uClibc O=$build_dir/uclibc"
 
 # make will fail if there is yet no .config file, but we can ignore this error.
-make distclean >> "${logfile}" 2>&1 || true 
+$MAKE_UCLIBC distclean >> "$logfile" 2>&1 || true
 
 # Copy the defconfig file to a temporary location
 TEMP_DEFCFG=`temp_file_in_dir "${DEFCFG_DIR}" XXXXXXXXXX_defconfig`
@@ -423,13 +417,13 @@ fi
 echo "HARDWIRED_ABSPATH=n" >> ${TEMP_DEFCFG}
 
 # Create the .config from the temporary defconfig file.
-make ARCH=arc `basename ${TEMP_DEFCFG}` >> "${logfile}" 2>&1
+$MAKE_UCLIBC ARCH=arc `basename $TEMP_DEFCFG` >> "$logfile" 2>&1
 
 # Now remove the temporary defconfig file.
 rm -f ${TEMP_DEFCFG}
 
 # PREFIX is an arg to Makefile, it is not set in .config.
-if make ARCH=${arch} V=1 PREFIX=${SYSROOTDIR} install_headers >> "${logfile}" 2>&1
+if $MAKE_UCLIBC ARCH=arc V=1 PREFIX=$SYSROOTDIR install_headers >> "$logfile" 2>&1
 then
     echo "  finished installing uClibc headers"
 else
@@ -454,11 +448,7 @@ fi
 echo "Building uClibc ..." | tee -a "${logfile}"
 echo "===================" >> "${logfile}"
 
-# We don't need to create directories or copy source, since that is already
-# done when we got the headers.
-cd ${uclibc_build_dir}
-
-if make ARCH=${arch} clean >> "${logfile}" 2>&1
+if $MAKE_UCLIBC ARCH=$arch clean >> "$logfile" 2>&1
 then
     echo "  finished cleaning uClibc"
 else
@@ -468,7 +458,7 @@ else
 fi
 
 # PREFIX is an arg to Makefile, it is not set in .config.
-if make ARCH=${arch} V=2 PREFIX=${SYSROOTDIR} >> "${logfile}" 2>&1
+if $MAKE_UCLIBC ARCH=$arch V=2 PREFIX=$SYSROOTDIR >> "$logfile" 2>&1
 then
     echo "  finished building uClibc"
 else
@@ -477,7 +467,7 @@ else
     exit 1
 fi
 
-if make ARCH=${arch} V=2 PREFIX=${SYSROOTDIR} install >> "${logfile}" 2>&1
+if $MAKE_UCLIBC ARCH=$arch V=2 PREFIX=$SYSROOTDIR install >> "$logfile" 2>&1
 then
     echo "  finished installing uClibc"
 else
