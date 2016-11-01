@@ -374,9 +374,19 @@ then
 fi
 
 # GDB
+
+# Similar to ARC Linux targets, on Windows there are issues with exceptions when
+# GDB is compiled as a C++ applications, so as a temporary measure disable C++
+# when doing canadian cross.
+if [ $IS_CROSS_COMPILING ]; then
+    cxx_build=--disable-build-with-cxx
+else
+    cxx_build=
+fi
+
 build_dir_init gdb
 configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils \
-    --enable-targets=arc-linux-uclibc
+    --enable-targets=arc-linux-uclibc $cxx_build
 make_target building all
 make_target installing ${HOST_INSTALL}-gdb
 if [ "$DO_PDF" = "--pdf" ]
