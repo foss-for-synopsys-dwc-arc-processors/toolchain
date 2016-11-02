@@ -969,8 +969,12 @@ $(patsubst arc_gnu_$(RELEASE)_%_install,%,$(DEPLOY_BUILD_ARTIFACTS)))
 
 # Create a symlink
 .PHONY: deploy-build
-deploy-build: .deploy-toolchain-build .deploy-linux-images
+deploy-build: .deploy-toolchain-build
 	$(DEPLOY_BUILD_LINK_CMD)
+
+ifeq ($(ENABLE_LINUX_IMAGES),y)
+deploy-build: .deploy-linux-images
+endif
 
 
 #
