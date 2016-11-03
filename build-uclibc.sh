@@ -584,8 +584,18 @@ then
     build_expat $toolchain_build_dir/_download_tmp uclibc_stage2
 fi
 
+# See comment for "native GDB" being built later. If whole toolchain is native,
+# then this step is itself building a native GDB, hence same machinations with
+# disable-build-with-cxx are required.
+if [ $IS_NATIVE = yes ]; then
+    cxx_build=--disable-build-with-cxx
+else
+    cxx_build=
+fi
+
 build_dir_init gdb
-configure_uclibc_stage2 gdb gdb --disable-ld --disable-gas --disable-binutils
+configure_uclibc_stage2 gdb gdb --disable-ld --disable-gas --disable-binutils \
+    $cxx_build
 make_target building all
 make_target installing ${HOST_INSTALL}-gdb $stripprog_opt
 if [ "$DO_PDF" = "--pdf" ]
