@@ -24,6 +24,8 @@ New Features and Enhancements
       versions of those libraries and download .tar.xz files of GMP and MPFR.
 * GCC
     * Support -fstack-protector and -fstack-protector-all.
+    * Remove support for -mabi option. Now GCC always generates function calls
+      compatible with MetaWare compiler.
     * Avoid unnecessary dependency of libgcc on newlib.
 * GDB
     * Support multi-target GDB in ARC code. GDB for baremetal targets now can
