@@ -4,7 +4,16 @@ Major Changes in 2016.09 Release
 Toolchain and IDE Components Versions
 -------------------------------------
 
-* GDB 7.11+
+* Binutils 2.27+ (upstream commit decf5bd and ARC patches)
+* GCC 6.2.1 (upstream commit e061fbe and ARC patches)
+* GDB 7.12 (upstream commit 5f8cf6c and ARC patches)
+* newlib 2.4 (upstream commit e6413b0 and ARC patches)
+* uclibc-ng 1.0.17 (plus few ARC patches)
+* Eclipse Mars (4.5.1) with CDT 8.8.0
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
+generator) version 1.0.53 and later.
 
 
 New Features and Enhancements
@@ -13,8 +22,23 @@ New Features and Enhancements
 * Toolchain build scripts
     * Use GNU FTP server to download GMP, MPFR and MPC, update to latest
       versions of those libraries and download .tar.xz files of GMP and MPFR.
+* GCC
+    * Support -fstack-protector and -fstack-protector-all.
+    * Avoid unnecessary dependency of libgcc on newlib.
 * GDB
-    * Update to upstream master (7.11+).
+    * Support multi-target GDB in ARC code. GDB for baremetal targets now can
+      debug Linux targets as well.
+* uClibc
+    * Migrated to uClibc-ng
+* IDE
+    * Migrated to use DSF instead of obsolete CDT for debugging, which brings
+      in multiple usability enhancements.
+    * Updated to latest version of TerminalView plugins.
+    * Detect if projects has been created with an older version of IDE and show
+      user a warning that there could be compatibility issues.
+    * Removed support for -mabi option that has been removed from ARC GCC.
+* OpenOCD
+    * Add support for DCCM version 4.
 * CGEN
     * Removed formal dependency on CGEN repository - it wasn't used anyway.
 
@@ -22,6 +46,11 @@ New Features and Enhancements
 Bugs Fixed in This Release (Summary)
 ------------------------------------
 
+* Newlib
+    * Fixed a bug in implementation for strcmp function for big endian -mcpu=em4
+      targets.
+* IDE
+    * Changing linker options was breaking project building.
 
 
 Major Changes in 2016.03 Release
