@@ -418,6 +418,10 @@ else
            -i ${TEMP_DEFCFG}
 fi
 
+# Disable HARDWIRED_ABSPATH to avoid absolute path references to allow
+# relocatable toolchains.
+echo "HARDWIRED_ABSPATH=n" >> ${TEMP_DEFCFG}
+
 # Create the .config from the temporary defconfig file.
 make ARCH=arc `basename ${TEMP_DEFCFG}` >> "${logfile}" 2>&1
 
@@ -453,52 +457,6 @@ echo "===================" >> "${logfile}"
 # We don't need to create directories or copy source, since that is already
 # done when we got the headers.
 cd ${uclibc_build_dir}
-
-# Copy the defconfig file to a temporary location
-TEMP_DEFCFG=`temp_file_in_dir "${DEFCFG_DIR}" XXXXXXXXXX_defconfig`
-if [ ! -f "${TEMP_DEFCFG}" ]
-then
-    echo "ERROR: Failed to create temporary defconfig file."
-    exit 1
-fi
-cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
-
-# Patch defconfig with the temporary install directories used.
-${SED} -e "s@%KERNEL_HEADERS%@$SYSROOTDIR$install_prefix/include@" \
-       -e "s@%RUNTIME_PREFIX%@/@" \
-       -e "s@%DEVEL_PREFIX%@$install_prefix/@" \
-       -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
-       -i ${TEMP_DEFCFG}
-
-# At this step we also disable HARDWIRED_ABSPATH to avoid absolute
-# path references to allow relocatable toolchains.
-echo "HARDWIRED_ABSPATH=n" >> ${TEMP_DEFCFG}
-
-# Patch defconfig for big or little endian.
-if [ "${ARC_ENDIAN}" = "big" ]
-then
-    ${SED} -e 's@ARCH_WANTS_LITTLE_ENDIAN=y@ARCH_WANTS_BIG_ENDIAN=y@' \
-           -i ${TEMP_DEFCFG}
-else
-    ${SED} -e 's@ARCH_WANTS_BIG_ENDIAN=y@ARCH_WANTS_LITTLE_ENDIAN=y@' \
-           -i ${TEMP_DEFCFG}
-fi
-
-# Patch the defconfig for thread support.
-if [ "x${NPTL_SUPPORT}" = "xyes" ]
-then
-    ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
-           -i ${TEMP_DEFCFG}
-else
-    ${SED} -e 's@UCLIBC_HAS_THREADS_NATIVE=y@LINUXTHREADS_OLD=y@' \
-           -i ${TEMP_DEFCFG}
-fi
-
-# Create the .config from the temporary defconfig file.
-make ARCH=arc `basename ${TEMP_DEFCFG}` >> "${logfile}" 2>&1
-
-# Now remove the temporary defconfig file.
-rm -f ${TEMP_DEFCFG}
 
 if make ARCH=${arch} clean >> "${logfile}" 2>&1
 then
