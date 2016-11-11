@@ -149,6 +149,9 @@ board files, for example in ``dejagnu/baseboard/arc-sim-nsimdrv.exp``.
 ``arc,hostlink``
     Hostlink type to use. Can be ``nsim`` or empty/not set.
 
+``arc,is_gcc_compat_suite``
+    Whether this is a GCC *compat* testsuite or not. Boolean value.
+
 ``arc,openocd_prog``
     Path to OpenOCD application binary.
 
