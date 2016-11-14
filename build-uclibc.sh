@@ -423,7 +423,7 @@ $MAKE_UCLIBC ARCH=arc `basename $TEMP_DEFCFG` >> "$logfile" 2>&1
 rm -f ${TEMP_DEFCFG}
 
 # PREFIX is an arg to Makefile, it is not set in .config.
-if $MAKE_UCLIBC ARCH=arc V=1 PREFIX=$SYSROOTDIR install_headers >> "$logfile" 2>&1
+if $MAKE_UCLIBC V=1 PREFIX=$SYSROOTDIR install_headers >> "$logfile" 2>&1
 then
     echo "  finished installing uClibc headers"
 else
@@ -448,7 +448,7 @@ fi
 echo "Building uClibc ..." | tee -a "${logfile}"
 echo "===================" >> "${logfile}"
 
-if $MAKE_UCLIBC ARCH=$arch clean >> "$logfile" 2>&1
+if $MAKE_UCLIBC clean >> "$logfile" 2>&1
 then
     echo "  finished cleaning uClibc"
 else
@@ -458,7 +458,7 @@ else
 fi
 
 # PREFIX is an arg to Makefile, it is not set in .config.
-if $MAKE_UCLIBC ARCH=$arch V=2 PREFIX=$SYSROOTDIR >> "$logfile" 2>&1
+if $MAKE_UCLIBC V=2 PREFIX=$SYSROOTDIR >> "$logfile" 2>&1
 then
     echo "  finished building uClibc"
 else
@@ -467,7 +467,7 @@ else
     exit 1
 fi
 
-if $MAKE_UCLIBC ARCH=$arch V=2 PREFIX=$SYSROOTDIR install >> "$logfile" 2>&1
+if $MAKE_UCLIBC V=2 PREFIX=$SYSROOTDIR install >> "$logfile" 2>&1
 then
     echo "  finished installing uClibc"
 else
