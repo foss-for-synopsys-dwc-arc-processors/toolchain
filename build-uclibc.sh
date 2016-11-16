@@ -376,51 +376,49 @@ MAKE_UCLIBC="make -C $ARC_GNU/uClibc O=$build_dir/uclibc"
 # make will fail if there is yet no .config file, but we can ignore this error.
 $MAKE_UCLIBC distclean >> "$logfile" 2>&1 || true
 
-# Copy the defconfig file to a temporary location
-TEMP_DEFCFG=`temp_file_in_dir "${DEFCFG_DIR}" XXXXXXXXXX_defconfig`
-if [ ! -f "${TEMP_DEFCFG}" ]
-then
-    echo "ERROR: Failed to create temporary defconfig file."
-    exit 1
-fi
-cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
+# First create a .config file which is really just a modified copy of a
+# specified defconfig. Then use `make olddefconfig` to convert it to a full
+# .config file.  Previously to achieve this, without modification to the
+# specified .config itself, this script had to create a temporary file that is
+# a copy of defconfig, then modify it, then use standard "defconfig" command,
+# then remove temporary file. This looks like an unnecessary complication
+# considering that "olddefconfig" yields same result.
+uc_dot_config=$build_dir/uclibc/.config
+cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} $uc_dot_config
 
 # Patch defconfig with the temporary install directories used.
 ${SED} -e "s@%KERNEL_HEADERS%@$SYSROOTDIR$install_prefix/include@" \
        -e "s@%RUNTIME_PREFIX%@/@" \
        -e "s@%DEVEL_PREFIX%@$install_prefix/@" \
        -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
-       -i ${TEMP_DEFCFG}
+       -i $uc_dot_config
 
 # Patch defconfig for big or little endian.
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     ${SED} -e 's@ARCH_WANTS_LITTLE_ENDIAN=y@ARCH_WANTS_BIG_ENDIAN=y@' \
-           -i ${TEMP_DEFCFG}
+           -i $uc_dot_config
 else
     ${SED} -e 's@ARCH_WANTS_BIG_ENDIAN=y@ARCH_WANTS_LITTLE_ENDIAN=y@' \
-           -i ${TEMP_DEFCFG}
+           -i $uc_dot_config
 fi
 
 # Patch the defconfig for thread support.
 if [ "x${NPTL_SUPPORT}" = "xyes" ]
 then
     ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
-           -i ${TEMP_DEFCFG}
+           -i $uc_dot_config
 else
     ${SED} -e 's@UCLIBC_HAS_THREADS_NATIVE=y@LINUXTHREADS_OLD=y@' \
-           -i ${TEMP_DEFCFG}
+           -i $uc_dot_config
 fi
 
 # Disable HARDWIRED_ABSPATH to avoid absolute path references to allow
 # relocatable toolchains.
-echo "HARDWIRED_ABSPATH=n" >> ${TEMP_DEFCFG}
+echo "HARDWIRED_ABSPATH=n" >> $uc_dot_config
 
-# Create the .config from the temporary defconfig file.
-$MAKE_UCLIBC ARCH=arc `basename $TEMP_DEFCFG` >> "$logfile" 2>&1
-
-# Now remove the temporary defconfig file.
-rm -f ${TEMP_DEFCFG}
+# Create complete .config from the "defconfig".
+$MAKE_UCLIBC ARCH=arc olddefconfig >> "$logfile" 2>&1
 
 # PREFIX is an arg to Makefile, it is not set in .config.
 if $MAKE_UCLIBC V=1 PREFIX=$SYSROOTDIR install_headers >> "$logfile" 2>&1
