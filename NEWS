@@ -15,6 +15,9 @@ Toolchain and IDE Components Versions
 This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
 generator) version 1.0.53 and later.
 
+GNU IDE 2016.09 will be supported in next embARC OSP release, planned for
+January 2017.
+
 
 New Features and Enhancements
 -----------------------------
