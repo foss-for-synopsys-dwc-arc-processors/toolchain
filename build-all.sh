@@ -1019,7 +1019,7 @@ fi
 if [ "x${uclibc}" = "x--uclibc" ]; then
     if [[ " ${allowed_linux_cpus[*]} " != *" $ISA_CPU "* ]]; then
 	echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
-	     "Choose one of the supprted CPU familes or disable building of"\
+	     "Choose one of the supported CPU familes or disable building of"\
 	     "uClibc tool chain with option --no-uclibc."\
 	     "Supported values are: $allowed_linux_cpus."
 	exit 1
