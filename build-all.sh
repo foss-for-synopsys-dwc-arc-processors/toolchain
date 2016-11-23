@@ -1001,8 +1001,8 @@ cpus_def=$ARC_GNU/gcc/gcc/config/arc/arc-cpus.def
 if [ -f $cpus_def ]; then
     # New GCC (2016.03 and later).
     # allowed_cpus should be a string wil values delimited by spaces.
-    allowed_cpus=$(awk -v FS="[(, ]+" '/^ARC/{printf " "$2}' $cpus_def)
-    allowed_linux_cpus=$(awk -v FS="[(, ]+" \
+    allowed_cpus=$(awk -v FS="[(, \t]+" '/^ARC/{printf " "$2}' $cpus_def)
+    allowed_linux_cpus=$(awk -v FS="[(, \t]+" \
 	'/^ARC/{if($3=="hs"||$3=="700")printf " "$2}' $cpus_def)
 else
     # Old GCC (2015.12 and earlier)
