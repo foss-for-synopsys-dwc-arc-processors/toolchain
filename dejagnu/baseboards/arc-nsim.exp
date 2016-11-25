@@ -42,6 +42,11 @@ load_generic_config "gdb-comm"
 # overrides one of the function in gdb-comm.
 search_and_load_file "library file" "nsim-extra.exp" ${boards_dir}
 
+# Load procedures for enabling support of compatibility tests (compat.exp
+# from GCC testsuite).
+search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
+search_and_load_file "library file" "arc-common.exp" ${boards_dir}
+
 # GDB tests require special treatment, they ignore "gdb-comm" configuration
 # unless "monitor" GDB test suite configuration is loaded.
 if { $tool == "gdb" } {
@@ -49,15 +54,14 @@ if { $tool == "gdb" } {
 }
 
 # Any multilib options are set in an environment variable.
-process_multilib_options "$env(ARC_MULTILIB_OPTIONS)"
+process_multilib_options [arc_get_multilib_options]
 
 set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
-set xldflags "$xldflags --specs=nsim.specs"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
 set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 
 # No linker script needed.
@@ -161,5 +165,19 @@ if { $tool == "gdb" } {
 # Tests may recognize this board as a simulator and reduce amount
 # of computations.
 set_board_info is_simulator 1
+
+# Turn on support of compat.exp tests from GCC testsuite if environment
+# variable ARC_GCC_COMPAT_SUITE == 1.
+if { [info exists env(ARC_GCC_COMPAT_SUITE)] } {
+    set is_gcc_compat_suite $env(ARC_GCC_COMPAT_SUITE)
+} else {
+    if { ![info exists is_gcc_compat_suite] } {
+	set is_gcc_compat_suite 0
+    }
+}
+
+if { $is_gcc_compat_suite } {
+    fix_gcc_compat_multilib_flags
+}
 
 # vim: noexpandtab sts=4 ts=8:

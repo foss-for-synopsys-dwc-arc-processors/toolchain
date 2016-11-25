@@ -93,7 +93,7 @@ fi
 echo "All repos checked out"
 
 # Sanity check that each branch has a remote
-for repo in cgen binutils gcc gdb newlib uClibc toolchain linux
+for repo in cgen binutils gcc gdb newlib uClibc toolchain
 do
     cd ../${repo} > /dev/null 2>&1
     if ! branch=`git symbolic-ref -q HEAD --short`
@@ -111,7 +111,7 @@ do
 done
 
 # Tag each component
-for repo in cgen binutils gcc gdb newlib uClibc linux
+for repo in cgen binutils gcc gdb newlib uClibc
 do
     cd ../${repo} > /dev/null 2>&1
 
@@ -121,11 +121,10 @@ do
     # don't want it to be clear that this tag is for toolchian.
     case $repo in
 	gdb) tag=${tagname}-gdb ;;
-	linux) tag=${tagname/arc-/arc-gnu-} ;;
 	*) tag=$tagname
     esac
 
-    if ! git tag ${tag}
+    if ! git tag -a -m "Create tag for $tagname release" $tag
     then
 	echo "ERROR: Failed to tag ${repo}"
 	exit 1
@@ -135,11 +134,6 @@ do
 done
 
 branch=`git symbolic-ref -q HEAD --short`
-
-if [[ $branch != *-dev ]] ; then
-    echo 'Current branch is not a *-dev branch! Cannot create a tag from it'
-    exit 1
-fi
 
 # Merge with a releases branch
 if ! git checkout arc-staging ; then
@@ -152,7 +146,8 @@ if ! git merge $branch </dev/null ; then
     exit 1
 fi
 
-# Create toolchain configuration file for release
+# Create toolchain configuration file for release.
+# For Linux just copy whatever is in the arc-dev.sh at the moment.
 cat > config/$tagname.sh <<EOF
 cgen=cgen:$tagname
 binutils=binutils:$tagname
@@ -160,7 +155,7 @@ gcc=gcc:$tagname
 gdb=gdb:$tagname-gdb
 newlib=newlib:$tagname
 uclibc=uClibc:$tagname
-linux=linux:${tagname/arc-/arc-gnu-}
+$(grep -e linux=linux config/arc-dev.sh)
 EOF
 
 # Now tell arc-versions.sh to use this file instead of arc-dev:
@@ -181,7 +176,7 @@ then
 fi
 
 # Tag the commit
-if ! git tag ${tagname}
+if ! git tag -a -m "Create tag for $tagname release" $tagname
 then
     echo "ERROR: Failed to tag toolchain"
     exit 1

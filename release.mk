@@ -35,10 +35,18 @@ DEPLOY_DESTINATION =
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
-# Whether to buidl and upload OpenOCD
+# Whether to build native toolchain for ARC HS Linux.
+ENABLE_NATIVE_TOOLS := y
+
+# Whether to build and upload OpenOCD for Linux.
 ENABLE_OPENOCD := y
 
+# Whether to build and upload OpenOCD for Windows.
+# Requires ENABLE_OPENOCD to be set to 'y'.
+ENABLE_OPENOCD_WIN := y
+
 # Whether to build and upload windows installer.
+# Requires ENABLE_OPENOCD_WIN to be set to 'y'.
 ENABLE_WINDOWS_INSTALLER := y
 
 # URL base for git repositories.
@@ -53,17 +61,53 @@ IDE_PLUGIN_LOCATION :=
 
 JAVA_VERSION := 8u66
 
+# libusb is used by the OpenOCD for Windows
+LIBUSB_VERSION := 1.0.20
+
 ROOT := $(realpath ..)
 
 THIRD_PARTY_SOFTWARE_LOCATION :=
+
+# Triplet of Mingw toolchain.
+WINDOWS_TRIPLET := i686-w64-mingw32
 
 # Must be a folder available to Windows host, e.g. Linux folder shared via
 # Samba.
 WINDOWS_WORKSPACE := $(ROOT)/windows_workspace
 
+
 # Include overriding configuration
 -include release.config
 
+#
+# Check prerequisite variables
+#
+ifeq ($(RELEASE_TAG),)
+$(error RELEASE_TAG variable can not be empty)
+endif
+
+ifneq ($(filter upload, $(MAKECMDGOALS)),)
+ifeq ($(RELEASE_NAME),)
+$(error RELEASE_NAME variable can not be empty for "upload" target)
+endif
+endif
+
+#
+# Internal variables
+#
+CP = rsync -a
+GIT = git
+PYTHON = /depot/Python-3.4.3/bin/python3
+
+# RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
+# RELEASE in this case would be 2016.09-rc1
+# RELEASE_BRANCH in this case would be 2016.09.
+RELEASE := $(shell cut -s -d- -f2- <<< $(RELEASE_TAG))
+RELEASE_BRANCH := $(shell cut -s -d- -f2 <<< $(RELEASE_TAG))
+
+ifeq ($(RELEASE_BRANCH),)
+$(error RELEASE_TAG variable must be in format xxx-YYYY.MM)
+endif
 
 #
 # Helpers
@@ -74,24 +118,47 @@ define create_dir
 endef
 
 # Create tarball for release
+#
 # :param $1 - name of directory to tar. Directory must be in the $O.
 define create_tar
        cd $O && tar caf $1$(TAR_EXT) $1/
 endef
 
+# Create windows tarball for release. Difference with standard `create_tar` is
+# that hard links are dereferenced, because they are notsupported in 7-zip -
+# hard links are turned into 0-byte files.
+#
+# :param $1 - name of directory to tar. Directory must
+# be in the $O.
+define create_windows_tar
+       cd $O && tar caf $1$(TAR_EXT) --hard-dereference $1/
+endef
+
+# :param $1 - name of directory to zip.
+define create_zip
+	cd $O && zip -q -r $1.zip $1/
+endef
+
+# Clone git repository
+# $1 - Git URL
+# $2 - directory name
+ifeq ($(GIT_REFERENCE_ROOT),)
+define git_clone_url
+	$(GIT) clone -q $1 $(ROOT)/$2
+endef
+else
+define git_clone_url
+	$(GIT) clone -q --reference=$(GIT_REFERENCE_ROOT)/$2 \
+	    $1 $(ROOT)/$2
+endef
+endif
+
 # Clone git repository
 # $1 - tool name
 # $2 - directory name
-ifeq ($(GIT_REFERENCE_ROOT),)
 define git_clone
-	$(GIT) clone -q $(GIT_URL_BASE)/$1.git $(ROOT)/$2
+    $(call git_clone_url,$(GIT_URL_BASE)/$1.git,$2)
 endef
-else
-define git_clone
-	$(GIT) clone -q --reference=$(GIT_REFERENCE_ROOT)/$2 \
-	    $(GIT_URL_BASE)/$1.git $(ROOT)/$2
-endef
-endif
 
 #
 # Build flags common to all toolchains
@@ -113,6 +180,10 @@ O := ../release_output
 # Use -a when invoking tar, then we can easily change to .tar.xz if we want.
 TAR_EXT := .tar.gz
 
+# Intermediate location for build directories. Toolchain will have it's own
+# bd-{elf32,uclibc}, so this is only for OpenOCD ATM.
+BUILD_DIR = $(ROOT)/build
+
 # Toolchain: source tarball
 # This variable should use .. instead of $(ROOT) so that tar will auto-remove
 # .. from file paths. Perhaps this ugliness can be fixed with --transform?
@@ -132,15 +203,22 @@ TOOLS_LINUXLE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_linu
 TOOLS_LINUXBE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_linux_install
 TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_linux_install
 TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_linux_install
+ARC_LINUX_TRIPLET := arc-snps-linux-uclibc
+
+# Toolchain: native linux toolchain
+TOOLS_LINUXLE_HS_DIR_NATIVE := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
 
 # IDE: vanilla Eclipse variables
 ECLIPSE_VERSION := mars-1
 ECLIPSE_VANILLA_ZIP_WIN := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_TGZ_LINUX := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
-ECLIPSE_REPO := http://download.eclipse.org/releases/luna
+ECLIPSE_REPO := http://download.eclipse.org/releases/mars
 # Coma separated list
-ECLIPSE_PREREQ := org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.view
+ECLIPSE_PREREQ := org.eclipse.tm.terminal.control,\
+    org.eclipse.tm.terminal.connector.serial,\
+    org.eclipse.tm.terminal.view.core,\
+    org.eclipse.tm.terminal.view.ui
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
 
 # Java.
@@ -151,12 +229,16 @@ JRE_TGZ_WIN   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
 IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
 IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
-IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE)_ide_plugins.zip
+# IDE plugins are built separately, and contain only RELEASE_BRANCH in the
+# name, not the whole RELEASE.
+IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip
 
 # OpenOCD
-OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
 OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_linux_install
-OOCD_SRC_DIR_LINUX := $(ROOT)/openocd
+OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
+OOCD_SRC_DIR := $(ROOT)/openocd
+OOCD_BUILD_DIR_LINUX := $(BUILD_DIR)/openocd_linux
+OOCD_BUILD_DIR_WIN := $(BUILD_DIR)/openocd_win
 
 # List of files that will be uploaded to GitHub Release.
 UPLOAD_ARTIFACTS = \
@@ -171,6 +253,7 @@ UPLOAD_ARTIFACTS = \
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
+UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_DIR_NATIVE)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_EXE_WIN)
 
 # List of files that will be deployed internally. Is a superset of "upload"
@@ -180,38 +263,13 @@ DEPLOY_ARTIFACTS = \
     $(DEPLOY_ARTIFACTS-y)
 
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_DIR_LINUX)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN).zip
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
-DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(OOCD_DIR_WIN).zip
 
 # md5sum
 MD5SUM_FILE := md5.sum
-
-#
-# Check prerequisite variables
-#
-ifeq ($(RELEASE),)
-$(error RELEASE variable can not be empty)
-endif
-
-ifneq ($(filter upload create-tag push-tag, $(MAKECMDGOALS)),)
-ifeq ($(RELEASE_TAG),)
-$(error RELEASE_TAG variable can not be empty for this target)
-endif
-endif
-
-ifneq ($(filter upload, $(MAKECMDGOALS)),)
-ifeq ($(RELEASE_NAME),)
-$(error RELEASE_NAME variable can not be empty for "upload" target)
-endif
-endif
-
-#
-# Configuration
-#
-CP = rsync -a
-GIT = git
-PYTHON = /depot/Python-3.4.3/bin/python3
 
 #
 # Human friendly aliases
@@ -228,16 +286,16 @@ BUILD_DEPS += \
     $O/.stamp_linux_be_700_tarball \
     $O/.stamp_linux_le_hs_tarball \
     $O/.stamp_linux_be_hs_tarball \
-    $(BUILD_DEPS-y) \
-    $O/$(OOCD_DIR_LINUX).tar.gz
+    $(BUILD_DEPS-y)
 
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
-BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_DIR_LINUX).tar.gz
+BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_linux_le_hs_native_tarball
+BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_DIR_LINUX)$(TAR_EXT)
+BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN)$(TAR_EXT)
+BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
-BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(OOCD_DIR_WIN).zip
-BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(OOCD_DIR_WIN).tar.gz
 
 
 # Build all components that can be built on Linux hosts.
@@ -272,7 +330,7 @@ clone:
 	$(call git_clone,gcc,gcc)
 	$(call git_clone,binutils-gdb,gdb)
 	$(call git_clone,newlib,newlib)
-	$(call git_clone,linux,linux)
+	$(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
 	$(call git_clone,uClibc,uClibc)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
@@ -308,14 +366,6 @@ ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 endif
 endif
 
-	# Copy OpenOCD for Windows
-ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
-ifeq ($(OPENOCD_WINDOWS_LOCATION),)
-	$(error OPENOCD_WINDOWS_LOCATION must be set to do copy-external)
-endif
-	$(CP) $(OPENOCD_WINDOWS_LOCATION)/$(OOCD_DIR_WIN)$(TAR_EXT) $O
-endif
-
 .PHONY: prerequisites
 prerequisites: clone copy-external
 
@@ -338,12 +388,15 @@ $O/.stamp_source_tarball:
 
 $O/.stamp_elf_le_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_DIR_LINUX) \
-	    --no-uclibc --release-name $(RELEASE)
+	    --release-name "$(RELEASE)" \
+	    --no-uclibc
 	touch $@
 
 $O/.stamp_elf_be_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_DIR_LINUX) \
-	    --no-uclibc --release-name $(RELEASE) --big-endian
+	    --release-name "$(RELEASE)" \
+	    --big-endian \
+	    --no-uclibc
 	touch $@
 
 $O/.stamp_elf_le_tarball: $O/.stamp_elf_le_built
@@ -356,24 +409,34 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 
 $O/.stamp_linux_le_700_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_DIR_LINUX) \
-	    --no-elf32 --release-name $(RELEASE) --cpu arc700
+	    --release-name "$(RELEASE)" \
+	    --cpu arc700 \
+	    --no-elf32
 	touch $@
 
 $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
-	    --no-elf32 --release-name $(RELEASE) --cpu archs
+	    --release-name "$(RELEASE)" \
+	    --cpu archs \
+	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
 	touch $@
 
 $O/.stamp_linux_be_700_built:
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_DIR_LINUX) \
-	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu arc700
+	    --release-name "$(RELEASE)" \
+	    --big-endian \
+	    --cpu arc700 \
+	    --no-elf32
 	touch $@
 
 $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
-	    --no-elf32 --release-name $(RELEASE) --big-endian --cpu archs
+	    --release-name "$(RELEASE)" \
+	    --big-endian \
+	    --cpu archs \
+	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
 	touch $@
@@ -398,7 +461,6 @@ $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
 # Windows build
 #
 
-WINDOWS_TRIPLET := i686-w64-mingw32
 WINDOWS_SYSROOT := /usr/$(WINDOWS_TRIPLET)/sys-root/mingw
 
 # Helper function to copy mingw .dll files to installation directories with
@@ -418,8 +480,9 @@ endif
 $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc --no-sim \
-	     --release-name $(RELEASE) --host $(WINDOWS_TRIPLET) --no-system-expat \
+	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc \
+	     --release-name "$(RELEASE)" \
+	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_DIR_WIN),arc-elf32)
 	touch $@
@@ -428,18 +491,39 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built
 	# Install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian --no-sim \
-	     --release-name $(RELEASE) --host $(WINDOWS_TRIPLET) --no-system-expat \
+	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian \
+	     --release-name "$(RELEASE)" \
+	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
 	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_DIR_WIN),arceb-elf32)
 	touch $@
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
-	$(call create_tar,$(TOOLS_ELFLE_DIR_WIN))
+	$(call create_windows_tar,$(TOOLS_ELFLE_DIR_WIN))
 	touch $@
 
 $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
-	$(call create_tar,$(TOOLS_ELFBE_DIR_WIN))
+	$(call create_windows_tar,$(TOOLS_ELFBE_DIR_WIN))
+	touch $@
+
+
+#
+# Native toolchain build
+#
+$O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built
+	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/bin):$$PATH \
+	     ./build-all.sh $(BUILDALLFLAGS) \
+	     --no-elf32 \
+	     --cpu archs \
+	     --release-name "$(RELEASE)" \
+	     --host arc-snps-linux-uclibc \
+	     --native \
+	     --no-system-expat \
+	     --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_NATIVE)
+	touch $@
+
+$O/.stamp_linux_le_hs_native_tarball: $O/.stamp_linux_le_hs_native_built
+	$(call create_tar,$(TOOLS_LINUXLE_HS_DIR_NATIVE))
 	touch $@
 
 #
@@ -471,7 +555,7 @@ $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_ZI
 	touch $@
 
 $O/.stamp_ide_linux_tar: \
-	$O/$(OOCD_DIR_LINUX)/bin/openocd \
+	$O/$(OOCD_DIR_LINUX)$(TAR_EXT) \
 	$O/.stamp_ide_linux_eclipse \
 	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
 	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
@@ -492,43 +576,119 @@ endif
 #
 ifeq ($(ENABLE_OPENOCD),y)
 
-openocd: $(OOCD_SRC_DIR_LINUX)/src/openocd
-openocd-bootstrap: $(OOCD_SRC_DIR_LINUX)/configure
-openocd-configure: $(OOCD_SRC_DIR_LINUX)/Makefile
-openocd-build: $(OOCD_SRC_DIR_LINUX)/src/openocd
-openocd-install: $(OOCD_DIR_LINUX)/bin/openocd
-openocd-tar: $O/$(OOCD_DIR_LINUX).tar.gz
-openocd: openocd-tar
+.PHONY: openocd-linux
+openocd-linux: $O/$(OOCD_DIR_LINUX)$(TAR_EXT)
 
-$(OOCD_SRC_DIR_LINUX)/configure:
-	cd $(OOCD_SRC_DIR_LINUX) && ./bootstrap
+DIRS += $(OOCD_BUILD_DIR_LINUX)
 
-$(OOCD_SRC_DIR_LINUX)/Makefile: $(OOCD_SRC_DIR_LINUX)/configure
-	cd $(OOCD_SRC_DIR_LINUX) && ./configure --enable-ftdi --disable-werror \
+
+# Bootstrap is common to Linux and Windows.
+$(OOCD_SRC_DIR)/configure:
+	cd $(OOCD_SRC_DIR) && ./bootstrap
+
+
+# Configure OpenOCD
+$(OOCD_BUILD_DIR_LINUX)/Makefile: $(OOCD_SRC_DIR)/configure \
+    | $(OOCD_BUILD_DIR_LINUX)
+	cd $(OOCD_BUILD_DIR_LINUX) && $(OOCD_SRC_DIR)/configure \
+	    --enable-ftdi --disable-werror \
 	    --prefix=$(abspath $O/$(OOCD_DIR_LINUX))
 
-$(OOCD_SRC_DIR_LINUX)/src/openocd: $(OOCD_SRC_DIR_LINUX)/Makefile
-	$(MAKE) -C $(OOCD_SRC_DIR_LINUX) all pdf
 
-$O/$(OOCD_DIR_LINUX)/bin/openocd: $(OOCD_SRC_DIR_LINUX)/src/openocd
-	$(MAKE) -C $(OOCD_SRC_DIR_LINUX) install install-pdf
+# Build OpenOCD
+define OOCD_BUILD_CMD
+	$(MAKE) -C $(OOCD_BUILD_DIR_$1) all pdf
+endef
 
-$O/$(OOCD_DIR_LINUX).tar.gz: $O/$(OOCD_DIR_LINUX)/bin/openocd
-	tar -C $O -caf $O/$(OOCD_DIR_LINUX).tar.gz $(OOCD_DIR_LINUX)/
+$(OOCD_BUILD_DIR_LINUX)/src/openocd: $(OOCD_BUILD_DIR_LINUX)/Makefile
+	$(call OOCD_BUILD_CMD,LINUX)
 
-# Make OpenOCD for Windows zip file.
-openocd-win: $O/$(OOCD_DIR_WIN).zip $O/$(OOCD_DIR_WIN).tar.gz
 
-#  Tarball is an order-only dependency, because untarred directory will
-#  preserve original timestamps, therefore it would be _older_ then the
-#  tarball, thus each time make would try to untar it again.
-$O/$(OOCD_DIR_WIN): | $O/$(OOCD_DIR_WIN)$(TAR_EXT)
-	tar -C $(dir $@) -xaf $|
+# Instal OpenOCD
+define OOCD_INSTALL_CMD
+	$(MAKE) -C $(OOCD_BUILD_DIR_$1) install install-pdf
+endef
 
-$O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)
-	cd $O && zip -q -r $(notdir $@) $(OOCD_DIR_WIN)/
+$O/$(OOCD_DIR_LINUX)/bin/openocd: $(OOCD_BUILD_DIR_LINUX)/src/openocd
+	$(call OOCD_INSTALL_CMD,LINUX)
 
-endif
+
+# Tarball for OpenOCD
+$O/$(OOCD_DIR_LINUX)$(TAR_EXT): $O/$(OOCD_DIR_LINUX)/bin/openocd
+	$(call create_tar,$(OOCD_DIR_LINUX))
+
+#
+# OpenOCD for Windows
+#
+ifeq ($(ENABLE_OPENOCD_WIN),y)
+
+.PHONY: openocd-win
+openocd-win: $O/$(OOCD_DIR_WIN)$(TAR_EXT) $O/$(OOCD_DIR_WIN).zip
+
+DIRS += $(OOCD_BUILD_DIR_WIN)
+
+#
+# Libusb for Windows
+#
+$(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2:
+	wget -O $@ 'http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2?r=&use_mirror='
+
+
+$(BUILD_DIR)/libusb_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
+	tar -C $(BUILD_DIR) -xaf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_src/'
+
+
+# It looks like that libusb Makefile is not parallel-friendly, it fails with error
+# 	mv: cannot stat `.deps/libusb_1_0_la-core.Tpo': No such file or directory
+# in parallel build, therefore we have to force sequential build on it.
+.PHONY: libusb-install
+libusb-install: $(BUILD_DIR)/libusb_install/lib/libusb-1.0.a
+$(BUILD_DIR)/libusb_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_src
+	cd $< && \
+	./configure --host=$(WINDOWS_TRIPLET) --disable-shared --enable-static \
+		--prefix=$(abspath $(BUILD_DIR)/libusb_install)
+	$(MAKE) -C $< -j1
+	$(MAKE) -C $< install
+
+
+# Configure OpenOCD for Windows.
+$(OOCD_BUILD_DIR_WIN)/Makefile: $(OOCD_SRC_DIR)/configure
+$(OOCD_BUILD_DIR_WIN)/Makefile: $(BUILD_DIR)/libusb_install/lib/libusb-1.0.a
+$(OOCD_BUILD_DIR_WIN)/Makefile: | $(OOCD_BUILD_DIR_WIN)
+
+$(OOCD_BUILD_DIR_WIN)/Makefile:
+	cd $(OOCD_BUILD_DIR_WIN) && \
+	PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_install)/lib/pkgconfig \
+	$(OOCD_SRC_DIR)/configure \
+	    --enable-ftdi --disable-werror \
+	    --disable-shared --enable-static \
+	    --host=$(WINDOWS_TRIPLET) \
+	    PKG_CONFIG=pkg-config \
+	    --prefix=$(abspath $O/$(OOCD_DIR_WIN))
+
+
+# Build OpenOCD for Windows.
+$(OOCD_BUILD_DIR_WIN)/src/openocd.exe: $(OOCD_BUILD_DIR_WIN)/Makefile
+	$(call OOCD_BUILD_CMD,WIN)
+
+
+# Install OpenOCD for Windows.
+$O/$(OOCD_DIR_WIN)/bin/openocd.exe: $(OOCD_BUILD_DIR_WIN)/src/openocd.exe
+	$(call OOCD_INSTALL_CMD,WIN)
+
+
+# Create tarball for OpenOCD for Windwos.
+$O/$(OOCD_DIR_WIN)$(TAR_EXT): $O/$(OOCD_DIR_WIN)/bin/openocd.exe
+	$(call create_tar,$(OOCD_DIR_WIN))
+
+
+# Create zip for OpenOCD for Windows.
+$O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)/bin/openocd.exe
+	$(call create_zip,$(OOCD_DIR_WIN))
+
+endif # ifeq ($(ENABLE_OPENOCD_WIN),y)
+
+endif # ifeq ($(ENABLE_OPENOCD),y)
 
 
 #
@@ -579,15 +739,15 @@ endif
 create-tag:
 	./tag-release.sh $(RELEASE_TAG)
 	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
-	$(GIT) --git-dir=$(OOCD_SRC_DIR_LINUX)/.git checkout arc-0.9-dev-$(RELEASE)
-	$(GIT) --git-dir=$(OOCD_SRC_DIR_LINUX)/.git tag $(RELEASE_TAG)
+	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git checkout arc-0.9-dev-$(RELEASE_BRANCH)
+	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git tag $(RELEASE_TAG)
 
 #
 # Push tag
 #
 push-tag:
 	./push-release.sh $(RELEASE_TAG)
-	$(GIT) --git-dir=$(OOCD_SRC_DIR_LINUX)/.git push origin $(RELEASE_TAG)
+	$(GIT) --git-dir=$(OOCD_SRC_DIR)/.git push origin $(RELEASE_TAG)
 
 #
 # Deploy to shared file system
@@ -597,7 +757,7 @@ deploy: $O/$(MD5SUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
 ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
-	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE_TAG:arc-%=%)
+	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE)
 
 
 #

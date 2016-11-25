@@ -1,0 +1,47 @@
+# Copyright (C) 2016 Synopsys Inc.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Returns string value of multilib options. Function returns
+# empty string if ARC_MULTILIB_OPTIONS is not set.
+proc arc_get_multilib_options {} {
+    global env
+
+    if { [info exists env(ARC_MULTILIB_OPTIONS)] } {
+	if { [regexp "^-m" $env(ARC_MULTILIB_OPTIONS)] || \
+	    [string length [string trim $env(ARC_MULTILIB_OPTIONS)]] == 0 } {
+	    return $env(ARC_MULTILIB_OPTIONS)
+	} else {
+	    return "-m$env(ARC_MULTILIB_OPTIONS)"
+	}
+    } else {
+	return ""
+    }
+}
+
+proc arc_get_cflags {} {
+    global env
+
+    set xcflags {}
+
+    # Use cflags instead ldflags because lto tests of ld testsuite ignore
+    # ldflags
+    if { ![info exists env(ARC_HOSTLINK_LIBRARY)] } {
+        lappend xcflags --specs=nsim.specs
+    }
+    lappend xcflags [arc_get_multilib_options]
+    return [join $xcflags]
+}
+
+# vim: noexpandtab sts=4 ts=8:

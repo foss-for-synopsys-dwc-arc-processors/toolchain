@@ -28,6 +28,8 @@ set rootme	    "."
 set tmpdir	    "."
 set CFLAGS	    ""
 set CXXFLAGS	    ""
+set HOSTCXX	    ""
+set HOSTCXXFLAGS    ""
 set SIM		    "${arc_exec_prefix}-run"
 set GDB		    "${arc_exec_prefix}-gdb"
 # Binutils
@@ -71,3 +73,20 @@ switch $tool {
 	}
     }
 }
+
+if { [info exists env(ARC_GCC_COMPAT_SUITE)] } {
+    set is_gcc_compat_suite "$env(ARC_GCC_COMPAT_SUITE)"
+} else {
+    set is_gcc_compat_suite "0"
+}
+
+# Configure DejaGnu for testing compatibility between GNU and MetaWare compilers.
+if { $is_gcc_compat_suite == "1" } {
+    set ALT_CC_UNDER_TEST	"$env(GCC_COMPAT_CCAC_PATH)"
+    set ALT_CXX_UNDER_TEST	"$ALT_CC_UNDER_TEST"
+    set COMPAT_OPTIONS		[list [list "$env(GCC_COMPAT_GCC_OPTIONS)" "$env(GCC_COMPAT_CCAC_OPTIONS)"]]
+    # Disable tests with packed structures to avoid unaligned access errors.
+    set COMPAT_SKIPS		[list {ATTRIBUTE}]
+}
+
+# vim: noexpandtab sts=4 ts=8:

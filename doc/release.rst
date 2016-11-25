@@ -15,19 +15,19 @@ of the work. List of prerequisites to build toolchain is list in toolchain
 for Windows hosts, in addition to those that are required to build toolchain for
 Linux hosts. To build IDE distributables, both for Windows and for Linux, a zip
 file with Eclipse CDT plugins for ARC is required (see
-:envvar:`IDE_PLUGIN_LOCATION`). To create Windows installer a distributable of
-OpenOCD for Windwos is required (see :envvar:`OPENOCD_WINDOWS_LOCATION`) and
-several MinGW and MSYS components are required (path set by
+:envvar:`IDE_PLUGIN_LOCATION`). To create Windows installer several MinGW and
+MSYS components are required (path set by
 :envvar:`THIRD_PARTY_SOFTWARE_LOCATION`). For a list of MinGW and MSYS packages,
 please refer to `windows-installer/README.md` section "Prerequisites".
 
-Currently ``release.mk`` doesn't properly support ability to select particular
-release packages to build, so, for example, it is not possible to select that
-only toolchain for Linux distributalbes are required. While it is possible to
-invoke particular Make targets directly to get only a limited set of
-distributales, it is not possible to make further targets like :option:`deploy`
-or :option:`upload` to use only this limited set of files (there is always an
-option to modify ``release.mk`` to get desired results).
+There are several variables that can be set to disable particular components,
+like Windows installer or OpenOCD, however those are not specifically tested, so
+may not really work. By default ``release.mk`` will build all of the possible
+components.  It is also possible to invoke particular Make targets directly to
+get only a limited set of distributales, however it is not possible to make
+further targets like :option:`deploy` or :option:`upload` to use only this
+limited set of files (there is always an option to modify ``release.mk`` to get
+desired results).
 
 
 Building Prerequisites
@@ -49,46 +49,27 @@ Create and push respective git tag::
     $ popd
 
 
-OpenOCD for Windows
-^^^^^^^^^^^^^^^^^^^
-
-OpenOCD for Windows cannot be linked with MinGW tools from EPEL, instead they
-should be built on Ubuntu::
-
-    $ sudo apt-get install libtool git-core build-essential autoconf automake \
-      texinfo texlive pkg-config gcc-mingw-w64
-    $ mkdir openocd_build
-    $ cd openocd_build
-
-Copy here extracted FTD2xx drivers, like::
-
-    $ mv ~/tmp/CDM\ v2.12.00\ WHQL\ Certified/ ftd2xx
-
-Get Makefile.openocd from toolchain repository::
-
-    $ wget https://raw.githubusercontent.com/foss-for-synopsys-dwc-arc-processors/toolchain/arc-dev/windows-installer/Makefile.openocd
-
-Get source and checkout to tag::
-
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/openocd.git
-    $ pushd openocd
-    $ git checkout arc-2016.03
-    $ popd
-
-Build. :envvar:`INSTALL_DIR` is a destination where OpenOCD for Windows will be
-installed::
-
-    $ make -f Makefile.openocd \
-      INSTALL_DIR=/media/sf_akolesov/pub/arc_gnu_2016.03_openocd_win_install
-
-
 Environment Variables
 ---------------------
+
+Those are make variables which can be set either as a parameters to make, like
+``make PARAM=VALUE`` or they can be specified in the ``release.config`` file
+that will be sourced by ``release.mk``.
+
+.. envvar:: CONFIG_STATIC_TOOLCHAIN
+
+   Whether to build toolchain linked dynamically or statically. Note this
+   affects the toolchain executable files, not the target libraries.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``n``
 
 .. envvar:: DEPLOY_DESTINATION
 
    Where to copy release distributables. Location is in format
-   ``[hostname:]/path``. A directory named ``$(RELEASE_TAG:arc-%=%)`` will be
+   ``[hostname:]/path``. A directory named ``${RELEASE_TAG##-arc}`` will be
    created in the target path and will contain all deploy artifacts. So for
    ``RELEASE_TAG = arc-2016.03-alpha1`` directory will be ``2016.03-alpha1``, while
    for ``RELEASE_TAG = arc-2016.03`` it will be ``2016.03``.
@@ -104,18 +85,43 @@ Environment Variables
    Default value
       ``y``
 
+
+.. envvar:: ENABLE_NATIVE_TOOLS
+
+   Whether to build and upload native toolchain. Currently toolchain is built
+   only for ARC HS Linux.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_OPENOCD
 
-   Whether to build and upload OpenOCD distributable package. IDE targets will
-   not work if OpenOCD is disabled. Therefore if this is ``n``, then
-   :envvar:``ENABLE_IDE`` and :envvar:`ENABLE_WINDOWS_INSTALLER`` also must be
-   ``n``.
+   Whether to build and upload OpenOCD distributable package for Linux. IDE
+   targets will not work if OpenOCD is disabled. Therefore if this is ``n``,
+   then :envvar:``ENABLE_IDE`` and :envvar:`ENABLE_WINDOWS_INSTALLER`` also must
+   be ``n``.
 
    Possible values:
       ``y`` and ``n``
 
    Default value:
       ``y``
+
+.. envvar:: ENABLE_OPENOCD_WIN
+
+   Whether to build and upload OpenOCD for Windows. This target currently
+   depends on :envvar:`ENABLE_OPENOCD`, which causes source code to be cloned
+   for OpenOCD. OpenOCD for Windows build will download and build libusb library
+   and is a prerequisite for IDE for Windows build.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
 
 .. envvar:: ENABLE_WINDOWS_INSTALLER
 
@@ -142,20 +148,25 @@ Environment Variables
 .. envvar:: IDE_PLUGIN_LOCATION
 
    Location of ARC plugin for Eclipse. This must be a directory and plugin file
-   must have a name ``arc_gnu_${RELEASE}_ide_plugin.zip``. File will be copied
-   with rsync therefore location may be prefixed with hostname separated by
-   semicolon, as in ``host:/path``.
+   must have a name ``arc_gnu_${RELEASE_TAG##arc-}_ide_plugin.zip``. File will
+   be copied with rsync therefore location may be prefixed with hostname
+   separated by semicolon, as in ``host:/path``.
+
+
+.. envvar:: LIBUSB_VERSION
+
+   Version of Libusb used for OpenOCD build for Windows.
+
+   Default value
+      1.0.20
+
 
 .. envvar:: OPENOCD_WINDOWS_LOCATION
 
    Location of OpenOCD build for Windows. Similar to
    :envvar:`IDE_PLUGIN_LOCATION` that must be a directory with name of format
-   ``arc_gnu_${RELEASE}_opencd_win_install``.
+   ``arc_gnu_${RELEASE_TAG##arc-}_opencd_win_install``.
 
-.. envvar:: RELEASE
-
-   Specifies toolchain release. Can be any string, for example 2016.03,
-   2015.12, etc.
 
 .. envvar:: RELEASE_NAME
 
@@ -164,14 +175,22 @@ Environment Variables
 .. envvar:: RELEASE_TAG
 
    Git tag for this release. Tag is used literaly and can be for example,
-   arc-2016.03-alpha1. Note that in Synopsys release candidates are created to
-   become release, therefore for 2016.03 RC1 value of :envvar:`RELEASE` is
-   ``2016.03``, while value of :envvar:`RELEASE_TAG` is ``arc-2016.03-rc1``.
+   arc-2016.03-alpha1.
+
 
 .. envvar:: THIRD_PARTY_SOFTWARE_LOCATION
 
    Location of 3rd party software, namely Java Runtime Environment (JRE) and
    Eclipse tarballs.
+
+
+.. envvar:: WINDOWS_TRIPLET
+
+   Triplet of MinGW toolchain to do a cross-build of toolchain for Windows.
+
+   Default value
+      i686-w64-mingw32
+
 
 .. envvar:: WINDOWS_WORKSPACE
 
@@ -198,7 +217,7 @@ Make targets
    * Windows installer - created on Windows hosts. This tasks would depend on
      toolchain created by :option:`build` target.
 
-   This target is affected by :envvar:`RELEASE`.
+   This target is affected by :envvar:`RELEASE_TAG`.
 
 .. option:: copy-windows-installer
 
@@ -208,8 +227,10 @@ Make targets
 .. option:: create-tag
 
    Create Git tags for released components. Required environment variables:
-   :envvar:`RELEASE`, :envvar:`RELEASE_NAME`. OpenOCD must have a branch named
-   ``arc-0.9-dev-${RELEASE}``.
+   :envvar:`RELEASE_TAG`, :envvar:`RELEASE_NAME`. OpenOCD must have a branch
+   named ``arc-0.9-dev-${RELEASE_BRANCH}``, where ``RELEASE_BRANCH`` is a bare
+   release, evaluated from the tag, so for :envvar:`RELEASE_TAG` of
+   ``arc-2016.09-eng003``, ``RELEASE_BRANCH`` would be ``2016.09``.
 
 .. option:: deploy
 
@@ -227,7 +248,7 @@ Make targets
 
    Clone sources of toolchain components from GitHub. Copy external components
    from specified locations. Is affected by following environment variables:
-   :envvar:`RELEASE`, :envvar:`GIT_REFERENCE_ROOT` (optional),
+   :envvar:`RELEASE_TAG`, :envvar:`GIT_REFERENCE_ROOT` (optional),
    :envvar:`IDE_PLUGIN_LOCATION`, :envvar:`OPENOCD_WINDOWS_LOCATION`,
    :envvar:`THIRD_PARTY_SOFTWARE_LOCATION`.
 
@@ -280,7 +301,6 @@ First setup required make variables in the ``release.config`` file that will be
 sourced by ``release.mk`` (``...`` must be replaced with an actual paths)::
 
     $ cat release.config
-    RELEASE=2016.03
     RELEASE_TAG=arc-2016.03
     IDE_PLUGIN_LOCATION=...
     OPENOCD_WINDOWS_LOCATION=...
@@ -309,7 +329,7 @@ Windows host on which installer will be built. ::
 On Windows host, build installer using ``windows-installer/build-installer.sh``
 script. Note that this script requires a basic cygwin environment. ::
 
-    $ RELEASE=2016.03 toolchain/windows-installer/build-installer.sh
+    $ RELEASE_BRANCH=2016.03 toolchain/windows-installer/build-installer.sh
 
 Copy Windows installer from :envvar:`WINDOWS_WORKSPACE` into
 ``release_output``::
