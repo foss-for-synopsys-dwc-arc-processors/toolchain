@@ -111,7 +111,8 @@ the toolchain. These should be peers of this `toolchain` directory.
         https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
-    $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+    $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
+		linux
 
 The binutils and gdb share the same repository, but must be in separate
 directories, because they use different branches. Option `--reference` passed

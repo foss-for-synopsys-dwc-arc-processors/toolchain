@@ -186,7 +186,7 @@ fi
 # started to cause build issues. As a result it is required to disable them
 # explicitly - otherwise either there would a build failure or a bunch of
 # useless but large files.
-if [ $IS_CROSS_COMPILING ]; then
+if [ $IS_CROSS_COMPILING = yes ]; then
     pch_opt=--disable-libstdcxx-pch
 else
     pch_opt=
@@ -378,7 +378,7 @@ fi
 # Similar to ARC Linux targets, on Windows there are issues with exceptions when
 # GDB is compiled as a C++ applications, so as a temporary measure disable C++
 # when doing canadian cross.
-if [ $IS_CROSS_COMPILING ]; then
+if [ $IS_CROSS_COMPILING = yes ]; then
     cxx_build=--disable-build-with-cxx
 else
     cxx_build=
