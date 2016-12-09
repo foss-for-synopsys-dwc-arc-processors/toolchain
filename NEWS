@@ -18,6 +18,9 @@ generator) version [[1.0.53]] and later.
 New Features and Enhancements
 -----------------------------
 
+* Toolchain Build  Scripts
+	* Removed obsolete unsupported scripts.
+
 [[TBD]]
 
 Bugs Fixed in This Release (Summary)
