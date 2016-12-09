@@ -1,3 +1,31 @@
+Major Changes in 2017.03 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* Binutils [[2.27+ (upstream commit decf5bd and ARC patches)]]
+* GCC [[6.2.1 (upstream commit e061fbe and ARC patches)]]
+* GDB [[7.12 (upstream commit 5f8cf6c and ARC patches)]]
+* newlib [[2.4 (upstream commit e6413b0 and ARC patches)]]
+* uclibc-ng [[1.0.17 (plus few ARC patches)]]
+* Eclipse [[Mars (4.5.1) with CDT 8.8.0]]
+* OpenOCD [[0.9+ upstream commit 30203b3d8b]], with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
+generator) version [[1.0.53]] and later.
+
+New Features and Enhancements
+-----------------------------
+
+[[TBD]]
+
+Bugs Fixed in This Release (Summary)
+------------------------------------
+
+[[TBD]]
+
+
 Major Changes in 2016.09 Release
 ================================
 
