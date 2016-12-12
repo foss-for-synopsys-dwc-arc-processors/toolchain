@@ -30,6 +30,8 @@ if [ -z "$RELEASE_TAG" ]; then
 fi
 
 RELEASE=$(cut -d- -f2- <<< $RELEASE_TAG)
+# Strip `-release` from the name.
+RELEASE=${RELEASE%-release}
 RELEASE_BRANCH=$(cut -d- -f2 <<< $RELEASE_TAG)
 
 rm -rf tmp *.nsi *.nsh *.bmp

@@ -127,11 +127,11 @@ the valid `-b <branch>` option so that Git will fetch a state of required
 branch or a tag. If branch is used, then current branches can be found in the
 config/arc-dev.sh file, which at the moment of this writing are:
 
-* binutils - arc-2016.09
+* binutils - arc-2017.03
 * gcc - arc-6.x-dev
 * gdb - arc-2016.09-gdb
-* newlib - arc-2016.09
-* uClibc - arc-2016.09
+* newlib - arc-2017.03
+* uClibc - arc-2017.03
 * Linux - linux-4.8.y
 
 Note, however that if `build-all.sh` will try to checkout repositories to their

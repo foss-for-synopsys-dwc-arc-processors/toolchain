@@ -35,6 +35,16 @@ proc arc_get_cflags {} {
     global tool
     global board
 
+    # Quick exit if this is a gcc.dg/compat testsuite. Return value of
+    # arc_get_cflags would be passed to both compilers in this testsuite, so
+    # that will cause compilation errors in Metaware due to unknown options.
+    # Instead all options should be specified via COMPAT_OPTIONS varibles in
+    # site.exp.
+    if { [board_info $board exists arc,is_gcc_compat_suite] &&
+	[string is true -strict [board_info $board arc,is_gcc_compat_suite]] } {
+	return ""
+    }
+
     set cflags {}
 
     # Use cflags instead ldflags because lto tests of ld testsuite ignore

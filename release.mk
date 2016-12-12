@@ -220,6 +220,7 @@ TOOLS_LINUXLE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_linu
 TOOLS_LINUXBE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_linux_install
 TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_linux_install
 TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_linux_install
+TOOLS_LINUXLE_HS38FPU_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_linux_install
 ARC_LINUX_TRIPLET := arc-snps-linux-uclibc
 
 # Toolchain: native linux toolchain
@@ -503,13 +504,25 @@ $O/.stamp_linux_le_700_built: $(TOOLS_ALL_DEPS-y)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_700_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $(TOOLS_ALL_DEPS-y)
+# Toolchain built with -mcpu=hs38_linux. This toolchain is never deistributed
+# itself, instead it's sysroot is copied into standard hs38 toolchain.
+$O/.stamp_linux_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y)
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS38FPU_DIR_LINUX) \
+	    --release-name "$(RELEASE)" \
+	    --cpu hs38_linux \
+	    --no-elf32
+	touch $@
+
+$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_linux_le_hs38fpu_built \
+    $(TOOLS_ALL_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38 \
 	    --no-elf32
 	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
+	cp -al $O/$(TOOLS_LINUXLE_HS38FPU_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-hs38_linux
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_DIR_LINUX))
 	touch $@
 
