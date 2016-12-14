@@ -56,6 +56,7 @@
 #                  [--optsize-newlib | --no-optsize-newlib]
 #                  [--optsize-libstdc++ | --no-optsize-libstdc++]
 #                  [--native | --no-native]
+#                  [--uclibc-build-in-src-tree]
 
 # --source-dir <source_dir>
 
@@ -340,6 +341,10 @@
 #    ARC Linux or it is a cross-toolchain, that would run on other host but
 #    would compile for ARC. Makes sense only for uClibc/Linux toolchain.
 
+# --uclibc-build-in-src-tree
+
+#    Whether to build uClibc inside of its the source tree default is NO.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -416,6 +421,7 @@ DO_STRIP_TARGET_LIBRARIES=no
 BUILD_OPTSIZE_NEWLIB=yes
 BUILD_OPTSIZE_LIBSTDCXX=yes
 IS_NATIVE=no
+UCLIBC_IN_SRC_TREE=no
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -671,6 +677,10 @@ case ${opt} in
 	IS_NATIVE=no
 	;;
 
+    --uclibc-build-in-src-tree)
+	UCLIBC_IN_SRC_TREE=yes
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -710,6 +720,7 @@ case ${opt} in
 	echo "                      [--optsize-newlib | --no-optsize-newlib]"
 	echo "                      [--optsize-libstdc++ | --no-optsize-libstdc++]"
 	echo "                      [--native | --no-native]"
+	echo "                      [--uclibc-build-in-src-tree]"
 	exit 1
 	;;
 
@@ -940,6 +951,7 @@ export BUILD_OPTSIZE_LIBSTDCXX
 export DO_STRIP_TARGET_LIBRARIES
 export IS_CROSS_COMPILING
 export IS_NATIVE
+export UCLIBC_IN_SRC_TREE
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
