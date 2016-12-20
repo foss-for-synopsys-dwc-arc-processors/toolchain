@@ -111,7 +111,7 @@ Compatibility tests
 
 GCC contains a set of compatibility tests named ``compat.exp``. It allows to test compatibility of ARC GNU gcc compiler and proprietary Synopsys MetaWare ccac compiler for ARC EM and ARC HS targets. If you want to run these tests it is necessary to configure additional variables in ``site.exp`` file:
 
-* ``set is_gcc_compat_suite "0"`` - enable support of compatibility tests from
+* ``set is_gcc_compat_suite "1"`` - enable support of compatibility tests from
   gcc.
 * ``set ALT_CC_UNDER_TEST "path/to/ccac"``
 * ``set ALT_CXX_UNDER_TEST "path/to/ccac"``

@@ -99,6 +99,10 @@
 #     Build with threading, thread local storage support and NPTL if this is
 #     set to "yes".
 
+# UCLIBC_IN_SRC_TREE
+
+#    Whether to build uClibc inside the source tree.
+
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
@@ -367,11 +371,15 @@ fi
 echo "Installing uClibc headers ..." | tee -a "${logfile}"
 echo "=============================" >> "${logfile}"
 
-# Create a build directory for uClibc. uClibc doesn't use GNU autotools, so
-# process is different from the rest of the tools.
-mkdir -p $build_dir/uclibc
-# Make command to operate on uClibc.
-MAKE_UCLIBC="make -C $ARC_GNU/uClibc O=$build_dir/uclibc"
+if [ $UCLIBC_IN_SRC_TREE = no ]; then
+    # Create a build directory for uClibc. uClibc doesn't use GNU autotools, so
+    # process is different from the rest of the tools.
+    mkdir -p $build_dir/uclibc
+    # Make command to operate on uClibc.
+    MAKE_UCLIBC="make -C $ARC_GNU/uClibc O=$build_dir/uclibc"
+else
+    MAKE_UCLIBC="make -C $ARC_GNU/uClibc"
+fi
 
 # make will fail if there is yet no .config file, but we can ignore this error.
 $MAKE_UCLIBC distclean >> "$logfile" 2>&1 || true
@@ -383,7 +391,11 @@ $MAKE_UCLIBC distclean >> "$logfile" 2>&1 || true
 # a copy of defconfig, then modify it, then use standard "defconfig" command,
 # then remove temporary file. This looks like an unnecessary complication
 # considering that "olddefconfig" yields same result.
-uc_dot_config=$build_dir/uclibc/.config
+if [ $UCLIBC_IN_SRC_TREE = no ]; then
+    uc_dot_config=$build_dir/uclibc/.config
+else
+    uc_dot_config=$ARC_GNU/uClibc/.config
+fi
 cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} $uc_dot_config
 
 # Patch defconfig with the temporary install directories used.
