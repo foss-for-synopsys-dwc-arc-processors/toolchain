@@ -56,7 +56,7 @@
 #                  [--optsize-newlib | --no-optsize-newlib]
 #                  [--optsize-libstdc++ | --no-optsize-libstdc++]
 #                  [--native | --no-native]
-#                  [--uclibc-build-in-src-tree]
+#                  [--uclibc-build-in-src-tree | --no-uclibc-build-in-src-tree]
 
 # --source-dir <source_dir>
 
@@ -341,9 +341,13 @@
 #    ARC Linux or it is a cross-toolchain, that would run on other host but
 #    would compile for ARC. Makes sense only for uClibc/Linux toolchain.
 
-# --uclibc-build-in-src-tree
+# --uclibc-build-in-src-tree | --no-uclibc-build-in-src-tree
 
-#    Whether to build uClibc inside of its the source tree default is NO.
+#    Whether to build uClibc inside of its the source tree. Default is to build
+#    inside the source tree because out of tree build often triggers a build
+#    failure, because total list of arguments to linker/archiver exceeds
+#    maximum in Linux systems. Building inside of the source tree means that it
+#    is not possible to run multiple concurrent builds from the same tree.
 
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
@@ -421,7 +425,7 @@ DO_STRIP_TARGET_LIBRARIES=no
 BUILD_OPTSIZE_NEWLIB=yes
 BUILD_OPTSIZE_LIBSTDCXX=yes
 IS_NATIVE=no
-UCLIBC_IN_SRC_TREE=no
+UCLIBC_IN_SRC_TREE=yes
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -681,6 +685,10 @@ case ${opt} in
 	UCLIBC_IN_SRC_TREE=yes
 	;;
 
+    --no-uclibc-build-in-src-tree)
+	UCLIBC_IN_SRC_TREE=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -720,7 +728,7 @@ case ${opt} in
 	echo "                      [--optsize-newlib | --no-optsize-newlib]"
 	echo "                      [--optsize-libstdc++ | --no-optsize-libstdc++]"
 	echo "                      [--native | --no-native]"
-	echo "                      [--uclibc-build-in-src-tree]"
+	echo "                      [--uclibc-build-in-src-tree | --no-uclibc-build-in-src-tree]"
 	exit 1
 	;;
 
