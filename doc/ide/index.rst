@@ -51,4 +51,5 @@ Creating and building an application
 .. toctree::
 
    arc-project-templates
+   building-user-guide
    building-linux-uclibc-applications
