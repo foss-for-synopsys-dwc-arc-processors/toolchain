@@ -67,6 +67,7 @@ Debugging
 
    creating-a-debug-configuration
    debugging-with-openocd
+   how-to-use-openocd-on-windows
    debugging-with-opellaxd
    debugging-with-nsim
    debugging-with-custom-gdb-server
