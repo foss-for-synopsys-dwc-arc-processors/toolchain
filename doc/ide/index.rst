@@ -49,6 +49,7 @@ ARC GNU plugins for Eclipse have following requirements to the system:
 Getting Started
 ---------------
 .. toctree::
+   installation
    getting-started-with-em-starter-kit
    getting-started-with-nsim
 
