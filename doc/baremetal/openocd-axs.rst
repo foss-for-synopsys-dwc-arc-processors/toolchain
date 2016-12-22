@@ -88,6 +88,8 @@ For example to build an application for AXS103/HS36::
    +-----+--------+---------------------------------------------------------+
 
 
+.. _openocd-axs-board-configuration:
+
 Board configuration
 -------------------
 
