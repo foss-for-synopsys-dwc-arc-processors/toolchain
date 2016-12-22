@@ -46,6 +46,11 @@ ARC GNU plugins for Eclipse have following requirements to the system:
     your PC. This is required for the Eclipse IDE GDB debugger to successfully
     download and debug programs on the target.
 
+Getting Started
+---------------
+.. toctree::
+   getting-started-with-em-starter-kit
+
 Creating and building an application
 ------------------------------------
 .. toctree::
