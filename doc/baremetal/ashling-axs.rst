@@ -121,6 +121,7 @@ To debug several cores on the AXC00x card simultaneously, start
 additional GDBs and connect to the required TCP ports. Cores are controlled
 independently from each other.
 
+.. _known-issues:
 
 Known issues
 ------------
