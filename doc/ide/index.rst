@@ -63,6 +63,7 @@ Debugging
    debugging-with-opellaxd
    debugging-with-nsim
    debugging-with-custom-gdb-server
+   debugging-with-running-gdb-server
    debugging-a-big-endian-application-on-em-sk
 
 Miscellaneous
