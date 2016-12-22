@@ -50,6 +50,7 @@ Getting Started
 ---------------
 .. toctree::
    getting-started-with-em-starter-kit
+   getting-started-with-nsim
 
 Creating and building an application
 ------------------------------------
@@ -58,6 +59,7 @@ Creating and building an application
    arc-project-templates
    building-user-guide
    building-linux-uclibc-applications
+   how-to-use-custom-toolchain
 
 Debugging
 ---------
@@ -76,3 +78,4 @@ Miscellaneous
 .. toctree::
 
    creating-eclipse-plugins-release-zip-file
+   how-to-run-embarc-project
