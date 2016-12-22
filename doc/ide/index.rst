@@ -59,3 +59,10 @@ Debugging
 .. toctree::
 
    creating-a-debug-configuration
+   debugging-a-big-endian-application-on-em-sk
+
+Miscellaneous
+-------------
+.. toctree::
+
+   creating-eclipse-plugins-release-zip-file
