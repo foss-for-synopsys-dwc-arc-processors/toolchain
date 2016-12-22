@@ -59,6 +59,7 @@ Debugging
 .. toctree::
 
    creating-a-debug-configuration
+   debugging-with-custom-gdb-server
    debugging-a-big-endian-application-on-em-sk
 
 Miscellaneous
