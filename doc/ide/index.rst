@@ -59,6 +59,7 @@ Debugging
 .. toctree::
 
    creating-a-debug-configuration
+   debugging-with-openocd
    debugging-with-opellaxd
    debugging-with-nsim
    debugging-with-custom-gdb-server
