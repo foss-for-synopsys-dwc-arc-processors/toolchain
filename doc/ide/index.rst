@@ -53,3 +53,9 @@ Creating and building an application
    arc-project-templates
    building-user-guide
    building-linux-uclibc-applications
+
+Debugging
+---------
+.. toctree::
+
+   creating-a-debug-configuration
