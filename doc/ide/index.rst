@@ -66,6 +66,7 @@ Debugging
 ---------
 .. toctree::
 
+   using-debug-perspective
    creating-a-debug-configuration
    debugging-with-openocd
    how-to-use-openocd-on-windows

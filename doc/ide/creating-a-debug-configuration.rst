@@ -54,6 +54,7 @@ and their settings see pages
    press **Apply** button, then close and open the dialog again. After that all
    the necessary fields become visible.
 
+.. _setting-a-com-port:
 
 Setting a COM port
 ------------------
