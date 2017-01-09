@@ -214,10 +214,12 @@ latex_elements = {
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-#'preamble': '',
+# Increase limitations on the number of floats.
+'preamble': '\usepackage{morefloats}',
+'preamble': '\usepackage{float}',
 
 # Latex figure (float) alignment
-#'figure_align': 'htbp',
+'figure_align': 'H',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
