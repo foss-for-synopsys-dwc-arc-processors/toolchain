@@ -38,7 +38,7 @@ git="git"
 def git_command(*args):
     a = [git, git_dir]
     a.extend(args)
-    return subprocess.check_output(a, universal_newlines=True)
+    return subprocess.run(a, check=True, stdout=subprocess.PIPE, universal_newlines=True).stdout
 
 for repo in repos:
     git_dir = "--git-dir=" + os.path.join(args.src_dir, repo, ".git")
