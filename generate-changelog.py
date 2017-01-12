@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
+import locale
 import os.path
 import subprocess
 import sys
 import re
+
+locale.setlocale(locale.LC_ALL, "en_US.utf-8")
 
 parser = argparse.ArgumentParser(
         description="Generate a changelog for an engineering build or RC of ARC GNU Toolchain.")
