@@ -113,6 +113,8 @@ CP = rsync -a
 GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
 SSH = ssh
+WGET = wget
+WGETFLAGS += -nv
 
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
 # RELEASE in this case would be 2016.09-rc1. However remove -release suffix
@@ -634,7 +636,7 @@ BUILDROOT_AXS103_MAKEFLAGS = -C $(BUILDROOT_SRC_DIR) \
 
 # Download Buildroot
 $(BUILD_DIR)/$(BUILDROOT_TAR):
-	wget -nv -O $@ $(BUILDROOT_URL)
+	$(WGET) $(WGETFLAGS) -O $@ $(BUILDROOT_URL)
 
 # Prepare Buildroot source directory
 $(BUILDROOT_SRC_DIR): $(BUILD_DIR)/$(BUILDROOT_TAR) | $(BUILD_DIR)
@@ -695,10 +697,10 @@ $O/.stamp_linux_le_hs_native_tarball: $O/.stamp_linux_le_hs_native_built
 ifeq ($(ENABLE_IDE),y)
 
 $O/$(ECLIPSE_VANILLA_TGZ_LINUX):
-	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_TGZ_LINUX)&r=1'
+	$(WGET) $(WGETFLAGS) -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_TGZ_LINUX)&r=1'
 
 $O/$(ECLIPSE_VANILLA_ZIP_WIN):
-	wget -nv -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_ZIP_WIN)&r=1'
+	$(WGET) $(WGETFLAGS) -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_ZIP_WIN)&r=1'
 
 # Install ARC plugins from .zip file and install prerequisites in Eclipse.
 # Similar invocation is in windows/build-release.sh. Those invocations must be
@@ -794,7 +796,7 @@ DIRS += $(OOCD_BUILD_DIR_WIN)
 # Libusb for Windows
 #
 $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2:
-	wget -O $@ 'http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2?r=&use_mirror='
+	$(WGET) $(WGETFLAGS) -O $@ 'http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2?r=&use_mirror='
 
 
 $(BUILD_DIR)/libusb_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
