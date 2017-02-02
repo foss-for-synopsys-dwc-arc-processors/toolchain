@@ -114,7 +114,8 @@ GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
 SSH = ssh
 WGET = wget
-WGETFLAGS += -nv
+# Always have `-nv`.
+override WGETFLAGS += -nv
 
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
 # RELEASE in this case would be 2016.09-rc1. However remove -release suffix
