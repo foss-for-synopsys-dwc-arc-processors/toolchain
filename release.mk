@@ -621,9 +621,7 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 # Linux
 #
 
-# Latest stable release is 2016.05 ATM, but it doesn't support Linux 4.7, which
-# is required for this toolchain.
-BUILDROOT_VERSION = 2016.08-rc2
+BUILDROOT_VERSION = 2016.11.2
 BUILDROOT_TAR = buildroot-$(BUILDROOT_VERSION).tar.bz2
 BUILDROOT_URL = https://buildroot.org/downloads/$(BUILDROOT_TAR)
 BUILDROOT_SRC_DIR = $(BUILD_DIR)/buildroot
