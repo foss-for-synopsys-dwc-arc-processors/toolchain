@@ -530,7 +530,7 @@ build_expat() {
     expat_tar=expat-${expat_version}.tar.gz
     if [ ! -s $1/$expat_tar ]; then
 	$WGET -O $1/$expat_tar \
-	  "http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download?use_mirror=kent"
+	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
     fi
 
     build_dir_init expat
