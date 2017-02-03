@@ -795,8 +795,7 @@ DIRS += $(OOCD_BUILD_DIR_WIN)
 # Libusb for Windows
 #
 $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2:
-	$(WGET) $(WGETFLAGS) -O $@ \
-		'http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2?r=&use_mirror=kent'
+	$(WGET) $(WGETFLAGS) -O $@ 'http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2?r=&use_mirror='
 
 
 $(BUILD_DIR)/libusb_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
