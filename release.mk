@@ -423,12 +423,10 @@ endif
 	# Copy IDE plugin
 	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
 
-	# Copy JRE. Original tarballs from Oracle do not have .tar in filenames.
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_LINUX:.tar.gz=.gz) \
-	    $O/$(JRE_TGZ_LINUX)
+	# Copy JRE.
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_LINUX) $O/$(JRE_TGZ_LINUX)
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_WIN:.tar.gz=.gz) \
-	    $O/$(JRE_TGZ_WIN)
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_WIN) $O/$(JRE_TGZ_WIN)
 endif
 
 	# Copy Eclipse
