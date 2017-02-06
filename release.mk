@@ -73,7 +73,7 @@ GIT_REFERENCE_ROOT :=
 
 IDE_PLUGIN_LOCATION :=
 
-JAVA_VERSION := 8u66
+JAVA_VERSION := 8u121
 
 # libusb is used by the OpenOCD for Windows
 LIBUSB_VERSION := 1.0.20
@@ -114,7 +114,8 @@ GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
 SSH = ssh
 WGET = wget
-WGETFLAGS += -nv
+# Always have `-nv`.
+override WGETFLAGS += -nv
 
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
 # RELEASE in this case would be 2016.09-rc1. However remove -release suffix
@@ -232,7 +233,7 @@ TOOLS_LINUXLE_HS_DIR_NATIVE := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_nativ
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
 
 # IDE: vanilla Eclipse variables
-ECLIPSE_VERSION := mars-1
+ECLIPSE_VERSION := neon-2
 ECLIPSE_VANILLA_ZIP_WIN := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_TGZ_LINUX := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
@@ -422,12 +423,10 @@ endif
 	# Copy IDE plugin
 	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
 
-	# Copy JRE. Original tarballs from Oracle do not have .tar in filenames.
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_LINUX:.tar.gz=.gz) \
-	    $O/$(JRE_TGZ_LINUX)
+	# Copy JRE.
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_LINUX) $O/$(JRE_TGZ_LINUX)
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_WIN:.tar.gz=.gz) \
-	    $O/$(JRE_TGZ_WIN)
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_WIN) $O/$(JRE_TGZ_WIN)
 endif
 
 	# Copy Eclipse
@@ -620,9 +619,7 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 # Linux
 #
 
-# Latest stable release is 2016.05 ATM, but it doesn't support Linux 4.7, which
-# is required for this toolchain.
-BUILDROOT_VERSION = 2016.08-rc2
+BUILDROOT_VERSION = 2016.11.2
 BUILDROOT_TAR = buildroot-$(BUILDROOT_VERSION).tar.bz2
 BUILDROOT_URL = https://buildroot.org/downloads/$(BUILDROOT_TAR)
 BUILDROOT_SRC_DIR = $(BUILD_DIR)/buildroot
