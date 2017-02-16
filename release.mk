@@ -333,7 +333,7 @@ MD5SUM_FILE := md5.sum
 #
 .PHONY: source-tarball elf-le-build elf-be-build elf-le elf-be \
     windows ide openocd-win \
-    openocd openocd-tar openocd-build openocd-install openocd-configure openocd-bootstrap
+    openocd-linux
 
 BUILD_DEPS += \
     $O/.stamp_source_tarball \
@@ -744,13 +744,17 @@ openocd-linux: $O/$(OOCD_DIR_LINUX)$(TAR_EXT)
 DIRS += $(OOCD_BUILD_DIR_LINUX)
 
 
-# Bootstrap is common to Linux and Windows.
-$(OOCD_SRC_DIR)/configure:
-	cd $(OOCD_SRC_DIR) && ./bootstrap
+# Git submodules are common to Linux and Windows.  Note, that this is not a
+# standard approach - typically one should call openocd/bootstrap script that
+# will run autoconf and git sumbodules. But CentOS 6 doesn't have a required
+# version of autoconf, hence it cannot run bootstrap.
+$(OOCD_SRC_DIR)/git2cl:
+	cd $(OOCD_SRC_DIR) && $(GIT) submodule init
+	cd $(OOCD_SRC_DIR) && $(GIT) submodule update
 
 
 # Configure OpenOCD
-$(OOCD_BUILD_DIR_LINUX)/Makefile: $(OOCD_SRC_DIR)/configure \
+$(OOCD_BUILD_DIR_LINUX)/Makefile: $(OOCD_SRC_DIR)/jimtcl \
     | $(OOCD_BUILD_DIR_LINUX)
 	cd $(OOCD_BUILD_DIR_LINUX) && $(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
@@ -814,7 +818,7 @@ $(BUILD_DIR)/libusb_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_src
 
 
 # Configure OpenOCD for Windows.
-$(OOCD_BUILD_DIR_WIN)/Makefile: $(OOCD_SRC_DIR)/configure
+$(OOCD_BUILD_DIR_WIN)/Makefile: $(OOCD_SRC_DIR)/jimtcl
 $(OOCD_BUILD_DIR_WIN)/Makefile: $(BUILD_DIR)/libusb_install/lib/libusb-1.0.a
 $(OOCD_BUILD_DIR_WIN)/Makefile: | $(OOCD_BUILD_DIR_WIN)
 
