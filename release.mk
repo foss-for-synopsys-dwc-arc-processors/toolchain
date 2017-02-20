@@ -73,7 +73,7 @@ GIT_REFERENCE_ROOT :=
 
 IDE_PLUGIN_LOCATION :=
 
-JAVA_VERSION := 8u66
+JAVA_VERSION := 8u121
 
 # libusb is used by the OpenOCD for Windows
 LIBUSB_VERSION := 1.0.20
