@@ -333,7 +333,7 @@ MD5SUM_FILE := md5.sum
 #
 .PHONY: source-tarball elf-le-build elf-be-build elf-le elf-be \
     windows ide openocd-win \
-    openocd openocd-tar openocd-build openocd-install openocd-configure openocd-bootstrap
+    openocd-linux
 
 BUILD_DEPS += \
     $O/.stamp_source_tarball \
@@ -744,16 +744,26 @@ openocd-linux: $O/$(OOCD_DIR_LINUX)$(TAR_EXT)
 DIRS += $(OOCD_BUILD_DIR_LINUX)
 
 
-# Bootstrap is common to Linux and Windows.
-$(OOCD_SRC_DIR)/configure:
-	cd $(OOCD_SRC_DIR) && ./bootstrap
+# Git submodules are common to Linux and Windows.  Note, that this is not a
+# standard approach - typically one should call openocd/bootstrap script that
+# will run autoconf and git sumbodules. But CentOS 6 doesn't have a required
+# version of autoconf, hence it cannot run bootstrap.
+$(OOCD_SRC_DIR)/git2cl:
+	cd $(OOCD_SRC_DIR) && $(GIT) submodule init
+	cd $(OOCD_SRC_DIR) && $(GIT) submodule update
 
 
 # Configure OpenOCD
-$(OOCD_BUILD_DIR_LINUX)/Makefile: $(OOCD_SRC_DIR)/configure \
-    | $(OOCD_BUILD_DIR_LINUX)
-	cd $(OOCD_BUILD_DIR_LINUX) && $(OOCD_SRC_DIR)/configure \
+$(OOCD_BUILD_DIR_LINUX)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_DIR_LINUX)/Makefile: $(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a
+$(OOCD_BUILD_DIR_LINUX)/Makefile: | $(OOCD_BUILD_DIR_LINUX)
+
+$(OOCD_BUILD_DIR_LINUX)/Makefile:
+	cd $(OOCD_BUILD_DIR_LINUX) && \
+		PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_linux_install)/lib/pkgconfig \
+		$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
+	    PKG_CONFIG=pkg-config \
 	    --prefix=$(abspath $O/$(OOCD_DIR_LINUX))
 
 
@@ -792,36 +802,52 @@ DIRS += $(OOCD_BUILD_DIR_WIN)
 #
 # Libusb for Windows
 #
+$(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2: | $(BUILD_DIR)
+
 $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2:
 	$(WGET) $(WGETFLAGS) -O $@ \
 		'http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2?r=&use_mirror=kent'
 
 
-$(BUILD_DIR)/libusb_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
-	tar -C $(BUILD_DIR) -xaf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_src/'
+$(BUILD_DIR)/libusb_linux_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
+	tar -C $(BUILD_DIR) -xaf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_linux_src/'
+
+
+.PHONY: libusb-linux-install
+libusb-linux-install: $(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a
+$(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_linux_src
+	cd $< && \
+	./configure --disable-shared --enable-static \
+		--prefix=$(abspath $(BUILD_DIR)/libusb_linux_install)
+	$(MAKE) -C $< -j1
+	$(MAKE) -C $< install
+
+
+$(BUILD_DIR)/libusb_win_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
+	tar -C $(BUILD_DIR) -xaf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_win_src/'
 
 
 # It looks like that libusb Makefile is not parallel-friendly, it fails with error
 # 	mv: cannot stat `.deps/libusb_1_0_la-core.Tpo': No such file or directory
 # in parallel build, therefore we have to force sequential build on it.
-.PHONY: libusb-install
-libusb-install: $(BUILD_DIR)/libusb_install/lib/libusb-1.0.a
-$(BUILD_DIR)/libusb_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_src
+.PHONY: libusb-win-install
+libusb-win-install: $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a
+$(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_win_src
 	cd $< && \
 	./configure --host=$(WINDOWS_TRIPLET) --disable-shared --enable-static \
-		--prefix=$(abspath $(BUILD_DIR)/libusb_install)
+		--prefix=$(abspath $(BUILD_DIR)/libusb_win_install)
 	$(MAKE) -C $< -j1
 	$(MAKE) -C $< install
 
 
 # Configure OpenOCD for Windows.
-$(OOCD_BUILD_DIR_WIN)/Makefile: $(OOCD_SRC_DIR)/configure
-$(OOCD_BUILD_DIR_WIN)/Makefile: $(BUILD_DIR)/libusb_install/lib/libusb-1.0.a
+$(OOCD_BUILD_DIR_WIN)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_DIR_WIN)/Makefile: $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a
 $(OOCD_BUILD_DIR_WIN)/Makefile: | $(OOCD_BUILD_DIR_WIN)
 
 $(OOCD_BUILD_DIR_WIN)/Makefile:
 	cd $(OOCD_BUILD_DIR_WIN) && \
-	PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_install)/lib/pkgconfig \
+	PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_win_install)/lib/pkgconfig \
 	$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
 	    --disable-shared --enable-static \
