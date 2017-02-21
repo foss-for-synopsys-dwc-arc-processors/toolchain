@@ -41,7 +41,7 @@ for url in ${urls} ; do
             if [ ! -f "${filename}" ]; then
                 $WGET "${url}"
             fi
-            tar xaf "${filename}"
+            tar xf "${filename}"
         fi
         mv "${dirname}" "${toolname}"
     fi

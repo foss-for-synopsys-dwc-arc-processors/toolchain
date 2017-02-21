@@ -711,7 +711,7 @@ $O/$(ECLIPSE_VANILLA_ZIP_WIN):
 # in sync.
 $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_ZIP)
 	mkdir -m775 -p $O/$(IDE_INSTALL_LINUX)
-	tar xaf $< -C $O/$(IDE_INSTALL_LINUX)
+	tar xf $< -C $O/$(IDE_INSTALL_LINUX)
 	$O/$(IDE_INSTALL_LINUX)/eclipse/eclipse \
 	    -application org.eclipse.equinox.p2.director \
 	    -noSplash \
@@ -733,7 +733,7 @@ $O/.stamp_ide_linux_tar: \
 	cp -al $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	cp -al $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	mkdir -m775 $O/$(IDE_INSTALL_LINUX)/eclipse/jre
-	tar xaf $O/$(JRE_TGZ_LINUX) -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
+	tar xf $O/$(JRE_TGZ_LINUX) -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
 	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	tar caf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
@@ -818,7 +818,7 @@ $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2:
 
 
 $(BUILD_DIR)/libusb_linux_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
-	tar -C $(BUILD_DIR) -xaf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_linux_src/'
+	tar -C $(BUILD_DIR) -xf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_linux_src/'
 
 
 .PHONY: libusb-linux-install
@@ -832,7 +832,7 @@ $(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_linux_sr
 
 
 $(BUILD_DIR)/libusb_win_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
-	tar -C $(BUILD_DIR) -xaf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_win_src/'
+	tar -C $(BUILD_DIR) -xf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_win_src/'
 
 
 # It looks like that libusb Makefile is not parallel-friendly, it fails with error

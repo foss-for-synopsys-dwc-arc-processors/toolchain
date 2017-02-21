@@ -90,7 +90,7 @@ versions >= 3.9 are supported. Linux sources should be located in the directory
 named `linux` that is the sibling of this `toolchain` directory. For example:
 
     $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.8.2.tar.xz
-    $ tar xaf linux-4.8.2.tar.xz --transform=s/linux-4.8.2/linux/
+    $ tar xf linux-4.8.2.tar.xz --transform=s/linux-4.8.2/linux/
 
 ### Using Git repositories
 
