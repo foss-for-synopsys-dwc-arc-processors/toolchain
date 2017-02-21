@@ -768,6 +768,7 @@ $(OOCD_BUILD_DIR_LINUX)/Makefile:
 		PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_linux_install)/lib/pkgconfig \
 		$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
+	    --disable-libusb0 \
 	    PKG_CONFIG=pkg-config \
 	    --prefix=$(abspath $O/$(OOCD_DIR_LINUX))
 
@@ -856,6 +857,7 @@ $(OOCD_BUILD_DIR_WIN)/Makefile:
 	$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
 	    --disable-shared --enable-static \
+	    --disable-libusb0 \
 	    --host=$(WINDOWS_TRIPLET) \
 	    PKG_CONFIG=pkg-config \
 	    --prefix=$(abspath $O/$(OOCD_DIR_WIN))
