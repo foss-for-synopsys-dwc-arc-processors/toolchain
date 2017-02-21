@@ -616,6 +616,11 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 
 
 #
+# Common build directory.
+#
+DIRS += $(BUILD_DIR)
+
+#
 # Linux
 #
 
