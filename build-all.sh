@@ -448,8 +448,11 @@ esac
 
 if [ x`uname -s` = "xDarwin" ]
 then
+    IS_MAC_OS=yes
     #You can install gsed with 'brew install gnu-sed'
     SED=gsed
+else
+    IS_MAC_OS=no
 fi
 
 # Parse options
@@ -835,9 +838,13 @@ then
     fi
 fi
 
-# Default parallellism
-make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
-           | grep -c processor`"
+# Default parallellism (number of cores + 1).
+if [ "$IS_MAC_OS" != yes ]; then
+    make_load="$( (echo processor; cat /proc/cpuinfo 2>/dev/null) \
+               | grep -c processor )"
+else
+    make_load="$(( $(sysctl -n hw.ncpu) + 1))"
+fi
 
 if [ "x${jobs}" = "x" ]
 then
@@ -958,6 +965,7 @@ export BUILD_OPTSIZE_NEWLIB
 export BUILD_OPTSIZE_LIBSTDCXX
 export DO_STRIP_TARGET_LIBRARIES
 export IS_CROSS_COMPILING
+export IS_MAC_OS
 export IS_NATIVE
 export UCLIBC_IN_SRC_TREE
 
