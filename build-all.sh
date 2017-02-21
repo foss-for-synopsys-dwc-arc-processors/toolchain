@@ -924,7 +924,7 @@ if [ $DO_PDF = --pdf ]; then
 
     # There are issues with Texinfo v4 and non-C locales.
     # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
-    if [ 4 = $TEXINFO_VERSION_MAJOR ]; then
+    if [ 4 = "$TEXINFO_VERSION_MAJOR" ]; then
 	export LC_ALL=C
     fi
 fi
