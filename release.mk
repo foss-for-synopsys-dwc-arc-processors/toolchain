@@ -767,10 +767,10 @@ $(OOCD_BUILD_DIR_LINUX)/Makefile: | $(OOCD_BUILD_DIR_LINUX)
 
 $(OOCD_BUILD_DIR_LINUX)/Makefile:
 	cd $(OOCD_BUILD_DIR_LINUX) && \
-		PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_linux_install)/lib/pkgconfig \
 		$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
 	    --disable-libusb0 \
+	    PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_linux_install)/lib/pkgconfig \
 	    PKG_CONFIG=pkg-config \
 	    --prefix=$(abspath $O/$(OOCD_DIR_LINUX))
 
