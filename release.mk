@@ -567,7 +567,7 @@ $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
 # Windows build
 #
 
-WINDOWS_SYSROOT := /usr/$(WINDOWS_TRIPLET)/sys-root/mingw
+WINDOWS_SYSROOT := $(shell $(WINDOWS_TRIPLET)-gcc -print-sysroot)/mingw
 
 # Helper function to copy mingw .dll files to installation directories with
 # executable files. There are several directories and for simplicity all .dlls
@@ -616,6 +616,11 @@ $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
 
 
 #
+# Common build directory.
+#
+DIRS += $(BUILD_DIR)
+
+#
 # Linux
 #
 
@@ -643,7 +648,9 @@ $(BUILDROOT_SRC_DIR): $(BUILD_DIR)/$(BUILDROOT_TAR) | $(BUILD_DIR)
 DIRS += $O/$(LINUX_IMAGES_DIR)
 
 # Configure Buildroot for AXS103
-$(BUILDROOT_AXS103_BUILD_DIR)/.config: $(BUILDROOT_SRC_DIR) $(BUILDROOT_AXS103_DEFCONFIG)
+$(BUILDROOT_AXS103_BUILD_DIR)/.config: $(BUILDROOT_AXS103_DEFCONFIG)
+$(BUILDROOT_AXS103_BUILD_DIR)/.config: | $(BUILDROOT_SRC_DIR)
+$(BUILDROOT_AXS103_BUILD_DIR)/.config:
 	$(MAKE) $(BUILDROOT_AXS103_MAKEFLAGS) distclean
 	$(MAKE) $(BUILDROOT_AXS103_MAKEFLAGS) defconfig
 
@@ -760,16 +767,17 @@ $(OOCD_BUILD_DIR_LINUX)/Makefile: | $(OOCD_BUILD_DIR_LINUX)
 
 $(OOCD_BUILD_DIR_LINUX)/Makefile:
 	cd $(OOCD_BUILD_DIR_LINUX) && \
-		PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_linux_install)/lib/pkgconfig \
 		$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
+	    --disable-libusb0 \
+	    PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_linux_install)/lib/pkgconfig \
 	    PKG_CONFIG=pkg-config \
 	    --prefix=$(abspath $O/$(OOCD_DIR_LINUX))
 
 
 # Build OpenOCD
 define OOCD_BUILD_CMD
-	$(MAKE) -C $(OOCD_BUILD_DIR_$1) all pdf
+	$(MAKE) -C $(OOCD_BUILD_DIR_$1) all pdf LC_ALL=C
 endef
 
 $(OOCD_BUILD_DIR_LINUX)/src/openocd: $(OOCD_BUILD_DIR_LINUX)/Makefile
@@ -851,6 +859,7 @@ $(OOCD_BUILD_DIR_WIN)/Makefile:
 	$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
 	    --disable-shared --enable-static \
+	    --disable-libusb0 \
 	    --host=$(WINDOWS_TRIPLET) \
 	    PKG_CONFIG=pkg-config \
 	    --prefix=$(abspath $O/$(OOCD_DIR_WIN))
