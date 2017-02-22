@@ -777,7 +777,7 @@ $(OOCD_BUILD_DIR_LINUX)/Makefile:
 
 # Build OpenOCD
 define OOCD_BUILD_CMD
-	$(MAKE) -C $(OOCD_BUILD_DIR_$1) all pdf
+	$(MAKE) -C $(OOCD_BUILD_DIR_$1) all pdf LC_ALL=C
 endef
 
 $(OOCD_BUILD_DIR_LINUX)/src/openocd: $(OOCD_BUILD_DIR_LINUX)/Makefile
