@@ -246,6 +246,24 @@ rm -rf "$build_dir"
 mkdir -p "$build_dir"
 
 # -----------------------------------------------------------------------------
+# Black magic for macOS. The problem is that default sed on macOS is not
+# compatible with GNU, while some scripts use GNU-specific extensions. GNU sed
+# can be installed with Homebrew, but by default it will have a name `gsed`, so
+# scripts should be modified to use it. While this can be done in ARC scripts,
+# we don't have full control over other projects, Linux in particular, which
+# also require GNU sed. Therefore in followind lines a new directory is
+# created, a link named `sed` is created and is pointed to `gsed` and directory
+# is added to the PATH, so GNU sed will be used by Linux.  Alternative solution
+# would be to install GNU sed as `sed` in Homebrew, however that might have
+# some negative effect on other applications, so I don't think it is wise to
+# require this from the user.
+if [ "$IS_MAC_OS" = yes ]; then
+    mkdir $build_dir/macos_aliases
+    ln -s $(which gsed) $build_dir/macos_aliases/sed
+    export PATH=$build_dir/macos_aliases:$PATH
+fi
+
+# -----------------------------------------------------------------------------
 # Install the Linux headers
 
 echo "Installing Linux headers ..." | tee -a "${logfile}"
