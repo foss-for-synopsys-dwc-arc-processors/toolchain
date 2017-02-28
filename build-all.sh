@@ -925,6 +925,13 @@ if [ $DO_PDF = --pdf ]; then
     if [ 4 = "$TEXINFO_VERSION_MAJOR" ]; then
 	export LC_ALL=C
     fi
+
+    # On macOS TeX binary might not be in the PATH even when texi2pdf is.
+    if [ $IS_MAC_OS = yes ]; then
+	if ! which tex &>/dev/null ; then
+	    export PATH=/Library/TeX/texbin:$PATH
+	fi
+    fi
 fi
 
 # Standard setup
