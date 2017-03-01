@@ -74,6 +74,37 @@ instead versions of those libraries installed on the build host will be used.
 In most cases this is not required.
 
 
+### macOS Prerequisites
+
+By default HFS on macOS is configured to be case-insensitive, which is known to
+cause issues with Linux sources (there are files which differ only in character
+case). As a result to build uClibc toolchain for ARC it is required to use
+partition that is configured to be case sensitive (use Disk Utility to create a
+new partition, at least 16 GiB are needed to build uClibc toolchain, 32 GiB are
+needed to build a complete baremetal toolchain. With baremetal (elf) toolchain
+there are no such problems.
+
+To build toolchain on macOS it is required to install several prerequisites
+which are either not installed by default or non-GNU-compatible versions are
+installed by default. This easily can be done with Homebrew:
+
+	# Install homebrew itself (https://brew.sh/)
+	$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+	# Install wget
+	$ brew install wget
+
+	# Install GNU sed
+	$ brew install gnu-sed
+
+To build PDF documentation for toolchain TeX must be installed:
+
+	$ brew cask install mactex
+
+If PDF documentation is not needed, pass option `--no-pdf` to build-all.sh to
+disable its build, then mactex is not required.
+
+
 Getting sources
 ---------------
 

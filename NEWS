@@ -20,6 +20,7 @@ New Features and Enhancements
 
 * Toolchain Build  Scripts
 	* Removed obsolete unsupported scripts.
+	* macOS support.
 
 [[TBD]]
 
