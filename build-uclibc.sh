@@ -337,8 +337,15 @@ fi
 
 # -----------------------------------------------------------------------------
 # Build Binutils - will be used by both state 1 and stage2
+# Note the --disable-shared option. It is used here, because binutils libraries
+# shouldn't be build as dynamic libs (this causes issues on macOS), however the
+# target libraries should be built as shared ones.  But as far as I see same
+# option is used for both host and target, so --enable-shared should be used
+# for components that build target libraries (like gcc and libgcc), but
+# shouldn't be used for binutils, since it doesn't has target libraries and is
+# known to have troubles when shared libraries are used.
 build_dir_init binutils
-configure_uclibc_stage2 binutils binutils --disable-gdb
+configure_uclibc_stage2 binutils binutils --disable-gdb --disable-shared
 make_target building all
 
 # Gas requires opcodes to be installed, LD requires BFD to be installed.
