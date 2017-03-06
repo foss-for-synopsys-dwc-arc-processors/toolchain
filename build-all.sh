@@ -448,8 +448,11 @@ esac
 
 if [ x`uname -s` = "xDarwin" ]
 then
+    IS_MAC_OS=yes
     #You can install gsed with 'brew install gnu-sed'
     SED=gsed
+else
+    IS_MAC_OS=no
 fi
 
 # Parse options
@@ -835,9 +838,13 @@ then
     fi
 fi
 
-# Default parallellism
-make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
-           | grep -c processor`"
+# Default parallellism (number of cores + 1).
+if [ "$IS_MAC_OS" != yes ]; then
+    make_load="$( (echo processor; cat /proc/cpuinfo 2>/dev/null) \
+               | grep -c processor )"
+else
+    make_load="$(( $(sysctl -n hw.ncpu) + 1))"
+fi
 
 if [ "x${jobs}" = "x" ]
 then
@@ -908,17 +915,22 @@ if [ $DO_PDF = --pdf ]; then
     # Texi is a major source of toolchain build errors -- PDF regularly do not
     # work with particular versions of texinfo, but work with others. To
     # workaround those issues build scripts should be aware of texi version.
-    export TEXINFO_VERSION_MAJOR=$(texi2pdf --version | grep -Po '(?<=Texinfo )[0-9]+')
-    # Grep perl look-behind expressions must have a fixed length, so to future
-    # proof for texinfo versions 10+, we have to read variable, because that
-    # wouldn't work: (?<=Texinfo [0-9]+\.)
-    export TEXINFO_VERSION_MINOR=$(texi2pdf --version |
-	grep -Po "(?<=Texinfo $TEXINFO_VERSION_MAJOR\.)[0-9]+")
+    export TEXINFO_VERSION_MAJOR=$(texi2pdf --version | \
+	perl -ne 'print $1 if /Texinfo ([0-9]+)/')
+    export TEXINFO_VERSION_MINOR=$(texi2pdf --version | \
+	perl -ne 'print $2 if /Texinfo ([0-9]+)\.([0-9]+)/')
 
     # There are issues with Texinfo v4 and non-C locales.
     # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
-    if [ 4 = $TEXINFO_VERSION_MAJOR ]; then
+    if [ 4 = "$TEXINFO_VERSION_MAJOR" ]; then
 	export LC_ALL=C
+    fi
+
+    # On macOS TeX binary might not be in the PATH even when texi2pdf is.
+    if [ $IS_MAC_OS = yes ]; then
+	if ! which tex &>/dev/null ; then
+	    export PATH=/Library/TeX/texbin:$PATH
+	fi
     fi
 fi
 
@@ -958,6 +970,7 @@ export BUILD_OPTSIZE_NEWLIB
 export BUILD_OPTSIZE_LIBSTDCXX
 export DO_STRIP_TARGET_LIBRARIES
 export IS_CROSS_COMPILING
+export IS_MAC_OS
 export IS_NATIVE
 export UCLIBC_IN_SRC_TREE
 
