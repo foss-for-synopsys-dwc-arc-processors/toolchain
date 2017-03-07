@@ -178,6 +178,19 @@ that will be sourced by ``release.mk``.
       ``y``
 
 
+.. envvar:: ENABLE_SOURCE_TARBALL
+
+   Whether to create a source tarball. Usually that should be true, so that
+   release would include source tarball, however if release makefile is run
+   multiple times on various machines to create packages for various target
+   systems, then it makes sense to have this true only on one system.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_WINDOWS_INSTALLER
 
    Whether to build and upload Windows installer for toolchain and IDE. While

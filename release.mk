@@ -59,6 +59,9 @@ ENABLE_OPENOCD_WIN := y
 # created, regardless of this option.
 ENABLE_PDF_DOCS := y
 
+# Whether to create a source tarball.
+ENABLE_SOURCE_TARBALL := y
+
 # Whether to build and upload windows installer.
 # Requires ENABLE_OPENOCD_WIN to be set to 'y'.
 ENABLE_WINDOWS_INSTALLER := y
@@ -284,12 +287,12 @@ DOCS_DIR := arc_gnu_$(RELEASE)_docs
 
 # List of files that will be uploaded to GitHub Release.
 UPLOAD_ARTIFACTS = \
-    $(TOOLS_SOURCE_DIR)$(TAR_EXT) \
     $(TOOLS_ELFLE_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXLE_700_DIR_LINUX)$(TAR_EXT) \
     $(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT) \
     $(UPLOAD_ARTIFACTS-y)
 
+UPLOAD_ARTIFACTS-$(ENABLE_SOURCE_TARBALL) += $(TOOLS_SOURCE_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT)
@@ -348,11 +351,12 @@ MD5SUM_FILE := md5.sum
     openocd-linux
 
 BUILD_DEPS += \
-    $O/.stamp_source_tarball \
     $O/.stamp_elf_le_tarball \
     $O/.stamp_linux_le_700_tarball \
     $O/.stamp_linux_le_hs_tarball \
     $(BUILD_DEPS-y)
+
+BUILD_DEPS-$(ENABLE_SOURCE_TARBALL) += $O/.stamp_source_tarball
 
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_elf_be_tarball
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_700_tarball
@@ -461,18 +465,20 @@ distclean: clean
 # Build targets
 #
 DIRS += $O
+TOOLS_ALL_ORDER_DEPS-y += $O
 
 # Create source tarball
-$O/.stamp_source_tarball:
+$O/.stamp_source_tarball: | $(TOOLS_ALL_ORDER_DEPS-y)
 	tar --exclude-vcs -c -z -f $O/$(TOOLS_SOURCE_DIR)$(TAR_EXT) --exclude=$O \
 	    --transform="s|^|arc_gnu_$(RELEASE)_sources/|" $(TOOLS_SOURCE_CONTENTS)
 	touch $@
 
 
-# Build PDF. Do it after source tarball, so that intermediate files will not
-# slip into source tarball.
 TOOLS_ALL_DEPS-$(ENABLE_PDF_DOCS) += $(PDF_DOC_FILE)
+ifeq ($(ENABLE_SOURCE_TARBALL),y)
 $(PDF_DOC_FILE): $O/.stamp_source_tarball
+endif
+$(PDF_DOC_FILE):
 	$(MAKE) -C doc clean
 	$(MAKE) -C doc latexpdf
 
@@ -486,14 +492,14 @@ define copy_pdf_doc_file
 endef
 endif
 
-$O/.stamp_elf_le_built: $(TOOLS_ALL_DEPS-y)
+$O/.stamp_elf_le_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --no-uclibc
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_DIR_LINUX))
 	touch $@
 
-$O/.stamp_elf_be_built: $(TOOLS_ALL_DEPS-y)
+$O/.stamp_elf_be_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
@@ -509,7 +515,7 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 	$(call create_tar,$(TOOLS_ELFBE_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_le_700_built: $(TOOLS_ALL_DEPS-y)
+$O/.stamp_linux_le_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --cpu arc700 \
@@ -519,7 +525,7 @@ $O/.stamp_linux_le_700_built: $(TOOLS_ALL_DEPS-y)
 
 # Toolchain built with -mcpu=hs38_linux. This toolchain is never deistributed
 # itself, instead it's sysroot is copied into standard hs38 toolchain.
-$O/.stamp_linux_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y)
+$O/.stamp_linux_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS38FPU_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38_linux \
@@ -527,7 +533,7 @@ $O/.stamp_linux_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y)
 	touch $@
 
 $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_linux_le_hs38fpu_built \
-    $(TOOLS_ALL_DEPS-y)
+    $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38 \
@@ -539,7 +545,7 @@ $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_linux_le_hs3
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_be_700_built: $(TOOLS_ALL_DEPS-y)
+$O/.stamp_linux_be_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
@@ -548,7 +554,8 @@ $O/.stamp_linux_be_700_built: $(TOOLS_ALL_DEPS-y)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_700_DIR_LINUX))
 	touch $@
 
-$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $(TOOLS_ALL_DEPS-y)
+$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $(TOOLS_ALL_DEPS-y) \
+	| $(TOOLS_ALL_ORDER_DEPS-y)
 	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
@@ -595,7 +602,8 @@ define copy_mingw_dlls
 endef
 endif
 
-$O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built $(TOOLS_ALL_DEPS-y)
+$O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built $(TOOLS_ALL_DEPS-y) \
+	| $(TOOLS_ALL_ORDER_DEPS-y)
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc \
@@ -606,7 +614,8 @@ $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built $(TOOLS_ALL_DEPS-y)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_DIR_WIN))
 	touch $@
 
-$O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built $(TOOLS_ALL_DEPS-y)
+$O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built $(TOOLS_ALL_DEPS-y) \
+	| $(TOOLS_ALL_ORDER_DEPS-y)
 	# Install toolchain in the same dir as little endian
 	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
@@ -690,7 +699,8 @@ linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 #
 # Native toolchain build
 #
-$O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built $(TOOLS_ALL_DEPS-y)
+$O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built $(TOOLS_ALL_DEPS-y) \
+	| $(TOOLS_ALL_ORDER_DEPS-y)
 	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --no-elf32 \
