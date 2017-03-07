@@ -109,6 +109,18 @@ endif
 #
 # Internal variables
 #
+
+# Identify host system (used in release tarball names).
+ifeq ($(shell uname -s),Linux)
+HOST := linux
+else
+ifeq ($(shell uname -s),Darwin)
+HOST := macos
+else
+$(error Unknown OS: $(shell uname -s). Only Linux and macOS (Darwin) are supported.)
+endif
+endif
+
 CP = rsync -a
 GIT = git
 PYTHON = /depot/Python-3.4.3/bin/python3
@@ -211,19 +223,19 @@ TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb newlib toolchain uClib
 TOOLS_SOURCE_DIR := arc_gnu_$(RELEASE)_sources
 
 # Toolchain: baremetal for Linux hosts
-TOOLS_ELFLE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_le_linux_install
-TOOLS_ELFBE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_be_linux_install
+TOOLS_ELFLE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_le_$(HOST)_install
+TOOLS_ELFBE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_be_$(HOST)_install
 
 # Toolchain: baremetal for Windows hosts
 TOOLS_ELFLE_DIR_WIN := arc_gnu_$(RELEASE)_prebuilt_elf32_le_win_install
 TOOLS_ELFBE_DIR_WIN := arc_gnu_$(RELEASE)_prebuilt_elf32_be_win_install
 
 # Toolchain: linux
-TOOLS_LINUXLE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_linux_install
-TOOLS_LINUXBE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_linux_install
-TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_linux_install
-TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_linux_install
-TOOLS_LINUXLE_HS38FPU_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_linux_install
+TOOLS_LINUXLE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_$(HOST)_install
+TOOLS_LINUXBE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_$(HOST)_install
+TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_$(HOST)_install
+TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(HOST)_install
+TOOLS_LINUXLE_HS38FPU_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_$(HOST)_install
 ARC_LINUX_TRIPLET := arc-snps-linux-uclibc
 
 # Toolchain: native linux toolchain
@@ -247,7 +259,7 @@ JRE_TGZ_LINUX := jre-$(JAVA_VERSION)-linux-x64.tar.gz
 JRE_TGZ_WIN   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
 
 # IDE: output related variables
-IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_linux_install
+IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_$(HOST)_install
 IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
 # IDE plugins are built separately, and contain only RELEASE_BRANCH in the
@@ -261,7 +273,7 @@ LINUX_AXS103_ROOTFS_CPIO = rootfs_axs103.cpio
 LINUX_AXS103_ROOTFS_TAR = rootfs_axs103.tgz
 
 # OpenOCD
-OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_linux_install
+OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_$(HOST)_install
 OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
 OOCD_SRC_DIR := $(ROOT)/openocd
 OOCD_BUILD_DIR_LINUX := $(BUILD_DIR)/openocd_linux
@@ -762,7 +774,7 @@ $(OOCD_SRC_DIR)/git2cl:
 
 # Configure OpenOCD
 $(OOCD_BUILD_DIR_LINUX)/Makefile: | $(OOCD_SRC_DIR)/git2cl
-$(OOCD_BUILD_DIR_LINUX)/Makefile: $(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a
+$(OOCD_BUILD_DIR_LINUX)/Makefile: $(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a
 $(OOCD_BUILD_DIR_LINUX)/Makefile: | $(OOCD_BUILD_DIR_LINUX)
 
 $(OOCD_BUILD_DIR_LINUX)/Makefile:
@@ -770,7 +782,7 @@ $(OOCD_BUILD_DIR_LINUX)/Makefile:
 		$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
 	    --disable-libusb0 \
-	    PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_linux_install)/lib/pkgconfig \
+	    PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_$(HOST)_install)/lib/pkgconfig \
 	    PKG_CONFIG=pkg-config \
 	    --prefix=$(abspath $O/$(OOCD_DIR_LINUX))
 
@@ -825,12 +837,12 @@ $(BUILD_DIR)/libusb_linux_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
 # distributions might have different versions (CentOS 6 uses libudev.so.0,
 # while CentOS 7 uses libudev.so.1).
 .PHONY: libusb-linux-install
-libusb-linux-install: $(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a
-$(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_linux_src
+libusb-linux-install: $(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a
+$(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_linux_src
 	cd $< && \
 	./configure --disable-shared --enable-static \
 		--disable-udev \
-		--prefix=$(abspath $(BUILD_DIR)/libusb_linux_install)
+		--prefix=$(abspath $(BUILD_DIR)/libusb_$(HOST)_install)
 	$(MAKE) -C $< -j1
 	$(MAKE) -C $< install
 
