@@ -30,8 +30,6 @@
 
 CONFIG_STATIC_TOOLCHAIN := n
 
-DEPLOY_DESTINATION =
-
 # Whether to build big endian toolchain
 ENABLE_BIG_ENDIAN := y
 
