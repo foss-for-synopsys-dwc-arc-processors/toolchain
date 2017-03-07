@@ -450,6 +450,13 @@ else
            -i $uc_dot_config
 fi
 
+# Remove locale support on macOS. uClibc runs an application on a host to
+# generate local files, but that application fails to build on macOS, therefore
+# locale support has to be disabled on macOS hosts.
+if [ "$IS_MAC_OS" = yes ]; then
+    kconfig_disable_option $uc_dot_config UCLIBC_HAS_LOCALE
+fi
+
 # Disable HARDWIRED_ABSPATH to avoid absolute path references to allow
 # relocatable toolchains.
 echo "HARDWIRED_ABSPATH=n" >> $uc_dot_config
