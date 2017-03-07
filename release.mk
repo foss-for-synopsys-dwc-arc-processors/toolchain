@@ -159,7 +159,7 @@ endef
 #
 # :param $1 - name of directory to tar. Directory must be in the $O.
 define create_tar
-       cd $O && tar caf $1$(TAR_EXT) $1/
+       cd $O && tar czf $1$(TAR_EXT) $1/
 endef
 
 # Create windows tarball for release. Difference with standard `create_tar` is
@@ -169,7 +169,7 @@ endef
 # :param $1 - name of directory to tar. Directory must
 # be in the $O.
 define create_windows_tar
-       cd $O && tar caf $1$(TAR_EXT) --hard-dereference $1/
+       cd $O && tar czf $1$(TAR_EXT) --hard-dereference $1/
 endef
 
 # :param $1 - name of directory to zip.
@@ -770,7 +770,7 @@ $O/.stamp_ide_linux_tar: \
 	tar xf $O/$(JRE_TGZ_LINUX) -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
 	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	tar caf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
+	tar czf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
 	touch $@
 endif
 
