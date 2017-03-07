@@ -591,7 +591,9 @@ $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
 # Windows build
 #
 
+ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 WINDOWS_SYSROOT := $(shell $(WINDOWS_TRIPLET)-gcc -print-sysroot)/mingw
+endif
 
 # Helper function to copy mingw .dll files to installation directories with
 # executable files. There are several directories and for simplicity all .dlls
