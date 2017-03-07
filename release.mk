@@ -135,6 +135,12 @@ WGET = wget
 # Always have `-nv`.
 override WGETFLAGS += -nv
 
+ifneq ($(HOST),macos)
+MD5SUM := md5sum
+else
+MD5SUM := md5 -r
+endif
+
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
 # RELEASE in this case would be 2016.09-rc1. However remove -release suffix
 # that is used for final release tags.
@@ -399,7 +405,7 @@ $O/$(MD5SUM_FILE): $O/$(IDE_EXE_WIN)
 endif
 
 $O/$(MD5SUM_FILE): $(BUILD_DEPS)
-	cd $O && md5sum $(UPLOAD_ARTIFACTS) > $@
+	cd $O && $(MD5SUM) $(UPLOAD_ARTIFACTS) > $@
 
 .PHONY: md5sum
 md5sum: $O/$(MD5SUM_FILE)
