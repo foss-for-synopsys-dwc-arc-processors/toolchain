@@ -135,8 +135,11 @@ override WGETFLAGS += -nv
 
 ifneq ($(HOST),macos)
 MD5SUM := md5sum
+LOCAL_CP := cp -al
 else
 MD5SUM := md5 -r
+# macOS' `cp` doesn't support hardlinks and `-l`.
+LOCAL_CP := cp -a
 endif
 
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
@@ -552,9 +555,9 @@ $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_linux_le_hs3
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38 \
 	    --no-elf32
-	cp -al $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
+	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
-	cp -al $O/$(TOOLS_LINUXLE_HS38FPU_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
+	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS38FPU_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-hs38_linux
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_DIR_LINUX))
 	touch $@
@@ -575,7 +578,7 @@ $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $(TOOLS_ALL_DEPS-y) \
 	    --big-endian \
 	    --cpu hs38 \
 	    --no-elf32
-	cp -al $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
+	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
 	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_HS_DIR_LINUX))
 	touch $@
@@ -766,14 +769,14 @@ $O/.stamp_ide_linux_tar: \
 	$O/.stamp_ide_linux_eclipse \
 	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
 	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
-	cp -al $O/$(TOOLS_ELFLE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -al $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -al $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	cp -al $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	$(LOCAL_CP) $O/$(TOOLS_ELFLE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	$(LOCAL_CP) $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	mkdir -m775 $O/$(IDE_INSTALL_LINUX)/eclipse/jre
 	tar xf $O/$(JRE_TGZ_LINUX) -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
 	    --strip-components=1
-	cp -al $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
+	$(LOCAL_CP) $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
 	tar czf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
 	touch $@
 endif
