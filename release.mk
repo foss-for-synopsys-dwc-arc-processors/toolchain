@@ -821,11 +821,15 @@ $(BUILD_DIR)/libusb_linux_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
 	tar -C $(BUILD_DIR) -xf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_linux_src/'
 
 
+# udev should be disabled, to avoid dependency on libudev.so, because various
+# distributions might have different versions (CentOS 6 uses libudev.so.0,
+# while CentOS 7 uses libudev.so.1).
 .PHONY: libusb-linux-install
 libusb-linux-install: $(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a
 $(BUILD_DIR)/libusb_linux_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_linux_src
 	cd $< && \
 	./configure --disable-shared --enable-static \
+		--disable-udev \
 		--prefix=$(abspath $(BUILD_DIR)/libusb_linux_install)
 	$(MAKE) -C $< -j1
 	$(MAKE) -C $< install
