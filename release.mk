@@ -241,31 +241,31 @@ TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb newlib toolchain uClib
 TOOLS_SOURCE_DIR := arc_gnu_$(RELEASE)_sources
 
 # Toolchain: baremetal for Linux hosts
-TOOLS_ELFLE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_le_$(HOST)_install
-TOOLS_ELFBE_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_elf32_be_$(HOST)_install
+TOOLS_ELFLE_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_le_$(HOST)_install
+TOOLS_ELFBE_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_be_$(HOST)_install
 
 # Toolchain: baremetal for Windows hosts
-TOOLS_ELFLE_DIR_WIN := arc_gnu_$(RELEASE)_prebuilt_elf32_le_win_install
-TOOLS_ELFBE_DIR_WIN := arc_gnu_$(RELEASE)_prebuilt_elf32_be_win_install
+TOOLS_ELFLE_WIN_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_le_win_install
+TOOLS_ELFBE_WIN_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_be_win_install
 
 # Toolchain: linux
-TOOLS_LINUXLE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_$(HOST)_install
-TOOLS_LINUXBE_700_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_$(HOST)_install
-TOOLS_LINUXLE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_$(HOST)_install
-TOOLS_LINUXBE_HS_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(HOST)_install
-TOOLS_LINUXLE_HS38FPU_DIR_LINUX := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_$(HOST)_install
+TOOLS_LINUXLE_700_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_$(HOST)_install
+TOOLS_LINUXBE_700_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_$(HOST)_install
+TOOLS_LINUXLE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_$(HOST)_install
+TOOLS_LINUXBE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(HOST)_install
+TOOLS_LINUXLE_HS38FPU_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_$(HOST)_install
 ARC_LINUX_TRIPLET := arc-snps-linux-uclibc
 
 # Toolchain: native linux toolchain
-TOOLS_LINUXLE_HS_DIR_NATIVE := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
+TOOLS_LINUXLE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
 
 # Toolchain PDF User Guide.
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
 
 # IDE: vanilla Eclipse variables
 ECLIPSE_VERSION := mars-1
-ECLIPSE_VANILLA_ZIP_WIN := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
-ECLIPSE_VANILLA_TGZ_LINUX := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
+ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
+ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
 ECLIPSE_REPO := http://download.eclipse.org/releases/mars
 # Coma separated list
@@ -273,13 +273,13 @@ ECLIPSE_PREREQ :=  org.eclipse.tm.terminal.control,org.eclipse.tm.terminal.conne
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
 
 # Java.
-JRE_TGZ_LINUX := jre-$(JAVA_VERSION)-linux-x64.tar.gz
-JRE_TGZ_WIN   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
+JRE_LINUX_TGZ := jre-$(JAVA_VERSION)-linux-x64.tar.gz
+JRE_WIN_TGZ   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
 
 # IDE: output related variables
-IDE_INSTALL_LINUX := arc_gnu_$(RELEASE)_ide_$(HOST)_install
-IDE_EXE_WIN := arc_gnu_$(RELEASE)_ide_win_install.exe
-IDE_TGZ_LINUX := $(IDE_INSTALL_LINUX).tar.gz
+IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
+IDE_WIN_EXE := arc_gnu_$(RELEASE)_ide_win_install.exe
+IDE_LINUX_TGZ := $(IDE_LINUX_INSTALL).tar.gz
 # IDE plugins are built separately, and contain only RELEASE_BRANCH in the
 # name, not the whole RELEASE.
 IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip
@@ -291,34 +291,34 @@ LINUX_AXS103_ROOTFS_CPIO = rootfs_axs103.cpio
 LINUX_AXS103_ROOTFS_TAR = rootfs_axs103.tgz
 
 # OpenOCD
-OOCD_DIR_LINUX := arc_gnu_$(RELEASE)_openocd_$(HOST)_install
-OOCD_DIR_WIN := arc_gnu_$(RELEASE)_openocd_win_install
+OOCD_HOST_DIR := arc_gnu_$(RELEASE)_openocd_$(HOST)_install
+OOCD_WIN_DIR := arc_gnu_$(RELEASE)_openocd_win_install
 OOCD_SRC_DIR := $(ROOT)/openocd
-OOCD_BUILD_DIR_LINUX := $(BUILD_DIR)/openocd_linux
-OOCD_BUILD_DIR_WIN := $(BUILD_DIR)/openocd_win
+OOCD_BUILD_HOST_DIR := $(BUILD_DIR)/openocd_$(HOST)
+OOCD_BUILD_WIN_DIR := $(BUILD_DIR)/openocd_win
 
 # Documentation package
 DOCS_DIR := arc_gnu_$(RELEASE)_docs
 
 # List of files that will be uploaded to GitHub Release.
 UPLOAD_ARTIFACTS = \
-    $(TOOLS_ELFLE_DIR_LINUX)$(TAR_EXT) \
+    $(TOOLS_ELFLE_HOST_DIR)$(TAR_EXT) \
     $(UPLOAD_ARTIFACTS-y)
 
 UPLOAD_ARTIFACTS-$(ENABLE_SOURCE_TARBALL) += $(TOOLS_SOURCE_DIR)$(TAR_EXT)
-UPLOAD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_700_DIR_LINUX)$(TAR_EXT)
-UPLOAD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_HS_DIR_LINUX)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_700_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_HS_HOST_DIR)$(TAR_EXT)
 
-UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)$(TAR_EXT)
-UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)$(TAR_EXT)
-UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_HOST_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 
-UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_TGZ_LINUX)
+UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_TGZ)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
-UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_DIR_NATIVE)$(TAR_EXT)
-UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_EXE_WIN)
+UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_NATIVE_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_WIN_EXE)
 
 # List of files that will be deployed internally. Is a superset of "upload"
 # artifacts.
@@ -326,11 +326,11 @@ DEPLOY_ARTIFACTS = \
     $(UPLOAD_ARTIFACTS) \
     $(DEPLOY_ARTIFACTS-y)
 
-DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_DIR_LINUX)$(TAR_EXT)
-DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)$(TAR_EXT)
-DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN).zip
-DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT)
-DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR).zip
+DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_WIN_DIR)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_WIN_DIR)$(TAR_EXT)
 # Include the directory here, because it is passed to rsync, and if that would
 # be individual file name, then files would end up in deploy destination
 # directly, instead of the linux images dir.
@@ -338,21 +338,21 @@ DEPLOY_ARTIFACTS-$(ENABLE_LINUX_IMAGES) += $(LINUX_IMAGES_DIR)
 
 # Artifacts for unpacked builds
 DEPLOY_BUILD_ARTIFACTS = \
-    $(TOOLS_ELFLE_DIR_LINUX) \
+    $(TOOLS_ELFLE_HOST_DIR) \
     $(DEPLOY_BUILD_ARTIFACTS-y)
 
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_700_DIR_LINUX)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_HS_DIR_LINUX)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_700_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_HS_HOST_DIR)
 
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_DIR_LINUX)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_DIR_LINUX)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_DIR_LINUX)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_INSTALL_LINUX)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_DIR_NATIVE)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_DIR_LINUX)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_DIR_WIN)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_DIR_WIN)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_DIR_WIN)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_INSTALL)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_NATIVE_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_WIN_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_WIN_DIR)
 # Linux images are not in this list, because directory names in this list are
 # processed, but linux_images doesn't conform to the convention expected by the
 # processing.
@@ -384,9 +384,9 @@ BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
 BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_linux_le_hs_native_tarball
-BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_DIR_LINUX)$(TAR_EXT)
-BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN)$(TAR_EXT)
-BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_DIR_WIN).zip
+BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_HOST_DIR)$(TAR_EXT)
+BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR)$(TAR_EXT)
+BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
 
@@ -394,7 +394,7 @@ BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAG
 BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
 BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 
-# Cannot include IDE_EXE_WIN into BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER),
+# Cannot include IDE_WIN_EXE into BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER),
 # because it is generated on the Windows host, after `make build`.
 
 # Build all components that can be built on Linux hosts.
@@ -402,7 +402,7 @@ BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTF
 build: $(BUILD_DEPS)
 
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
-$O/$(MD5SUM_FILE): $O/$(IDE_EXE_WIN)
+$O/$(MD5SUM_FILE): $O/$(IDE_WIN_EXE)
 endif
 
 $O/$(MD5SUM_FILE): $(BUILD_DEPS)
@@ -457,15 +457,15 @@ endif
 	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
 
 	# Copy JRE.
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_LINUX) $O/$(JRE_TGZ_LINUX)
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_LINUX_TGZ) $O/$(JRE_LINUX_TGZ)
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_TGZ_WIN) $O/$(JRE_TGZ_WIN)
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_WIN_TGZ) $O/$(JRE_WIN_TGZ)
 endif
 
 	# Copy Eclipse
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_TGZ_LINUX) $O
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_LINUX_TGZ) $O
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_ZIP_WIN) $O
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_WIN_ZIP) $O
 endif
 endif
 
@@ -510,40 +510,40 @@ endef
 endif
 
 $O/.stamp_elf_le_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_DIR_LINUX) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --no-uclibc
-	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_DIR_LINUX))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_HOST_DIR))
 	touch $@
 
 $O/.stamp_elf_be_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_DIR_LINUX) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --no-uclibc
-	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_DIR_LINUX))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_HOST_DIR))
 	touch $@
 
 $O/.stamp_elf_le_tarball: $O/.stamp_elf_le_built
-	$(call create_tar,$(TOOLS_ELFLE_DIR_LINUX))
+	$(call create_tar,$(TOOLS_ELFLE_HOST_DIR))
 	touch $@
 
 $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
-	$(call create_tar,$(TOOLS_ELFBE_DIR_LINUX))
+	$(call create_tar,$(TOOLS_ELFBE_HOST_DIR))
 	touch $@
 
 $O/.stamp_linux_le_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_DIR_LINUX) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --cpu arc700 \
 	    --no-elf32
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_700_DIR_LINUX))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_700_HOST_DIR))
 	touch $@
 
 # Toolchain built with -mcpu=hs38_linux. This toolchain is never deistributed
 # itself, instead it's sysroot is copied into standard hs38 toolchain.
 $O/.stamp_linux_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS38FPU_DIR_LINUX) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS38FPU_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38_linux \
 	    --no-elf32
@@ -551,52 +551,52 @@ $O/.stamp_linux_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y
 
 $O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_linux_le_hs38fpu_built \
     $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_LINUX) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38 \
 	    --no-elf32
-	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_700_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-arc700
-	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS38FPU_DIR_LINUX)/arc-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/arc-snps-linux-uclibc/sysroot-hs38_linux
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_DIR_LINUX))
+	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_700_HOST_DIR)/arc-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/arc-snps-linux-uclibc/sysroot-arc700
+	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS38FPU_HOST_DIR)/arc-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/arc-snps-linux-uclibc/sysroot-hs38_linux
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_linux_be_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_DIR_LINUX) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --cpu arc700 \
 	    --no-elf32
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_700_DIR_LINUX))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_700_HOST_DIR))
 	touch $@
 
 $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $(TOOLS_ALL_DEPS-y) \
 	| $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_DIR_LINUX) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --cpu hs38 \
 	    --no-elf32
-	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_700_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/arceb-snps-linux-uclibc/sysroot-arc700
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_HS_DIR_LINUX))
+	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_700_HOST_DIR)/arceb-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_LINUXBE_HS_HOST_DIR)/arceb-snps-linux-uclibc/sysroot-arc700
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_linux_le_700_tarball: $O/.stamp_linux_le_700_built
-	$(call create_tar,$(TOOLS_LINUXLE_700_DIR_LINUX))
+	$(call create_tar,$(TOOLS_LINUXLE_700_HOST_DIR))
 	touch $@
 
 $O/.stamp_linux_le_hs_tarball: $O/.stamp_linux_le_hs_built
-	$(call create_tar,$(TOOLS_LINUXLE_HS_DIR_LINUX))
+	$(call create_tar,$(TOOLS_LINUXLE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_linux_be_700_tarball: $O/.stamp_linux_be_700_built
-	$(call create_tar,$(TOOLS_LINUXBE_700_DIR_LINUX))
+	$(call create_tar,$(TOOLS_LINUXBE_700_HOST_DIR))
 	touch $@
 
 $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
-	$(call create_tar,$(TOOLS_LINUXBE_HS_DIR_LINUX))
+	$(call create_tar,$(TOOLS_LINUXBE_HS_HOST_DIR))
 	touch $@
 
 #
@@ -611,7 +611,7 @@ endif
 # executable files. There are several directories and for simplicity all .dlls
 # are copied to all target location.
 #
-# :param $1 - toolchain installation directory, e.g. $O/$(TOOLS_ELFLE_DIR_WIN).
+# :param $1 - toolchain installation directory, e.g. $O/$(TOOLS_ELFLE_WIN_DIR).
 # :param $2 - toolchain triplet, e.g. arc-elf32, arceb-elf32, etc.
 ifneq ($(CONFIG_STATIC_TOOLCHAIN),y)
 define copy_mingw_dlls
@@ -623,35 +623,35 @@ endif
 
 $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built $(TOOLS_ALL_DEPS-y) \
 	| $(TOOLS_ALL_ORDER_DEPS-y)
-	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_DIR_LINUX)/bin):$$PATH \
+	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_HOST_DIR)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFLE_DIR_WIN) --no-uclibc \
+	     --install-dir $O/$(TOOLS_ELFLE_WIN_DIR) --no-uclibc \
 	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
-	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_DIR_WIN),arc-elf32)
-	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_DIR_WIN))
+	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_WIN_DIR),arc-elf32)
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_WIN_DIR))
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built $(TOOLS_ALL_DEPS-y) \
 	| $(TOOLS_ALL_ORDER_DEPS-y)
 	# Install toolchain in the same dir as little endian
-	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_DIR_LINUX))/bin:$$PATH \
+	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_HOST_DIR))/bin:$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFBE_DIR_WIN) --no-uclibc --big-endian \
+	     --install-dir $O/$(TOOLS_ELFBE_WIN_DIR) --no-uclibc --big-endian \
 	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
-	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_DIR_WIN),arceb-elf32)
-	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_DIR_WIN))
+	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_WIN_DIR),arceb-elf32)
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_WIN_DIR))
 	touch $@
 
 $O/.stamp_elf_le_windows_tarball: $O/.stamp_elf_le_windows_built
-	$(call create_windows_tar,$(TOOLS_ELFLE_DIR_WIN))
+	$(call create_windows_tar,$(TOOLS_ELFLE_WIN_DIR))
 	touch $@
 
 $O/.stamp_elf_be_windows_tarball: $O/.stamp_elf_be_windows_built
-	$(call create_windows_tar,$(TOOLS_ELFBE_DIR_WIN))
+	$(call create_windows_tar,$(TOOLS_ELFBE_WIN_DIR))
 	touch $@
 
 
@@ -672,7 +672,7 @@ BUILDROOT_AXS103_BUILD_DIR = $(BUILD_DIR)/buildroot_axs103
 BUILDROOT_AXS103_DEFCONFIG := $(ROOT)/toolchain/extras/buildroot/axs103.defconfig
 BUILDROOT_AXS103_MAKEFLAGS = -C $(BUILDROOT_SRC_DIR) \
 	O=$(abspath $(BUILDROOT_AXS103_BUILD_DIR)) \
-	ARC_TOOLCHAIN_PATH=$(realpath $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)) \
+	ARC_TOOLCHAIN_PATH=$(realpath $O/$(TOOLS_LINUXLE_HS_HOST_DIR)) \
 	LINUX_SRC_PATH=$(realpath $(ROOT)/linux) \
 	DEFCONFIG=$(BUILDROOT_AXS103_DEFCONFIG)
 
@@ -720,7 +720,7 @@ linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 #
 $O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built $(TOOLS_ALL_DEPS-y) \
 	| $(TOOLS_ALL_ORDER_DEPS-y)
-	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/bin):$$PATH \
+	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --no-elf32 \
 	     --cpu hs38 \
@@ -728,12 +728,12 @@ $O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built $(TOOLS_ALL_DEPS
 	     --host arc-snps-linux-uclibc \
 	     --native \
 	     --no-system-expat \
-	     --install-dir $O/$(TOOLS_LINUXLE_HS_DIR_NATIVE)
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_DIR_NATIVE))
+	     --install-dir $O/$(TOOLS_LINUXLE_HS_NATIVE_DIR)
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_NATIVE_DIR))
 	touch $@
 
 $O/.stamp_linux_le_hs_native_tarball: $O/.stamp_linux_le_hs_native_built
-	$(call create_tar,$(TOOLS_LINUXLE_HS_DIR_NATIVE))
+	$(call create_tar,$(TOOLS_LINUXLE_HS_NATIVE_DIR))
 	touch $@
 
 #
@@ -741,19 +741,19 @@ $O/.stamp_linux_le_hs_native_tarball: $O/.stamp_linux_le_hs_native_built
 #
 ifeq ($(ENABLE_IDE),y)
 
-$O/$(ECLIPSE_VANILLA_TGZ_LINUX):
-	$(WGET) $(WGETFLAGS) -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_TGZ_LINUX)&r=1'
+$O/$(ECLIPSE_VANILLA_LINUX_TGZ):
+	$(WGET) $(WGETFLAGS) -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_LINUX_TGZ)&r=1'
 
-$O/$(ECLIPSE_VANILLA_ZIP_WIN):
-	$(WGET) $(WGETFLAGS) -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_ZIP_WIN)&r=1'
+$O/$(ECLIPSE_VANILLA_WIN_ZIP):
+	$(WGET) $(WGETFLAGS) -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_WIN_ZIP)&r=1'
 
 # Install ARC plugins from .zip file and install prerequisites in Eclipse.
 # Similar invocation is in windows/build-release.sh. Those invocations must be
 # in sync.
-$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_ZIP)
-	mkdir -m775 -p $O/$(IDE_INSTALL_LINUX)
-	tar xf $< -C $O/$(IDE_INSTALL_LINUX)
-	$O/$(IDE_INSTALL_LINUX)/eclipse/eclipse \
+$O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_LINUX_TGZ) $O/$(IDE_PLUGINS_ZIP)
+	mkdir -m775 -p $O/$(IDE_LINUX_INSTALL)
+	tar xf $< -C $O/$(IDE_LINUX_INSTALL)
+	$O/$(IDE_LINUX_INSTALL)/eclipse/eclipse \
 	    -application org.eclipse.equinox.p2.director \
 	    -noSplash \
 	    -repository $(ECLIPSE_REPO),jar:file:$(realpath $O/$(IDE_PLUGINS_ZIP))\!/ \
@@ -761,23 +761,23 @@ $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_TGZ_LINUX) $O/$(IDE_PLUGINS_ZI
 	# Eclipse will create a bunch of repos with local paths, that will not
 	# work for end-users, hence those repos must be manually removed.
 	sed -i -e "/$(subst /,_,$O)/ d" \
-	    $O/$(IDE_INSTALL_LINUX)/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
+	    $O/$(IDE_LINUX_INSTALL)/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
 	touch $@
 
 $O/.stamp_ide_linux_tar: \
-	$O/$(OOCD_DIR_LINUX)$(TAR_EXT) \
+	$O/$(OOCD_HOST_DIR)$(TAR_EXT) \
 	$O/.stamp_ide_linux_eclipse \
 	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
 	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
-	$(LOCAL_CP) $O/$(TOOLS_ELFLE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	$(LOCAL_CP) $O/$(TOOLS_ELFBE_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_HS_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	mkdir -m775 $O/$(IDE_INSTALL_LINUX)/eclipse/jre
-	tar xf $O/$(JRE_TGZ_LINUX) -C $O/$(IDE_INSTALL_LINUX)/eclipse/jre \
+	$(LOCAL_CP) $O/$(TOOLS_ELFLE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	$(LOCAL_CP) $O/$(TOOLS_ELFBE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	mkdir -m775 $O/$(IDE_LINUX_INSTALL)/eclipse/jre
+	tar xf $O/$(JRE_LINUX_TGZ) -C $O/$(IDE_LINUX_INSTALL)/eclipse/jre \
 	    --strip-components=1
-	$(LOCAL_CP) $O/$(OOCD_DIR_LINUX)/* $O/$(IDE_INSTALL_LINUX)
-	tar czf $O/$(IDE_TGZ_LINUX) -C $O $(IDE_INSTALL_LINUX)
+	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	tar czf $O/$(IDE_LINUX_TGZ) -C $O $(IDE_LINUX_INSTALL)
 	touch $@
 endif
 
@@ -787,9 +787,9 @@ endif
 ifeq ($(ENABLE_OPENOCD),y)
 
 .PHONY: openocd-linux
-openocd-linux: $O/$(OOCD_DIR_LINUX)$(TAR_EXT)
+openocd-linux: $O/$(OOCD_HOST_DIR)$(TAR_EXT)
 
-DIRS += $(OOCD_BUILD_DIR_LINUX)
+DIRS += $(OOCD_BUILD_HOST_DIR)
 
 
 # Git submodules are common to Linux and Windows.  Note, that this is not a
@@ -802,41 +802,41 @@ $(OOCD_SRC_DIR)/git2cl:
 
 
 # Configure OpenOCD
-$(OOCD_BUILD_DIR_LINUX)/Makefile: | $(OOCD_SRC_DIR)/git2cl
-$(OOCD_BUILD_DIR_LINUX)/Makefile: $(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a
-$(OOCD_BUILD_DIR_LINUX)/Makefile: | $(OOCD_BUILD_DIR_LINUX)
+$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_HOST_DIR)/Makefile: $(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a
+$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_BUILD_HOST_DIR)
 
-$(OOCD_BUILD_DIR_LINUX)/Makefile:
-	cd $(OOCD_BUILD_DIR_LINUX) && \
+$(OOCD_BUILD_HOST_DIR)/Makefile:
+	cd $(OOCD_BUILD_HOST_DIR) && \
 		$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
 	    --disable-libusb0 \
 	    PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_$(HOST)_install)/lib/pkgconfig \
 	    PKG_CONFIG=pkg-config \
-	    --prefix=$(abspath $O/$(OOCD_DIR_LINUX))
+	    --prefix=$(abspath $O/$(OOCD_HOST_DIR))
 
 
 # Build OpenOCD
 define OOCD_BUILD_CMD
-	$(MAKE) -C $(OOCD_BUILD_DIR_$1) all pdf LC_ALL=C
+	$(MAKE) -C $(OOCD_BUILD_$1_DIR) all pdf LC_ALL=C
 endef
 
-$(OOCD_BUILD_DIR_LINUX)/src/openocd: $(OOCD_BUILD_DIR_LINUX)/Makefile
-	$(call OOCD_BUILD_CMD,LINUX)
+$(OOCD_BUILD_HOST_DIR)/src/openocd: $(OOCD_BUILD_HOST_DIR)/Makefile
+	$(call OOCD_BUILD_CMD,HOST)
 
 
 # Instal OpenOCD
 define OOCD_INSTALL_CMD
-	$(MAKE) -C $(OOCD_BUILD_DIR_$1) install install-pdf
+	$(MAKE) -C $(OOCD_BUILD_$1_DIR) install install-pdf
 endef
 
-$O/$(OOCD_DIR_LINUX)/bin/openocd: $(OOCD_BUILD_DIR_LINUX)/src/openocd
-	$(call OOCD_INSTALL_CMD,LINUX)
+$O/$(OOCD_HOST_DIR)/bin/openocd: $(OOCD_BUILD_HOST_DIR)/src/openocd
+	$(call OOCD_INSTALL_CMD,HOST)
 
 
 # Tarball for OpenOCD
-$O/$(OOCD_DIR_LINUX)$(TAR_EXT): $O/$(OOCD_DIR_LINUX)/bin/openocd
-	$(call create_tar,$(OOCD_DIR_LINUX))
+$O/$(OOCD_HOST_DIR)$(TAR_EXT): $O/$(OOCD_HOST_DIR)/bin/openocd
+	$(call create_tar,$(OOCD_HOST_DIR))
 
 #
 # OpenOCD for Windows
@@ -844,9 +844,9 @@ $O/$(OOCD_DIR_LINUX)$(TAR_EXT): $O/$(OOCD_DIR_LINUX)/bin/openocd
 ifeq ($(ENABLE_OPENOCD_WIN),y)
 
 .PHONY: openocd-win
-openocd-win: $O/$(OOCD_DIR_WIN)$(TAR_EXT) $O/$(OOCD_DIR_WIN).zip
+openocd-win: $O/$(OOCD_WIN_DIR)$(TAR_EXT) $O/$(OOCD_WIN_DIR).zip
 
-DIRS += $(OOCD_BUILD_DIR_WIN)
+DIRS += $(OOCD_BUILD_WIN_DIR)
 
 #
 # Libusb for Windows
@@ -858,8 +858,8 @@ $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2:
 		'http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2?r=&use_mirror=kent'
 
 
-$(BUILD_DIR)/libusb_linux_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
-	tar -C $(BUILD_DIR) -xf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_linux_src/'
+$(BUILD_DIR)/libusb_$(HOST)_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
+	tar -C $(BUILD_DIR) -xf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_$(HOST)_src/'
 
 
 # udev should be disabled, to avoid dependency on libudev.so, because various
@@ -867,7 +867,7 @@ $(BUILD_DIR)/libusb_linux_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
 # while CentOS 7 uses libudev.so.1).
 .PHONY: libusb-linux-install
 libusb-linux-install: $(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a
-$(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_linux_src
+$(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_$(HOST)_src
 	cd $< && \
 	./configure --disable-shared --enable-static \
 		--disable-udev \
@@ -894,12 +894,12 @@ $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_win_src
 
 
 # Configure OpenOCD for Windows.
-$(OOCD_BUILD_DIR_WIN)/Makefile: | $(OOCD_SRC_DIR)/git2cl
-$(OOCD_BUILD_DIR_WIN)/Makefile: $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a
-$(OOCD_BUILD_DIR_WIN)/Makefile: | $(OOCD_BUILD_DIR_WIN)
+$(OOCD_BUILD_WIN_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_WIN_DIR)/Makefile: $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a
+$(OOCD_BUILD_WIN_DIR)/Makefile: | $(OOCD_BUILD_WIN_DIR)
 
-$(OOCD_BUILD_DIR_WIN)/Makefile:
-	cd $(OOCD_BUILD_DIR_WIN) && \
+$(OOCD_BUILD_WIN_DIR)/Makefile:
+	cd $(OOCD_BUILD_WIN_DIR) && \
 	PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_win_install)/lib/pkgconfig \
 	$(OOCD_SRC_DIR)/configure \
 	    --enable-ftdi --disable-werror \
@@ -907,27 +907,27 @@ $(OOCD_BUILD_DIR_WIN)/Makefile:
 	    --disable-libusb0 \
 	    --host=$(WINDOWS_TRIPLET) \
 	    PKG_CONFIG=pkg-config \
-	    --prefix=$(abspath $O/$(OOCD_DIR_WIN))
+	    --prefix=$(abspath $O/$(OOCD_WIN_DIR))
 
 
 # Build OpenOCD for Windows.
-$(OOCD_BUILD_DIR_WIN)/src/openocd.exe: $(OOCD_BUILD_DIR_WIN)/Makefile
+$(OOCD_BUILD_WIN_DIR)/src/openocd.exe: $(OOCD_BUILD_WIN_DIR)/Makefile
 	$(call OOCD_BUILD_CMD,WIN)
 
 
 # Install OpenOCD for Windows.
-$O/$(OOCD_DIR_WIN)/bin/openocd.exe: $(OOCD_BUILD_DIR_WIN)/src/openocd.exe
+$O/$(OOCD_WIN_DIR)/bin/openocd.exe: $(OOCD_BUILD_WIN_DIR)/src/openocd.exe
 	$(call OOCD_INSTALL_CMD,WIN)
 
 
 # Create tarball for OpenOCD for Windows.
-$O/$(OOCD_DIR_WIN)$(TAR_EXT): $O/$(OOCD_DIR_WIN)/bin/openocd.exe
-	$(call create_tar,$(OOCD_DIR_WIN))
+$O/$(OOCD_WIN_DIR)$(TAR_EXT): $O/$(OOCD_WIN_DIR)/bin/openocd.exe
+	$(call create_tar,$(OOCD_WIN_DIR))
 
 
 # Create zip for OpenOCD for Windows.
-$O/$(OOCD_DIR_WIN).zip: $O/$(OOCD_DIR_WIN)/bin/openocd.exe
-	$(call create_zip,$(OOCD_DIR_WIN))
+$O/$(OOCD_WIN_DIR).zip: $O/$(OOCD_WIN_DIR)/bin/openocd.exe
+	$(call create_zip,$(OOCD_WIN_DIR))
 
 endif # ifeq ($(ENABLE_OPENOCD_WIN),y)
 
@@ -950,12 +950,12 @@ $O/.stamp_windows_workspace: $O/.stamp_elf_le_windows_tarball \
 ifeq ($(THIRD_PARTY_SOFTWARE_LOCATION),)
 	$(error THIRD_PARTY_SOFTWARE_LOCATION must be set to create windows workspace)
 endif
-	$(CP) $O/$(TOOLS_ELFLE_DIR_WIN)$(TAR_EXT) \
-	      $O/$(TOOLS_ELFBE_DIR_WIN)$(TAR_EXT) \
+	$(CP) $O/$(TOOLS_ELFLE_WIN_DIR)$(TAR_EXT) \
+	      $O/$(TOOLS_ELFBE_WIN_DIR)$(TAR_EXT) \
 	      $O/$(IDE_PLUGINS_ZIP) \
-	      $O/$(OOCD_DIR_WIN)$(TAR_EXT) \
-	      $O/$(ECLIPSE_VANILLA_ZIP_WIN) \
-	      $O/$(JRE_TGZ_WIN) \
+	      $O/$(OOCD_WIN_DIR)$(TAR_EXT) \
+	      $O/$(ECLIPSE_VANILLA_WIN_ZIP) \
+	      $O/$(JRE_WIN_TGZ) \
 	      $(addprefix $(THIRD_PARTY_SOFTWARE_LOCATION)/,make coreutils) \
 	      $(WINDOWS_WORKSPACE)/packages/
 	$(CP) $(ROOT)/toolchain $(WINDOWS_WORKSPACE)/
@@ -968,9 +968,9 @@ endif
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 
 .PHONY: copy-windows-installer
-copy-windows-installer: $O/$(IDE_EXE_WIN)
+copy-windows-installer: $O/$(IDE_WIN_EXE)
 
-$O/$(IDE_EXE_WIN): $(WINDOWS_WORKSPACE)/$(IDE_EXE_WIN)
+$O/$(IDE_WIN_EXE): $(WINDOWS_WORKSPACE)/$(IDE_WIN_EXE)
 	$(CP) $< $@
 
 endif
@@ -980,7 +980,7 @@ endif
 #
 DIRS += $O/$(DOCS_DIR)
 $O/$(DOCS_DIR)$(TAR_EXT): $O/.stamp_elf_le_built | $O/$(DOCS_DIR)
-	$(CP) $O/$(TOOLS_ELFLE_DIR_LINUX)/share/doc/ $O/$(DOCS_DIR)
+	$(CP) $O/$(TOOLS_ELFLE_HOST_DIR)/share/doc/ $O/$(DOCS_DIR)
 	$(call create_tar,$(DOCS_DIR))
 
 
