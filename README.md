@@ -120,8 +120,8 @@ Latest stable release from https://kernel.org/ is recommended, and only
 versions >= 3.9 are supported. Linux sources should be located in the directory
 named `linux` that is the sibling of this `toolchain` directory. For example:
 
-    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.8.2.tar.xz
-    $ tar xf linux-4.8.2.tar.xz --transform=s/linux-4.8.2/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.9.13.tar.xz
+    $ tar xf linux-4.9.13.tar.xz --transform=s/linux-4.9.13/linux/
 
 ### Using Git repositories
 
@@ -163,7 +163,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * gdb - arc-2016.09-gdb
 * newlib - arc-2017.03
 * uClibc - arc-2017.03
-* Linux - linux-4.8.y
+* Linux - linux-4.9.y
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
 latest state, which is a default behaviour, then it will anyway fetch
