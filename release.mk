@@ -1037,6 +1037,7 @@ endif
 upload: $O/$(MD5SUM_FILE)
 	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
 	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
+	    --release-id=$(RELEASE) \
 	    --name="$(RELEASE_NAME)" \
 	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
 	    --md5sum-file=$O/$(MD5SUM_FILE) \
