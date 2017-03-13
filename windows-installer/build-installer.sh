@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# Copyright (C) 2014-2016 Synopsys Inc.
+# Copyright (C) 2014-2017 Synopsys Inc.
 
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
