@@ -132,12 +132,11 @@ SSH = ssh
 WGET = wget
 # Always have `-nv`.
 override WGETFLAGS += -nv
+CHECKSUM := shasum -a256 -b
 
 ifneq ($(HOST),macos)
-MD5SUM := md5sum
 LOCAL_CP := cp -al
 else
-MD5SUM := md5 -r
 # macOS' `cp` doesn't support hardlinks and `-l`.
 LOCAL_CP := cp -a
 endif
@@ -357,8 +356,7 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_WIN_DIR)
 # processed, but linux_images doesn't conform to the convention expected by the
 # processing.
 
-# md5sum
-MD5SUM_FILE := md5.sum
+CHECKSUM_FILE := checksum.txt
 
 #
 # Human friendly aliases
@@ -402,14 +400,14 @@ BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTF
 build: $(BUILD_DEPS)
 
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
-$O/$(MD5SUM_FILE): $O/$(IDE_WIN_EXE)
+$O/$(CHECKSUM_FILE): $O/$(IDE_WIN_EXE)
 endif
 
-$O/$(MD5SUM_FILE): $(BUILD_DEPS)
-	cd $O && $(MD5SUM) $(UPLOAD_ARTIFACTS) > $@
+$O/$(CHECKSUM_FILE): $(BUILD_DEPS)
+	cd $O && $(CHECKSUM) $(UPLOAD_ARTIFACTS) > $@
 
-.PHONY: md5sum
-md5sum: $O/$(MD5SUM_FILE)
+.PHONY: checksum
+checksum: $O/$(CHECKSUM_FILE)
 
 source-tarball: $O/.stamp_source_tarball
 
@@ -1012,7 +1010,7 @@ endif
 # Deploy to shared file system
 #
 .PHONY: deploy
-deploy: $O/$(MD5SUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
+deploy: $O/$(CHECKUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
 ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
@@ -1075,13 +1073,13 @@ endif
 #
 # This is not a part of a default target. Upload should be triggered manually.
 # RELEASE_TAG and RELEASE_NAME mustbe set to something
-upload: $O/$(MD5SUM_FILE)
+upload: $O/$(CHECKSUM_FILE)
 	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
 	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
 	    --release-id=$(RELEASE) \
 	    --name="$(RELEASE_NAME)" \
 	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
-	    --md5sum-file=$O/$(MD5SUM_FILE) \
+	    --checksum-file=$O/$(CHECKSUM_FILE) \
 	    $(addprefix $O/,$(UPLOAD_ARTIFACTS))
 
 #
