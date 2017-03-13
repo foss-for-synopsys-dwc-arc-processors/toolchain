@@ -31,6 +31,7 @@ parser.add_argument("--release-id", help="Tag name without prefix and suffix")
 parser.add_argument("--name", required=True)
 parser.add_argument("--description", default="")
 parser.add_argument("--md5sum-file", help="File with md5sums for uploaded assets")
+parser.add_argument("--checksum-file", help="File with hash sums for uploaded assets")
 parser.add_argument("--draft", action="store_true", default=False)
 parser.add_argument("--prerelease", action="store_true", default=False)
 parser.add_argument("--oauth-token", required=True)
@@ -76,6 +77,11 @@ if args.release_id is not None:
 
 if args.md5sum_file is not None:
     with open(args.md5sum_file, "r") as f:
+        text = f.read()
+        args.description = args.description + "\n```\n" + text + "\n```"
+
+if args.checksum_file is not None:
+    with open(args.checksum_file, "r") as f:
         text = f.read()
         args.description = args.description + "\n```\n" + text + "\n```"
 
