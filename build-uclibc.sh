@@ -224,7 +224,6 @@ echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" | tee -a ${logfile}
 # Initalize, including getting the tool versions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
 toolchain_build_dir="$(echo "${PWD}")"/toolchain
-uclibc_build_dir="$(echo "${PWD}")"/uClibc
 linux_src_dir=${LINUXDIR}
 linux_build_dir=$build_dir/linux
 
