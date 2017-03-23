@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2012-2016 Synopsys Inc.
+# Copyright (C) 2012-2017 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>

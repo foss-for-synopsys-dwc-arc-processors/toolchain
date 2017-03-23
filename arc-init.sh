@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2007-2016 Synopsys Inc.
+# Copyright (C) 2007-2017 Synopsys Inc.
 
 # This file is a common initialization script for ARC tool chains.
 
@@ -538,6 +538,52 @@ build_expat() {
     configure_$2 expat $PWD
     make_target building all
     make_target installing install
+}
+
+# $1 - a configuration file or a directory with .config
+# $2 - option to enable
+kconfig_enable_option() {
+    local config=$1
+    if [ -d "$1" ]; then
+        config=$1/.config
+    fi
+
+    # Delete occurrences of option $2 from $config and append
+    # "$2=y" to enable this option.
+    if ! grep -q "$2=y" $config ; then
+        # Config file must not be empty because sed does not work
+        # correctly with empty files.
+        echo >> $config
+
+        $SED -i \
+            -e "/# $2 is not set/d" \
+            -e "/$2=n/d" \
+            -e "\$a$2=y" \
+            $config
+    fi
+}
+
+# $1 - a configuration file or a directory with .config
+# $2 - option to disable
+kconfig_disable_option() {
+    local config=$1
+    if [ -d "$1" ]; then
+        config=$1/.config
+    fi
+
+    # Delete option $2 from $config and append "$2=n" to disable this
+    # option by force.
+    if ! grep -q "$2=n" $config ; then
+        # Config file must not be empty because sed does not work
+        # correctly with empty files.
+        echo >> $config
+
+        $SED -i \
+            -e "/# $2 is not set/d" \
+            -e "/$2=y/d" \
+            -e "\$a$2=n" \
+            $config
+    fi
 }
 
 # Create a common log directory for all logs in this and sub-scripts

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2010-2016 Synopsys Inc.
+# Copyright (C) 2010-2017 Synopsys Inc.
 
 # Contributor Brendan Kehoe <brendan@zen.org>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
@@ -448,6 +448,13 @@ then
 else
     ${SED} -e 's@UCLIBC_HAS_THREADS_NATIVE=y@LINUXTHREADS_OLD=y@' \
            -i $uc_dot_config
+fi
+
+# Remove locale support on macOS. uClibc runs an application on a host to
+# generate local files, but that application fails to build on macOS, therefore
+# locale support has to be disabled on macOS hosts.
+if [ "$IS_MAC_OS" = yes ]; then
+    kconfig_disable_option $uc_dot_config UCLIBC_HAS_LOCALE
 fi
 
 # Disable HARDWIRED_ABSPATH to avoid absolute path references to allow
