@@ -98,6 +98,14 @@ then
     linux=""
 fi
 
+if [ $DO_UCLIBC = yes ]
+then
+    libc=$uclibc
+elif [ $DO_GLIBC = yes ]
+then
+    libc=$glibc
+fi
+
 # It is not safe to "pull" in the initial state, because if repository is
 # currently in detached state (e.g. on a tag), then pull will fail. It is also
 # not safe to checkout before fetching data, because it might be required to
@@ -113,7 +121,7 @@ fi
 
 # All this will go horribly wrong if you leave uncommitted changes lying
 # around or if you change the remote. Nothing then but to sort it out by hand!
-for version in ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
+for version in ${binutils} ${gcc} ${gdb} ${newlib} ${libc} ${linux}
 do
     tool=`echo ${version} | cut -d ':' -f 1`
     branch=`echo ${version} | cut -d ':' -f 2`
