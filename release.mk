@@ -1010,7 +1010,7 @@ endif
 # Deploy to shared file system
 #
 .PHONY: deploy
-deploy: $O/$(CHECKUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
+deploy: $O/$(CHECKSUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
 ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
