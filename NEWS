@@ -4,30 +4,37 @@ Major Changes in 2017.03 Release
 Toolchain and IDE Components Versions
 -------------------------------------
 
-* Binutils [[2.27+ (upstream commit decf5bd and ARC patches)]]
-* GCC [[6.2.1 (upstream commit e061fbe and ARC patches)]]
-* GDB [[7.12 (upstream commit 5f8cf6c and ARC patches)]]
-* newlib [[2.4 (upstream commit e6413b0 and ARC patches)]]
-* uclibc-ng [[1.0.17 (plus few ARC patches)]]
-* Eclipse [[Mars (4.5.1) with CDT 8.8.0]]
-* OpenOCD [[0.9+ upstream commit 30203b3d8b]], with ARC support.
+* Binutils 2.28 with additonal ARC patches
+* GCC 6.3.0 with additional ARC patches
+* GDB 7.12 (upstream commit 5f8cf6c) with ARC patches
+* newlib 2.4 (upstream commit e6413b0) with ARC patches
+* uclibc-ng 1.0.17 with few ARC patches
+* Eclipse Mars (4.5.1) with CDT 8.8.0
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
 
 This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
-generator) version [[1.0.53]] and later.
+generator) version 1.0.53 and later.
 
 New Features and Enhancements
 -----------------------------
 
-* Toolchain Build  Scripts
+* Binary distributables
+	* ARC HS toolchain now includes sysroot for -mcpu=hs38_linux.
+	* New documentation site.
+
+* Toolchain Build Scripts
 	* Removed obsolete unsupported scripts.
 	* macOS support.
+	* Import documentation from wiki. Build it with Sphinx.
 
-[[TBD]]
+* GCC
+	* Update to version 6.3.0.
 
-Bugs Fixed in This Release (Summary)
-------------------------------------
+* Binutils
+	* Update to version 2.28.
 
-[[TBD]]
+* OpenOCD
+	* Support Secure MPU registers.
 
 
 Major Changes in 2016.09 Release
