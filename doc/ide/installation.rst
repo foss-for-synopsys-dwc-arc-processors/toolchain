@@ -7,7 +7,7 @@ Installation
 Using installer for Windows
 ---------------------------
 
-Windows users are advised to use our Windows installer for Eclisepse for GNU
+Windows users are advised to use our Windows installer for Eclipse for GNU
 Toolchain for IDE, that can be downloaded from this `releases
 page <https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/releases>`_.
 Installer already contains all of the necessary components.
