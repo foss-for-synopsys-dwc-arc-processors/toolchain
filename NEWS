@@ -26,6 +26,7 @@ New Features and Enhancements
 	* Removed obsolete unsupported scripts.
 	* macOS support.
 	* Import documentation from wiki. Build it with Sphinx.
+	* Added tcftool binary to toolchain for Windows and x86 Linux hosts.
 
 * GCC
 	* Update to version 6.3.0.

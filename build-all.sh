@@ -1124,4 +1124,33 @@ if [ -d "${INSTALLDIR}/" ]; then
     cp "${ARC_GNU}/toolchain/Synopsys_FOSS_Notices.pdf" "${INSTALLDIR}/"
 fi
 
+# Copy TCFtool.
+if [ -d "$INSTALLDIR/bin" ]; then
+    # Use config.{guess,sub} from GCC sources.
+    if [ "$TOOLCHAIN_HOST" ]; then
+	triplet=$($ARC_GNU/gcc/config.sub $TOOLCHAIN_HOST)
+    else
+	triplet=$($ARC_GNU/gcc/config.guess)
+    fi
+
+    # Convert triplet to tcftool filename components.
+    case $triplet in
+	i?86-*|x86_64-*)
+	    fname_arch=x86 ;;
+    esac
+
+    case $triplet in
+	*-linux-gnu)
+	    fname_os=linux ;;
+	*-mingw32)
+	    fname_os=windows
+	    fname_ext=.exe ;;
+    esac
+
+    if [ -n "$fname_arch" -a -n "$fname_os" ]; then
+	cp -a "$ARC_GNU/toolchain/extras/tcftool/tcftool_${fname_arch}_${fname_os}${fname_ext}" \
+	    $INSTALLDIR/bin/tcftool${fname_ext}
+    fi
+fi
+
 # vim: noexpandtab sts=4 ts=8:
