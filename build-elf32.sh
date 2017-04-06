@@ -243,8 +243,12 @@ then
 	# "/usr/bin/texi2dvi: pdfetex exited with bad status, quitting."
 	# Hence we have to invoke make trice - once for each PDF to be built, and then to install
 	# them. Detection is based on texinfo version instead of the OS.
-	make_target_ordered "generating PDF documentation" install-pdf-target-newlib || true
-	make_target_ordered "generating PDF documentation" install-pdf-target-newlib || true
+	# `make_target_ordered` will emit it's own error messages on make failures, so they should
+	# be suppressed, so that users will not be confused.
+	make_target_ordered "generating PDF documentation" \
+	    install-pdf-target-newlib &>/dev/null || true
+	make_target_ordered "generating PDF documentation" \
+	    install-pdf-target-newlib &>/dev/null || true
 	make_target_ordered "generating PDF documentation" install-pdf-target-newlib
     else
 	make_target "generating PDF documentation" install-pdf-target-newlib
