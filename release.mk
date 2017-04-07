@@ -777,7 +777,7 @@ $O/.stamp_ide_linux_tar: \
 	$(LOCAL_CP) $O/$(TOOLS_ELFBE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
-	mkdir -m775 $O/$(IDE_LINUX_INSTALL)/eclipse/jre
+	mkdir -p -m775 $O/$(IDE_LINUX_INSTALL)/eclipse/jre
 	tar xf $O/$(JRE_LINUX_TGZ) -C $O/$(IDE_LINUX_INSTALL)/eclipse/jre \
 	    --strip-components=1
 	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
