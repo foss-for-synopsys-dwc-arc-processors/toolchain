@@ -1021,6 +1021,7 @@ ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
 	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE)
+	$(DEPLOY_LINK_CMD)
 
 #
 # Deploy unpacked builds which can be used directly
@@ -1040,6 +1041,15 @@ else
     'mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE)'
   DEPLOY_BUILD_LINK_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
     'ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION_PATH)/latest'
+endif
+
+ifeq ($(findstring :,$(DEPLOY_DESTINATION)),)
+  DEPLOY_LINK_CMD=ln -fsT $(RELEASE) $(DEPLOY_DESTINATION)/latest
+else
+  DEPLOY_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_DESTINATION)")
+  DEPLOY_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_DESTINATION)")
+  DEPLOY_LINK_CMD=$(SSH) $(DEPLOY_DESTINATION_HOST) \
+    'ln -fsT $(RELEASE) $(DEPLOY_DESTINATION_PATH)/latest'
 endif
 
 .PHONY: .deploy_build_destdir
