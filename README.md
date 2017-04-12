@@ -354,10 +354,14 @@ add EPEL repository, then install Mingw from it. In CentOS:
 For instruction how to install EPEL on RHEL, see
 <https://fedoraproject.org/wiki/EPEL/FAQ>.
 
-After prerequisites are installed and Linux tools are in the `PATH`, do:
+First stage of GCC build should be disabled, because libraries will be built
+with the Linux host toolchain.
 
+After prerequisites are installed do:
+
+    $ export PATH=$LINUX_HOST_TOOLS_PATH/bin:$PATH
     $ ./build-all.sh --no-uclibc --host i686-w64-mingw32 \
-      --no-system-expat
+      --no-system-expat --no-elf32-gcc-stage1
 
 Note that value of host triplet depends on what mingw toolchain is being used.
 Triplet `i686-w64-mingw32` is valid for mingw toolchain currently used in
