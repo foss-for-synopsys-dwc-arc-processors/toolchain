@@ -27,13 +27,15 @@
 
 #     arc-versions.sh [--auto-checkout | --no-auto-checkout]
 #                     [--auto-pull | --no-auto-pull]
-#                     [--uclibc | --no-uclibc]
 
 # The environment variable ${ARC_GNU} should point to the directory within
 # which the GIT trees live.
 
+# Environment variables DO_UCLIBC or DO_GLIBC should be set to `yes' if Linux
+# toolchain is being built.
+
 # The environment variable ${LINUXDIR} should point to the Linux root
-# directory (only used if --uclibc is set).
+# directory (only used if DO_UCLIBC or DO_GLIBC is set to `yes').
 
 # We checkout the desired branch for each tool. Note that these must exist or
 # we fail.
@@ -41,7 +43,6 @@
 # Default options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
-uclibc_arg="--uclibc"
 
 # Parse options
 until
@@ -55,14 +56,9 @@ case ${opt} in
 	autopull=$1
 	;;
 
-    --uclibc | --no-uclibc)
-	uclibc_arg=$1
-	;;
-
     ?*)
 	echo "Usage: arc-versions.sh  [--auto-checkout | --no-auto-checkout]"
         echo "                        [--auto-pull | --no-auto-pull]"
-        echo "                        [--uclibc | --no-uclibc]"
 	exit 1
 	;;
 
@@ -97,7 +93,7 @@ else
 fi
 
 # Disable linux if needed
-if [ "x${uclibc_arg}" != "x--uclibc" ]
+if [ ${DO_UCLIBC:-no} = yes -o ${DO_GLIBC:-no} = yes ]
 then
     linux=""
 fi
@@ -125,7 +121,7 @@ do
     echo "Checking out branch/tag ${branch} of ${tool}"
 
     # Kludge, because Linux has its own environment variable. Note that the
-    # tool can only "linux" if --uclibc is set above.
+    # tool can only be "linux" if Linux toolchain is being built.
     if [ "${tool}" = "linux" ]
     then
 	cd ${LINUXDIR}

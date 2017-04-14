@@ -401,8 +401,8 @@ build_pathnm ()
 autocheckout=""
 autopull=""
 external_download="--external-download"
-elf32="--elf32"
-uclibc="--uclibc"
+DO_ELF32=yes
+DO_UCLIBC=yes
 ISA_CPU="arc700"
 UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
@@ -503,12 +503,20 @@ case ${opt} in
 	external_download=$1
 	;;
 
-    --elf32 | --no-elf32)
-	elf32=$1
+    --elf32)
+	DO_ELF32=yes
 	;;
 
-    --uclibc | --no-uclibc)
-	uclibc=$1
+    --no-elf32)
+	DO_ELF32=no
+	;;
+
+    --uclibc)
+	DO_UCLIBC=yes
+	;;
+
+    --no-uclibc)
+	DO_UCLIBC=no
 	;;
 
     --uclibc-defconfig)
@@ -787,7 +795,7 @@ fi
 
 # Default Linux directory if not already set. Only matters if we are building
 # the uClibc tool chain.
-if [ "x${uclibc}" = "x--uclibc" -a "x${LINUXDIR}" = "x" ]
+if [ $DO_UCLIBC = yes -a "x${LINUXDIR}" = "x" ]
 then
     if [ -d "${ARC_GNU}"/linux ]
     then
@@ -942,6 +950,8 @@ export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
+export DO_ELF32
+export DO_UCLIBC
 export ELF32_DISABLE_MULTILIB
 export UCLIBC_DISABLE_MULTILIB
 export ISA_CPU
@@ -1014,7 +1024,7 @@ echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
 if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
-    ${uclibc} >> ${logfile} 2>&1
+    >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
     echo "- see ${logfile}"
@@ -1049,7 +1059,7 @@ if [[ " ${allowed_cpus[*]} " != *" $ISA_CPU "* ]]; then
     exit 1
 fi
 
-if [ "x${uclibc}" = "x--uclibc" ]; then
+if [ $DO_UCLIBC = yes ]; then
     if [[ " ${allowed_linux_cpus[*]} " != *" $ISA_CPU "* ]]; then
 	echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
 	     "Choose one of the supported CPU familes or disable building of"\
@@ -1078,8 +1088,7 @@ fi
 cd ${builddir}
 
 # Optionally build the arc-elf32- tool chain
-if [ "x${elf32}" = "x--elf32" ]
-then
+if [ $DO_ELF32 = yes ]; then
     if ! "${ARC_GNU}"/toolchain/build-elf32.sh
     then
 	echo "ERROR: arc-elf32- tool chain build failed."
@@ -1091,8 +1100,7 @@ then
 fi
 
 # Optionally build the arc-linux-uclibc- tool chain
-if [ "x${uclibc}" = "x--uclibc" ]
-then
+if [ $DO_UCLIBC = yes ]; then
     if ! "${ARC_GNU}"/toolchain/build-uclibc.sh
     then
 	echo "ERROR: arc-linux-uclibc- tool chain build failed."
