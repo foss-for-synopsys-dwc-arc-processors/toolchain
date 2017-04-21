@@ -10,6 +10,8 @@ pages:
 
 .. note::
    Opella-XD has some problems, see section :ref:`known-issues`.
+   
+   On some platforms debugging fails when Opella-XD gdb server is stared from IDE, in this case use :ref:`alt-way`.
 
 Board Configuration
 -------------------
@@ -58,3 +60,17 @@ switching to Debug Perspective.
 
    Debugging process with Opella-XD
 
+.. _alt-way:
+
+Alternative way of debugging
+----------------------------------------
+
+Another way to debug an application is connecting to running gdb-server.
+Run Ashling GDB Server from command line as described in * :ref:`Using Ashling Opella-XD <ashling-axs>`.
+Choose the "Connect to running GDB server" value of ARC GDB Server field on Debugger tab of debug configuration.
+
+.. figure:: images/debugging/ashling/ashling_dbg_config_commands.png
+
+On the next tab, Commands, specify path to your tdesc file.
+
+Start debug session after successful initialization of the gdb-server.
