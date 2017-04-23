@@ -65,7 +65,7 @@ Alternative way of debugging
 ----------------------------------------
 
 Another way to debug an application is connecting to running gdb-server.
-Run Ashling GDB Server from command line as described in * :ref:`Using Ashling Opella-XD <ashling-axs>`.
+Run Ashling GDB Server from command line as described in :ref:`Running Ashling GDB Server<run-ashling-gdb-server>`.
 Choose the "Connect to running GDB server" value of ARC GDB Server field on Debugger tab of debug configuration.
 
 .. figure:: images/debugging/ashling/ashling_dbg_config_commands.png
