@@ -36,6 +36,7 @@ required to set *JP1403* and unset *JP1402*, while for OpenOCD it is otherwise.
 Refer to our [wiki guide](AXS-SDP-and-OpenOCD) and to the User Guide of the
 AXC00x CPU card you are using for more details.
 
+.. _run-ashling-gdb-server:
 
 Running Ashling GDB Server
 --------------------------
