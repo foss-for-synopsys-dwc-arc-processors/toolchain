@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Synopsys Inc.
+# Copyright (C) 2016-2017 Synopsys Inc.
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -34,6 +34,16 @@ proc arc_get_cflags {} {
     global env
     global tool
     global board
+
+    # Quick exit if this is a gcc.dg/compat testsuite. Return value of
+    # arc_get_cflags would be passed to both compilers in this testsuite, so
+    # that will cause compilation errors in Metaware due to unknown options.
+    # Instead all options should be specified via COMPAT_OPTIONS varibles in
+    # site.exp.
+    if { [board_info $board exists arc,is_gcc_compat_suite] &&
+	[string is true -strict [board_info $board arc,is_gcc_compat_suite]] } {
+	return ""
+    }
 
     set cflags {}
 

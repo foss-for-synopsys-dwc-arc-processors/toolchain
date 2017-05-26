@@ -129,6 +129,16 @@ that will be sourced by ``release.mk``.
       ``y``
 
 
+.. envvar:: ENABLE_LINUX_TOOLS
+
+   Whether to build and deploy GNU Toolchain for Linux targets.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_NATIVE_TOOLS
 
    Whether to build and upload native toolchain. Currently toolchain is built
@@ -171,6 +181,19 @@ that will be sourced by ``release.mk``.
    Whether to build Toolchain PDF documentation. This affects only the
    "toolchain" repository - PDF documents from gcc, binutils, etc are always
    created, regardless of this option.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
+.. envvar:: ENABLE_SOURCE_TARBALL
+
+   Whether to create a source tarball. Usually that should be true, so that
+   release would include source tarball, however if release makefile is run
+   multiple times on various machines to create packages for various target
+   systems, then it makes sense to have this true only on one system.
 
    Possible values
       ``y`` and ``n``

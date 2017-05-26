@@ -1,7 +1,7 @@
 # Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free Software
 # Foundation, Inc.
 #
-# Copyright (C) 2013-2016 Synopsys, Inc.
+# Copyright (C) 2013-2017 Synopsys, Inc.
 #
 # Contributor: Anton Kolesov <anton.kolesov@synopsys.com>
 # Contributor: Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>
@@ -238,6 +238,17 @@ set_board_info is_simulator 1
 # is required to use status wrapper, that will print "***EXIT <number>" message.
 set_board_info needs_status_wrapper 1
 
+
+# Turn on support of compat.exp tests from GCC testsuite if environment
+# variable ARC_GCC_COMPAT_SUITE == 1.
+if { [info exists env(ARC_GCC_COMPAT_SUITE)] } {
+    set_board_info arc,is_gcc_compat_suite $env(ARC_GCC_COMPAT_SUITE)
+} else {
+    if { ![board_info $board exists arc,is_gcc_compat_suite] } {
+	set_board_info arc,is_gcc_compat_suite 0
+    }
+}
+
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 set_board_info compiler  "[find_gcc]"
@@ -254,17 +265,7 @@ set_board_info gdb,nosignals 1
 set_board_info gdb,noresults 1
 set_board_info gdb,noinferiorio 1
 
-# Turn on support of compat.exp tests from GCC testsuite if environment
-# variable ARC_GCC_COMPAT_SUITE == 1.
-if { [info exists env(ARC_GCC_COMPAT_SUITE)] } {
-    set is_gcc_compat_suite $env(ARC_GCC_COMPAT_SUITE)
-} else {
-    if { ![info exists is_gcc_compat_suite] } {
-	set is_gcc_compat_suite 0
-    }
-}
-
-if { $is_gcc_compat_suite } {
+if [string is true -strict [board_info $board arc,is_gcc_compat_suite]] {
     fix_gcc_compat_multilib_flags
 }
 

@@ -1,19 +1,20 @@
 #!/bin/sh
 
-# Nasty Sphinx 1.4 uses some stuff that causes an error on my CentOS 6 host
-# when building PDF (tex never works same on two machines). Has to use
-# Sphinx 1.3.5 to avoid triggering an error.
-if ! pip3 show Sphinx ; then
-    # PIP will always download file at URL, hence it is required to explicitly
-    # check if package has been already installed to avoid unnecessary
-    # download.
-    pip3 install --user \
-	https://github.com/sphinx-doc/sphinx/archive/1.3.5.tar.gz
-fi
+# Sphinx, pygments and sphinx_rtd_theme should be installed in some directory
+# which path should be in PIP_ROOT variable.  Don't use pip directly here
+# because it will modify the system. Python 3.5 is assumed. To create a proper
+# PIP_ROOT:
+#	pip install --prefix=$PIP_ROOT https://github.com/sphinx-doc/sphinx/archive/1.3.5.tar.gz
+#	pip install --prefix=$PIP_ROOT pygments sphinx_rtd_theme
 
-pip3 install --user \
-    pygments \
-    sphinx_rtd_theme
+export PATH=$PIP_ROOT/bin:$PATH
+export PYTHONPATH=$PIP_ROOT/lib/python3.5/site-packages
+
+# TEX_ROOT should contain path to a folder where texlive-texmf-latex has been
+# installed. Can be created like this:
+#	rpm --no-deps -i --root=$TEX_ROOT texlive-texmf-latex-2007
+p=$TEX_ROOT/usr/share/texmf/tex/latex
+export TEXINPUTS=.:$p/titlesec:$p/ltxmisc:$p/wrapfig:$p/upquote:$p/multirow:$p/eqparbox:
 
 make clean
 make html

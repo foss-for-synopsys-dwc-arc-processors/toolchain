@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2010-2016 Synopsys Inc.
+# Copyright (C) 2010-2017 Synopsys Inc.
 
 # Contributor Brendan Kehoe <brendan@zen.org>
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
@@ -98,6 +98,10 @@
 
 #     Build with threading, thread local storage support and NPTL if this is
 #     set to "yes".
+
+# UCLIBC_IN_SRC_TREE
+
+#    Whether to build uClibc inside the source tree.
 
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
@@ -220,7 +224,6 @@ echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" | tee -a ${logfile}
 # Initalize, including getting the tool versions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
 toolchain_build_dir="$(echo "${PWD}")"/toolchain
-uclibc_build_dir="$(echo "${PWD}")"/uClibc
 linux_src_dir=${LINUXDIR}
 linux_build_dir=$build_dir/linux
 
@@ -235,11 +238,29 @@ else
     SYSROOTDIR=$INSTALLDIR/$triplet/sysroot
     install_prefix=/usr
 fi
-DEFCFG_DIR=extra/Configs/defconfigs/arc/
+DEFCFG_DIR=$ARC_GNU/uClibc/extra/Configs/defconfigs/arc/
 
 # Purge old build dir if there is any and create a new one.
 rm -rf "$build_dir"
 mkdir -p "$build_dir"
+
+# -----------------------------------------------------------------------------
+# Black magic for macOS. The problem is that default sed on macOS is not
+# compatible with GNU, while some scripts use GNU-specific extensions. GNU sed
+# can be installed with Homebrew, but by default it will have a name `gsed`, so
+# scripts should be modified to use it. While this can be done in ARC scripts,
+# we don't have full control over other projects, Linux in particular, which
+# also require GNU sed. Therefore in followind lines a new directory is
+# created, a link named `sed` is created and is pointed to `gsed` and directory
+# is added to the PATH, so GNU sed will be used by Linux.  Alternative solution
+# would be to install GNU sed as `sed` in Homebrew, however that might have
+# some negative effect on other applications, so I don't think it is wise to
+# require this from the user.
+if [ "$IS_MAC_OS" = yes ]; then
+    mkdir $build_dir/macos_aliases
+    ln -s $(which gsed) $build_dir/macos_aliases/sed
+    export PATH=$build_dir/macos_aliases:$PATH
+fi
 
 # -----------------------------------------------------------------------------
 # Install the Linux headers
@@ -315,8 +336,15 @@ fi
 
 # -----------------------------------------------------------------------------
 # Build Binutils - will be used by both state 1 and stage2
+# Note the --disable-shared option. It is used here, because binutils libraries
+# shouldn't be build as dynamic libs (this causes issues on macOS), however the
+# target libraries should be built as shared ones.  But as far as I see same
+# option is used for both host and target, so --enable-shared should be used
+# for components that build target libraries (like gcc and libgcc), but
+# shouldn't be used for binutils, since it doesn't has target libraries and is
+# known to have troubles when shared libraries are used.
 build_dir_init binutils
-configure_uclibc_stage2 binutils binutils --disable-gdb
+configure_uclibc_stage2 binutils binutils --disable-gdb --disable-shared
 make_target building all
 
 # Gas requires opcodes to be installed, LD requires BFD to be installed.
@@ -367,65 +395,76 @@ fi
 echo "Installing uClibc headers ..." | tee -a "${logfile}"
 echo "=============================" >> "${logfile}"
 
-# uClibc builds in place, so if ${ARC_GNU} is set (to a different location) we
-# have to create the directory and copy the source across.
-mkdir -p ${uclibc_build_dir}
-cd ${uclibc_build_dir}
-
-if [ ! -f Makefile.in ]
-then
-    echo Copying over uClibc sources
-    tar -C "${ARC_GNU}"/uClibc --exclude=.svn --exclude='*.o' \
-	--exclude='*.a' -cf - . | tar -xf -
+if [ $UCLIBC_IN_SRC_TREE = no ]; then
+    # Create a build directory for uClibc. uClibc doesn't use GNU autotools, so
+    # process is different from the rest of the tools.
+    mkdir -p $build_dir/uclibc
+    # Make command to operate on uClibc.
+    MAKE_UCLIBC="make -C $ARC_GNU/uClibc O=$build_dir/uclibc"
+else
+    MAKE_UCLIBC="make -C $ARC_GNU/uClibc"
 fi
 
 # make will fail if there is yet no .config file, but we can ignore this error.
-make distclean >> "${logfile}" 2>&1 || true 
+$MAKE_UCLIBC distclean >> "$logfile" 2>&1 || true
 
-# Copy the defconfig file to a temporary location
-TEMP_DEFCFG=`temp_file_in_dir "${DEFCFG_DIR}" XXXXXXXXXX_defconfig`
-if [ ! -f "${TEMP_DEFCFG}" ]
-then
-    echo "ERROR: Failed to create temporary defconfig file."
-    exit 1
+# First create a .config file which is really just a modified copy of a
+# specified defconfig. Then use `make olddefconfig` to convert it to a full
+# .config file.  Previously to achieve this, without modification to the
+# specified .config itself, this script had to create a temporary file that is
+# a copy of defconfig, then modify it, then use standard "defconfig" command,
+# then remove temporary file. This looks like an unnecessary complication
+# considering that "olddefconfig" yields same result.
+if [ $UCLIBC_IN_SRC_TREE = no ]; then
+    uc_dot_config=$build_dir/uclibc/.config
+else
+    uc_dot_config=$ARC_GNU/uClibc/.config
 fi
-cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
+cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} $uc_dot_config
 
 # Patch defconfig with the temporary install directories used.
 ${SED} -e "s@%KERNEL_HEADERS%@$SYSROOTDIR$install_prefix/include@" \
        -e "s@%RUNTIME_PREFIX%@/@" \
        -e "s@%DEVEL_PREFIX%@$install_prefix/@" \
        -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
-       -i ${TEMP_DEFCFG}
+       -i $uc_dot_config
 
 # Patch defconfig for big or little endian.
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     ${SED} -e 's@ARCH_WANTS_LITTLE_ENDIAN=y@ARCH_WANTS_BIG_ENDIAN=y@' \
-           -i ${TEMP_DEFCFG}
+           -i $uc_dot_config
 else
     ${SED} -e 's@ARCH_WANTS_BIG_ENDIAN=y@ARCH_WANTS_LITTLE_ENDIAN=y@' \
-           -i ${TEMP_DEFCFG}
+           -i $uc_dot_config
 fi
 
 # Patch the defconfig for thread support.
 if [ "x${NPTL_SUPPORT}" = "xyes" ]
 then
     ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
-           -i ${TEMP_DEFCFG}
+           -i $uc_dot_config
 else
     ${SED} -e 's@UCLIBC_HAS_THREADS_NATIVE=y@LINUXTHREADS_OLD=y@' \
-           -i ${TEMP_DEFCFG}
+           -i $uc_dot_config
 fi
 
-# Create the .config from the temporary defconfig file.
-make ARCH=arc `basename ${TEMP_DEFCFG}` >> "${logfile}" 2>&1
+# Remove locale support on macOS. uClibc runs an application on a host to
+# generate local files, but that application fails to build on macOS, therefore
+# locale support has to be disabled on macOS hosts.
+if [ "$IS_MAC_OS" = yes ]; then
+    kconfig_disable_option $uc_dot_config UCLIBC_HAS_LOCALE
+fi
 
-# Now remove the temporary defconfig file.
-rm -f ${TEMP_DEFCFG}
+# Disable HARDWIRED_ABSPATH to avoid absolute path references to allow
+# relocatable toolchains.
+echo "HARDWIRED_ABSPATH=n" >> $uc_dot_config
+
+# Create complete .config from the "defconfig".
+$MAKE_UCLIBC ARCH=arc olddefconfig >> "$logfile" 2>&1
 
 # PREFIX is an arg to Makefile, it is not set in .config.
-if make ARCH=${arch} V=1 PREFIX=${SYSROOTDIR} install_headers >> "${logfile}" 2>&1
+if $MAKE_UCLIBC V=1 PREFIX=$SYSROOTDIR install_headers >> "$logfile" 2>&1
 then
     echo "  finished installing uClibc headers"
 else
@@ -450,57 +489,7 @@ fi
 echo "Building uClibc ..." | tee -a "${logfile}"
 echo "===================" >> "${logfile}"
 
-# We don't need to create directories or copy source, since that is already
-# done when we got the headers.
-cd ${uclibc_build_dir}
-
-# Copy the defconfig file to a temporary location
-TEMP_DEFCFG=`temp_file_in_dir "${DEFCFG_DIR}" XXXXXXXXXX_defconfig`
-if [ ! -f "${TEMP_DEFCFG}" ]
-then
-    echo "ERROR: Failed to create temporary defconfig file."
-    exit 1
-fi
-cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} ${TEMP_DEFCFG}
-
-# Patch defconfig with the temporary install directories used.
-${SED} -e "s@%KERNEL_HEADERS%@$SYSROOTDIR$install_prefix/include@" \
-       -e "s@%RUNTIME_PREFIX%@/@" \
-       -e "s@%DEVEL_PREFIX%@$install_prefix/@" \
-       -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
-       -i ${TEMP_DEFCFG}
-
-# At this step we also disable HARDWIRED_ABSPATH to avoid absolute
-# path references to allow relocatable toolchains.
-echo "HARDWIRED_ABSPATH=n" >> ${TEMP_DEFCFG}
-
-# Patch defconfig for big or little endian.
-if [ "${ARC_ENDIAN}" = "big" ]
-then
-    ${SED} -e 's@ARCH_WANTS_LITTLE_ENDIAN=y@ARCH_WANTS_BIG_ENDIAN=y@' \
-           -i ${TEMP_DEFCFG}
-else
-    ${SED} -e 's@ARCH_WANTS_BIG_ENDIAN=y@ARCH_WANTS_LITTLE_ENDIAN=y@' \
-           -i ${TEMP_DEFCFG}
-fi
-
-# Patch the defconfig for thread support.
-if [ "x${NPTL_SUPPORT}" = "xyes" ]
-then
-    ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
-           -i ${TEMP_DEFCFG}
-else
-    ${SED} -e 's@UCLIBC_HAS_THREADS_NATIVE=y@LINUXTHREADS_OLD=y@' \
-           -i ${TEMP_DEFCFG}
-fi
-
-# Create the .config from the temporary defconfig file.
-make ARCH=arc `basename ${TEMP_DEFCFG}` >> "${logfile}" 2>&1
-
-# Now remove the temporary defconfig file.
-rm -f ${TEMP_DEFCFG}
-
-if make ARCH=${arch} clean >> "${logfile}" 2>&1
+if $MAKE_UCLIBC clean >> "$logfile" 2>&1
 then
     echo "  finished cleaning uClibc"
 else
@@ -510,7 +499,7 @@ else
 fi
 
 # PREFIX is an arg to Makefile, it is not set in .config.
-if make ARCH=${arch} V=2 PREFIX=${SYSROOTDIR} >> "${logfile}" 2>&1
+if $MAKE_UCLIBC V=2 PREFIX=$SYSROOTDIR >> "$logfile" 2>&1
 then
     echo "  finished building uClibc"
 else
@@ -519,7 +508,7 @@ else
     exit 1
 fi
 
-if make ARCH=${arch} V=2 PREFIX=${SYSROOTDIR} install >> "${logfile}" 2>&1
+if $MAKE_UCLIBC V=2 PREFIX=$SYSROOTDIR install >> "$logfile" 2>&1
 then
     echo "  finished installing uClibc"
 else
@@ -635,7 +624,7 @@ if [ $DO_NATIVE_GDB = yes ]; then
     fi
 
     build_dir_init ncurses
-    tar xaf $toolchain_build_dir/_download_tmp/$ncurses_tar --strip-components=1
+    tar xf $toolchain_build_dir/_download_tmp/$ncurses_tar --strip-components=1
 
     # GCC 5 introduced some changes to the preprocessor output, that causes a
     # compilation error in files generated by ncurses. See GCC commit:

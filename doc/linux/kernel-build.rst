@@ -10,7 +10,7 @@ single question "How to confirm, that I can build Linux kernel with *that*
 toolchain?"
 
 To learn how to configure Linux, debug kernel itself and build extra software
-please see `<https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki>`.
+please see `https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki`.
 
 
 Prerequisites
@@ -58,29 +58,30 @@ Synopsys will be used.
 Configuring
 -----------
 
-Check `Buildroot downloads page <http://buildroot.org/download.html>` for
+Check `Buildroot downloads page <http://buildroot.org/download.html>`_ for
 latest release. This guide further assumes latest snapshot. Get Buildroot
 sources::
 
-    $ mkdir arc-2016.09-linux-guide
-    $ cd arc-2016.09-linux-guide
+    $ mkdir arc-2017.03-linux-guide
+    $ cd arc-2017.03-linux-guide
     $ wget https://buildroot.org/downloads/buildroot-snapshot.tar.bz2
     $ tar xaf buildroot-snapshot.tar.bz2
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
 this guide, a custom "defconfig" file will be created and then will be used to
 configure Buildroot. Custom "defconfig" file can be located anywhere and have
-any name. For example it can be ``arc-2016.09-linux-guide/hs_defconfig``.
+any name. For example it can be ``arc-2017.03-linux-guide/hs_defconfig``.
 Contents of this file should be following::
 
     BR2_arcle=y
     BR2_archs38=y
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2016.09-rc1/arc_gnu_2016.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_4_8=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_6=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.03-rc1/arc_gnu_2017.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_GCC_6=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_9=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
+    BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_INET_RPC=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_LINUX_KERNEL=y
@@ -115,12 +116,15 @@ Building
 To build Linux kernel image using that defconfig::
 
     $ cd buildroot
-    $ make O=../output_hs defconfig DEFCONFIG=../hs_defconfig
+    $ make O=`readlink -e ../output_hs` defconfig DEFCONFIG=`readlink -e ../hs_defconfig`
     $ cd ../output_hs
     $ make
 
+It's necessary to pass an absolute path to Buildroot, because there is the issue
+with a relative path.
+
 After that there will be Linux kernel image file
-``arc-2016.09-linux-guide/output/images/vmlinux``.
+``arc-2017.03-linux-guide/output/images/vmlinux``.
 
 
 Running on nSIM
@@ -129,7 +133,7 @@ Running on nSIM
 Linux configuration in the provided Buildroot defconfig is for the standalone
 nSIM. This kernel image can be run directly on nSIM, without any other
 additional software. Assuming current directory is
-``arc-2016.09-linux-guide``::
+``arc-2017.03-linux-guide``::
 
     $ $NSIM_HOME/bin/nsimdrv -propsfile archs38.props output_hs/images/vmlinux
 
@@ -183,9 +187,9 @@ Process of building kernel for ARC 770 is similar to what is for ARC HS. It is
 required only to change several option in Buildroot defconfig:
 
   * ``BR2_archs38=y`` with ``BR2_arc770d=y``
-  * ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2016.09-rc1/arc_gnu_2016.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
+  * ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.03-rc1/arc_gnu_2017.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
     with
-    ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2016.09-rc1/arc_gnu_2016.09-rc1_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
+    ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.03-rc1/arc_gnu_2017.03-rc1_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
   * ``BR2_LINUX_KERNEL_DEFCONFIG="nsim_hs"`` with
     ``BR2_LINUX_KERNEL_DEFCONFIG="nsim_700"``
 
@@ -230,10 +234,11 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_archs38=y
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2016.09-rc1/arc_gnu_2016.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_4_8=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_6=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.03-rc1/arc_gnu_2017.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_GCC_6=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_9=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
+    BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_INET_RPC=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_LINUX_KERNEL=y
@@ -249,7 +254,7 @@ Save this defconfig to some file (for example ``vdk_defconfig``). Then use same
 process as in :ref:`linux-building-label` section.::
 
     $ cd buildroot
-    $ make O=../output_vdk defconfig DEFCONFIG=<path-to-VDK-defconfig-file>
+    $ make O=`readlink -e ../output_vdk` defconfig DEFCONFIG=<path-to-VDK-defconfig-file>
     $ cd ../output_vdk
     $ make
 
@@ -318,9 +323,9 @@ defconfig is::
     BR2_archs38=y
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2016.09/arc_gnu_2016.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.03/arc_gnu_2017.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_6=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_8=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_9=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_INET_RPC=y
@@ -335,5 +340,5 @@ defconfig is::
 
 This defconfig will create a uImage file instead of vmlinux. Please refer to
 `ARC Linux wiki
-<https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki/Getting-Started-with-Linux-on-ARC-AXS103-Software-Development-Platform-(SDP)>`
+<https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki/Getting-Started-with-Linux-on-ARC-AXS103-Software-Development-Platform-(SDP)>`_
 for more details on using u-boot with AXS103.

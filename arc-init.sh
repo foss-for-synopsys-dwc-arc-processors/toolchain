@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2007-2016 Synopsys Inc.
+# Copyright (C) 2007-2017 Synopsys Inc.
 
 # This file is a common initialization script for ARC tool chains.
 
@@ -102,65 +102,6 @@ then
   fi
 fi
 export SED
-
-run_check () {
-    bd=$1
-    tool=$2
-    logfile=$3
-    board=$4
-    echo -n "Testing ${tool}..."
-    echo "Regression test ${tool}" >> "${logfile}"
-    echo "=======================" >> "${logfile}"
-
-    cd ${bd}
-    test_result=0
-    # Important note. Must use --target_board=${board}, *not* --target_board
-    # ${board} or GNU will think this is not parallelizable (horrible kludgy
-    # test in the makefile).
-    make ${PARALLEL} "check-${tool}" RUNTESTFLAGS="--target_board=${board}" \
-	>> "${logfile}" 2>&1 || test_result=1
-    echo
-    cd - > /dev/null 2>&1
-    return ${test_result}
-}
-
-# Save the results files to the results directory, removing spare line feed
-# characters at the end of lines and marking as not writable or executable.
-
-# $1 - build directory
-# $2 - results directory
-# $3 - results file name w/o suffix
-# $4 - logfile
-save_res () {
-    bd=$1
-    rd=$2
-    resfile=$3
-    logfile=$4
-    resbase=`basename $resfile`
-
-    if [ \( -r ${bd}/${resfile}.log \) -a \( -r ${bd}/${resfile}.sum \) ]
-    then
-        # Generated files have Windows line endings. dos2unix tool cannot be
-        # used because sometimes it recognizes input files as binary and
-        # refuses to work. Specifying option "-f" could solve this problem,
-        # but RedHats dos2unix is too old to understand this option. "tr -d
-        # '\015\" seems to be more universal solution.
-	tr -d '\015' < ${bd}/${resfile}.log > ${rd}/${resbase}.log \
-	    2>> ${logfile}
-	chmod ugo-wx ${rd}/${resbase}.log >> ${logfile} 2>&1
-	tr -d '\015' < ${bd}/${resfile}.sum > ${rd}/${resbase}.sum \
-	    2>> ${logfile}
-	chmod ugo-wx ${rd}/${resbase}.sum >>${logfile} 2>&1
-
-        # Report the summary to the user
-	echo
-	${SED} -n -e '/Summary/,$p' < ${rd}/${resbase}.sum | grep '^#' || true
-	echo
-    else
-	# Silent failure
-	return  1
-    fi
-}
 
 # Some targets have a version of mktemp that does not support the
 # --tmpdir option for creating temporary files in a particular
@@ -589,7 +530,7 @@ build_expat() {
     expat_tar=expat-${expat_version}.tar.gz
     if [ ! -s $1/$expat_tar ]; then
 	$WGET -O $1/$expat_tar \
-	  http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download
+	  "http://sourceforge.net/projects/expat/files/expat/$expat_version/$expat_tar/download?use_mirror=kent"
     fi
 
     build_dir_init expat
@@ -599,17 +540,57 @@ build_expat() {
     make_target installing install
 }
 
+# $1 - a configuration file or a directory with .config
+# $2 - option to enable
+kconfig_enable_option() {
+    local config=$1
+    if [ -d "$1" ]; then
+        config=$1/.config
+    fi
+
+    # Delete occurrences of option $2 from $config and append
+    # "$2=y" to enable this option.
+    if ! grep -q "$2=y" $config ; then
+        # Config file must not be empty because sed does not work
+        # correctly with empty files.
+        echo >> $config
+
+        $SED -i \
+            -e "/# $2 is not set/d" \
+            -e "/$2=n/d" \
+            -e "\$a$2=y" \
+            $config
+    fi
+}
+
+# $1 - a configuration file or a directory with .config
+# $2 - option to disable
+kconfig_disable_option() {
+    local config=$1
+    if [ -d "$1" ]; then
+        config=$1/.config
+    fi
+
+    # Delete option $2 from $config and append "$2=n" to disable this
+    # option by force.
+    if ! grep -q "$2=n" $config ; then
+        # Config file must not be empty because sed does not work
+        # correctly with empty files.
+        echo >> $config
+
+        $SED -i \
+            -e "/# $2 is not set/d" \
+            -e "/$2=y/d" \
+            -e "\$a$2=n" \
+            $config
+    fi
+}
+
 # Create a common log directory for all logs in this and sub-scripts
 LOGDIR="$ARC_GNU/logs"
 mkdir -p "$LOGDIR"
 
-# Create a common results directory in which sub-directories will be created
-# for each set of tests.
-RESDIR="$ARC_GNU/results"
-mkdir -p "$RESDIR"
-
 # Export the environment variables
 export LOGDIR
-export RESDIR
 
 # vim: noexpandtab sts=4 ts=8:

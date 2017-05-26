@@ -2,7 +2,7 @@
 
 # Script to specify versions of tools to use.
 
-# Copyright (C) 2012-2016 Synopsys Inc.
+# Copyright (C) 2012-2017 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
@@ -77,7 +77,7 @@ done
 # That should be a separate variable to allow for a straightforward creation of
 # new releases, where we want default to point to release, instead of dev
 # branch.
-default_toolchain_config=arc-2016.09-release
+default_toolchain_config=arc-2017.03-release
 
 # Specify the default versions to use as a string <tool>:<branch>. Those are
 # taken from the checkout configuration file. Only actually matters if

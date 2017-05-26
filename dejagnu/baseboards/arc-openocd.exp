@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Synopsys, Inc.
+# Copyright (C) 2016-2017 Synopsys, Inc.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -25,6 +25,12 @@ set_board_info arc,openocd_log_level 0
 
 # Assume that this is a CCM design (should be evaluated dynamically, somehow).
 set_board_info arc,has_executable_stack 0
+
+# GDB test break-unload-file.exp does command "file", which resets gdbarch to
+# ARCompact one, which doesn't play well with OpenOCD when actual target is ARC v2.
+if { !([check_target_arc700] || [check_target_arc600] || [check_target_arc601]) } {
+    set_board_info gdb_init_command "set arch ARCv2"
+}
 
 proc arc-openocd_reboot { cfg } {
     puts "Reboot is forbidden for this board - it means that test suite is "

@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-# Copyright (C) 2013-2016 Synopsys Inc.
+# Copyright (C) 2013-2017 Synopsys Inc.
 
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
@@ -41,7 +41,7 @@ for url in ${urls} ; do
             if [ ! -f "${filename}" ]; then
                 $WGET "${url}"
             fi
-            tar xaf "${filename}"
+            tar xf "${filename}"
         fi
         mv "${dirname}" "${toolname}"
     fi

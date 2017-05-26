@@ -74,6 +74,44 @@ instead versions of those libraries installed on the build host will be used.
 In most cases this is not required.
 
 
+### macOS Prerequisites
+
+By default HFS on macOS is configured to be case-insensitive, which is known to
+cause issues with Linux sources (there are files which differ only in character
+case). As a result to build uClibc toolchain for ARC it is required to use
+partition that is configured to be case sensitive (use Disk Utility to create a
+new partition, at least 16 GiB are needed to build uClibc toolchain, 32 GiB are
+needed to build a complete baremetal toolchain. With baremetal (elf) toolchain
+there are no such problems.
+
+To build toolchain on macOS it is required to install several prerequisites
+which are either not installed by default or non-GNU-compatible versions are
+installed by default. This easily can be done with Homebrew:
+
+	# Install homebrew itself (https://brew.sh/)
+	$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+	# Install wget
+	$ brew install wget
+
+	# Install GNU sed
+	$ brew install gnu-sed
+
+To build PDF documentation for toolchain TeX must be installed:
+
+	$ brew cask install mactex
+
+If PDF documentation is not needed, pass option `--no-pdf` to build-all.sh to
+disable its build, then mactex is not required.
+
+> NB! Linux/uClibc toolchain built on macOS has different uClibc configuration
+> then the one built on Linux hosts - **local support is disabled**. The reason
+> is that when locale support is enabled, uClibc makefiles will build an
+> application called `genlocale` that will run on host system, but on macOS
+> this application fails to build, therefore support for locales is disabled
+> when Linux/uClibc toolchain is built on macOS.
+
+
 Getting sources
 ---------------
 
@@ -89,8 +127,8 @@ Latest stable release from https://kernel.org/ is recommended, and only
 versions >= 3.9 are supported. Linux sources should be located in the directory
 named `linux` that is the sibling of this `toolchain` directory. For example:
 
-    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.8.2.tar.xz
-    $ tar xaf linux-4.8.2.tar.xz --transform=s/linux-4.8.2/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.9.13.tar.xz
+    $ tar xf linux-4.9.13.tar.xz --transform=s/linux-4.9.13/linux/
 
 ### Using Git repositories
 
@@ -127,12 +165,12 @@ the valid `-b <branch>` option so that Git will fetch a state of required
 branch or a tag. If branch is used, then current branches can be found in the
 config/arc-dev.sh file, which at the moment of this writing are:
 
-* binutils - arc-2016.09
-* gcc - arc-6.x-dev
+* binutils - arc-2017.03
+* gcc - arc-2017.03
 * gdb - arc-2016.09-gdb
-* newlib - arc-2016.09
-* uClibc - arc-2016.09
-* Linux - linux-4.8.y
+* newlib - arc-2017.03
+* uClibc - arc-2017.03
+* Linux - linux-4.9.y
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
 latest state, which is a default behaviour, then it will anyway fetch
@@ -316,10 +354,14 @@ add EPEL repository, then install Mingw from it. In CentOS:
 For instruction how to install EPEL on RHEL, see
 <https://fedoraproject.org/wiki/EPEL/FAQ>.
 
-After prerequisites are installed and Linux tools are in the `PATH`, do:
+First stage of GCC build should be disabled, because libraries will be built
+with the Linux host toolchain.
 
+After prerequisites are installed do:
+
+    $ export PATH=$LINUX_HOST_TOOLS_PATH/bin:$PATH
     $ ./build-all.sh --no-uclibc --host i686-w64-mingw32 \
-      --no-system-expat
+      --no-system-expat --no-elf32-gcc-stage1
 
 Note that value of host triplet depends on what mingw toolchain is being used.
 Triplet `i686-w64-mingw32` is valid for mingw toolchain currently used in

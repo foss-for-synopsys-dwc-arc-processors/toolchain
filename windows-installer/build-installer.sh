@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# Copyright (C) 2014-2016 Synopsys Inc.
+# Copyright (C) 2014-2017 Synopsys Inc.
 
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
 
@@ -21,7 +21,7 @@
 
 # Params
 # Eclipse parameters copied from Makefile.release
-ECLIPSE_REPO=http://download.eclipse.org/releases/mars
+ECLIPSE_REPO=http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/mars
 ECLIPSE_PREREQ=org.eclipse.tm.terminal.feature.feature.group
 
 if [ -z "$RELEASE_TAG" ]; then
@@ -30,6 +30,8 @@ if [ -z "$RELEASE_TAG" ]; then
 fi
 
 RELEASE=$(cut -d- -f2- <<< $RELEASE_TAG)
+# Strip `-release` from the name.
+RELEASE=${RELEASE%-release}
 RELEASE_BRANCH=$(cut -d- -f2 <<< $RELEASE_TAG)
 
 rm -rf tmp *.nsi *.nsh *.bmp

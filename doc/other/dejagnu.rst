@@ -111,7 +111,7 @@ Compatibility tests
 
 GCC contains a set of compatibility tests named ``compat.exp``. It allows to test compatibility of ARC GNU gcc compiler and proprietary Synopsys MetaWare ccac compiler for ARC EM and ARC HS targets. If you want to run these tests it is necessary to configure additional variables in ``site.exp`` file:
 
-* ``set is_gcc_compat_suite "0"`` - enable support of compatibility tests from
+* ``set is_gcc_compat_suite "1"`` - enable support of compatibility tests from
   gcc.
 * ``set ALT_CC_UNDER_TEST "path/to/ccac"``
 * ``set ALT_CXX_UNDER_TEST "path/to/ccac"``
@@ -132,3 +132,34 @@ configuration and set these environment variables in ``example_run.sh``:
 * ``GCC_COMPAT_CCAC_PATH`` - path to Synopsys MetaWare ccac executable.
 * ``GCC_COMPAT_GCC_OPTIONS`` - options for gcc.
 * ``GCC_COMPAT_CCAC_OPTIONS`` - options for ccac.
+
+
+ARC-specific board options
+--------------------------
+
+Following options are supported by ARC DejaGNU scripts and are usually set in
+board files, for example in ``dejagnu/baseboard/arc-sim-nsimdrv.exp``.
+
+``arc,gdbserver_prog``
+    Path to GDB server to use with ``arc-nsim.exp``.
+
+``arc,gdbserver_args``
+    Argument to pass to GDB server used in ``arc-nsim.exp``.
+
+``arc,hostlink``
+    Hostlink type to use. Can be ``nsim`` or empty/not set.
+
+``arc,is_gcc_compat_suite``
+    Whether this is a GCC *compat* testsuite or not. Boolean value.
+
+``arc,openocd_prog``
+    Path to OpenOCD application binary.
+
+``arc,openocf_cfg``
+    OpenOCD configuration file. Passed to ``openocd`` via option ``-s`` as-is.
+
+``arc,openocd_log``
+    Path to logfile for OpenoCD.
+
+``arc,openocd_log_level``
+    Level of OpenOCD verbosity. Integer from 0 to 3 inclusive.

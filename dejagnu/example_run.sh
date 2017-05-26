@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-# Copyright (C) 2015-2016 Synopsys Inc.
+# Copyright (C) 2015-2017 Synopsys Inc.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -61,12 +61,15 @@ if [ "${ARC_GCC_COMPAT_SUITE:-0}" == "1" ]; then
     # it's necessary to pass "-EB" to MetaWare compiler and change path to
     # MetaWare libraries from "-L$METAWARE_HOME/arc/lib/av2em/le" to
     # "-L$METAWARE_HOME/arc/lib/av2em/be".
-    export GCC_COMPAT_GCC_OPTIONS="-O0 -g -mcpu=arcem -mno-sdata -mabi=mwabi \
+    export GCC_COMPAT_GCC_OPTIONS="-O0 -g -mcpu=em4_dmips -mno-sdata \
         -fshort-enums -Wl,-z,muldefs -Wl,--no-warn-mismatch -lgcc -lnsim -lc \
         -lg -lm -L$METAWARE_ROOT/arc/lib/av2em/le -lmw"
 
     # Set options for alternate compiler.
-    export GCC_COMPAT_CCAC_OPTIONS="-O0 -g -av2em -Xbasecase -Hnocopyr -Hnosdata"
+    # Metaware and GCC has different expectations for structure alignment.
+    # See Synopsys STAR 9001042680.
+    export GCC_COMPAT_CCAC_OPTIONS="-O0 -g -av2em -Xbasecase -Hnocopyr \
+	-Hnosdata -fstrict-abi"
 fi
 
 #

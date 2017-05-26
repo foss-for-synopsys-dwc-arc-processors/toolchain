@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2012-2016 Synopsys Inc.
+# Copyright (C) 2012-2017 Synopsys Inc.
 
 # Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
 # Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
@@ -56,6 +56,7 @@
 #                  [--optsize-newlib | --no-optsize-newlib]
 #                  [--optsize-libstdc++ | --no-optsize-libstdc++]
 #                  [--native | --no-native]
+#                  [--uclibc-build-in-src-tree | --no-uclibc-build-in-src-tree]
 
 # --source-dir <source_dir>
 
@@ -340,6 +341,14 @@
 #    ARC Linux or it is a cross-toolchain, that would run on other host but
 #    would compile for ARC. Makes sense only for uClibc/Linux toolchain.
 
+# --uclibc-build-in-src-tree | --no-uclibc-build-in-src-tree
+
+#    Whether to build uClibc inside of its the source tree. Default is to build
+#    inside the source tree because out of tree build often triggers a build
+#    failure, because total list of arguments to linker/archiver exceeds
+#    maximum in Linux systems. Building inside of the source tree means that it
+#    is not possible to run multiple concurrent builds from the same tree.
+
 # Where directories are specified as arguments, they are relative to the
 # current directory, unless specified as absolute names.
 
@@ -416,6 +425,7 @@ DO_STRIP_TARGET_LIBRARIES=no
 BUILD_OPTSIZE_NEWLIB=yes
 BUILD_OPTSIZE_LIBSTDCXX=yes
 IS_NATIVE=no
+UCLIBC_IN_SRC_TREE=yes
 
 # Default multilib usage and conversion for toolchain building
 case "x${DISABLE_MULTILIB}" in
@@ -438,8 +448,11 @@ esac
 
 if [ x`uname -s` = "xDarwin" ]
 then
+    IS_MAC_OS=yes
     #You can install gsed with 'brew install gnu-sed'
     SED=gsed
+else
+    IS_MAC_OS=no
 fi
 
 # Parse options
@@ -671,6 +684,14 @@ case ${opt} in
 	IS_NATIVE=no
 	;;
 
+    --uclibc-build-in-src-tree)
+	UCLIBC_IN_SRC_TREE=yes
+	;;
+
+    --no-uclibc-build-in-src-tree)
+	UCLIBC_IN_SRC_TREE=no
+	;;
+
     ?*)
 	echo "Unknown argument $1"
 	echo
@@ -710,6 +731,7 @@ case ${opt} in
 	echo "                      [--optsize-newlib | --no-optsize-newlib]"
 	echo "                      [--optsize-libstdc++ | --no-optsize-libstdc++]"
 	echo "                      [--native | --no-native]"
+	echo "                      [--uclibc-build-in-src-tree | --no-uclibc-build-in-src-tree]"
 	exit 1
 	;;
 
@@ -816,9 +838,13 @@ then
     fi
 fi
 
-# Default parallellism
-make_load="`(echo processor; cat /proc/cpuinfo 2>/dev/null echo processor) \
-           | grep -c processor`"
+# Default parallellism (number of cores + 1).
+if [ "$IS_MAC_OS" != yes ]; then
+    make_load="$( (echo processor; cat /proc/cpuinfo 2>/dev/null) \
+               | grep -c processor )"
+else
+    make_load="$(( $(sysctl -n hw.ncpu) + 1))"
+fi
 
 if [ "x${jobs}" = "x" ]
 then
@@ -889,17 +915,22 @@ if [ $DO_PDF = --pdf ]; then
     # Texi is a major source of toolchain build errors -- PDF regularly do not
     # work with particular versions of texinfo, but work with others. To
     # workaround those issues build scripts should be aware of texi version.
-    export TEXINFO_VERSION_MAJOR=$(texi2pdf --version | grep -Po '(?<=Texinfo )[0-9]+')
-    # Grep perl look-behind expressions must have a fixed length, so to future
-    # proof for texinfo versions 10+, we have to read variable, because that
-    # wouldn't work: (?<=Texinfo [0-9]+\.)
-    export TEXINFO_VERSION_MINOR=$(texi2pdf --version |
-	grep -Po "(?<=Texinfo $TEXINFO_VERSION_MAJOR\.)[0-9]+")
+    export TEXINFO_VERSION_MAJOR=$(texi2pdf --version | \
+	perl -ne 'print $1 if /Texinfo ([0-9]+)/')
+    export TEXINFO_VERSION_MINOR=$(texi2pdf --version | \
+	perl -ne 'print $2 if /Texinfo ([0-9]+)\.([0-9]+)/')
 
     # There are issues with Texinfo v4 and non-C locales.
     # See http://lists.gnu.org/archive/html/bug-texinfo/2010-03/msg00031.html
-    if [ 4 = $TEXINFO_VERSION_MAJOR ]; then
+    if [ 4 = "$TEXINFO_VERSION_MAJOR" ]; then
 	export LC_ALL=C
+    fi
+
+    # On macOS TeX binary might not be in the PATH even when texi2pdf is.
+    if [ $IS_MAC_OS = yes ]; then
+	if ! which tex &>/dev/null ; then
+	    export PATH=/Library/TeX/texbin:$PATH
+	fi
     fi
 fi
 
@@ -939,7 +970,9 @@ export BUILD_OPTSIZE_NEWLIB
 export BUILD_OPTSIZE_LIBSTDCXX
 export DO_STRIP_TARGET_LIBRARIES
 export IS_CROSS_COMPILING
+export IS_MAC_OS
 export IS_NATIVE
+export UCLIBC_IN_SRC_TREE
 
 # Set up a logfile
 logfile="${LOGDIR}/all-build-$(date -u +%F-%H%M).log"
@@ -1089,6 +1122,35 @@ fi
 # Do not copy if toolchain hasn't been built
 if [ -d "${INSTALLDIR}/" ]; then
     cp "${ARC_GNU}/toolchain/Synopsys_FOSS_Notices.pdf" "${INSTALLDIR}/"
+fi
+
+# Copy TCFtool.
+if [ -d "$INSTALLDIR/bin" ]; then
+    # Use config.{guess,sub} from GCC sources.
+    if [ "$TOOLCHAIN_HOST" ]; then
+	triplet=$($ARC_GNU/gcc/config.sub $TOOLCHAIN_HOST)
+    else
+	triplet=$($ARC_GNU/gcc/config.guess)
+    fi
+
+    # Convert triplet to tcftool filename components.
+    case $triplet in
+	i?86-*|x86_64-*)
+	    fname_arch=x86 ;;
+    esac
+
+    case $triplet in
+	*-linux-gnu)
+	    fname_os=linux ;;
+	*-mingw32)
+	    fname_os=windows
+	    fname_ext=.exe ;;
+    esac
+
+    if [ -n "$fname_arch" -a -n "$fname_os" ]; then
+	cp -a "$ARC_GNU/toolchain/extras/tcftool/tcftool_${fname_arch}_${fname_os}${fname_ext}" \
+	    $INSTALLDIR/bin/tcftool${fname_ext}
+    fi
 fi
 
 # vim: noexpandtab sts=4 ts=8:
