@@ -280,8 +280,7 @@ This command will build toolchain for ARC 700 Linux development:
 
 This command will build toolchain for ARC HS Linux development:
 
-
-    $ ./build-all.sh --no-elf32 --cpu hs38_linux --install-dir $INSTALL_ROOT
+    $ ./build-all.sh --no-elf32 --cpu hs38 --install-dir $INSTALL_ROOT
 
 This command will build toolchain for ARC HS Linux development with glibc:
 
@@ -316,7 +315,7 @@ cross toolchain for this system. Then it should be added it to the PATH, after
 that `build-all.sh` can be run:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT_NATIVE \
-      --cpu hs38_linux --native --host arc-snps-linux-uclibc
+      --cpu hs38 --native --host arc-snps-linux-uclibc
 
 In this command line, argument to `--cpu` option must correspond to the target
 CPU and argument to `--host` options depends on whether this is a big or little
