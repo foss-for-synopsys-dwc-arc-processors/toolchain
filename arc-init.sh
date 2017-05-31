@@ -307,7 +307,7 @@ configure_elf32() {
 # $1 - name
 # $2 - src dir (optional, default is same as name)
 # $3 - extra options (optional)
-configure_uclibc_stage1() {
+configure_linux_stage1() {
     local tool=$1
     shift
     if [ $# -gt 0 ]
@@ -368,7 +368,7 @@ configure_uclibc_stage1() {
 # $1 - name
 # $2 - src dir (optional, default is same as name)
 # $3 - extra options (optional)
-configure_uclibc_stage2() {
+configure_linux_stage2() {
     local tool=$1
     shift
     if [ $# -gt 0 ]

@@ -344,7 +344,7 @@ fi
 # shouldn't be used for binutils, since it doesn't has target libraries and is
 # known to have troubles when shared libraries are used.
 build_dir_init binutils
-configure_uclibc_stage2 binutils binutils --disable-gdb --disable-shared
+configure_linux_stage2 binutils binutils --disable-gdb --disable-shared
 make_target building all
 
 # Gas requires opcodes to be installed, LD requires BFD to be installed.
@@ -379,7 +379,7 @@ fi
 # built yet.
 if [ $IS_CROSS_COMPILING != yes ]; then
     build_dir_init gcc-stage1
-    configure_uclibc_stage1 gcc
+    configure_linux_stage1 gcc
     make_target building all-gcc
     # It looks like that libssp install target is not parallel-friendly - I had
     # occassional issues, when installing it's header.
@@ -526,7 +526,7 @@ fi
 # -----------------------------------------------------------------------------
 # GCC stage 2
 build_dir_init gcc-stage2
-configure_uclibc_stage2 gcc gcc $pch_opt
+configure_linux_stage2 gcc gcc $pch_opt
 make_target building all
 # It looks like that libssp install target is not parallel-friendly - I had
 # occassional issues, when installing it's header.
@@ -583,7 +583,7 @@ else
 fi
 
 build_dir_init gdb
-configure_uclibc_stage2 gdb gdb --disable-ld --disable-gas --disable-binutils \
+configure_linux_stage2 gdb gdb --disable-ld --disable-gas --disable-binutils \
     $cxx_build
 make_target building all
 make_target installing ${HOST_INSTALL}-gdb $stripprog_opt
