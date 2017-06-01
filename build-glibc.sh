@@ -388,7 +388,7 @@ fi
 # Expat if requested
 if [ "$SYSTEM_EXPAT" = no ]
 then
-    build_expat $toolchain_build_dir/_download_tmp uclibc_stage2
+    build_expat $toolchain_build_dir/_download_tmp linux_stage2
 fi
 
 # See comment for "native GDB" being built later. If whole toolchain is native,
