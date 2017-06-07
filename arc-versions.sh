@@ -98,12 +98,10 @@ then
     linux=""
 fi
 
-if [ $DO_UCLIBC = yes ]
-then
-    libc=$uclibc
-elif [ $DO_GLIBC = yes ]
-then
+if [ ${DO_GLIBC:-no} = yes ]; then
     libc=$glibc
+else
+    libc=$uclibc
 fi
 
 # It is not safe to "pull" in the initial state, because if repository is
