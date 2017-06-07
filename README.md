@@ -148,7 +148,10 @@ the toolchain. These should be peers of this `toolchain` directory.
     $ git clone --reference binutils \
         https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
+    $ # For Linux uClibc toolchain:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+    $ # or for Linux glibc toolchain:
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git
     $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
 		linux
 
@@ -171,6 +174,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * newlib - arc-2017.03
 * uClibc - arc-2017.03
 * Linux - linux-4.9.y
+* glibc - vineet-glibc-master
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
 latest state, which is a default behaviour, then it will anyway fetch
@@ -222,11 +226,12 @@ The most important options of `build-all.sh` are:
    be moved to another system and used from the same location (this is a
    limitation of upstream toolchain implementation and is not specific to
    ARC).
- * `--no-elf32` and `--no-uclibc` - choose type of toolchain to build. By
-   default both are built. Specify `--no-uclibc` if you intend to work
+ * `--no-elf32`, `--no-uclibc`, `--glibc` - choose type of toolchain to build. By
+   default elf32 and uclibc are built. Specify `--no-uclibc` if you intend to work
    exclusively with bare metal applications, specify `--no-elf32` of you intend
-   to work exclusively with Linux applications. Linux kernel is built with
-   uClibc toolchain.
+   to work exclusively with Linux applications. Specify `--glibc` if you want to
+   build glibc toolchain instead of uClibc. Linux kernel is built with uClibc or
+   glibc toolchain.
  * `--no-multilib` - do not build multilib standard libraries. Use it when you
    are going to work with bare metal applications for a particular core. This
    option does not affect uClibc toolchain.
@@ -239,8 +244,7 @@ The most important options of `build-all.sh` are:
    em, arcem, em4, em4_dmips, em4_fpus, em4_fpuda, quarkse, hs, archs, hs34,
    hs38, hs38_linux, arc600, arc600_norm, arc600_mul64, arc600_mul32x16,
    arc601, arc601_norm, arc601_mul64, arc601_mul32x16, arc700. Note that only
-   ARC 700 and ARC HS can be selected as a default core for Linux/uClibc
-   toolchain.
+   ARC 700 and ARC HS can be selected as a default core for Linux toolchain.
  * `--host <triplet>` - option to set host triplet of toolchain. That allows to
    do Canadian cross-compilation, where toolchain for ARC processors
    (`--target`) will run on Windows hosts (`--host`) but will be built on Linux
@@ -276,8 +280,11 @@ This command will build toolchain for ARC 700 Linux development:
 
 This command will build toolchain for ARC HS Linux development:
 
+    $ ./build-all.sh --no-elf32 --cpu hs38 --install-dir $INSTALL_ROOT
 
-    $ ./build-all.sh --no-elf32 --cpu hs38_linux --install-dir $INSTALL_ROOT
+This command will build toolchain for ARC HS Linux development with glibc:
+
+    $ ./build-all.sh --no-elf32 --glibc --cpu hs38 --install-dir $INSTALL_ROOT
 
 This command will build bare metal toolchain for ARC EM7D in the ARC EM Starter
 Kit 2.2:
@@ -302,13 +309,13 @@ Build bare metal toolchain for ARC EM4 and EM6 in the ARC EM Starter Kit 1.1:
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_dmips
 
-To build native ARC Linux toolchain (toolchain that runs on same system as for
+To build native ARC Linux uClibc toolchain (toolchain that runs on same system as for
 which it compiles, so host == target) it is required first to build a normal
 cross toolchain for this system. Then it should be added it to the PATH, after
 that `build-all.sh` can be run:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT_NATIVE \
-      --cpu hs38_linux --native --host arc-snps-linux-uclibc
+      --cpu hs38 --native --host arc-snps-linux-uclibc
 
 In this command line, argument to `--cpu` option must correspond to the target
 CPU and argument to `--host` options depends on whether this is a big or little

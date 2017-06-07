@@ -307,7 +307,7 @@ configure_elf32() {
 # $1 - name
 # $2 - src dir (optional, default is same as name)
 # $3 - extra options (optional)
-configure_uclibc_stage1() {
+configure_linux_stage1() {
     local tool=$1
     shift
     if [ $# -gt 0 ]
@@ -348,7 +348,7 @@ configure_uclibc_stage1() {
 	--without-newlib \
 	--disable-c99 \
 	--disable-libgomp \
-	--with-pkgversion="$UCLIBC_TOOLS_VERSION" \
+	--with-pkgversion="$LINUX_TOOLS_VERSION" \
 	--with-bugurl="$ARC_COMMON_BUGURL" \
 	--with-gnu-as \
 	--with-gnu-ld \
@@ -368,7 +368,7 @@ configure_uclibc_stage1() {
 # $1 - name
 # $2 - src dir (optional, default is same as name)
 # $3 - extra options (optional)
-configure_uclibc_stage2() {
+configure_linux_stage2() {
     local tool=$1
     shift
     if [ $# -gt 0 ]
@@ -406,7 +406,7 @@ configure_uclibc_stage2() {
 	--target=$triplet \
 	--with-cpu=${ISA_CPU} \
 	$UCLIBC_DISABLE_MULTILIB \
-	--with-pkgversion="$UCLIBC_TOOLS_VERSION" \
+	--with-pkgversion="$LINUX_TOOLS_VERSION" \
 	--with-bugurl="$ARC_COMMON_BUGURL" \
 	--enable-fast-install=N/A \
 	--with-endian=$ARC_ENDIAN \
@@ -462,7 +462,7 @@ configure_for_arc() {
     # calling "make install". Note - prefix is set to /usr, DESTDIR should
     # point to sysroot.
     if ! $srcdir/configure --prefix=/usr --host=$triplet \
-	    --with-pkgversion="$UCLIBC_TOOLS_VERSION"\
+	    --with-pkgversion="$LINUX_TOOLS_VERSION"\
 	    --with-bugurl="$ARC_COMMON_BUGURL" \
 	    $DISABLEWERROR \
 	    "$cflags" "$cxxflags" $* \

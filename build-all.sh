@@ -32,6 +32,7 @@
 #                  [--auto-checkout | --no-auto-checkout]
 #                  [--external-download | --no-external-download]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
+#                  [--glibc]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>]
 #                  [--big-endian | --little-endian]
@@ -141,6 +142,11 @@
 
 #     If specified, build the arc-uclibc-linux- tool chain (default is
 #     --uclibc).
+
+# --glibc
+
+#     If specified, build the glibc Linux toolchain for ARC processors (default
+#     is not to build).
 
 # --datestamp-install
 
@@ -401,8 +407,9 @@ build_pathnm ()
 autocheckout=""
 autopull=""
 external_download="--external-download"
-elf32="--elf32"
-uclibc="--uclibc"
+DO_ELF32=yes
+DO_UCLIBC=yes
+DO_GLIBC=no
 ISA_CPU="arc700"
 UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
@@ -503,12 +510,26 @@ case ${opt} in
 	external_download=$1
 	;;
 
-    --elf32 | --no-elf32)
-	elf32=$1
+    --elf32)
+	DO_ELF32=yes
 	;;
 
-    --uclibc | --no-uclibc)
-	uclibc=$1
+    --no-elf32)
+	DO_ELF32=no
+	;;
+
+    --uclibc)
+	DO_UCLIBC=yes
+	DO_GLIBC=no
+	;;
+
+    --no-uclibc)
+	DO_UCLIBC=no
+	;;
+
+    --glibc)
+	DO_GLIBC=yes
+	DO_UCLIBC=no
 	;;
 
     --uclibc-defconfig)
@@ -705,6 +726,7 @@ case ${opt} in
 	echo "                      [--external-download | --no-external-download]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
+	echo "                      [--glibc]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
 	echo "                      [--big-endian | --little-endian]"
@@ -787,7 +809,7 @@ fi
 
 # Default Linux directory if not already set. Only matters if we are building
 # the uClibc tool chain.
-if [ "x${uclibc}" = "x--uclibc" -a "x${LINUXDIR}" = "x" ]
+if [[ ( $DO_UCLIBC = yes || $DO_GLIBC = yes ) && "${LINUXDIR}" = "" ]]
 then
     if [ -d "${ARC_GNU}"/linux ]
     then
@@ -860,14 +882,24 @@ PARALLEL="-j ${jobs} -l ${load}"
 
 # Set version string for Linux uClibc toolchain, it will be used by arc-init. I
 # do not like this cross-file dependency, but otherwise it happens that
-# arc-init depends on either UCLIBC_TOOLS_VERSION, or on ISA_CPU+RELEASE_NAME.
+# arc-init depends on either LINUX_TOOLS_VERSION, or on ISA_CPU+RELEASE_NAME.
 # Probably that stuff should be centralized is some better way or uClibc
 # configure procedures should take version string as an argument.
 if [ $ISA_CPU = arc700 ]
 then
-    UCLIBC_TOOLS_VERSION="ARCompact ISA Linux uClibc toolchain $RELEASE_NAME"
+    if [ $DO_UCLIBC = yes ]
+    then
+        LINUX_TOOLS_VERSION="ARCompact ISA Linux uClibc toolchain $RELEASE_NAME"
+    else
+        LINUX_TOOLS_VERSION="ARC700 GNU/Linux glibc toolchain $RELEASE_NAME"
+    fi
 else
-    UCLIBC_TOOLS_VERSION="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
+    if [ $DO_UCLIBC = yes ]
+    then
+	LINUX_TOOLS_VERSION="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
+    else
+        LINUX_TOOLS_VERSION="ARC HS GNU/Linux glibc toolchain $RELEASE_NAME"
+    fi
 fi
 
 # Convenience variable: IS_CROSS_COMPILING=(build != host)
@@ -942,6 +974,9 @@ export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
+export DO_ELF32
+export DO_UCLIBC
+export DO_GLIBC
 export ELF32_DISABLE_MULTILIB
 export UCLIBC_DISABLE_MULTILIB
 export ISA_CPU
@@ -963,7 +998,7 @@ export NPTL_SUPPORT
 export CHECKOUT_CONFIG
 # Used by configure funcs in arc-init.sh
 export TOOLCHAIN_HOST
-export UCLIBC_TOOLS_VERSION
+export LINUX_TOOLS_VERSION
 export SYSTEM_EXPAT
 export DO_ELF32_GCC_STAGE1
 export BUILD_OPTSIZE_NEWLIB
@@ -1014,7 +1049,7 @@ echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
 if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
-    ${uclibc} >> ${logfile} 2>&1
+    >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
     echo "- see ${logfile}"
@@ -1049,7 +1084,7 @@ if [[ " ${allowed_cpus[*]} " != *" $ISA_CPU "* ]]; then
     exit 1
 fi
 
-if [ "x${uclibc}" = "x--uclibc" ]; then
+if [ $DO_UCLIBC = yes -o $DO_GLIBC = yes ]; then
     if [[ " ${allowed_linux_cpus[*]} " != *" $ISA_CPU "* ]]; then
 	echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
 	     "Choose one of the supported CPU familes or disable building of"\
@@ -1078,8 +1113,7 @@ fi
 cd ${builddir}
 
 # Optionally build the arc-elf32- tool chain
-if [ "x${elf32}" = "x--elf32" ]
-then
+if [ $DO_ELF32 = yes ]; then
     if ! "${ARC_GNU}"/toolchain/build-elf32.sh
     then
 	echo "ERROR: arc-elf32- tool chain build failed."
@@ -1091,11 +1125,19 @@ then
 fi
 
 # Optionally build the arc-linux-uclibc- tool chain
-if [ "x${uclibc}" = "x--uclibc" ]
-then
+if [ $DO_UCLIBC = yes ]; then
     if ! "${ARC_GNU}"/toolchain/build-uclibc.sh
     then
 	echo "ERROR: arc-linux-uclibc- tool chain build failed."
+	exit 1
+    fi
+fi
+
+# Optionally build the arc-snps-linux-gnu tool chain
+if [ $DO_GLIBC = yes ]; then
+    if ! "${ARC_GNU}"/toolchain/build-glibc.sh
+    then
+	echo "ERROR: arc-snps-linux-gnu (GNU/Linux) toolchain build failed."
 	exit 1
     fi
 fi

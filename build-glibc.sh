@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2010-2017 Synopsys Inc.
-
-# Contributor Brendan Kehoe <brendan@zen.org>
-# Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
-# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
-
-# This file is a master script for ARC tool chains.
+# Copyright (C) 2017 Synopsys Inc.
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -19,7 +13,7 @@
 # more details.
 
 # You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #		   SCRIPT TO BUILD ARC-LINUX-UCLIBC TOOLKIT
 #		   ========================================
@@ -54,16 +48,6 @@
 
 #     "little" or "big"
 
-# UCLIBC_DISABLE_MULTILIB
-
-#     Either --enable-multilib or --disable-multilib to control the building
-#     of multilibs.
-
-# UCLIBC_DEFCFG
-
-#     The defconfig to be used when building uClibc. That should a name of file
-#     that is inside uClibc/extra/Configs/defconfig/arc directory.
-
 # ISA_CPU
 
 #     Specifies target ARC core, can be arc700 or archs.
@@ -94,15 +78,6 @@
 #     Make target prefix to install host application. Should be either
 #     "install" or "install-strip".
 
-# NPTL_SUPPORT
-
-#     Build with threading, thread local storage support and NPTL if this is
-#     set to "yes".
-
-# UCLIBC_IN_SRC_TREE
-
-#    Whether to build uClibc inside the source tree.
-
 # We source the script arc-init.sh to set up variables needed by the script
 # and define a function to get to the configuration directory (which can be
 # tricky under MinGW/MSYS environments).
@@ -113,9 +88,9 @@
 # 1. Install Linux headers
 # 2. Build and install Binutils
 # 3. Build and install GCC stage 1 (without libgcc and C++)
-# 4. Install uClibc headers
+# 4. Install glibc headers
 # 5. Build and install libgcc from GCC stage 1 build tree.
-# 6. Build and install uClibc
+# 6. Build and install glibc
 # 7. Build and install GCC stage 2 (with C++)
 # 8. Build and install GDB
 # 9. Build and copy GDB-server for target and or native GDB.
@@ -141,85 +116,25 @@
 # down, and apparently that may not be needed anymore.
 #
 
-# Following after this paragraph text, is a text of historical significance
-# that described how things used to be done in the age of ARC GCC 4.4 and early
-# days of ARC GCC 4.8. Things changed since then so this is not totally
-# relevant today, but explains how things evolved, since some things today can
-# be done differently then they are done right now, because it was an evolution
-# of previous decisions. For example it seems that we can install Linux and
-# uClibc headers after stage 1 instead of doing this as a first step.  Although
-# that might be true in general, but not for ARC, since our libgcc depends on
-# libc headers. To be completely honest I haven't read this header guide while
-# modifying toolchain to support sysroot and avoid unified source tree, as I
-# was just looking at the code itself, and was completely oblivious to the
-# presence of this gentoo web-guide... (On the matter of comments in code: will
-# anybody read this???).
-
-# << How it used to be done: >>
-
-# This approach is based on Mike Frysinger's guidelines on building a
-# cross-compiler.
-
-#     http://dev.gentoo.org/~vapier/CROSS-COMPILE-GUTS
-
-# However this seems to have a basic flaw, because it relies on using sysroot,
-# and for older versions of GCC (4.4.x included), the build of libgcc does not
-# take any notice of sysroot.
-
-# This has been extended to uClibc and brought up to date, using the
-# install-headers targets of Linux and uClibc.
-
-# The basic approach recommended by Frysinger is:
-
-# 1. Build binutils
-# 2. Install the Linux kernel headers
-# 3. Install the uClibc headers
-# 4. Build gcc stage 1 (C only)
-# 5. Build uClibc
-# 6. Build gcc stage 2 (C, C++ etc)
-
-# We create a sysroot, where we can put our intermediate stuff. However there
-# is a catch with GCC 4.4.7 (fixed in in GCC 4.7) that libgcc is muddled up in
-# gcc and doesn't seem to recognize the sysroot. So we have to also install
-# headers in the install directory before building libgcc.
-
-# So we use a revised flow.
-
-# 1. Install the Linux kernel headers into the temporary directory
-# 2. Install uClibc headers into the temporary directory using host GCC
-# 3. Build and install GCC stage 1 without headers into temporary directory
-# 4. Build & install uClibc using the stage 1 compiler into the final directory
-# 5. Build & install the whole tool chain from scratch (including GCC stage 2)
-#    using the temporary headers
-
-# We build GDB after GCC. gdbserver also has to be built and installed
-# separately. So we add two extra steps
-
-# 6. Build & install GDB
-# 7. Build & install gdbserver
-
-# << End of history lesson >>
-
-
 # -----------------------------------------------------------------------------
 # Local variables.
 if [ "${ARC_ENDIAN}" = "big" ]
 then
     arche=arceb
-    build_dir="$(echo "${PWD}")/bd-uclibceb"
+    build_dir="$(echo "${PWD}")/bd-glibceb"
 else
     arche=arc
-    build_dir="$(echo "${PWD}")/bd-uclibc"
+    build_dir="$(echo "${PWD}")/bd-glibc"
 fi
 
 arch=arc
-triplet=${arche}-snps-linux-uclibc
+triplet=${arche}-snps-linux-gnu
 
 # Set up a logfile
-logfile="${LOGDIR}/uclibc-build-$(date -u +%F-%H%M).log"
+logfile="${LOGDIR}/glibc-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
 
-echo "START ${ARC_ENDIAN}-endian uClibc: $(date)" | tee -a ${logfile}
+echo "START ${ARC_ENDIAN}-endian glibc: $(date)" | tee -a ${logfile}
 
 # Initalize, including getting the tool versions.
 . "${ARC_GNU}"/toolchain/arc-init.sh
@@ -238,7 +153,6 @@ else
     SYSROOTDIR=$INSTALLDIR/$triplet/sysroot
     install_prefix=/usr
 fi
-DEFCFG_DIR=$ARC_GNU/uClibc/extra/Configs/defconfigs/arc/
 
 # Purge old build dir if there is any and create a new one.
 rm -rf "$build_dir"
@@ -306,13 +220,6 @@ else
     echo "ERROR: Linux header install was not successful. Please see"
     echo "       \"${logfile}\" for details."
     exit 1
-fi
-
-if [ "x${NPTL_SUPPORT}" = "xyes" ]
-then
-    thread_flags="--enable-threads --enable-tls"
-else
-    thread_flags="--disable-threads --disable-tls"
 fi
 
 if [ $IS_CROSS_COMPILING = yes ]; then
@@ -388,90 +295,23 @@ if [ $IS_CROSS_COMPILING != yes ]; then
 fi
 
 # -----------------------------------------------------------------------------
-# Install uClibc headers for the Stage 1 compiler. This needs a C compiler,
-# which we do not yet have. We get round this by using the native C
-# compiler. uClibc will complain, but get on with the job anyway.
+# Install glibc headers.
+echo "Installing glibc headers ..." | tee -a "${logfile}"
 
-echo "Installing uClibc headers ..." | tee -a "${logfile}"
-echo "=============================" >> "${logfile}"
+# Configure glibc build directory.
+build_dir_init glibc
+configure_for_arc $ARC_GNU/glibc $triplet \
+    --build=$($ARC_GNU/gcc/config.guess) \
+    --target=$triplet \
+    --with-headers=$SYSROOTDIR/usr/include \
+    --enable-obsolete-rpc
 
-if [ $UCLIBC_IN_SRC_TREE = no ]; then
-    # Create a build directory for uClibc. uClibc doesn't use GNU autotools, so
-    # process is different from the rest of the tools.
-    mkdir -p $build_dir/uclibc
-    # Make command to operate on uClibc.
-    MAKE_UCLIBC="make -C $ARC_GNU/uClibc O=$build_dir/uclibc"
-else
-    MAKE_UCLIBC="make -C $ARC_GNU/uClibc"
-fi
-
-# make will fail if there is yet no .config file, but we can ignore this error.
-$MAKE_UCLIBC distclean >> "$logfile" 2>&1 || true
-
-# First create a .config file which is really just a modified copy of a
-# specified defconfig. Then use `make olddefconfig` to convert it to a full
-# .config file.  Previously to achieve this, without modification to the
-# specified .config itself, this script had to create a temporary file that is
-# a copy of defconfig, then modify it, then use standard "defconfig" command,
-# then remove temporary file. This looks like an unnecessary complication
-# considering that "olddefconfig" yields same result.
-if [ $UCLIBC_IN_SRC_TREE = no ]; then
-    uc_dot_config=$build_dir/uclibc/.config
-else
-    uc_dot_config=$ARC_GNU/uClibc/.config
-fi
-cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} $uc_dot_config
-
-# Patch defconfig with the temporary install directories used.
-${SED} -e "s@%KERNEL_HEADERS%@$SYSROOTDIR$install_prefix/include@" \
-       -e "s@%RUNTIME_PREFIX%@/@" \
-       -e "s@%DEVEL_PREFIX%@$install_prefix/@" \
-       -e "s@CROSS_COMPILER_PREFIX=\".*\"@CROSS_COMPILER_PREFIX=\"${triplet}-\"@" \
-       -i $uc_dot_config
-
-# Patch defconfig for big or little endian.
-if [ "${ARC_ENDIAN}" = "big" ]
-then
-    ${SED} -e 's@ARCH_WANTS_LITTLE_ENDIAN=y@ARCH_WANTS_BIG_ENDIAN=y@' \
-           -i $uc_dot_config
-else
-    ${SED} -e 's@ARCH_WANTS_BIG_ENDIAN=y@ARCH_WANTS_LITTLE_ENDIAN=y@' \
-           -i $uc_dot_config
-fi
-
-# Patch the defconfig for thread support.
-if [ "x${NPTL_SUPPORT}" = "xyes" ]
-then
-    ${SED} -e 's@LINUXTHREADS_OLD=y@UCLIBC_HAS_THREADS_NATIVE=y@' \
-           -i $uc_dot_config
-else
-    ${SED} -e 's@UCLIBC_HAS_THREADS_NATIVE=y@LINUXTHREADS_OLD=y@' \
-           -i $uc_dot_config
-fi
-
-# Remove locale support on macOS. uClibc runs an application on a host to
-# generate local files, but that application fails to build on macOS, therefore
-# locale support has to be disabled on macOS hosts.
-if [ "$IS_MAC_OS" = yes ]; then
-    kconfig_disable_option $uc_dot_config UCLIBC_HAS_LOCALE
-fi
-
-# Disable HARDWIRED_ABSPATH to avoid absolute path references to allow
-# relocatable toolchains.
-echo "HARDWIRED_ABSPATH=n" >> $uc_dot_config
-
-# Create complete .config from the "defconfig".
-$MAKE_UCLIBC ARCH=arc olddefconfig >> "$logfile" 2>&1
-
-# PREFIX is an arg to Makefile, it is not set in .config.
-if $MAKE_UCLIBC V=1 PREFIX=$SYSROOTDIR install_headers >> "$logfile" 2>&1
-then
-    echo "  finished installing uClibc headers"
-else
-    echo "ERROR: uClibc header install was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
+# Install headers.
+make_target_ordered "installing headers" \
+    install-bootstrap-headers=yes \
+    install-headers \
+    DESTDIR=$SYSROOTDIR
+touch $SYSROOTDIR/usr/include/gnu/stubs.h
 
 # -----------------------------------------------------------------------------
 # Build stage 1 libgcc (not needed when cross compiling).
@@ -484,37 +324,15 @@ if [ $IS_CROSS_COMPILING != yes ]; then
 fi
 
 # -----------------------------------------------------------------------------
-# Build uClibc using the stage 1 compiler.
-
-echo "Building uClibc ..." | tee -a "${logfile}"
-echo "===================" >> "${logfile}"
-
-if $MAKE_UCLIBC clean >> "$logfile" 2>&1
-then
-    echo "  finished cleaning uClibc"
-else
-    echo "ERROR: uClibc clean was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
-
-# PREFIX is an arg to Makefile, it is not set in .config.
-if $MAKE_UCLIBC V=2 PREFIX=$SYSROOTDIR >> "$logfile" 2>&1
-then
-    echo "  finished building uClibc"
-else
-    echo "ERROR: uClibc build was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
-fi
-
-if $MAKE_UCLIBC V=2 PREFIX=$SYSROOTDIR install >> "$logfile" 2>&1
-then
-    echo "  finished installing uClibc"
-else
-    echo "ERROR: uClibc install was not successful. Please see"
-    echo "       \"${logfile}\" for details."
-    exit 1
+# Build glibc using the stage 1 compiler.
+echo "Building glibc ..." | tee -a "${logfile}"
+cd $build_dir/glibc
+make_target building all
+make_target_ordered installing install DESTDIR=$SYSROOTDIR
+if [ $DO_PDF = --pdf ]; then
+    make_target "generating PDF documentation" pdf
+    # No target to install PDF, do it manually.
+    cp -a manual/libc.pdf $INSTALLDIR/share/doc/
 fi
 
 if [ $IS_CROSS_COMPILING != yes ]; then
@@ -703,6 +521,6 @@ else
     ${triplet}-objcopy -g gdbserver $SYSROOTDIR$install_prefix/bin/gdbserver
 fi
 
-echo "DONE  UCLIBC: $(date)" | tee -a "${logfile}"
+echo "DONE  GLIBC: $(date)" | tee -a "${logfile}"
 
 # vim: noexpandtab sts=4 ts=8:
