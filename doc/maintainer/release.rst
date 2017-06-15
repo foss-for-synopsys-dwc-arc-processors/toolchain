@@ -272,7 +272,7 @@ that will be sourced by ``release.mk``.
    should be as short as possible , because Eclipse contains very long file
    names, while old NSIS uses ancient Windows APIs, which are pretty limited in
    the maximum file length. As a result build might fail due to too long path,
-   if :envvar`WINDOWS_LOCATION` is too long on Windows host.
+   if :envvar:`WINDOWS_LOCATION` is too long on Windows host.
 
 
 Make targets
