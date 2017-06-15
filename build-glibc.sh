@@ -419,7 +419,7 @@ cd ${INSTALLDIR}/bin
 for i in ${triplet}-*
 do
     ln -fs $i $(echo $i | sed "s/${triplet}/${arche}-linux/")
-    ln -fs $i $(echo $i | sed "s/${triplet}/${arche}-linux-uclibc/")
+    ln -fs $i $(echo $i | sed "s/${triplet}/${arche}-linux-glibc/")
 done
 
 echo "  finished creating symlinks"
