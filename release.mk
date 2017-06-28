@@ -48,6 +48,9 @@ ENABLE_LINUX_TOOLS := y
 # Whether to build native toolchain for ARC HS Linux.
 ENABLE_NATIVE_TOOLS := y
 
+# Whether to build toolchain for Linux/glibc targets.
+ENABLE_GLIBC_TOOLS := y
+
 # Whether to build and upload OpenOCD for Linux.
 ENABLE_OPENOCD := y
 
@@ -255,6 +258,9 @@ TOOLS_LINUXBE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(HOST)
 TOOLS_LINUXLE_HS38FPU_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_$(HOST)_install
 ARC_LINUX_TRIPLET := arc-snps-linux-uclibc
 
+# Toolchain: linux with glibc.
+TOOLS_GLIBC_LE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_$(HOST)_install
+
 # Toolchain: native linux toolchain
 TOOLS_LINUXLE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
 
@@ -316,6 +322,8 @@ UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_HOST_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_HOST_DIR)$(TAR_EXT)
 endif
 
+UPLOAD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)$(TAR_EXT)
+
 UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_TGZ)
@@ -350,6 +358,7 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_INSTALL)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_NATIVE_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)
@@ -382,6 +391,8 @@ ifeq ($(ENABLE_LINUX_TOOLS),y)
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_700_tarball
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_hs_tarball
 endif
+
+BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_le_hs_tarball
 
 BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
@@ -425,6 +436,9 @@ elf-le: $O/.stamp_elf_le_tarball
 
 elf-be: $O/.stamp_elf_be_tarball
 
+.PHONY: glibc-le
+glibc-le: $O/.stamp_glibc_le_hs_tarball
+
 windows: $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
 
 ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
@@ -443,6 +457,9 @@ clone:
 	$(call git_clone,uClibc,uClibc)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
+endif
+ifeq ($(ENABLE_GLIBC_TOOLS),y)
+	$(call git_clone,glibc,glibc)
 endif
 
 
@@ -587,6 +604,15 @@ $O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $(TOOLS_ALL_DEPS-y) \
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_HS_HOST_DIR))
 	touch $@
 
+$O/.stamp_glibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_GLIBC_LE_HS_HOST_DIR) \
+	    --release-name "$(RELEASE)" \
+	    --cpu hs38 \
+	    --no-uclibc --glibc \
+	    --no-elf32
+	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_LE_HS_HOST_DIR))
+	touch $@
+
 $O/.stamp_linux_le_700_tarball: $O/.stamp_linux_le_700_built
 	$(call create_tar,$(TOOLS_LINUXLE_700_HOST_DIR))
 	touch $@
@@ -601,6 +627,10 @@ $O/.stamp_linux_be_700_tarball: $O/.stamp_linux_be_700_built
 
 $O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
 	$(call create_tar,$(TOOLS_LINUXBE_HS_HOST_DIR))
+	touch $@
+
+$O/.stamp_glibc_le_hs_tarball: $O/.stamp_glibc_le_hs_built
+	$(call create_tar,$(TOOLS_GLIBC_LE_HS_HOST_DIR))
 	touch $@
 
 #

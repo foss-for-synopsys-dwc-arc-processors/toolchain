@@ -139,6 +139,16 @@ that will be sourced by ``release.mk``.
       ``y``
 
 
+.. envvar:: ENABLE_GLIBC_TOOLS
+
+   Whether to build and deploy GNU Toolchain for Linux/glibc targets.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_NATIVE_TOOLS
 
    Whether to build and upload native toolchain. Currently toolchain is built
