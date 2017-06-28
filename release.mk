@@ -43,7 +43,7 @@ ENABLE_IDE := y
 ENABLE_LINUX_IMAGES := y
 
 # Whether to build Toolchain for Linux targets.
-ENABLE_LINUX_TOOLS := y
+ENABLE_UCLIBC_TOOLS := y
 
 # Whether to build native toolchain for ARC HS Linux.
 ENABLE_NATIVE_TOOLS := y
@@ -251,18 +251,17 @@ TOOLS_ELFLE_WIN_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_le_win_install
 TOOLS_ELFBE_WIN_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_be_win_install
 
 # Toolchain: linux
-TOOLS_LINUXLE_700_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_$(HOST)_install
-TOOLS_LINUXBE_700_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_$(HOST)_install
-TOOLS_LINUXLE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_$(HOST)_install
-TOOLS_LINUXBE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(HOST)_install
-TOOLS_LINUXLE_HS38FPU_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_$(HOST)_install
-ARC_LINUX_TRIPLET := arc-snps-linux-uclibc
+TOOLS_UCLIBC_LE_700_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_arc700_$(HOST)_install
+TOOLS_UCLIBC_BE_700_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_arc700_$(HOST)_install
+TOOLS_UCLIBC_LE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_$(HOST)_install
+TOOLS_UCLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(HOST)_install
+TOOLS_UCLIBC_LE_HS38FPU_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_$(HOST)_install
 
 # Toolchain: linux with glibc.
 TOOLS_GLIBC_LE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_$(HOST)_install
 
 # Toolchain: native linux toolchain
-TOOLS_LINUXLE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
+TOOLS_UCLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
 
 # Toolchain PDF User Guide.
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
@@ -313,13 +312,13 @@ UPLOAD_ARTIFACTS = \
     $(UPLOAD_ARTIFACTS-y)
 
 UPLOAD_ARTIFACTS-$(ENABLE_SOURCE_TARBALL) += $(TOOLS_SOURCE_DIR)$(TAR_EXT)
-UPLOAD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_700_HOST_DIR)$(TAR_EXT)
-UPLOAD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_HS_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_UCLIBC_TOOLS) += $(TOOLS_UCLIBC_LE_700_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_UCLIBC_TOOLS) += $(TOOLS_UCLIBC_LE_HS_HOST_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_HOST_DIR)$(TAR_EXT)
-ifeq ($(ENABLE_LINUX_TOOLS),y)
-UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_HOST_DIR)$(TAR_EXT)
-UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_HOST_DIR)$(TAR_EXT)
+ifeq ($(ENABLE_UCLIBC_TOOLS),y)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_700_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_HS_HOST_DIR)$(TAR_EXT)
 endif
 
 UPLOAD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)$(TAR_EXT)
@@ -328,7 +327,7 @@ UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_TGZ)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
-UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_NATIVE_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_UCLIBC_LE_HS_NATIVE_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_WIN_EXE)
 
 # List of files that will be deployed internally. Is a superset of "upload"
@@ -352,15 +351,15 @@ DEPLOY_BUILD_ARTIFACTS = \
     $(TOOLS_ELFLE_HOST_DIR) \
     $(DEPLOY_BUILD_ARTIFACTS-y)
 
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_700_HOST_DIR)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_LINUX_TOOLS) += $(TOOLS_LINUXLE_HS_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_UCLIBC_TOOLS) += $(TOOLS_UCLIBC_LE_700_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_UCLIBC_TOOLS) += $(TOOLS_UCLIBC_LE_HS_HOST_DIR)
 
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_HOST_DIR)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_700_HOST_DIR)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_LINUXBE_HS_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_700_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_INSTALL)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_LINUXLE_HS_NATIVE_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_UCLIBC_LE_HS_NATIVE_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_WIN_DIR)
@@ -383,13 +382,13 @@ BUILD_DEPS += \
     $(BUILD_DEPS-y)
 
 BUILD_DEPS-$(ENABLE_SOURCE_TARBALL) += $O/.stamp_source_tarball
-BUILD_DEPS-$(ENABLE_LINUX_TOOLS) += $O/.stamp_linux_le_700_tarball
-BUILD_DEPS-$(ENABLE_LINUX_TOOLS) += $O/.stamp_linux_le_hs_tarball
+BUILD_DEPS-$(ENABLE_UCLIBC_TOOLS) += $O/.stamp_uclibc_le_700_tarball
+BUILD_DEPS-$(ENABLE_UCLIBC_TOOLS) += $O/.stamp_uclibc_le_hs_tarball
 
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_elf_be_tarball
-ifeq ($(ENABLE_LINUX_TOOLS),y)
-BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_700_tarball
-BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_linux_be_hs_tarball
+ifeq ($(ENABLE_UCLIBC_TOOLS),y)
+BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_uclibc_be_700_tarball
+BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_uclibc_be_hs_tarball
 endif
 
 BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_le_hs_tarball
@@ -398,7 +397,7 @@ BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
-BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_linux_le_hs_native_tarball
+BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_uclibc_le_hs_native_tarball
 BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_HOST_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR).zip
@@ -553,55 +552,55 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 	$(call create_tar,$(TOOLS_ELFBE_HOST_DIR))
 	touch $@
 
-$O/.stamp_linux_le_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_700_HOST_DIR) \
+$O/.stamp_uclibc_le_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_LE_700_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --cpu arc700 \
 	    --no-elf32
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_700_HOST_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_700_HOST_DIR))
 	touch $@
 
 # Toolchain built with -mcpu=hs38_linux. This toolchain is never deistributed
 # itself, instead it's sysroot is copied into standard hs38 toolchain.
-$O/.stamp_linux_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS38FPU_HOST_DIR) \
+$O/.stamp_uclibc_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_LE_HS38FPU_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38_linux \
 	    --no-elf32
 	touch $@
 
-$O/.stamp_linux_le_hs_built: $O/.stamp_linux_le_700_built $O/.stamp_linux_le_hs38fpu_built \
+$O/.stamp_uclibc_le_hs_built: $O/.stamp_uclibc_le_700_built $O/.stamp_uclibc_le_hs38fpu_built \
     $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXLE_HS_HOST_DIR) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --cpu hs38 \
 	    --no-elf32
-	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_700_HOST_DIR)/arc-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/arc-snps-linux-uclibc/sysroot-arc700
-	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS38FPU_HOST_DIR)/arc-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/arc-snps-linux-uclibc/sysroot-hs38_linux
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_HOST_DIR))
+	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_LE_700_HOST_DIR)/arc-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)/arc-snps-linux-uclibc/sysroot-arc700
+	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_LE_HS38FPU_HOST_DIR)/arc-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)/arc-snps-linux-uclibc/sysroot-hs38_linux
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
 	touch $@
 
-$O/.stamp_linux_be_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_700_HOST_DIR) \
+$O/.stamp_uclibc_be_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_BE_700_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --cpu arc700 \
 	    --no-elf32
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_700_HOST_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_BE_700_HOST_DIR))
 	touch $@
 
-$O/.stamp_linux_be_hs_built: $O/.stamp_linux_be_700_built $(TOOLS_ALL_DEPS-y) \
+$O/.stamp_uclibc_be_hs_built: $O/.stamp_uclibc_be_700_built $(TOOLS_ALL_DEPS-y) \
 	| $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_LINUXBE_HS_HOST_DIR) \
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR) \
 	    --release-name "$(RELEASE)" \
 	    --big-endian \
 	    --cpu hs38 \
 	    --no-elf32
-	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_700_HOST_DIR)/arceb-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_LINUXBE_HS_HOST_DIR)/arceb-snps-linux-uclibc/sysroot-arc700
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXBE_HS_HOST_DIR))
+	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_BE_700_HOST_DIR)/arceb-snps-linux-uclibc/sysroot \
+	    $O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR)/arceb-snps-linux-uclibc/sysroot-arc700
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_glibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
@@ -613,20 +612,20 @@ $O/.stamp_glibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_LE_HS_HOST_DIR))
 	touch $@
 
-$O/.stamp_linux_le_700_tarball: $O/.stamp_linux_le_700_built
-	$(call create_tar,$(TOOLS_LINUXLE_700_HOST_DIR))
+$O/.stamp_uclibc_le_700_tarball: $O/.stamp_uclibc_le_700_built
+	$(call create_tar,$(TOOLS_UCLIBC_LE_700_HOST_DIR))
 	touch $@
 
-$O/.stamp_linux_le_hs_tarball: $O/.stamp_linux_le_hs_built
-	$(call create_tar,$(TOOLS_LINUXLE_HS_HOST_DIR))
+$O/.stamp_uclibc_le_hs_tarball: $O/.stamp_uclibc_le_hs_built
+	$(call create_tar,$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
 	touch $@
 
-$O/.stamp_linux_be_700_tarball: $O/.stamp_linux_be_700_built
-	$(call create_tar,$(TOOLS_LINUXBE_700_HOST_DIR))
+$O/.stamp_uclibc_be_700_tarball: $O/.stamp_uclibc_be_700_built
+	$(call create_tar,$(TOOLS_UCLIBC_BE_700_HOST_DIR))
 	touch $@
 
-$O/.stamp_linux_be_hs_tarball: $O/.stamp_linux_be_hs_built
-	$(call create_tar,$(TOOLS_LINUXBE_HS_HOST_DIR))
+$O/.stamp_uclibc_be_hs_tarball: $O/.stamp_uclibc_be_hs_built
+	$(call create_tar,$(TOOLS_UCLIBC_BE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_glibc_le_hs_tarball: $O/.stamp_glibc_le_hs_built
@@ -706,7 +705,7 @@ BUILDROOT_AXS103_BUILD_DIR = $(BUILD_DIR)/buildroot_axs103
 BUILDROOT_AXS103_DEFCONFIG := $(ROOT)/toolchain/extras/buildroot/axs103.defconfig
 BUILDROOT_AXS103_MAKEFLAGS = -C $(BUILDROOT_SRC_DIR) \
 	O=$(abspath $(BUILDROOT_AXS103_BUILD_DIR)) \
-	ARC_TOOLCHAIN_PATH=$(realpath $O/$(TOOLS_LINUXLE_HS_HOST_DIR)) \
+	ARC_TOOLCHAIN_PATH=$(realpath $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)) \
 	LINUX_SRC_PATH=$(realpath $(ROOT)/linux) \
 	DEFCONFIG=$(BUILDROOT_AXS103_DEFCONFIG)
 
@@ -752,9 +751,9 @@ linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 #
 # Native toolchain build
 #
-$O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built $(TOOLS_ALL_DEPS-y) \
+$O/.stamp_uclibc_le_hs_native_built: $O/.stamp_uclibc_le_hs_built $(TOOLS_ALL_DEPS-y) \
 	| $(TOOLS_ALL_ORDER_DEPS-y)
-	PATH=$(shell readlink -e $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/bin):$$PATH \
+	PATH=$(shell readlink -e $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)/bin):$$PATH \
 	     ./build-all.sh $(BUILDALLFLAGS) \
 	     --no-elf32 \
 	     --cpu hs38 \
@@ -762,12 +761,12 @@ $O/.stamp_linux_le_hs_native_built: $O/.stamp_linux_le_hs_built $(TOOLS_ALL_DEPS
 	     --host arc-snps-linux-uclibc \
 	     --native \
 	     --no-system-expat \
-	     --install-dir $O/$(TOOLS_LINUXLE_HS_NATIVE_DIR)
-	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUXLE_HS_NATIVE_DIR))
+	     --install-dir $O/$(TOOLS_UCLIBC_LE_HS_NATIVE_DIR)
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_HS_NATIVE_DIR))
 	touch $@
 
-$O/.stamp_linux_le_hs_native_tarball: $O/.stamp_linux_le_hs_native_built
-	$(call create_tar,$(TOOLS_LINUXLE_HS_NATIVE_DIR))
+$O/.stamp_uclibc_le_hs_native_tarball: $O/.stamp_uclibc_le_hs_native_built
+	$(call create_tar,$(TOOLS_UCLIBC_LE_HS_NATIVE_DIR))
 	touch $@
 
 #
@@ -802,11 +801,11 @@ $O/.stamp_ide_linux_tar: \
 	$O/$(OOCD_HOST_DIR)$(TAR_EXT) \
 	$O/.stamp_ide_linux_eclipse \
 	$O/.stamp_elf_be_built $O/.stamp_elf_le_built \
-	$O/.stamp_linux_be_hs_built $O/.stamp_linux_le_hs_built
+	$O/.stamp_uclibc_be_hs_built $O/.stamp_uclibc_le_hs_built
 	$(LOCAL_CP) $O/$(TOOLS_ELFLE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	$(LOCAL_CP) $O/$(TOOLS_ELFBE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
-	$(LOCAL_CP) $O/$(TOOLS_LINUXLE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
-	$(LOCAL_CP) $O/$(TOOLS_LINUXBE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	mkdir -p -m775 $O/$(IDE_LINUX_INSTALL)/eclipse/jre
 	tar xf $O/$(JRE_LINUX_TGZ) -C $O/$(IDE_LINUX_INSTALL)/eclipse/jre \
 	    --strip-components=1
