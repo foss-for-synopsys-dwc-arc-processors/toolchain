@@ -115,6 +115,10 @@ disable its build, then mactex is not required.
 Getting sources
 ---------------
 
+GNU toolchain build process doesn't support source directories that contain
+whitespaces in it. Please make sure that ARC GNU source directory path doesn't
+contain any whitespaces.
+
 ###  Using source tarball
 
 GNU Toolchain for ARC source tarball can be downloaded from project GitHub
