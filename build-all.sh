@@ -853,11 +853,7 @@ fi
 # Default defconfig for uClibc, only if it has not already been set
 if [ "x${UCLIBC_DEFCFG}" = "x" ]
 then
-    if [ "$ISA_CPU" = arc700 ]; then
-        UCLIBC_DEFCFG=defconfig
-    else
-        UCLIBC_DEFCFG=arcv2_defconfig
-    fi
+    UCLIBC_DEFCFG=defconfig
 fi
 
 # Default parallellism (number of cores + 1).

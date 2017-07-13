@@ -238,7 +238,7 @@ else
     SYSROOTDIR=$INSTALLDIR/$triplet/sysroot
     install_prefix=/usr
 fi
-DEFCFG_DIR=$ARC_GNU/uClibc/extra/Configs/defconfigs/arc/
+DEFCFG_DIR=$ARC_GNU/toolchain/extras/uClibc/
 
 # Purge old build dir if there is any and create a new one.
 rm -rf "$build_dir"
