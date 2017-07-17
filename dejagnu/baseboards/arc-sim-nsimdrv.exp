@@ -136,6 +136,7 @@ if { [check_target_arc700] } {
 	-prop=nsim_ext=$tmpdir/quarkse_em_fsflt2i.so \
 	-prop=nsim_ext=$tmpdir/quarkse_em_fsi2flt.so \
 	-prop=nsim_ext=$tmpdir/quarkse_em_fssqrt.so \
+	-p nsim_isa_lpc_size=16 \
 	-p nsim_isa_spfp=compact \
 	-p nsim_isa_dpfp=compact
 } elseif { [check_target_quarkse2_em] } {
