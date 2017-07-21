@@ -121,15 +121,13 @@ if [file exists $nsim_version_path] {
 
 set_board_info nsim_flags [join $nsim_flags]
 
-# nSIM is an exclusive resource -- only one client can connect at a time. For
-# this we cannot use get-ip.sh from arc-linux-nsim.exp, as it doesn't treat
-# target as an exclusive resource. Using script that generates random port
-# allows to leave management of nSIM instances to dejagnu -- it will start,
-# reboot and kill them as needed. get-random-port.sh verifies that generated
-# is free, there is still probability of collision due to race conditions, but
-# it is much less than in other situations.
-# Call to nsim_open will set the netport (used by gdb-comm) as well as setting
-# up nSim specific data.
+# nSIM is an exclusive resource -- only one client can connect at a time.
+# Using script that generates random port allows to leave management of nSIM
+# instances to dejagnu -- it will start, reboot and kill them as needed.
+# get-random-port.sh verifies that generated is free, there is still
+# probability of collision due to race conditions, but it is much less than in
+# other situations.  Call to nsim_open will set the netport (used by gdb-comm)
+# as well as setting up nSim specific data.
 set port [exec [file dirname $env(DEJAGNU)]/get-random-port.sh]
 nsim_open $port
 
