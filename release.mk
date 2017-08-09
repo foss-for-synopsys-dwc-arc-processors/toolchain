@@ -267,7 +267,7 @@ TOOLS_UCLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_nat
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
 
 # IDE: vanilla Eclipse variables
-ECLIPSE_VERSION := mars-1
+ECLIPSE_VERSION := neon-3
 ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
