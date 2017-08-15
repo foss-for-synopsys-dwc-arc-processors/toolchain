@@ -523,7 +523,7 @@ get_multilibs() {
 # Arguments:
 #   $1 - download directory.
 #   $2 - configure type. Basically an XXX part of `configure_XXX` call.
-#        Examples: elf32, uclibc_stage2.
+#        Examples: elf32, linux_stage2.
 build_expat() {
     mkdir -p $1
     expat_version=2.1.0
