@@ -89,7 +89,7 @@ Terminal (Deprecated)" plugin from "TM Terminal and RSE 3.7 Main Features" group
 
 **For more recent versions:**
 
-Install "TM Terminal" plugin from Mars repository.
+Install "TM Terminal" plugin from Neon repository.
 
 .. figure:: images/install/installation_of_tm_terminal.png
 

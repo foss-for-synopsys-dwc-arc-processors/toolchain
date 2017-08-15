@@ -21,7 +21,7 @@
 
 # Params
 # Eclipse parameters copied from Makefile.release
-ECLIPSE_REPO=http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/mars
+ECLIPSE_REPO=http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/neon
 ECLIPSE_PREREQ=org.eclipse.tm.terminal.feature.feature.group
 
 if [ -z "$RELEASE_TAG" ]; then

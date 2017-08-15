@@ -273,10 +273,10 @@ ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar
 # Coma separated list
 # Synopsys IT blocks some of the Eclipse mirrors, so an exact mirror is
 # specified - the one which is not blocked.
-ECLIPSE_REPO := http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/mars
+ECLIPSE_REPO := http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/neon
 # Coma separated list
 ECLIPSE_PREREQ :=  org.eclipse.tm.terminal.control,org.eclipse.tm.terminal.connector.serial,org.eclipse.tm.terminal.view.core,org.eclipse.tm.terminal.view.ui
-ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/1
+ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/neon/3
 
 # Java.
 JRE_LINUX_TGZ := jre-$(JAVA_VERSION)-linux-x64.tar.gz
