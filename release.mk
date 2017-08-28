@@ -214,11 +214,6 @@ endef
 BUILDALLFLAGS := --disable-werror --strip --no-auto-pull \
 --no-auto-checkout --elf32-strip-target-libs
 
-# Relative paths require patchelf, not present on macOS.
-ifneq ($(HOST),macos)
-BUILDALLFLAGS += --rel-rpaths
-endif
-
 EXTRA_CONFIG_FLAGS += --with-python=no
 ifeq ($(CONFIG_STATIC_TOOLCHAIN),y)
 EXTRA_CONFIG_FLAGS += LDFLAGS=-static

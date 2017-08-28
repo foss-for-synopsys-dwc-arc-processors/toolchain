@@ -43,7 +43,6 @@
 #                  [--target-cflags <flags>]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
-#                  [--rel-rpaths | --no-rel-rpaths]
 #                  [--disable-werror | --no-disable-werror]
 #                  [--strip | --no-strip]
 #                  [--release-name <release>]
@@ -231,12 +230,6 @@
 #     Use these to control whether PDF versions of user guides should be built
 #     and installed (default --pdf).
 
-# --rel-rpaths | --no-rel-rpaths
-
-#     Use these to control whether once tools have been built, the tools RPATHs
-#     are set so they are relative to the INSTALL directory and thus become
-#     portable (default --rel-rpaths).
-
 # --disable-werror | --no-disable-werror
 
 #     Use these to control whether the tools are built with --disable-werror
@@ -415,7 +408,6 @@ UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
 DO_NATIVE_GDB=maybe
-rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
 CXXFLAGS_FOR_TARGET=""
@@ -602,10 +594,6 @@ case ${opt} in
 	DO_PDF=$1
 	;;
 
-    --rel-rpaths|--no-rel-rpaths)
-	rel_rpaths=$1
-	;;
-
     --disable-werror)
 	DISABLEWERROR=$1
 	;;
@@ -738,7 +726,6 @@ case ${opt} in
         echo "                      [--target-cflags <flags>]"
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
-	echo "                      [--rel-rpaths | --no-rel-rpaths]"
 	echo "                      [--disable-werror | --no-disable-werror]"
 	echo "                      [--strip | --no-strip]"
 	echo "                      [--sed-tool <tool>]"
@@ -1144,16 +1131,6 @@ if [ "x${SYMLINKDIR}" != "x" ]
 then
     rm -f ${SYMLINKDIR}
     ln -s ${INSTALLDIR} ${SYMLINKDIR}
-fi
-
-# Patch RPATHs so they are relative
-if [ "x${rel_rpaths}" = "x--rel-rpaths" ]
-then
-    if ! "${ARC_GNU}"/toolchain/rel-rpaths.sh ${INSTALLDIR} >> "${logfile}" 2>&1
-    then
-	echo "ERROR: Unable to make RPATHs relative. Is patchelf installed?"
-	exit 1
-    fi
 fi
 
 # Copy legal notice

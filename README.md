@@ -224,12 +224,7 @@ initialization script, `arc-init.sh`.
 
 The most important options of `build-all.sh` are:
 
- * `--install-dir <dir>` - define where toolchain will be installed. Unless
-   option `--rel-rpaths` is specified to the `build-all.sh` then once tool
-   chain is installed, it cannot be moved to another location, however it can
-   be moved to another system and used from the same location (this is a
-   limitation of upstream toolchain implementation and is not specific to
-   ARC).
+ * `--install-dir <dir>` - define where toolchain will be installed.
  * `--no-elf32`, `--no-uclibc`, `--glibc` - choose type of toolchain to build. By
    default elf32 and uclibc are built. Specify `--no-uclibc` if you intend to work
    exclusively with bare metal applications, specify `--no-elf32` of you intend
