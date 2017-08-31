@@ -39,6 +39,9 @@ ENABLE_DOCS_PACKAGE := n
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
+# Whether to build or download GNU IDE Plugins
+ENABLE_IDE_PLUGINS_BUILD := y
+
 # Whether to build Linux images
 ENABLE_LINUX_IMAGES := y
 
@@ -386,7 +389,7 @@ endif
 BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
-BUILD_DEPS-$(ENABLE_IDE) += $O/$(IDE_PLUGINS_ZIP)
+BUILD_DEPS-$(ENABLE_IDE_PLUGINS_BUILD) += $O/$(IDE_PLUGINS_ZIP)
 BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_linux_le_hs_native_tarball
 BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_HOST_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR)$(TAR_EXT)
@@ -441,6 +444,7 @@ clone:
 	$(call git_clone,newlib,newlib)
 	$(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
 	$(call git_clone,uClibc,uClibc)
+	$(call git_clone,arc_gnu_eclipse,arc_gnu_eclipse)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
 endif
@@ -457,8 +461,10 @@ ifeq ($(THIRD_PARTY_SOFTWARE_LOCATION),)
 	$(error THIRD_PARTY_SOFTWARE_LOCATION must be set to do copy-external)
 endif
 
-	# Copy IDE plugin
+ifneq ($(ENABLE_IDE_PLUGINS_BUILD),y)
+	# Copy IDE Plugin
 	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
+endif
 
 	# Copy JRE.
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_LINUX_TGZ) $O/$(JRE_LINUX_TGZ)
@@ -750,6 +756,21 @@ $O/$(ECLIPSE_VANILLA_LINUX_TGZ):
 
 $O/$(ECLIPSE_VANILLA_WIN_ZIP):
 	$(WGET) $(WGETFLAGS) -O $@ '$(ECLIPSE_DL_LINK_BASE)/$(ECLIPSE_VANILLA_WIN_ZIP)&r=1'
+
+#
+# Building IDE Plugins
+#
+ifeq ($(ENABLE_IDE_PLUGINS_BUILD),y)
+
+IDE_PLUGIN_SRC_DIR=$(ROOT)/arc_gnu_eclipse
+IDE_PLUGIN_BUILD_DIR=$(IDE_PLUGIN_SRC_DIR)/build
+IDE_PLUGIN_OUT_DIR=$(IDE_PLUGIN_SRC_DIR)/repository/target/
+
+$O/$(IDE_PLUGINS_ZIP):
+	cd $(IDE_PLUGIN_SRC_DIR) && $(IDE_PLUGIN_BUILD_DIR)/build-repository.sh
+	$(CP) $(IDE_PLUGIN_OUT_DIR)/repository-*-SNAPSHOT.zip $@
+
+endif
 
 # Install ARC plugins from .zip file and install prerequisites in Eclipse.
 # Similar invocation is in windows/build-release.sh. Those invocations must be
