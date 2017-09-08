@@ -284,9 +284,7 @@ JRE_WIN_TGZ   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
 IDE_WIN_EXE := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_LINUX_TGZ := $(IDE_LINUX_INSTALL).tar.gz
-# IDE plugins are built separately, and contain only RELEASE_BRANCH in the
-# name, not the whole RELEASE.
-IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip
+IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE)_ide_plugins.zip
 
 # Linux
 LINUX_IMAGES_DIR = linux_images
@@ -474,7 +472,8 @@ endif
 
 ifneq ($(ENABLE_IDE_PLUGINS_BUILD),y)
 	# Copy IDE Plugin
-	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
+	# Prebuilt ZIP has old-style name with RELEASE_BRANCH instead of RELEASE
+	$(CP) $(IDE_PLUGIN_LOCATION)/arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip $O/$(IDE_PLUGINS_ZIP)
 endif
 
 	# Copy JRE.
