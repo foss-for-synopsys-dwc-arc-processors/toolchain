@@ -216,6 +216,7 @@ set nsim_gcc_mapping {
     "__ARC_MULT32__"		1	nsim_isa_mult32=1
     "__ARC_MUL32BY16__"		1	nsim_isa_mul32x16=1
     "__ARC_NORM__"		0	nsim_isa_bitscan_option=0
+    "__ARC_RF16__"		1	nsim_isa_rgf_num_regs=16
 }
 
 foreach {gcc_define set_if_defined nsim_prop} $nsim_gcc_mapping {
