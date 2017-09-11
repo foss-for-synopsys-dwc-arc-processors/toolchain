@@ -78,8 +78,8 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.03-rc1/arc_gnu_2017.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_6=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_9=y
+    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_12=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_INET_RPC=y
@@ -235,8 +235,8 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.03-rc1/arc_gnu_2017.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_6=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_9=y
+    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_12=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_INET_RPC=y
@@ -324,8 +324,8 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.03/arc_gnu_2017.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_6=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_9=y
+    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_12=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_INET_RPC=y
