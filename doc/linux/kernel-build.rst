@@ -76,6 +76,7 @@ Contents of this file should be following::
     BR2_arcle=y
     BR2_archs38=y
     BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
@@ -232,6 +233,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_arcle=y
     BR2_archs38=y
     BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
@@ -320,6 +322,7 @@ defconfig is::
     BR2_arcle=y
     BR2_archs38=y
     BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09/arc_gnu_2017.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
