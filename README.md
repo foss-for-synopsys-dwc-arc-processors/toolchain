@@ -39,11 +39,16 @@ Linux-like environment is required to build GNU toolchain for ARC. To build a
 toolchain for Windows, it is recommended to cross-compile it using MinGW on
 Linux. Refer to "Building toolchain on Windows" section of this document.
 
+Note that GDB requires compiler with C++ 11 support, therefore it is not
+possible to build toolchain with GCC 4.4 on RHEL/CentOS 6. Toolchain still can
+be built on RHEL/CentOS 6 when using manually installed newer compiler, however
+it is out of scope of this document to describe how to do that.
+
 GNU toolchain for ARC has same standard prerequisites as an upstream GNU tool
 chain as documented in the GNU toolchain user guide or on the [GCC
 website](http://gcc.gnu.org/install/prerequisites.html)
 
-On Ubuntu 12.04/14.04 LTS those can be installed with following command (as root):
+On Ubuntu those can be installed with following command (as root):
 
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
       libexpat1-dev texlive build-essential git wget
