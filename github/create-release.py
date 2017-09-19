@@ -52,6 +52,7 @@ if args.release_id is not None:
 | Baremetal           | {0} \ {1}    |                | {2} \ {3}    | |
 | Linux/uClibc ARC700 | {4} \ {5}    | | | |
 | Linux/uClibc ARC HS | {6} \ {7}    |                | {8} \ {9}    | {10}         |
+| Linux/glibc ARC HS  | {13}         |                |              |              |
 | IDE                 | {11}         | {12}           | | |
     """.format(
             fformat.format(t=le, release=args.release_id, type="baremetal", cpu="le", host="linux"),
@@ -73,7 +74,9 @@ if args.release_id is not None:
             fformat.format(t=le, release=args.release_id, type="uclibc", cpu="le_archs",
                 host="native"),
             ide_fformat.format(t="Download", release=args.release_id, host="linux", ext="tar.gz"),
-            ide_fformat.format(t="Download", release=args.release_id, host="win", ext="exe"))
+            ide_fformat.format(t="Download", release=args.release_id, host="win", ext="exe"),
+            fformat.format(t=le, release=args.release_id, type="glibc", cpu="le_archs",
+                host="linux"))
 
 if args.md5sum_file is not None:
     with open(args.md5sum_file, "r") as f:
