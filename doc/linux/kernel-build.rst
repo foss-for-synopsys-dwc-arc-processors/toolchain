@@ -181,6 +181,32 @@ Notable defconfigs available for ARC: ``axs101``, ``axs103``, ``axs103_smp``,
 ``vsk_hs38_smp_defconfig``.
 
 
+Using glibc toolchain
+---------------------
+
+Configuration for glibc toolchain is fairly similar for uClibc, with only minor
+differences.::
+
+    BR2_arcle=y
+    BR2_archs38=y
+    BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
+    BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_12=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
+    BR2_TOOLCHAIN_EXTERNAL_CXX=y
+    BR2_LINUX_KERNEL=y
+    BR2_LINUX_KERNEL_DEFCONFIG="nsim_hs"
+    BR2_LINUX_KERNEL_VMLINUX=y
+    BR2_PACKAGE_GDB=y
+    BR2_PACKAGE_GDB_SERVER=y
+    BR2_PACKAGE_GDB_DEBUGGER=y
+    BR2_TARGET_ROOTFS_INITRAMFS=y
+    # BR2_TARGET_ROOTFS_TAR is not set
+
+
 Linux for ARC 770 processors
 ----------------------------
 
