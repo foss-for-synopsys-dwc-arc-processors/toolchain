@@ -47,13 +47,13 @@ if args.release_id is not None:
     be = "Big endian"
 
     args.description += """
-|                     | Linux x86_64 | Windows x86_64 | macOS x86_64 | Linux ARC HS |
-| ------------------- | ------------ | -------------- | ------------ | ------------ |
-| Baremetal           | {0} \ {1}    |                | {2} \ {3}    | |
-| Linux/uClibc ARC700 | {4} \ {5}    | | | |
-| Linux/uClibc ARC HS | {6} \ {7}    |                | {8} \ {9}    | {10}         |
-| Linux/glibc ARC HS  | {13}         |                |              |              |
-| IDE                 | {11}         | {12}           | | |
+|                     | Linux x86_64 | Windows x86_64 | Linux ARC HS |
+| ------------------- | ------------ | -------------- | ------------ |
+| Baremetal           | {0} \ {1}    |                |              |
+| Linux/uClibc ARC700 | {4} \ {5}    |                |              |
+| Linux/uClibc ARC HS | {6} \ {7}    |                | {10}         |
+| Linux/glibc ARC HS  | {13}         |                |              |
+| IDE                 | {11}         | {12}           |              |
     """.format(
             fformat.format(t=le, release=args.release_id, type="baremetal", cpu="le", host="linux"),
             fformat.format(t=be, release=args.release_id, type="baremetal", cpu="be", host="linux"),
