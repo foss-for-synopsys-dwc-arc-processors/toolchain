@@ -64,8 +64,8 @@ sources::
 
     $ mkdir arc-2017.09-linux-guide
     $ cd arc-2017.09-linux-guide
-    $ wget https://buildroot.org/downloads/buildroot-snapshot.tar.bz2
-    $ tar xaf buildroot-snapshot.tar.bz2
+    $ wget https://buildroot.org/downloads/buildroot-2017.08.tar.bz2
+    $ tar xf buildroot-2017.08.tar.bz2
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
 this guide, a custom "defconfig" file will be created and then will be used to
@@ -115,6 +115,7 @@ Building
 
 To build Linux kernel image using that defconfig::
 
+    $ mkdir output_hs
     $ cd buildroot
     $ make O=`readlink -e ../output_hs` defconfig DEFCONFIG=`readlink -e ../hs_defconfig`
     $ cd ../output_hs
@@ -253,6 +254,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
 Save this defconfig to some file (for example ``vdk_defconfig``). Then use same
 process as in :ref:`linux-building-label` section.::
 
+    $ mkdir output_vdk
     $ cd buildroot
     $ make O=`readlink -e ../output_vdk` defconfig DEFCONFIG=<path-to-VDK-defconfig-file>
     $ cd ../output_vdk
