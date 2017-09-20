@@ -11,11 +11,10 @@ Currently GNU toolchain has a partial support for :abbr:`TCF (target
 configuration files)`, however it is not complete and in particular scenarios
 TCFs cannot be used as-is.
 
-If you are using Eclipse IDE for ARC, please refer to a `respective page on its
-wiki
-<https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki/Building-User-Guide>`_.
-Eclipse IDE for ARC supports only GCC compiler and GNU linker script sections
-of TCF, it doesn't support preprocessor defines sections as of version 2016.03.
+If you are using Eclipse IDE for ARC, please refer to a
+:doc:`../ide/building-user-guide`.  Eclipse IDE for ARC supports only GCC
+compiler and GNU linker script sections of TCF, it doesn't support preprocessor
+defines sections as of version 2016.03.
 
 If you are using GNU toolchain without IDE on Linux hosts you can use a special
 script :program:`arc-elf32-tcf-gcc` (for big-endian toolchain this file has

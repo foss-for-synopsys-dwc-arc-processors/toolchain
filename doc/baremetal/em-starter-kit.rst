@@ -9,27 +9,22 @@ Using GNU Toolchain to Debug Applications on EM Starter Kit
 Prerequisites
 -------------
 
-Software installer for Windows can be downloaded `here
-<https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/releases>`_.
-In order to use OpenOCD it is required to install appropriate WinUSB drivers,
-see `this page
-<https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki/How-to-Use-OpenOCD-on-Windows>`_
-for details.
-
-Toolchain for Linux hosts can be downloaded from the `GNU Toolchain Releases
-page
+Toolchain for Linux and Windows hosts can be downloaded from the `GNU Toolchain
+Releases page
 <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases>`_.
 For Linux hosts there is a choice between complete tarballs that include
 toolchain, IDE and OpenOCD (like installer for Windows), and tarballs that
 include toolchain only.
 
+In order to use OpenOCD on Windows it is required to install appropriate WinUSB drivers,
+see :doc:`../ide/how-to-use-openocd-on-windows` for details.
+
 
 Building an application
 -----------------------
 
-To learn how to build and debug application with Eclipse IDE, please use `IDE
-User Guide
-<https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki>`_.
+To learn how to build and debug application with Eclipse IDE, please use
+:doc:`../ide/index` manual.
 
 Different core templates in EM Starter Kit use different memory maps, so
 different memory map files are required to compile applications that work

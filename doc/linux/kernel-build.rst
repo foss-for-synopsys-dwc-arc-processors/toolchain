@@ -10,7 +10,7 @@ single question "How to confirm, that I can build Linux kernel with *that*
 toolchain?"
 
 To learn how to configure Linux, debug kernel itself and build extra software
-please see `https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki`_.
+please see `<https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki>`_.
 
 
 Prerequisites
