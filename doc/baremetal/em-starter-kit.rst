@@ -71,6 +71,12 @@ For example for EM Starter Kit v2.2 EM7D to build an application::
    +      +--------+------------------------------------------------------------+
    |      | EM11D  | -mcpu=em4_fpuda -mfpu=fpuda_all                            |
    +------+--------+------------------------------------------------------------+
+   |      | EM7D   | -mcpu=em4_dmips                                            |
+   +      +--------+------------------------------------------------------------+
+   |v2.03a| EM9D   | -mcpu=em4_fpus -mfpu=fpus_all                              |
+   +      +--------+------------------------------------------------------------+
+   |      | EM11D  | -mcpu=em4_fpuda -mfpu=fpuda_all                            |
+   +------+--------+------------------------------------------------------------+
 
 
 Running an application with OpenOCD
@@ -88,12 +94,12 @@ different ARC EM Starter Kit versions:
 
 * ``snps_em_sk_v1.cfg`` - for ARC EM Starter Kit v1.x.
 * ``snps_em_sk_v2.1.cfg`` - for ARC EM Starter Kit versions 2.0 and 2.1.
-* ``snps_em_sk_v2.2.cfg`` - for ARC EM Starter Kit version 2.2.
+* ``snps_em_sk_v2.2.cfg`` - for ARC EM Starter Kit version 2.2 and 2.03a.
 * ``snps_em_sk.cfg`` - this is a configuration for ARC EM Starter Kit 2.0 and
   2.1, preserved for compatibility.
 
 Following documentation would assume the usage of the latest ARC EM Starter Kit
-version 2.2.
+version 2.03a which is similar to 2.2.
 
 Start OpenOCD::
 
