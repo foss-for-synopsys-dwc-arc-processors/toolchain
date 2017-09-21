@@ -17,7 +17,7 @@ Prerequisites
         $ git clone git@github.com:foss-for-synopsys-dwc-arc-processors/toolchain.git
 
 3. Download free nSIM from webpage:
-   <https://www.synopsys.com/cgi-bin/dwarcnsim/req1.cgi>. Note that requests
+   https://www.synopsys.com/cgi-bin/dwarcnsim/req1.cgi. Note that requests
    are manually approved, hence it make take up to 2 workdays for download to
    be ready.
 4. Build toolchain.

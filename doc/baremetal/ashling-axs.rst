@@ -16,8 +16,7 @@ Using Ashling Opella-XD GDB server with AXS SDP
 
 Ashling GDB Server can be used to debug application running on the AXS10x
 family of software development platforms. It is recommended to use latest
-version of Ashling drivers and software package available, which, at the moment
-of this writing, is 1.0.6-D.
+version of Ashling drivers and software package available.
 
 
 Building an application
@@ -33,8 +32,8 @@ Board configuration
 Board should be configured mostly the same way as for the OpenOCD, but it is
 required to change *JP1402* and *JP1403* jumpers - to debug with Opella-XD it is
 required to set *JP1403* and unset *JP1402*, while for OpenOCD it is otherwise.
-Refer to our [wiki guide](AXS-SDP-and-OpenOCD) and to the User Guide of the
-AXC00x CPU card you are using for more details.
+Refer to :ref:`OpenOCD manual <label_building-an-application-axs>` and to the
+User Guide of the AXC00x CPU card you are using for more details.
 
 .. _run-ashling-gdb-server:
 
