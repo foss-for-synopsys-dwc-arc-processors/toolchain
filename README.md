@@ -291,19 +291,19 @@ This command will build toolchain for ARC HS Linux development with glibc:
     $ ./build-all.sh --no-elf32 --glibc --cpu hs38 --install-dir $INSTALL_ROOT
 
 This command will build bare metal toolchain for ARC EM7D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_dmips
 
 This command will build bare metal toolchain for ARC EM9D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpus --target-cflags "-O2 -g -mfpu=fpus_all"
 
 This command will build bare metal toolchain for ARC EM11D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
