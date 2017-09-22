@@ -37,9 +37,9 @@ should be renamed to ``memory.x``, because ``arcv2elfx`` linker emulation
 doesn't support ability to override that file name. Please refer to
 :doc:`linker` for more details about ``memory.x`` files.
 
-For example for EM Starter Kit v2.2 EM7D to build an application::
+For example for EM Starter Kit v2.03a EM7D to build an application::
 
-    $ cp -a toolchain/extras/dev_systems/sk2.2_em7d.x memory.x
+    $ cp -a toolchain/extras/dev_systems/sk2.03a_em7d.x memory.x
     $ arc-elf32-gcc -Wl,-marcv2elfx --specs=nosys.specs -mcpu=em4_dmips -O2 -g \
          test.c -o test.elf
 
@@ -77,6 +77,28 @@ For example for EM Starter Kit v2.2 EM7D to build an application::
    +      +--------+------------------------------------------------------------+
    |      | EM11D  | -mcpu=em4_fpuda -mfpu=fpuda_all                            |
    +------+--------+------------------------------------------------------------+
+
+
+C library for GNU Toolchain for ARC provides basic support for UART module of EM
+Starter Kit, which allows to use standard C function for input and output:
+``printf()``, ``scanf()``, etc. Memory map files are also provided for processor
+configurations of EM Starter Kit. Both of those features are available via
+special "specs" files: ``emsk_em9d.specs`` and ``emsk_em11d.specs`` (there is no
+separate file for EM7D of EM Starter Kit, it is identical to EM9D). Usage
+example is following::
+
+    $ cat hello_world.c
+    #include <stdio.h>
+    int main() {
+        printf("hello world\n");
+        return 0;
+    }
+
+    $ arc-elf32-gcc --specs=emsk_em9d.specs -mcpu=em4_dmips hello_world.c
+
+Note that it is still required to specify valid ``-mcpu`` option value - it is
+not set by the specs file.
+
 
 
 Running an application with OpenOCD

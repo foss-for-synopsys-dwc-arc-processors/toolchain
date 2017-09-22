@@ -462,11 +462,11 @@ https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev
 
 To run OpenOCD:
 
-    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk.cfg
+    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk_v2.03a.cfg
 
 Compile test application and run:
 
-    $ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs simple.c
+    $ arc-elf32-gcc -mcpu=em4_dmips -g --specs=emsk_em9d.specs simple.c
     $ arc-elf32-gdb --quiet a.out
     (gdb) target remote :3333
     (gdb) load
@@ -477,9 +477,6 @@ Compile test application and run:
     (gdb) break exit
     (gdb) continue
     (gdb) quit
-
-Note that since there is no hostlink support in OpenOCD applications, so IO
-functions will not work properly.
 
 
 ### Using Ashling Opella-XD debug probe to debug bare metal applications
