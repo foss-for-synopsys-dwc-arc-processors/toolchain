@@ -448,18 +448,17 @@ implementations. One reason to prefer `nsim.specs` over `nosys.specs` even when
 developing for hardware platform which doesn't have hostlink support is that
 `nsim` will halt target core on call to function "exit" and on many errors,
 while `exit` functions `nosys.specs` is an infinite loop. For more details
-please see [our wiki
-page](https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/Building-a-baremetal-application).
+please see [documentation](http://embarc.org/toolchain/baremetal/index.html).
 
 
 ### Using EM Starter Kit to run bare metal ARC EM application
 
 > A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building application" of our EM Starter Kit Wiki page:
-> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+> Refer to the section "Building application" of our EM Starter Kit page:
+> http://embarc.org/toolchain/baremetal/em-starter-kit.html
 
 Build instructions for OpenOCD are available at its page:
-https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2014.12/doc/README.ARC
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2017.09/doc/README.ARC
 
 To run OpenOCD:
 
@@ -486,8 +485,8 @@ functions will not work properly.
 ### Using Ashling Opella-XD debug probe to debug bare metal applications
 
 > A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building application" of our EM Starter Kit Wiki page:
-> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+> Refer to the section "Building application" of our EM Starter Kit page:
+> http://embarc.org/toolchain/baremetal/em-starter-kit.html
 > For different hardware configurations other changes might be required.
 
 > The Ashling Opella-XD debug probe and its drivers are not part of the GNU
