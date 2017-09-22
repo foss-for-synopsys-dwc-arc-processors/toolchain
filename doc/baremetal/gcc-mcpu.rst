@@ -112,9 +112,9 @@ values for ARC HS.
         hs                      Y                      none
        hs34                     Y                      mpy
       archs          Y          Y          Y           mpy
-       hs4x          Y          Y          Y           mpy
-      hs4xd          Y          Y          Y           mpy
        hs38          Y          Y          Y        plus_qmacw
+       hs4x          Y          Y          Y        plus_qmacw
+      hs4xd          Y          Y          Y        plus_qmacw
     hs38_linux       Y          Y          Y        plus_qmacw    fpud_all
    ============ =========== ========== ========= =============== =========
 
@@ -134,10 +134,10 @@ added to the GNU toolchain.
   ARChitect: hs34, hs36 and hs38.
 * ``-mcpu=archs`` is a generic CPU, which corresponds to the default
   configuration in older GNU toolchain versions.
-* ``-mcpu=hs4x`` and ``-mcpu=hs4xd`` have same option set as ``-mcpu=archs`` but compiler will
-  optimize instruction scheduling for specified processors.
 * ``-mcpu=hs38`` is a fully featured ARC HS.  It corresponds to the following
   ARC HS templates in ARChitect: hs38_full
+* ``-mcpu=hs4x`` and ``-mcpu=hs4xd`` have same option set as ``-mcpu=hs38`` but compiler will
+  optimize instruction scheduling for specified processors.
 * ``-mcpu=hs38_linux`` is a fully featured ARC HS with additional support for
   double-precision FPU. It corresponds to the following ARC HS templates in
   ARChitect: hs38_slc_full.
