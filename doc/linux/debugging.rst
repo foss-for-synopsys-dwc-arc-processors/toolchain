@@ -162,14 +162,6 @@ Then you can your debug session as usual. In the simplest case::
 
     (gdb) continue
 
-Note that there is a known limitation of gdbserver - it is not safe to debug
-multiprocess application with it. Problem is that when child if forked, it
-still shares code pages with parent, therefore software breakpoints set in the
-parent process might be hit by the child process should it execute the same
-code path. In this case child process will crash due to unexpected breakpoint.
-This is a generic problem with gdbserver, that is not specific to ARC port of
-GDB - it can be reproduced with gdb/gdbserver for x86_64.
-
 
 Debugging applications with native GDB
 --------------------------------------
@@ -184,37 +176,3 @@ native GDB binary can be found in sysroot directory:
 With native GDB it is possible to debug applications the same way as it is done
 on the host system without gdbserver.
 
-When choosing between gdbserver and native GDB, following pros and cons should
-be considered.
-
-Pros of native GDB:
-
-* Overhead for network communication between GDB and gdbserver is removed,
-  theoretically improving debugging performance.
-* Some features might be not implemented in the gdbserver.
-* As described in gdbserver section - gdbserver cannot be safely used to debug
-  applications that use fork(). Therefore native GDB is the debugger of choice
-  for multiprocess applications.
-* There is no need for a second host to perform debugging session, since
-  everything is on the target system.
-
-
-Cons:
-
-* It is required that applications on target system should have debugging
-  symbols (unless you are so hardcore that you don't need them). Debugging
-  symbols, especially in the most verbose case occupy significant disk space.
-  Depending on the type of target hardware this might be or might not be a thing
-  to consider. Usually this can be ignored in case of virtual prototypes, and is
-  hardly a problem with development systems, however disk space is probably very
-  limited on the production systems. Large rootfs size also means increased time
-  required to load rootfs into the target memory.
-* Not only debugging symbols will take noticeable disk space, but also GDB will
-  also read them intensively, so if target file system has a low performance,
-  this might be noticeable.
-* Full GDB on target requires more computational power than gdbserver. This
-  might offset all of the gains from exclusion of the networking layer.
-
-In general it is highly dependent on target system properties and developer
-needs whether gdbserver or native GDB is better and it is up to the software
-developer to decide what is better in their particular case.
