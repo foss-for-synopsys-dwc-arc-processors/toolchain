@@ -153,10 +153,10 @@ section ""
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\GNU Toolchain User Guide.lnk" \
 	"$INSTDIR\share\doc\GNU_Toolchain_for_ARC.pdf"
-    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Wiki on GitHub.lnk" \
-      "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki"
+    CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Documentation online.lnk" \
+      "http://embarc.org/toolchain/ide/index.html"
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Releases on GitHub.lnk" \
-      "https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/releases"
+      "https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases"
 SectionEnd
 
 #
