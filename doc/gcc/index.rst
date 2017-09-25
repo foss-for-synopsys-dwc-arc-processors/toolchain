@@ -11,4 +11,5 @@ ARC specific tech discussion
 .. toctree::
 
    custom-instructions.rst
+   extensions-support.rst
 
