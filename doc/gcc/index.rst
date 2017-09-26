@@ -14,4 +14,5 @@ ARC specific tech discussion
    extensions-support.rst
    64bit.rst
    jli.rst
+   secure-shield.rst
 
