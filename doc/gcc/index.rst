@@ -24,4 +24,5 @@ From MWDT to GCC
 .. toctree::
 
    option-matrix.rst
+   apex.rst
 
