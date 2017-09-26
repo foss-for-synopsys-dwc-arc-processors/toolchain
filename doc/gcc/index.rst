@@ -12,4 +12,5 @@ ARC specific tech discussion
 
    custom-instructions.rst
    extensions-support.rst
+   64bit.rst
 
