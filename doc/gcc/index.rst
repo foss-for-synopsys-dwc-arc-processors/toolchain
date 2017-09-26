@@ -15,4 +15,5 @@ ARC specific tech discussion
    64bit.rst
    jli.rst
    secure-shield.rst
+   sanitizers.rst
 
