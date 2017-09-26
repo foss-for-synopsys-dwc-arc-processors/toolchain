@@ -27,3 +27,10 @@ From MWDT to GCC
    apex.rst
    builtins.rst
 
+Improving GCC output
+--------------------
+
+.. toctree::
+
+   optimizations.rst
+
