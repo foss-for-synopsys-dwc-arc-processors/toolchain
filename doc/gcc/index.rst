@@ -16,4 +16,5 @@ ARC specific tech discussion
    jli.rst
    secure-shield.rst
    sanitizers.rst
+   small-data.rst
 
