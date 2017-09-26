@@ -18,3 +18,10 @@ ARC specific tech discussion
    sanitizers.rst
    small-data.rst
 
+From MWDT to GCC
+----------------
+
+.. toctree::
+
+   option-matrix.rst
+
