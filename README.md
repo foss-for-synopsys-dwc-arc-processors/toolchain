@@ -291,19 +291,19 @@ This command will build toolchain for ARC HS Linux development with glibc:
     $ ./build-all.sh --no-elf32 --glibc --cpu hs38 --install-dir $INSTALL_ROOT
 
 This command will build bare metal toolchain for ARC EM7D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_dmips
 
 This command will build bare metal toolchain for ARC EM9D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpus --target-cflags "-O2 -g -mfpu=fpus_all"
 
 This command will build bare metal toolchain for ARC EM11D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
@@ -448,26 +448,25 @@ implementations. One reason to prefer `nsim.specs` over `nosys.specs` even when
 developing for hardware platform which doesn't have hostlink support is that
 `nsim` will halt target core on call to function "exit" and on many errors,
 while `exit` functions `nosys.specs` is an infinite loop. For more details
-please see [our wiki
-page](https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/Building-a-baremetal-application).
+please see [documentation](http://embarc.org/toolchain/baremetal/index.html).
 
 
 ### Using EM Starter Kit to run bare metal ARC EM application
 
 > A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building application" of our EM Starter Kit Wiki page:
-> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+> Refer to the section "Building application" of our EM Starter Kit page:
+> http://embarc.org/toolchain/baremetal/em-starter-kit.html
 
 Build instructions for OpenOCD are available at its page:
-https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2014.12/doc/README.ARC
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2017.09/doc/README.ARC
 
 To run OpenOCD:
 
-    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk.cfg
+    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk_v2.03a.cfg
 
 Compile test application and run:
 
-    $ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs simple.c
+    $ arc-elf32-gcc -mcpu=em4_dmips -g --specs=emsk_em9d.specs simple.c
     $ arc-elf32-gdb --quiet a.out
     (gdb) target remote :3333
     (gdb) load
@@ -479,15 +478,12 @@ Compile test application and run:
     (gdb) continue
     (gdb) quit
 
-Note that since there is no hostlink support in OpenOCD applications, so IO
-functions will not work properly.
-
 
 ### Using Ashling Opella-XD debug probe to debug bare metal applications
 
 > A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building application" of our EM Starter Kit Wiki page:
-> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+> Refer to the section "Building application" of our EM Starter Kit page:
+> http://embarc.org/toolchain/baremetal/em-starter-kit.html
 > For different hardware configurations other changes might be required.
 
 > The Ashling Opella-XD debug probe and its drivers are not part of the GNU

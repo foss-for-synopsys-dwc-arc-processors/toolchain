@@ -10,7 +10,7 @@ single question "How to confirm, that I can build Linux kernel with *that*
 toolchain?"
 
 To learn how to configure Linux, debug kernel itself and build extra software
-please see `https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki`_.
+please see `<https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki>`_.
 
 
 Prerequisites
@@ -64,8 +64,8 @@ sources::
 
     $ mkdir arc-2017.09-linux-guide
     $ cd arc-2017.09-linux-guide
-    $ wget https://buildroot.org/downloads/buildroot-snapshot.tar.bz2
-    $ tar xaf buildroot-snapshot.tar.bz2
+    $ wget https://buildroot.org/downloads/buildroot-2017.08.tar.bz2
+    $ tar xf buildroot-2017.08.tar.bz2
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
 this guide, a custom "defconfig" file will be created and then will be used to
@@ -115,6 +115,7 @@ Building
 
 To build Linux kernel image using that defconfig::
 
+    $ mkdir output_hs
     $ cd buildroot
     $ make O=`readlink -e ../output_hs` defconfig DEFCONFIG=`readlink -e ../hs_defconfig`
     $ cd ../output_hs
@@ -178,6 +179,32 @@ AXS10x SDP.
 
 Notable defconfigs available for ARC: ``axs101``, ``axs103``, ``axs103_smp``,
 ``vsk_hs38_smp_defconfig``.
+
+
+Using glibc toolchain
+---------------------
+
+Configuration for glibc toolchain is fairly similar for uClibc, with only minor
+differences.::
+
+    BR2_arcle=y
+    BR2_archs38=y
+    BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
+    BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_12=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
+    BR2_TOOLCHAIN_EXTERNAL_CXX=y
+    BR2_LINUX_KERNEL=y
+    BR2_LINUX_KERNEL_DEFCONFIG="nsim_hs"
+    BR2_LINUX_KERNEL_VMLINUX=y
+    BR2_PACKAGE_GDB=y
+    BR2_PACKAGE_GDB_SERVER=y
+    BR2_PACKAGE_GDB_DEBUGGER=y
+    BR2_TARGET_ROOTFS_INITRAMFS=y
+    # BR2_TARGET_ROOTFS_TAR is not set
 
 
 Linux for ARC 770 processors
@@ -253,6 +280,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
 Save this defconfig to some file (for example ``vdk_defconfig``). Then use same
 process as in :ref:`linux-building-label` section.::
 
+    $ mkdir output_vdk
     $ cd buildroot
     $ make O=`readlink -e ../output_vdk` defconfig DEFCONFIG=<path-to-VDK-defconfig-file>
     $ cd ../output_vdk

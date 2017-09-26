@@ -1,16 +1,14 @@
 Debugging a big endian Application on EM Starter Kit
 ====================================================
 
-.. note::
-
-   This page was written for ARC EM Starter Kit 1.0. It is mostly applicable
-   to later versions of ARC EM Starter Kit, but there are some minor differences.
-
 The EM Starter Kit comes with 4 pre-installed little endian configurations.
 User wishing to work with big endian configuration can use the procedure below
 to program a big endian .bit file, using the Digilent Adept Software. Big
-endian .bit file is not a part of the EM Starter Kit Software package, Synopsys
-will provide it on request.
+endian .bit file is not a part of the EM Starter Kit Software package.
+
+
+Instruction for Windows
+-----------------------
 
 1. Ensure that EM Starter Kit is powered ON and connected to the host PC
 
@@ -26,8 +24,8 @@ After closing the jumper:
 
    J8 Jumper in closed position
 
-3. Download the Digilent Adept 2.13.1 System Software for Windows from
-   http://www.digilentinc.com/Products/Detail.cfm?Prod=ADEPT2
+3. Download the Digilent Adept 2 System Software for Windows from
+   http://store.digilentinc.com/digilent-adept-2-download-only/
 
 4. Open the "Adept" utility
 
@@ -35,11 +33,12 @@ After closing the jumper:
 
    Adept Utility before Initializing Chain
 
-5. Press "Initialize chain". There should be only one device in a chain: XC6SLX45.
+5. Press "Initialize chain". There should be only one device in a chain:
+   XC6SLX150 (XC6SLX45 for ARC EM Starter Kit 1.x)
 
 .. figure:: images/big_endian/adept_shows_device.png
 
-   XC6SLX45 Device shown after Initialization
+   XC6SLX{150,45} Device shown after Initialization
 
 6. Press "Browse" button and navigate to location of your big endian .bit file
 
@@ -57,3 +56,31 @@ The EM Starter Kit will now use the selected big-endian FPGA image until the
 board is powered off or until reconfiguration by pressing the FPGA
 configuration button located above the “C” in the “ARC” log on the board. Refer
 to EM Starter Kit documentation for more details.
+
+
+Instructions for Linux
+----------------------
+
+Follow step 1 through 3 from Windows section to properly configure board and
+download Adept software. To program FPGA it is required to install both
+"runtime" and "utilities" packages. After installing utilities and setting
+jumpers appropriately, use Digilent command-line utilities::
+
+	$ djtgcfg enum
+	Found 1 device(s)
+
+	Device: TE0604-03
+	    Product Name:   JTAG-ONB4
+	    User Name:      TE0604-03
+	    Serial Number:  25163300005A
+
+	$ djtgcfg init -d TE0604-03
+	Initializing scan chain...
+	Found Device ID: 4401d093
+
+	Found 1 device(s):
+	    Device 0: XC6SLX150
+
+	$ djtgcfg prog -d TE0604-03 -i 0 -f <bit_file>
+	Programming device. Do not touch your board. This may take a few minutes...
+	Programming succeeded.
