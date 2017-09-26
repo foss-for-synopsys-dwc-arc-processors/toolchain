@@ -25,4 +25,5 @@ From MWDT to GCC
 
    option-matrix.rst
    apex.rst
+   builtins.rst
 
