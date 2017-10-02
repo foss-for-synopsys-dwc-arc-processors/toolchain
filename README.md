@@ -302,11 +302,6 @@ Kit 2.03a:
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
 
-Build bare metal toolchain for ARC EM4 and EM6 in the ARC EM Starter Kit 1.1:
-
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_dmips
-
 To build native ARC Linux uClibc toolchain (toolchain that runs on same system as for
 which it compiles, so host == target) it is required first to build a normal
 cross toolchain for this system. Then it should be added it to the PATH, after
