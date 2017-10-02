@@ -1,3 +1,45 @@
+Major Changes in 2018.03 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* Binutils [[TBD]] with ARC patches
+* GCC [[TBD]] with ARC patches
+* GDB [[TBD]] with ARC patches
+* newlib [[TBD]] with ARC patches
+* uclibc-ng [[TBD]]
+* Eclipse [[TBD]] with CDT [[TBD]]
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
+generator) version 1.0.53 and later.
+
+New Features and Enhancements
+-----------------------------
+
+* Binary distributables
+	* [[TBD]]
+
+* Toolchain Build Scripts
+	* [[TBD]]
+
+* GCC
+	* [[TBD]]
+
+* Binutils
+	* [[TBD]]
+
+* GDB
+	* [[TBD]]
+
+* Eclipse plugins
+	* [[TBD]]
+
+* uClibc-ng
+	* [[TBD]]
+
+
 Major Changes in 2017.09 Release
 ================================
 
