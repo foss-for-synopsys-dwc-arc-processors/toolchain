@@ -158,7 +158,7 @@ the toolchain. These should be peers of this `toolchain` directory.
         https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     $ # For Linux uClibc toolchain:
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+    $ git clone https://github.com/wbx-github/uclibc-ng.git
     $ # or for Linux glibc toolchain:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git
     $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
@@ -181,7 +181,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * gcc - arc-2018.03
 * gdb - arc-2018.03-gdb
 * newlib - arc-2018.03
-* uClibc - arc-2017.09
+* uclibc-ng - v1.0.26
 * Linux - linux-4.12.y
 * glibc - vineet-glibc-master
 

@@ -237,7 +237,7 @@ BUILD_DIR = $(ROOT)/build
 # Toolchain: source tarball
 # This variable should use .. instead of $(ROOT) so that tar will auto-remove
 # .. from file paths. Perhaps this ugliness can be fixed with --transform?
-TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb glibc newlib toolchain uClibc openocd)
+TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb glibc newlib toolchain uclibc-ng openocd)
 TOOLS_SOURCE_DIR := arc_gnu_$(RELEASE)_sources
 
 # Toolchain: baremetal for Linux hosts
@@ -449,7 +449,7 @@ clone:
 	$(call git_clone,binutils-gdb,gdb)
 	$(call git_clone,newlib,newlib)
 	$(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
-	$(call git_clone,uClibc,uClibc)
+	$(call git_clone_url,git@github.com:wbx-github/uclibc-ng.git,uclibc-ng)
 	$(call git_clone,arc_gnu_eclipse,arc_gnu_eclipse)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
@@ -494,7 +494,7 @@ prerequisites: clone copy-external
 
 .PHONY: distclean
 distclean: clean
-	rm -rf $(ROOT)/{binutils,gcc,gdb,newlib,linux,uClibc}
+	rm -rf $(ROOT)/{binutils,gcc,gdb,newlib,linux,uclibc-ng}
 	rm -rf $(ROOT)/openocd
 
 #
