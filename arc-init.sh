@@ -44,7 +44,7 @@
 # - set the following environment variables to the sub-directories to be used:
 #   - binutils
 #   - gcc
-#   - insight
+#   - gdb
 #   - newlib
 #   - uclibc
 
@@ -148,7 +148,7 @@ fi
 if [ ! -f "${ARC_GNU}"/toolchain/arc-versions.sh ]
 then
     echo "ERROR: Script requires arc-versions.sh to exist and define"
-    echo "       binutils, gcc, insight, newlib and uclibc versions."
+    echo "       binutils, gcc, gdb, newlib and uclibc versions."
     exit 1
 fi
 
