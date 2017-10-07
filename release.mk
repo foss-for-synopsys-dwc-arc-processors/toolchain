@@ -790,6 +790,7 @@ $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_LINUX_TGZ) $O/$(IDE_PLUGINS_ZI
 	# work for end-users, hence those repos must be manually removed.
 	sed -i -e "/$(subst /,_,$O)/ d" \
 	    $O/$(IDE_LINUX_INSTALL)/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
+	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_LINUX_INSTALL)/eclipse/eclipse.ini
 	touch $@
 
 $O/.stamp_ide_linux_tar: \
