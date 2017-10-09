@@ -11,7 +11,9 @@
 	.wy-table-responsive {
 		overflow: visible !important;
 	}
+}
 
+@media screen {
 	.wy-side-nav-search {
 		background-color: #5a2a82;
 	}
