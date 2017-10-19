@@ -57,13 +57,7 @@ On RHEL 6/7 those can be installed with following command (as root):
 
     # yum groupinstall "Development Tools"
     # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
-      git texlive-\* wget
-
-It's necessary to install a full `texlive` set in RHEL 6/7 (`texlive-*`) to
-prevent errors due to missing TeX fonts while building a documentation. Since
-`texlive-*` installs a big set of large packets (hundreds of megabytes) it's
-possible to omit `texlive-*` in `yum install` and instead pass `--no-pdf`
-option to the `build-all.sh` script if the documentation is not required.
+      git texlive-ec texlive-cm-super wget gcc-c++
 
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
