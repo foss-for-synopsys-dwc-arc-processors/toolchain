@@ -13,6 +13,7 @@ Welcome to GNU Toolchain for ARC documentation!
    linux/index
    other/index
    ide/index
+   gcc/index
    maintainer/index
    faq
 
@@ -21,6 +22,5 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 

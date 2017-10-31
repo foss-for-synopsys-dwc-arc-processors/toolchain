@@ -27,13 +27,15 @@
 
 #     arc-versions.sh [--auto-checkout | --no-auto-checkout]
 #                     [--auto-pull | --no-auto-pull]
-#                     [--uclibc | --no-uclibc]
 
 # The environment variable ${ARC_GNU} should point to the directory within
 # which the GIT trees live.
 
+# Environment variables DO_UCLIBC or DO_GLIBC should be set to `yes' if Linux
+# toolchain is being built.
+
 # The environment variable ${LINUXDIR} should point to the Linux root
-# directory (only used if --uclibc is set).
+# directory (only used if DO_UCLIBC or DO_GLIBC is set to `yes').
 
 # We checkout the desired branch for each tool. Note that these must exist or
 # we fail.
@@ -41,7 +43,6 @@
 # Default options
 autocheckout="--auto-checkout"
 autopull="--auto-pull"
-uclibc_arg="--uclibc"
 
 # Parse options
 until
@@ -55,14 +56,9 @@ case ${opt} in
 	autopull=$1
 	;;
 
-    --uclibc | --no-uclibc)
-	uclibc_arg=$1
-	;;
-
     ?*)
 	echo "Usage: arc-versions.sh  [--auto-checkout | --no-auto-checkout]"
         echo "                        [--auto-pull | --no-auto-pull]"
-        echo "                        [--uclibc | --no-uclibc]"
 	exit 1
 	;;
 
@@ -77,7 +73,7 @@ done
 # That should be a separate variable to allow for a straightforward creation of
 # new releases, where we want default to point to release, instead of dev
 # branch.
-default_toolchain_config=arc-2017.03-release
+default_toolchain_config=arc-2017.09-release
 
 # Specify the default versions to use as a string <tool>:<branch>. Those are
 # taken from the checkout configuration file. Only actually matters if
@@ -97,9 +93,15 @@ else
 fi
 
 # Disable linux if needed
-if [ "x${uclibc_arg}" != "x--uclibc" ]
+if [ ${DO_UCLIBC:-no} = yes -o ${DO_GLIBC:-no} = yes ]
 then
     linux=""
+fi
+
+if [ ${DO_GLIBC:-no} = yes ]; then
+    libc=$glibc
+else
+    libc=$uclibc
 fi
 
 # It is not safe to "pull" in the initial state, because if repository is
@@ -117,7 +119,7 @@ fi
 
 # All this will go horribly wrong if you leave uncommitted changes lying
 # around or if you change the remote. Nothing then but to sort it out by hand!
-for version in ${binutils} ${gcc} ${gdb} ${newlib} ${uclibc} ${linux}
+for version in ${binutils} ${gcc} ${gdb} ${newlib} ${libc} ${linux}
 do
     tool=`echo ${version} | cut -d ':' -f 1`
     branch=`echo ${version} | cut -d ':' -f 2`
@@ -125,7 +127,7 @@ do
     echo "Checking out branch/tag ${branch} of ${tool}"
 
     # Kludge, because Linux has its own environment variable. Note that the
-    # tool can only "linux" if --uclibc is set above.
+    # tool can only be "linux" if Linux toolchain is being built.
     if [ "${tool}" = "linux" ]
     then
 	cd ${LINUXDIR}

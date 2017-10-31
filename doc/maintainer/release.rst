@@ -139,6 +139,16 @@ that will be sourced by ``release.mk``.
       ``y``
 
 
+.. envvar:: ENABLE_GLIBC_TOOLS
+
+   Whether to build and deploy GNU Toolchain for Linux/glibc targets.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
+
+
 .. envvar:: ENABLE_NATIVE_TOOLS
 
    Whether to build and upload native toolchain. Currently toolchain is built
@@ -272,7 +282,7 @@ that will be sourced by ``release.mk``.
    should be as short as possible , because Eclipse contains very long file
    names, while old NSIS uses ancient Windows APIs, which are pretty limited in
    the maximum file length. As a result build might fail due to too long path,
-   if :envvar`WINDOWS_LOCATION` is too long on Windows host.
+   if :envvar:`WINDOWS_LOCATION` is too long on Windows host.
 
 
 Make targets

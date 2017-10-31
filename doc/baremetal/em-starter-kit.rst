@@ -9,27 +9,22 @@ Using GNU Toolchain to Debug Applications on EM Starter Kit
 Prerequisites
 -------------
 
-Software installer for Windows can be downloaded `here
-<https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/releases>`_.
-In order to use OpenOCD it is required to install appropriate WinUSB drivers,
-see `this page
-<https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki/How-to-Use-OpenOCD-on-Windows>`_
-for details.
-
-Toolchain for Linux hosts can be downloaded from the `GNU Toolchain Releases
-page
+Toolchain for Linux and Windows hosts can be downloaded from the `GNU Toolchain
+Releases page
 <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases>`_.
 For Linux hosts there is a choice between complete tarballs that include
 toolchain, IDE and OpenOCD (like installer for Windows), and tarballs that
 include toolchain only.
 
+In order to use OpenOCD on Windows it is required to install appropriate WinUSB drivers,
+see :doc:`../ide/how-to-use-openocd-on-windows` for details.
+
 
 Building an application
 -----------------------
 
-To learn how to build and debug application with Eclipse IDE, please use `IDE
-User Guide
-<https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki>`_.
+To learn how to build and debug application with Eclipse IDE, please use
+:doc:`../ide/index` manual.
 
 Different core templates in EM Starter Kit use different memory maps, so
 different memory map files are required to compile applications that work
@@ -42,9 +37,9 @@ should be renamed to ``memory.x``, because ``arcv2elfx`` linker emulation
 doesn't support ability to override that file name. Please refer to
 :doc:`linker` for more details about ``memory.x`` files.
 
-For example for EM Starter Kit v2.2 EM7D to build an application::
+For example for EM Starter Kit v2.03a EM7D to build an application::
 
-    $ cp -a toolchain/extras/dev_systems/sk2.2_em7d.x memory.x
+    $ cp -a toolchain/extras/dev_systems/sk2.03a_em7d.x memory.x
     $ arc-elf32-gcc -Wl,-marcv2elfx --specs=nosys.specs -mcpu=em4_dmips -O2 -g \
          test.c -o test.elf
 
@@ -76,6 +71,34 @@ For example for EM Starter Kit v2.2 EM7D to build an application::
    +      +--------+------------------------------------------------------------+
    |      | EM11D  | -mcpu=em4_fpuda -mfpu=fpuda_all                            |
    +------+--------+------------------------------------------------------------+
+   |      | EM7D   | -mcpu=em4_dmips                                            |
+   +      +--------+------------------------------------------------------------+
+   |v2.03a| EM9D   | -mcpu=em4_fpus -mfpu=fpus_all                              |
+   +      +--------+------------------------------------------------------------+
+   |      | EM11D  | -mcpu=em4_fpuda -mfpu=fpuda_all                            |
+   +------+--------+------------------------------------------------------------+
+
+
+C library for GNU Toolchain for ARC provides basic support for UART module of EM
+Starter Kit, which allows to use standard C function for input and output:
+``printf()``, ``scanf()``, etc. Memory map files are also provided for processor
+configurations of EM Starter Kit. Both of those features are available via
+special "specs" files: ``emsk_em9d.specs`` and ``emsk_em11d.specs`` (there is no
+separate file for EM7D of EM Starter Kit, it is identical to EM9D). Usage
+example is following::
+
+    $ cat hello_world.c
+    #include <stdio.h>
+    int main() {
+        printf("hello world\n");
+        return 0;
+    }
+
+    $ arc-elf32-gcc --specs=emsk_em9d.specs -mcpu=em4_dmips hello_world.c
+
+Note that it is still required to specify valid ``-mcpu`` option value - it is
+not set by the specs file.
+
 
 
 Running an application with OpenOCD
@@ -93,12 +116,12 @@ different ARC EM Starter Kit versions:
 
 * ``snps_em_sk_v1.cfg`` - for ARC EM Starter Kit v1.x.
 * ``snps_em_sk_v2.1.cfg`` - for ARC EM Starter Kit versions 2.0 and 2.1.
-* ``snps_em_sk_v2.2.cfg`` - for ARC EM Starter Kit version 2.2.
+* ``snps_em_sk_v2.2.cfg`` - for ARC EM Starter Kit version 2.2 and 2.03a.
 * ``snps_em_sk.cfg`` - this is a configuration for ARC EM Starter Kit 2.0 and
   2.1, preserved for compatibility.
 
 Following documentation would assume the usage of the latest ARC EM Starter Kit
-version 2.2.
+version 2.03a which is similar to 2.2.
 
 Start OpenOCD::
 

@@ -1,3 +1,51 @@
+Major Changes in 2017.09 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* Binutils 2.29 with additonal ARC patches
+* GCC 7.1.1 with additional ARC patches
+* GDB 8.0 (upstream commit 9a24775) with ARC patches
+* newlib 2.5 (upstream tag newlib-snapshot-20170519) with ARC patches
+* uclibc-ng 1.0.26 with few ARC patches
+* Eclipse Neon 4.6.3 with CDT 9.2.1
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
+generator) version 1.0.53 and later.
+
+New Features and Enhancements
+-----------------------------
+
+* Binary distributables
+	* Glibc toolchain for ARC HS
+	* Update to Linux headers 4.12
+
+* Toolchain Build Scripts
+	* Support for Glibc toolchain
+	* Support for latest uClibc
+	* Remove several outdated and unused files
+
+* GCC
+	* Update to upstream 7.1.1 version
+	* Support for reduced 16-entry register file
+	* Support for non-32bit LP_COUNT
+	* Support for ARC EM DSP instructions via builtins
+	* Reworked hardware loop support implementation
+
+* Binutils
+	* Update to upstream 2.29 version
+
+* GDB
+	* Update to upstream 8.0 version
+	* Support for R30, R58 and R59 register on ARC HS Linux targets
+
+* Eclipse plugins
+	* Upgrade to Eclipse Neon and CDT 9.2
+	* Fix invalid default value of Ashling XML file  
+
+
 Major Changes in 2017.03 Release
 ================================
 

@@ -127,7 +127,7 @@ if { [check_target_arc700] } {
     compile_quarkse_em_nsim_apex
     lappend nsim_flags \
 	-p nsim_isa_family=av2em \
-	-p nsim_isa_core=1 \
+	-p nsim_isa_core=3 \
 	-p nsim_isa_mpy_option=3 \
 	-p nsim_isa_div_rem_option=2 \
 	-p nsim_isa_code_density_option=2 \
@@ -136,13 +136,14 @@ if { [check_target_arc700] } {
 	-prop=nsim_ext=$tmpdir/quarkse_em_fsflt2i.so \
 	-prop=nsim_ext=$tmpdir/quarkse_em_fsi2flt.so \
 	-prop=nsim_ext=$tmpdir/quarkse_em_fssqrt.so \
+	-p nsim_isa_lpc_size=16 \
 	-p nsim_isa_spfp=compact \
 	-p nsim_isa_dpfp=compact
 } elseif { [check_target_quarkse2_em] } {
     compile_quarkse_em_nsim_apex
     lappend nsim_flags \
 	-p nsim_isa_family=av2em \
-	-p nsim_isa_core=1 \
+	-p nsim_isa_core=3 \
 	-p nsim_isa_mpy_option=2 \
 	-p nsim_isa_div_rem_option=2 \
 	-p nsim_isa_code_density_option=2 \
@@ -161,12 +162,12 @@ if { [check_target_arc700] } {
 } elseif { [check_target_archs] } {
     lappend nsim_flags \
 	-p nsim_isa_family=av2hs \
-	-p nsim_isa_core=1 \
+	-p nsim_isa_core=3 \
 	-on nsim_isa_sat
 } elseif { [check_target_arcem] } {
     lappend nsim_flags \
 	-p nsim_isa_family=av2em \
-	-p nsim_isa_core=1 \
+	-p nsim_isa_core=3 \
 	-on nsim_isa_sat
 } else {
     perror "Unknown CPU configuration"
@@ -215,6 +216,7 @@ set nsim_gcc_mapping {
     "__ARC_MULT32__"		1	nsim_isa_mult32=1
     "__ARC_MUL32BY16__"		1	nsim_isa_mul32x16=1
     "__ARC_NORM__"		0	nsim_isa_bitscan_option=0
+    "__ARC_RF16__"		1	nsim_isa_rgf_num_regs=16
 }
 
 foreach {gcc_define set_if_defined nsim_prop} $nsim_gcc_mapping {

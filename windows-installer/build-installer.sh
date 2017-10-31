@@ -21,7 +21,7 @@
 
 # Params
 # Eclipse parameters copied from Makefile.release
-ECLIPSE_REPO=http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/mars
+ECLIPSE_REPO=http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/neon
 ECLIPSE_PREREQ=org.eclipse.tm.terminal.feature.feature.group
 
 if [ -z "$RELEASE_TAG" ]; then
@@ -84,6 +84,8 @@ unzip packages/eclipse-cpp-*-win32.zip -d tmp/eclipse
 # cygwin unzip, but eclipse.exe has it.
 chmod +x tmp/eclipse/eclipse/eclipsec.exe
 chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
+echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" \
+    >> tmp/eclipse/eclipse/eclipse.ini
 
 # Copy Java runtime environment:
 echo "Preparing JRE..."

@@ -32,6 +32,7 @@
 #                  [--auto-checkout | --no-auto-checkout]
 #                  [--external-download | --no-external-download]
 #                  [--elf32 | --no-elf32] [--uclibc | --no-uclibc]
+#                  [--glibc]
 #                  [--datestamp-install]
 #                  [--comment-install <comment>]
 #                  [--big-endian | --little-endian]
@@ -42,7 +43,6 @@
 #                  [--target-cflags <flags>]
 #                  [--multilib | --no-multilib]
 #                  [--pdf | --no-pdf]
-#                  [--rel-rpaths | --no-rel-rpaths]
 #                  [--disable-werror | --no-disable-werror]
 #                  [--strip | --no-strip]
 #                  [--release-name <release>]
@@ -142,6 +142,11 @@
 #     If specified, build the arc-uclibc-linux- tool chain (default is
 #     --uclibc).
 
+# --glibc
+
+#     If specified, build the glibc Linux toolchain for ARC processors (default
+#     is not to build).
+
 # --datestamp-install
 
 #     If specified, this will append a date and timestamp to the install
@@ -224,12 +229,6 @@
 
 #     Use these to control whether PDF versions of user guides should be built
 #     and installed (default --pdf).
-
-# --rel-rpaths | --no-rel-rpaths
-
-#     Use these to control whether once tools have been built, the tools RPATHs
-#     are set so they are relative to the INSTALL directory and thus become
-#     portable (default --rel-rpaths).
 
 # --disable-werror | --no-disable-werror
 
@@ -401,14 +400,14 @@ build_pathnm ()
 autocheckout=""
 autopull=""
 external_download="--external-download"
-elf32="--elf32"
-uclibc="--uclibc"
+DO_ELF32=yes
+DO_UCLIBC=yes
+DO_GLIBC=no
 ISA_CPU="arc700"
 UCLIBC_DEFCFG=""
 CONFIG_EXTRA=""
 DO_PDF="--pdf"
 DO_NATIVE_GDB=maybe
-rel_rpaths="--no-rel-rpaths"
 DISABLEWERROR="--disable-werror"
 CFLAGS_FOR_TARGET=""
 CXXFLAGS_FOR_TARGET=""
@@ -503,12 +502,26 @@ case ${opt} in
 	external_download=$1
 	;;
 
-    --elf32 | --no-elf32)
-	elf32=$1
+    --elf32)
+	DO_ELF32=yes
 	;;
 
-    --uclibc | --no-uclibc)
-	uclibc=$1
+    --no-elf32)
+	DO_ELF32=no
+	;;
+
+    --uclibc)
+	DO_UCLIBC=yes
+	DO_GLIBC=no
+	;;
+
+    --no-uclibc)
+	DO_UCLIBC=no
+	;;
+
+    --glibc)
+	DO_GLIBC=yes
+	DO_UCLIBC=no
 	;;
 
     --uclibc-defconfig)
@@ -579,10 +592,6 @@ case ${opt} in
 
     --pdf|--no-pdf)
 	DO_PDF=$1
-	;;
-
-    --rel-rpaths|--no-rel-rpaths)
-	rel_rpaths=$1
 	;;
 
     --disable-werror)
@@ -705,6 +714,7 @@ case ${opt} in
 	echo "                      [--external-download | --no-external-download]"
         echo "                      [--elf32 | --no-elf32]"
         echo "                      [--uclibc | --no-uclibc]"
+	echo "                      [--glibc]"
 	echo "                      [--datestamp-install]"
 	echo "                      [--comment-install <comment>]"
 	echo "                      [--big-endian | --little-endian]"
@@ -716,7 +726,6 @@ case ${opt} in
         echo "                      [--target-cflags <flags>]"
 	echo "                      [--multilib | --no-multilib]"
 	echo "                      [--pdf | --no-pdf]"
-	echo "                      [--rel-rpaths | --no-rel-rpaths]"
 	echo "                      [--disable-werror | --no-disable-werror]"
 	echo "                      [--strip | --no-strip]"
 	echo "                      [--sed-tool <tool>]"
@@ -787,7 +796,7 @@ fi
 
 # Default Linux directory if not already set. Only matters if we are building
 # the uClibc tool chain.
-if [ "x${uclibc}" = "x--uclibc" -a "x${LINUXDIR}" = "x" ]
+if [[ ( $DO_UCLIBC = yes || $DO_GLIBC = yes ) && "${LINUXDIR}" = "" ]]
 then
     if [ -d "${ARC_GNU}"/linux ]
     then
@@ -831,11 +840,7 @@ fi
 # Default defconfig for uClibc, only if it has not already been set
 if [ "x${UCLIBC_DEFCFG}" = "x" ]
 then
-    if [ "$ISA_CPU" = arc700 ]; then
-        UCLIBC_DEFCFG=defconfig
-    else
-        UCLIBC_DEFCFG=arcv2_defconfig
-    fi
+    UCLIBC_DEFCFG=defconfig
 fi
 
 # Default parallellism (number of cores + 1).
@@ -860,14 +865,24 @@ PARALLEL="-j ${jobs} -l ${load}"
 
 # Set version string for Linux uClibc toolchain, it will be used by arc-init. I
 # do not like this cross-file dependency, but otherwise it happens that
-# arc-init depends on either UCLIBC_TOOLS_VERSION, or on ISA_CPU+RELEASE_NAME.
+# arc-init depends on either LINUX_TOOLS_VERSION, or on ISA_CPU+RELEASE_NAME.
 # Probably that stuff should be centralized is some better way or uClibc
 # configure procedures should take version string as an argument.
 if [ $ISA_CPU = arc700 ]
 then
-    UCLIBC_TOOLS_VERSION="ARCompact ISA Linux uClibc toolchain $RELEASE_NAME"
+    if [ $DO_UCLIBC = yes ]
+    then
+        LINUX_TOOLS_VERSION="ARCompact ISA Linux uClibc toolchain $RELEASE_NAME"
+    else
+        LINUX_TOOLS_VERSION="ARC700 GNU/Linux glibc toolchain $RELEASE_NAME"
+    fi
 else
-    UCLIBC_TOOLS_VERSION="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
+    if [ $DO_UCLIBC = yes ]
+    then
+	LINUX_TOOLS_VERSION="ARCv2 ISA Linux uClibc toolchain $RELEASE_NAME"
+    else
+        LINUX_TOOLS_VERSION="ARC HS GNU/Linux glibc toolchain $RELEASE_NAME"
+    fi
 fi
 
 # Convenience variable: IS_CROSS_COMPILING=(build != host)
@@ -942,6 +957,9 @@ export ARC_GNU
 export LINUXDIR
 export INSTALLDIR
 export ARC_ENDIAN
+export DO_ELF32
+export DO_UCLIBC
+export DO_GLIBC
 export ELF32_DISABLE_MULTILIB
 export UCLIBC_DISABLE_MULTILIB
 export ISA_CPU
@@ -963,7 +981,7 @@ export NPTL_SUPPORT
 export CHECKOUT_CONFIG
 # Used by configure funcs in arc-init.sh
 export TOOLCHAIN_HOST
-export UCLIBC_TOOLS_VERSION
+export LINUX_TOOLS_VERSION
 export SYSTEM_EXPAT
 export DO_ELF32_GCC_STAGE1
 export BUILD_OPTSIZE_NEWLIB
@@ -1014,7 +1032,7 @@ echo "======================" >> "${logfile}"
 
 echo "Checking out GIT trees ..."
 if ! ${ARC_GNU}/toolchain/arc-versions.sh ${autocheckout} ${autopull} \
-    ${uclibc} >> ${logfile} 2>&1
+    >> ${logfile} 2>&1
 then
     echo "ERROR: Failed to checkout GIT versions of tools"
     echo "- see ${logfile}"
@@ -1049,7 +1067,7 @@ if [[ " ${allowed_cpus[*]} " != *" $ISA_CPU "* ]]; then
     exit 1
 fi
 
-if [ "x${uclibc}" = "x--uclibc" ]; then
+if [ $DO_UCLIBC = yes -o $DO_GLIBC = yes ]; then
     if [[ " ${allowed_linux_cpus[*]} " != *" $ISA_CPU "* ]]; then
 	echo "ERROR: uClibc tool chain cannot be built for this CPU family."\
 	     "Choose one of the supported CPU familes or disable building of"\
@@ -1078,8 +1096,7 @@ fi
 cd ${builddir}
 
 # Optionally build the arc-elf32- tool chain
-if [ "x${elf32}" = "x--elf32" ]
-then
+if [ $DO_ELF32 = yes ]; then
     if ! "${ARC_GNU}"/toolchain/build-elf32.sh
     then
 	echo "ERROR: arc-elf32- tool chain build failed."
@@ -1091,11 +1108,19 @@ then
 fi
 
 # Optionally build the arc-linux-uclibc- tool chain
-if [ "x${uclibc}" = "x--uclibc" ]
-then
+if [ $DO_UCLIBC = yes ]; then
     if ! "${ARC_GNU}"/toolchain/build-uclibc.sh
     then
 	echo "ERROR: arc-linux-uclibc- tool chain build failed."
+	exit 1
+    fi
+fi
+
+# Optionally build the arc-snps-linux-gnu tool chain
+if [ $DO_GLIBC = yes ]; then
+    if ! "${ARC_GNU}"/toolchain/build-glibc.sh
+    then
+	echo "ERROR: arc-snps-linux-gnu (GNU/Linux) toolchain build failed."
 	exit 1
     fi
 fi
@@ -1106,16 +1131,6 @@ if [ "x${SYMLINKDIR}" != "x" ]
 then
     rm -f ${SYMLINKDIR}
     ln -s ${INSTALLDIR} ${SYMLINKDIR}
-fi
-
-# Patch RPATHs so they are relative
-if [ "x${rel_rpaths}" = "x--rel-rpaths" ]
-then
-    if ! "${ARC_GNU}"/toolchain/rel-rpaths.sh ${INSTALLDIR} >> "${logfile}" 2>&1
-    then
-	echo "ERROR: Unable to make RPATHs relative. Is patchelf installed?"
-	exit 1
-    fi
 fi
 
 # Copy legal notice

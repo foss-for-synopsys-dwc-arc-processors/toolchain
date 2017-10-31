@@ -39,11 +39,16 @@ Linux-like environment is required to build GNU toolchain for ARC. To build a
 toolchain for Windows, it is recommended to cross-compile it using MinGW on
 Linux. Refer to "Building toolchain on Windows" section of this document.
 
+Note that GDB requires compiler with C++ 11 support, therefore it is not
+possible to build toolchain with GCC 4.4 on RHEL/CentOS 6. Toolchain still can
+be built on RHEL/CentOS 6 when using manually installed newer compiler, however
+it is out of scope of this document to describe how to do that.
+
 GNU toolchain for ARC has same standard prerequisites as an upstream GNU tool
 chain as documented in the GNU toolchain user guide or on the [GCC
 website](http://gcc.gnu.org/install/prerequisites.html)
 
-On Ubuntu 12.04/14.04 LTS those can be installed with following command (as root):
+On Ubuntu those can be installed with following command (as root):
 
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
       libexpat1-dev texlive build-essential git wget
@@ -52,13 +57,7 @@ On RHEL 6/7 those can be installed with following command (as root):
 
     # yum groupinstall "Development Tools"
     # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
-      git texlive-\* wget
-
-It's necessary to install a full `texlive` set in RHEL 6/7 (`texlive-*`) to
-prevent errors due to missing TeX fonts while building a documentation. Since
-`texlive-*` installs a big set of large packets (hundreds of megabytes) it's
-possible to omit `texlive-*` in `yum install` and instead pass `--no-pdf`
-option to the `build-all.sh` script if the documentation is not required.
+      git texlive-ec texlive-cm-super wget gcc-c++
 
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
@@ -115,6 +114,10 @@ disable its build, then mactex is not required.
 Getting sources
 ---------------
 
+GNU toolchain build process doesn't support source directories that contain
+whitespaces in it. Please make sure that ARC GNU source directory path doesn't
+contain any whitespaces.
+
 ###  Using source tarball
 
 GNU Toolchain for ARC source tarball can be downloaded from project GitHub
@@ -127,8 +130,8 @@ Latest stable release from https://kernel.org/ is recommended, and only
 versions >= 3.9 are supported. Linux sources should be located in the directory
 named `linux` that is the sibling of this `toolchain` directory. For example:
 
-    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.9.13.tar.xz
-    $ tar xf linux-4.9.13.tar.xz --transform=s/linux-4.9.13/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.12.12.tar.xz
+    $ tar xf linux-4.12.12.tar.xz --transform=s/linux-4.12.12/linux/
 
 ### Using Git repositories
 
@@ -148,7 +151,10 @@ the toolchain. These should be peers of this `toolchain` directory.
     $ git clone --reference binutils \
         https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
+    $ # For Linux uClibc toolchain:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+    $ # or for Linux glibc toolchain:
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git
     $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
 		linux
 
@@ -170,7 +176,8 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * gdb - arc-2016.09-gdb
 * newlib - arc-2017.03
 * uClibc - arc-2017.03
-* Linux - linux-4.9.y
+* Linux - linux-4.12.y
+* glibc - vineet-glibc-master
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
 latest state, which is a default behaviour, then it will anyway fetch
@@ -216,17 +223,13 @@ initialization script, `arc-init.sh`.
 
 The most important options of `build-all.sh` are:
 
- * `--install-dir <dir>` - define where toolchain will be installed. Unless
-   option `--rel-rpaths` is specified to the `build-all.sh` then once tool
-   chain is installed, it cannot be moved to another location, however it can
-   be moved to another system and used from the same location (this is a
-   limitation of upstream toolchain implementation and is not specific to
-   ARC).
- * `--no-elf32` and `--no-uclibc` - choose type of toolchain to build. By
-   default both are built. Specify `--no-uclibc` if you intend to work
+ * `--install-dir <dir>` - define where toolchain will be installed.
+ * `--no-elf32`, `--no-uclibc`, `--glibc` - choose type of toolchain to build. By
+   default elf32 and uclibc are built. Specify `--no-uclibc` if you intend to work
    exclusively with bare metal applications, specify `--no-elf32` of you intend
-   to work exclusively with Linux applications. Linux kernel is built with
-   uClibc toolchain.
+   to work exclusively with Linux applications. Specify `--glibc` if you want to
+   build glibc toolchain instead of uClibc. Linux kernel is built with uClibc or
+   glibc toolchain.
  * `--no-multilib` - do not build multilib standard libraries. Use it when you
    are going to work with bare metal applications for a particular core. This
    option does not affect uClibc toolchain.
@@ -239,8 +242,7 @@ The most important options of `build-all.sh` are:
    em, arcem, em4, em4_dmips, em4_fpus, em4_fpuda, quarkse, hs, archs, hs34,
    hs38, hs38_linux, arc600, arc600_norm, arc600_mul64, arc600_mul32x16,
    arc601, arc601_norm, arc601_mul64, arc601_mul32x16, arc700. Note that only
-   ARC 700 and ARC HS can be selected as a default core for Linux/uClibc
-   toolchain.
+   ARC 700 and ARC HS can be selected as a default core for Linux toolchain.
  * `--host <triplet>` - option to set host triplet of toolchain. That allows to
    do Canadian cross-compilation, where toolchain for ARC processors
    (`--target`) will run on Windows hosts (`--host`) but will be built on Linux
@@ -276,23 +278,26 @@ This command will build toolchain for ARC 700 Linux development:
 
 This command will build toolchain for ARC HS Linux development:
 
+    $ ./build-all.sh --no-elf32 --cpu hs38 --install-dir $INSTALL_ROOT
 
-    $ ./build-all.sh --no-elf32 --cpu hs38_linux --install-dir $INSTALL_ROOT
+This command will build toolchain for ARC HS Linux development with glibc:
+
+    $ ./build-all.sh --no-elf32 --glibc --cpu hs38 --install-dir $INSTALL_ROOT
 
 This command will build bare metal toolchain for ARC EM7D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_dmips
 
 This command will build bare metal toolchain for ARC EM9D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpus --target-cflags "-O2 -g -mfpu=fpus_all"
 
 This command will build bare metal toolchain for ARC EM11D in the ARC EM Starter
-Kit 2.2:
+Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
@@ -302,13 +307,13 @@ Build bare metal toolchain for ARC EM4 and EM6 in the ARC EM Starter Kit 1.1:
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_dmips
 
-To build native ARC Linux toolchain (toolchain that runs on same system as for
+To build native ARC Linux uClibc toolchain (toolchain that runs on same system as for
 which it compiles, so host == target) it is required first to build a normal
 cross toolchain for this system. Then it should be added it to the PATH, after
 that `build-all.sh` can be run:
 
     $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT_NATIVE \
-      --cpu hs38_linux --native --host arc-snps-linux-uclibc
+      --cpu hs38 --native --host arc-snps-linux-uclibc
 
 In this command line, argument to `--cpu` option must correspond to the target
 CPU and argument to `--host` options depends on whether this is a big or little
@@ -437,26 +442,25 @@ implementations. One reason to prefer `nsim.specs` over `nosys.specs` even when
 developing for hardware platform which doesn't have hostlink support is that
 `nsim` will halt target core on call to function "exit" and on many errors,
 while `exit` functions `nosys.specs` is an infinite loop. For more details
-please see [our wiki
-page](https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/Building-a-baremetal-application).
+please see [documentation](http://embarc.org/toolchain/baremetal/index.html).
 
 
 ### Using EM Starter Kit to run bare metal ARC EM application
 
 > A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building application" of our EM Starter Kit Wiki page:
-> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+> Refer to the section "Building application" of our EM Starter Kit page:
+> http://embarc.org/toolchain/baremetal/em-starter-kit.html
 
 Build instructions for OpenOCD are available at its page:
-https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2014.12/doc/README.ARC
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2017.09/doc/README.ARC
 
 To run OpenOCD:
 
-    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk.cfg
+    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk_v2.03a.cfg
 
 Compile test application and run:
 
-    $ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs simple.c
+    $ arc-elf32-gcc -mcpu=em4_dmips -g --specs=emsk_em9d.specs simple.c
     $ arc-elf32-gdb --quiet a.out
     (gdb) target remote :3333
     (gdb) load
@@ -468,15 +472,12 @@ Compile test application and run:
     (gdb) continue
     (gdb) quit
 
-Note that since there is no hostlink support in OpenOCD applications, so IO
-functions will not work properly.
-
 
 ### Using Ashling Opella-XD debug probe to debug bare metal applications
 
 > A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building application" of our EM Starter Kit Wiki page:
-> https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/EM-Starter-Kit
+> Refer to the section "Building application" of our EM Starter Kit page:
+> http://embarc.org/toolchain/baremetal/em-starter-kit.html
 > For different hardware configurations other changes might be required.
 
 > The Ashling Opella-XD debug probe and its drivers are not part of the GNU

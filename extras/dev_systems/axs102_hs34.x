@@ -14,5 +14,5 @@ REGION_ALIAS("text", ICCM)
 REGION_ALIAS("data", DCCM)
 REGION_ALIAS("sdata", DCCM)
 
-PROVIDE (__stack_top = (0xBFFFFFFF & -4) );
-PROVIDE (__end_heap = (0xBFFFFFFF) );
+PROVIDE (__stack_top = (0xC000FFFF & -4) );
+PROVIDE (__end_heap = (0xC000FFFF) );

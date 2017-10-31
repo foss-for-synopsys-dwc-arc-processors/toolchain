@@ -80,6 +80,6 @@ Miscellaneous
 -------------
 .. toctree::
 
+   preferences
    creating-eclipse-plugins-release-zip-file
    how-to-run-embarc-project
-   qftest-test-suite-user-manual

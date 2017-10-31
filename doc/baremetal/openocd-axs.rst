@@ -39,18 +39,15 @@ Toolchain components and allows to select which ones to install.
 
 .. note::
     In order to use OpenOCD it is required to install appropriate WinUSB
-    drivers, see `this page
-    <https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki/How-to-Use-OpenOCD-on-Windows>`_
-    for details.
+    drivers, see :doc:`../ide/how-to-use-openocd-on-windows` for details.
 
 .. _label_building-an-application-axs:
 
 Building an application
 -----------------------
 
-To learn how to build and debug application with Eclipse IDE, please use `IDE
-User Guide
-<https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki>`_.
+To learn how to build and debug application with Eclipse IDE, please use
+:doc:`../ide/index` manual.
 
 A memory map appropriate to the selected board should be used to link
 applications.  This "toolchain" repository includes memory maps for all ARC SDP
