@@ -32,7 +32,6 @@ fi
 RELEASE=$(cut -d- -f2- <<< $RELEASE_TAG)
 # Strip `-release` from the name.
 RELEASE=${RELEASE%-release}
-RELEASE_BRANCH=$(cut -d- -f2 <<< $RELEASE_TAG)
 
 rm -rf tmp *.nsi *.nsh *.bmp
 mkdir tmp
@@ -77,7 +76,7 @@ tar -C tmp/toolchain_be -xaf packages/arc_gnu_*_prebuilt_elf32_be_win_install.ta
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/toolchain_be toolchain_be
 
 echo "Preparing Eclipse..."
-IDE_PLUGINS_ZIP=packages/arc_gnu_${RELEASE_BRANCH}_ide_plugins.zip
+IDE_PLUGINS_ZIP=packages/arc_gnu_${RELEASE}_ide_plugins.zip
 mkdir tmp/eclipse
 unzip packages/eclipse-cpp-*-win32.zip -d tmp/eclipse
 # For some reason some of important exec files don't have exec bit set by the 

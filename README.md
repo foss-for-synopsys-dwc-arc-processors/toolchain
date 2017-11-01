@@ -171,11 +171,11 @@ the valid `-b <branch>` option so that Git will fetch a state of required
 branch or a tag. If branch is used, then current branches can be found in the
 config/arc-dev.sh file, which at the moment of this writing are:
 
-* binutils - arc-2017.03
-* gcc - arc-2017.03
-* gdb - arc-2016.09-gdb
-* newlib - arc-2017.03
-* uClibc - arc-2017.03
+* binutils - arc-2018.03
+* gcc - arc-2018.03
+* gdb - arc-2018.03-gdb
+* newlib - arc-2018.03
+* uClibc - arc-2017.09
 * Linux - linux-4.12.y
 * glibc - vineet-glibc-master
 
@@ -301,11 +301,6 @@ Kit 2.03a:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
-
-Build bare metal toolchain for ARC EM4 and EM6 in the ARC EM Starter Kit 1.1:
-
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_dmips
 
 To build native ARC Linux uClibc toolchain (toolchain that runs on same system as for
 which it compiles, so host == target) it is required first to build a normal
