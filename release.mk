@@ -472,8 +472,7 @@ endif
 
 ifneq ($(ENABLE_IDE_PLUGINS_BUILD),y)
 	# Copy IDE Plugin
-	# Prebuilt ZIP has old-style name with RELEASE_BRANCH instead of RELEASE
-	$(CP) $(IDE_PLUGIN_LOCATION)/arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip $O/$(IDE_PLUGINS_ZIP)
+	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
 endif
 
 	# Copy JRE.
