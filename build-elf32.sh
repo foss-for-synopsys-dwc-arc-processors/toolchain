@@ -120,6 +120,11 @@ else
     build_dir="$(echo "${PWD}")/bd-elf32"
 fi
 
+if [ "${HOST}" = "macos" ]
+then
+    macos_params="--with-guile=no"
+fi
+
 # Set up a logfile
 logfile="${LOGDIR}/elf32-build-$(date -u +%F-%H%M).log"
 rm -f "${logfile}"
@@ -389,7 +394,7 @@ else
 fi
 
 build_dir_init gdb
-configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils \
+configure_elf32 gdb gdb --disable-ld --disable-gas --disable-binutils ${macos_params} \
     --enable-targets=arc-linux-uclibc $cxx_build
 make_target building all
 make_target installing ${HOST_INSTALL}-gdb
