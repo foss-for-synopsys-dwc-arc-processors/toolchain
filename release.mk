@@ -39,6 +39,9 @@ ENABLE_DOCS_PACKAGE := n
 # Whether to build and upload IDE
 ENABLE_IDE := y
 
+# Whether to build and upload IDE on macOS
+ENABLE_IDE_MACOS := n
+
 # Whether to build or download GNU IDE Plugins
 ENABLE_IDE_PLUGINS_BUILD := y
 
@@ -268,6 +271,7 @@ PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_A
 ECLIPSE_VERSION := neon-3
 ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
+ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.tar.gz
 # Coma separated list
 # Synopsys IT blocks some of the Eclipse mirrors, so an exact mirror is
 # specified - the one which is not blocked.
@@ -278,12 +282,15 @@ ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/tech
 
 # Java.
 JRE_LINUX_TGZ := jre-$(JAVA_VERSION)-linux-x64.tar.gz
+JRE_MACOS_TGZ := jre-$(JAVA_VERSION)-macosx-x64.tar.gz
 JRE_WIN_TGZ   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
 
 # IDE: output related variables
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
+IDE_MACOS_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
 IDE_WIN_EXE := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_LINUX_TGZ := $(IDE_LINUX_INSTALL).tar.gz
+IDE_MACOS_TGZ := $(IDE_MACOS_INSTALL).tar.gz
 IDE_PLUGINS_ZIP := arc_gnu_$(RELEASE)_ide_plugins.zip
 
 # Linux
@@ -391,7 +398,10 @@ BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_le_hs_tarball
 
 BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
+ifneq ($(HOST),macos)
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
+endif
+BUILD_DEPS-$(ENABLE_IDE_MACOS) += $O/.stamp_ide_macos_tar
 BUILD_DEPS-$(ENABLE_IDE_PLUGINS_BUILD) += $O/$(IDE_PLUGINS_ZIP)
 BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_uclibc_le_hs_native_tarball
 BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_HOST_DIR)$(TAR_EXT)
@@ -476,13 +486,21 @@ ifneq ($(ENABLE_IDE_PLUGINS_BUILD),y)
 endif
 
 	# Copy JRE.
+ifeq ($(HOST),macos)
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_MACOS_TGZ) $O/$(JRE_MACOS_TGZ)
+else
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_LINUX_TGZ) $O/$(JRE_LINUX_TGZ)
+endif
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_WIN_TGZ) $O/$(JRE_WIN_TGZ)
 endif
 
 	# Copy Eclipse
+ifeq ($(HOST),macos)
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_MACOS_TGZ) $O
+else
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_LINUX_TGZ) $O
+endif
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_WIN_ZIP) $O
 endif
@@ -827,6 +845,38 @@ $O/.stamp_ide_linux_tar: \
 	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	tar czf $O/$(IDE_LINUX_TGZ) -C $O $(IDE_LINUX_INSTALL)
 	touch $@
+
+#
+# IDE on macOS
+#
+$O/.stamp_ide_macos_eclipse: $O/$(ECLIPSE_VANILLA_MACOS_TGZ) $O/$(IDE_PLUGINS_ZIP)
+	mkdir -m775 -p $O/$(IDE_MACOS_INSTALL)
+	tar xf $< -C $O/$(IDE_MACOS_INSTALL)
+	$O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/MacOS/eclipse \
+            -application org.eclipse.equinox.p2.director \
+            -noSplash \
+            -repository $(ECLIPSE_REPO),jar:file:$(realpath $O/$(IDE_PLUGINS_ZIP))\!/ \
+            -installIU $(ECLIPSE_PREREQ),com.arc.cdt.feature.feature.group
+	# Eclipse will create a bunch of repos with local paths, that will not
+	# work for end-users, hence those repos must be manually removed.
+	sed -i -e "/$(subst /,_,$O)/ d" \
+            $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
+	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/eclipse.ini
+	touch $@
+
+$O/.stamp_ide_macos_tar: \
+	$O/$(OOCD_HOST_DIR)$(TAR_EXT) \
+	$O/.stamp_ide_macos_eclipse \
+	$O/.stamp_elf_be_built $O/.stamp_elf_le_built
+	$(LOCAL_CP) $O/$(TOOLS_ELFLE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	$(LOCAL_CP) $O/$(TOOLS_ELFBE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	mkdir -p -m775 $O/$(IDE_MACOS_INSTALL)/eclipse/jre
+	tar xf $O/$(JRE_MACOS_TGZ) -C $O/$(IDE_MACOS_INSTALL)/eclipse/jre \
+            --strip-components=1
+	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_MACOS_INSTALL)
+	tar czf $O/$(IDE_MACOS_TGZ) -C $O $(IDE_MACOS_INSTALL)
+	touch $@
+
 endif
 
 #
@@ -851,7 +901,9 @@ $(OOCD_SRC_DIR)/git2cl:
 
 # Configure OpenOCD
 $(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+ifneq ($(HOST),macos)
 $(OOCD_BUILD_HOST_DIR)/Makefile: $(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a
+endif
 $(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_BUILD_HOST_DIR)
 
 $(OOCD_BUILD_HOST_DIR)/Makefile:
