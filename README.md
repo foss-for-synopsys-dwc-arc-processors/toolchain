@@ -104,7 +104,7 @@ If PDF documentation is not needed, pass option `--no-pdf` to build-all.sh to
 disable its build, then mactex is not required.
 
 > NB! Linux/uClibc toolchain built on macOS has different uClibc configuration
-> then the one built on Linux hosts - **local support is disabled**. The reason
+> then the one built on Linux hosts - **locale support is disabled**. The reason
 > is that when locale support is enabled, uClibc makefiles will build an
 > application called `genlocale` that will run on host system, but on macOS
 > this application fails to build, therefore support for locales is disabled
