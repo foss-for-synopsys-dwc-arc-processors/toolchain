@@ -237,7 +237,7 @@ BUILD_DIR = $(ROOT)/build
 # Toolchain: source tarball
 # This variable should use .. instead of $(ROOT) so that tar will auto-remove
 # .. from file paths. Perhaps this ugliness can be fixed with --transform?
-TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb newlib toolchain uClibc)
+TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb newlib toolchain uClibc openocd)
 TOOLS_SOURCE_DIR := arc_gnu_$(RELEASE)_sources
 
 # Toolchain: baremetal for Linux hosts
