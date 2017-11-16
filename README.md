@@ -51,7 +51,7 @@ website](http://gcc.gnu.org/install/prerequisites.html)
 On Ubuntu those can be installed with following command (as root):
 
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev texlive build-essential git wget
+      libexpat1-dev texlive build-essential git wget gawk
 
 On RHEL 6/7 those can be installed with following command (as root):
 
