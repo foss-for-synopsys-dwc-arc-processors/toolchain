@@ -63,6 +63,12 @@ On RHEL 6/7 those can be installed with following command (as root):
 repositories. If it is built from the source tarball, then `git` is not
 required.
 
+> Note: it has been reported that there are problems with building
+> native/selfhosting toolchain on systems with bison 3 and it is required to
+> downgrade to bison v2. Bison, however, it not required to build toolchain in
+> general, and it not listed in prerequisites, so this issue affects only those
+> who need bison for other purposes.
+
 GCC depends on the GMP, MPFR and MPC packages, however there are problems with
 availability of those packages on the RHEL/CentOS 6 systems (packages has too
 old versions or not available at all). To avoid this problem our build script
