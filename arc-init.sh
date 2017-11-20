@@ -513,7 +513,7 @@ get_multilibs() {
     # cross-compiling native compiler should be identical to the target
     # one.
     if [ $IS_CROSS_COMPILING = yes ]; then
-	echo $($orig_install_dir/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
+	echo $(${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
     else
 	echo $($INSTALLDIR/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
     fi
