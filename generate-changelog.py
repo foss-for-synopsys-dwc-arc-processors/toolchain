@@ -20,7 +20,7 @@ parser.add_argument("--max-commits", default=50, type=int,
 
 args = parser.parse_args()
 
-repos = ["binutils", "gcc", "gdb", "newlib", "toolchain", "uClibc" ]
+repos = ["binutils", "gcc", "gdb", "newlib", "toolchain", "uclibc-ng" ]
 
 new_tag = args.tag
 

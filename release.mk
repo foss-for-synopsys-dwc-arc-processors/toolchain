@@ -83,7 +83,7 @@ GIT_REFERENCE_ROOT :=
 
 IDE_PLUGIN_LOCATION :=
 
-JAVA_VERSION := 8u121
+JAVA_VERSION := 8u152
 
 # libusb is used by the OpenOCD for Windows
 LIBUSB_VERSION := 1.0.20
@@ -237,7 +237,7 @@ BUILD_DIR = $(ROOT)/build
 # Toolchain: source tarball
 # This variable should use .. instead of $(ROOT) so that tar will auto-remove
 # .. from file paths. Perhaps this ugliness can be fixed with --transform?
-TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb newlib toolchain uClibc)
+TOOLS_SOURCE_CONTENTS := $(addprefix ../,binutils gcc gdb glibc newlib toolchain uclibc-ng openocd)
 TOOLS_SOURCE_DIR := arc_gnu_$(RELEASE)_sources
 
 # Toolchain: baremetal for Linux hosts
@@ -265,16 +265,16 @@ TOOLS_UCLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_nat
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
 
 # IDE: vanilla Eclipse variables
-ECLIPSE_VERSION := neon-3
+ECLIPSE_VERSION := oxygen-1a
 ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 # Coma separated list
 # Synopsys IT blocks some of the Eclipse mirrors, so an exact mirror is
 # specified - the one which is not blocked.
-ECLIPSE_REPO := http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/neon
+ECLIPSE_REPO := http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/oxygen
 # Coma separated list
-ECLIPSE_PREREQ :=  org.eclipse.tm.terminal.control,org.eclipse.tm.terminal.connector.serial,org.eclipse.tm.terminal.view.core,org.eclipse.tm.terminal.view.ui
-ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/neon/3
+ECLIPSE_PREREQ :=  org.eclipse.tm.terminal.control,org.eclipse.tm.terminal.view.core,org.eclipse.tm.terminal.view.ui
+ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/oxygen/1a
 
 # Java.
 JRE_LINUX_TGZ := jre-$(JAVA_VERSION)-linux-x64.tar.gz
@@ -449,7 +449,7 @@ clone:
 	$(call git_clone,binutils-gdb,gdb)
 	$(call git_clone,newlib,newlib)
 	$(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
-	$(call git_clone,uClibc,uClibc)
+	$(call git_clone_url,git@github.com:wbx-github/uclibc-ng.git,uclibc-ng)
 	$(call git_clone,arc_gnu_eclipse,arc_gnu_eclipse)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
@@ -472,8 +472,7 @@ endif
 
 ifneq ($(ENABLE_IDE_PLUGINS_BUILD),y)
 	# Copy IDE Plugin
-	# Prebuilt ZIP has old-style name with RELEASE_BRANCH instead of RELEASE
-	$(CP) $(IDE_PLUGIN_LOCATION)/arc_gnu_$(RELEASE_BRANCH)_ide_plugins.zip $O/$(IDE_PLUGINS_ZIP)
+	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
 endif
 
 	# Copy JRE.
@@ -495,7 +494,7 @@ prerequisites: clone copy-external
 
 .PHONY: distclean
 distclean: clean
-	rm -rf $(ROOT)/{binutils,gcc,gdb,newlib,linux,uClibc}
+	rm -rf $(ROOT)/{binutils,gcc,gdb,newlib,linux,uclibc-ng}
 	rm -rf $(ROOT)/openocd
 
 #

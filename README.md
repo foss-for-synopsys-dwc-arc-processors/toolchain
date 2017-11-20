@@ -51,7 +51,7 @@ website](http://gcc.gnu.org/install/prerequisites.html)
 On Ubuntu those can be installed with following command (as root):
 
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev texlive build-essential git wget
+      libexpat1-dev texlive build-essential git wget gawk
 
 On RHEL 6/7 those can be installed with following command (as root):
 
@@ -62,6 +62,12 @@ On RHEL 6/7 those can be installed with following command (as root):
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
 required.
+
+> Note: it has been reported that there are problems with building
+> native/selfhosting toolchain on systems with bison 3 and it is required to
+> downgrade to bison v2. Bison, however, it not required to build toolchain in
+> general, and it not listed in prerequisites, so this issue affects only those
+> who need bison for other purposes.
 
 GCC depends on the GMP, MPFR and MPC packages, however there are problems with
 availability of those packages on the RHEL/CentOS 6 systems (packages has too
@@ -104,7 +110,7 @@ If PDF documentation is not needed, pass option `--no-pdf` to build-all.sh to
 disable its build, then mactex is not required.
 
 > NB! Linux/uClibc toolchain built on macOS has different uClibc configuration
-> then the one built on Linux hosts - **local support is disabled**. The reason
+> then the one built on Linux hosts - **locale support is disabled**. The reason
 > is that when locale support is enabled, uClibc makefiles will build an
 > application called `genlocale` that will run on host system, but on macOS
 > this application fails to build, therefore support for locales is disabled
@@ -152,7 +158,7 @@ the toolchain. These should be peers of this `toolchain` directory.
         https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     $ # For Linux uClibc toolchain:
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+    $ git clone https://github.com/wbx-github/uclibc-ng.git
     $ # or for Linux glibc toolchain:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git
     $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
@@ -175,7 +181,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * gcc - arc-2018.03
 * gdb - arc-2018.03-gdb
 * newlib - arc-2018.03
-* uClibc - arc-2017.09
+* uclibc-ng - v1.0.26
 * Linux - linux-4.12.y
 * glibc - vineet-glibc-master
 
