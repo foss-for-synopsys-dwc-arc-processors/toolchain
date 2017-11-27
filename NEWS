@@ -19,6 +19,7 @@ New Features and Enhancements
 -----------------------------
 
 * Binary distributables
+	* Fixed missing "nano" libraries in Windows release.
 	* [[TBD]]
 
 * Toolchain Build Scripts

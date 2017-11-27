@@ -55,10 +55,10 @@ if args.release_id is not None:
 | Linux/glibc ARC HS  | {13}         |                |              |
 | IDE                 | {11}         | {12}           |              |
     """.format(
-            fformat.format(t=le, release=args.release_id, type="baremetal", cpu="le", host="linux"),
-            fformat.format(t=be, release=args.release_id, type="baremetal", cpu="be", host="linux"),
-            fformat.format(t=le, release=args.release_id, type="baremetal", cpu="le", host="macos"),
-            fformat.format(t=be, release=args.release_id, type="baremetal", cpu="be", host="macos"),
+            fformat.format(t=le, release=args.release_id, type="elf32", cpu="le", host="linux"),
+            fformat.format(t=be, release=args.release_id, type="elf32", cpu="be", host="linux"),
+            fformat.format(t=le, release=args.release_id, type="elf32", cpu="le", host="macos"),
+            fformat.format(t=be, release=args.release_id, type="elf32", cpu="be", host="macos"),
             fformat.format(t=le, release=args.release_id, type="uclibc", cpu="le_arc700",
                 host="linux"),
             fformat.format(t=be, release=args.release_id, type="uclibc", cpu="be_arc700",
