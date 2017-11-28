@@ -181,7 +181,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * gcc - arc-2018.03
 * gdb - arc-2018.03-gdb
 * newlib - arc-2018.03
-* uclibc-ng - v1.0.26
+* uclibc-ng - v1.0.27
 * Linux - linux-4.12.y
 * glibc - vineet-glibc-master
 

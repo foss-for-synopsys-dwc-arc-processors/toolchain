@@ -8,7 +8,7 @@ Toolchain and IDE Components Versions
 * GCC [[TBD]] with ARC patches
 * GDB [[TBD]] with ARC patches
 * newlib [[TBD]] with ARC patches
-* uclibc-ng [[TBD]]
+* uclibc-ng v1.0.27|[[TBD]]
 * Eclipse [[TBD]] with CDT [[TBD]]
 * OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
 
