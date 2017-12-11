@@ -269,7 +269,7 @@ PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_A
 
 # IDE: vanilla Eclipse variables
 ECLIPSE_VERSION := oxygen-1a
-ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32.zip
+ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32-x86_64.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.tar.gz
 # Coma separated list
@@ -283,7 +283,7 @@ ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/tech
 # Java.
 JRE_LINUX_TGZ := jre-$(JAVA_VERSION)-linux-x64.tar.gz
 JRE_MACOS_TGZ := jre-$(JAVA_VERSION)-macosx-x64.tar.gz
-JRE_WIN_TGZ   := jre-$(JAVA_VERSION)-windows-i586.tar.gz
+JRE_WIN_TGZ   := jre-$(JAVA_VERSION)-windows-x64.tar.gz
 
 # IDE: output related variables
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
