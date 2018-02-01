@@ -124,6 +124,9 @@ order, as it doesn't depend on other components::
 Linux toolchain
 ---------------
 
+uClibc toolchain
+^^^^^^^^^^^^^^^^
+
 Define location of sysroot directory::
 
     $ export SYSROOTDIR=$INSTALLDIR/arc-snps-linux-uclibc/sysroot
@@ -247,3 +250,33 @@ Build GDB::
     $ make install-gdb
     $ cd -
 
+
+Glibc toolchain
+^^^^^^^^^^^^^^^
+
+Glibc toolchain is built like the uClibc toolchain, but there are few differences.
+First, it is needed to change ``--target=arc-snps-linux-uclibc`` to ``--target=arc-snps-linux-gnu``.
+Second, uClibc-specific stages should be replaced with following glibc-specific stages.
+
+Install glibc headers::
+
+    $ mkdir -p build/glibc
+    $ cd build/glibc
+    $ ../../glibc/configure \
+        --target=arc-snps-linux-gnu \
+        --build=x86_64-pc-linux-gnu \
+        --host=arc-snps-linux-gnu \
+        --with-headers=$SYSROOTDIR/usr/include \
+        --prefix=/usr \
+        --disable-werror \
+        --enable-obsolete-rpc
+    $ make install-bootstrap-headers=yes install-headers DESTDIR=$SYSROOTDIR
+    $ touch $SYSROOTDIR/usr/include/gnu/stubs.h
+    $ cd -
+
+Build glibc::
+
+    $ cd build/glibc
+    $ make
+    $ make install DESTDIR=$SYSROOTDIR
+    $ cd -
