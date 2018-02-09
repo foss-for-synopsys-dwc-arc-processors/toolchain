@@ -1,6 +1,7 @@
 #!/bin/sh
-/remote/nl20h2/claziss/work/qemu/install/bin/qemu-system-arc -M arc-sim \
-   -m 2G -nographic -no-reboot -monitor none -serial stdio -kernel $1 | grep -q "0"
+/remote/nl20h2/claziss/work/qemu/install/bin/qemu-system-arc -cpu arcem -M arc-sim \
+    -d in_asm -D out.txt \
+    -m 2G -nographic -no-reboot -monitor none -serial stdio -kernel $1 | grep -q "0"
 RET=$?
 
 echo "*** EXIT code ${RET}"

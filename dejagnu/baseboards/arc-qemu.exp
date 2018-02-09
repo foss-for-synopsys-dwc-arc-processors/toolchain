@@ -30,8 +30,7 @@ load_base_board_description "basic-sim"
 # Any multilib options are set in an environment variable.
 process_multilib_options ""
 
-set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
-    -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m --specs=qemu.specs"
+set xldflags "--specs=qemu.specs"
 
 #set QEMU flags
 #set xarchflags ""
@@ -40,7 +39,7 @@ set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
 #set SIM_PATH "[file dirname $env(DEJAGNU)]/dejagnu/baseboards"
 set_board_info sim "/remote/nl20h2/claziss/projects/workspace_2/arc/toolchain/dejagnu/baseboards/qsim "
 #set_board_info sim "/remote/nl20h2/claziss/work/qemu/install/bin/qemu-system-arc -M arc-sim  -m 2G -nographic -no-reboot -monitor none -serial stdio -kernel "
-set_board_info sim_time_limit 20
+set_board_info sim_time_limit 5
 set_board_info is-simulator 1
 
 # No multilib options needed by default.
@@ -48,7 +47,7 @@ process_multilib_options ""
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
-set xcflags "-mcpu=arcem"
+set xcflags "-mcpu=em"
 
 set_board_info compiler  "[find_gcc]"
 set_board_info cflags    "[libgloss_include_flags] ${xcflags} [newlib_include_flags]"
