@@ -98,11 +98,22 @@ Important notes about modifying Buildroot defconfig:
 * ``BR2_TOOLCHAIN_EXTERNAL_URL`` should point to a valid URL of GNU Toolchain
   for ARC distributable.
 * ``BR2_TOOLCHAIN_EXTERNAL_HEADERS_X_XX`` should be aligned to Linux headers
-  version used for the toolchain build. It is 4.8 for toolchain release
-  2016.09, it is 4.6 for toolchain release 2016.03, it is 3.18 for toolchain
-  releases 2015.06 and 2015.12, it is 3.13 for earlier toolchain versions. This
-  parameter identifies version of Linux that was used to build toolchain and is
-  not related to version of Linux that will be *built by* toolchain or where
+  version used for the toolchain build.
+
+  =================== =======================
+  Toolchain version   Linux headers version
+  =================== =======================
+  2018.03             4.15
+  2017.09             4.12
+  2017.03             4.9
+  2016.09             4.8
+  2016.03             4.6
+  2015.06, 2015.12    3.18
+  earlier             3.13
+  =================== =======================
+
+  This parameter identifies version of Linux that was used to build toolchain and
+  is not related to version of Linux that will be *built by* the toolchain or where
   applications compiled by this toolchain will run.
 * Other Linux kernel defconfigs can be used.
 * Building GDB or GDBserver is not necessary.
