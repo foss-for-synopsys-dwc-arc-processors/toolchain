@@ -115,6 +115,9 @@ Important notes about modifying Buildroot defconfig:
   This parameter identifies version of Linux that was used to build toolchain and
   is not related to version of Linux that will be *built by* the toolchain or where
   applications compiled by this toolchain will run.
+* For building big endian linux you have to replace ``BR2_arcle=y`` to
+  ``BR2_arceb=y`` and change value of ``BR2_TOOLCHAIN_EXTERNAL_URL`` to respective
+  URL for your processor.
 * Other Linux kernel defconfigs can be used.
 * Building GDB or GDBserver is not necessary.
 
@@ -261,7 +264,7 @@ This section is specific to ARC HS VDK which is distributed along with nSIM
 
 Buildroot defconfig for VDK differs from the one for a simple nSIM:
 
-* Linux defconfig is ``vdk_hs38_smp`` for single core simulation.
+* Linux defconfig is ``vdk_hs38_smp``
 * Ext2 file of root file system should be created, instead of being linked into
   the kernel
 
