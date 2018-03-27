@@ -51,23 +51,34 @@ website](http://gcc.gnu.org/install/prerequisites.html)
 On Ubuntu those can be installed with following command (as root):
 
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev texlive build-essential git wget gawk
+      libexpat1-dev texlive build-essential git wget gawk bison
 
-On RHEL 6/7 those can be installed with following command (as root):
+On RHEL 6 those can be installed with following command (as root):
 
     # yum groupinstall "Development Tools"
     # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
       git texlive-ec texlive-cm-super wget gcc-c++
 
+On RHEL 7 those can be installed with following command:
+
+    # sudo yum install -y autoconf automake binutils bison byacc flex gcc \
+      gcc-c++ libtool patch
+    # sudo yum install -y texinfo-tex byacc flex ncurses-devel zlib-devel \
+      expat-devel git texlive-\* wget
+
+On Fedora:
+
+    # sudo dnf install -y autoconf automake binutils bison byacc flex gcc \
+      gcc-c++ git libtool patch texinfo-tex byacc flex ncurses-devel \
+      zlib-devel expat-devel git texlive-\* wget
+
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
 required.
 
-> Note: it has been reported that there are problems with building
-> native/selfhosting toolchain on systems with bison 3 and it is required to
-> downgrade to bison v2. Bison, however, it not required to build toolchain in
-> general, and it not listed in prerequisites, so this issue affects only those
-> who need bison for other purposes.
+> Note: GNU binutils requires bison version 2, it doesn't work with bison 3.
+> But glibc suports only bison >= 2.7. If you have bison 3 installed and
+> toolchain build fails, try removing it.
 
 GCC depends on the GMP, MPFR and MPC packages, however there are problems with
 availability of those packages on the RHEL/CentOS 6 systems (packages has too
@@ -136,8 +147,8 @@ Latest stable release from https://kernel.org/ is recommended, and only
 versions >= 3.9 are supported. Linux sources should be located in the directory
 named `linux` that is the sibling of this `toolchain` directory. For example:
 
-    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.12.12.tar.xz
-    $ tar xf linux-4.12.12.tar.xz --transform=s/linux-4.12.12/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.15.11.tar.xz
+    $ tar xf linux-4.15.11.tar.xz --transform=s/linux-4.15.11/linux/
 
 ### Using Git repositories
 
@@ -182,7 +193,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * gdb - arc-2018.03-gdb
 * newlib - arc-2018.03
 * uclibc-ng - v1.0.27
-* Linux - linux-4.12.y
+* Linux - linux-4.15.y
 * glibc - vineet-glibc-master
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
