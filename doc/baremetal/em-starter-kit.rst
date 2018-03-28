@@ -109,7 +109,7 @@ Starting OpenOCD
 
 Parameters of a particular target board are described in the OpenOCD
 configuration files. OpenOCD repository from Synopsys already includes several
-configration files made specifically for Synopsys own development platforms:
+configuration files made specifically for Synopsys own development platforms:
 ARC EM Starter Kit and ARC SDP. Due to differences between different versions
 of ARC EM Starter Kit hardware, there are separate configuration files for
 different ARC EM Starter Kit versions:
