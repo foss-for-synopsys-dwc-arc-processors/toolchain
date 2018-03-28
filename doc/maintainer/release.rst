@@ -255,7 +255,7 @@ that will be sourced by ``release.mk``.
 
 .. envvar:: RELEASE_TAG
 
-   Git tag for this release. Tag is used literaly and can be for example,
+   Git tag for this release. Tag is used literally and can be for example,
    arc-2016.03-alpha1.
 
 
