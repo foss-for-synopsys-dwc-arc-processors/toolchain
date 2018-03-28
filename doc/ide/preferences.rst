@@ -2,7 +2,7 @@ Plugin preferences
 ==================
 
 ARC plugins in IDE support preferences that can alter their behaviour. These
-preferencs are unlikely to be useful for end-user, so they are not exposed via
+preferences are unlikely to be useful for end-user, so they are not exposed via
 GUI, but they can be modified via preferences files located in Eclipse workspace
 folder in ``.metadata/.plugins/org.eclipse.core.runtime/.settings`` folder.
 
