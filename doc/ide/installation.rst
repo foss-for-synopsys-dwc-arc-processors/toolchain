@@ -245,7 +245,7 @@ devices to allow OpenOCD to connect to those devices. Create file
 ``/etc/udev/rules.d/99-ftdi.rulesi`` with the following contents: ::
 
     # allow users to claim the device
-    # Digilent HS1 and similiar products
+    # Digilent HS1 and similar products
     SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", MODE="0664", GROUP="plugdev"
     # Digilent HS2
     SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0664", GROUP="plugdev"
