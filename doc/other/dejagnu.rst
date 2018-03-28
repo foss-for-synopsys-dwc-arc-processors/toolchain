@@ -81,7 +81,7 @@ options.
 
 Toolchain repository an example ``run.sh`` file that does some of those
 actions: ``toolchain/dejagnu/example_run.sh``. Note that example file is not
-intended to run as-is - it should be modifed for particular purpose.
+intended to run as-is - it should be modified for particular purpose.
 
 Baremetal boards that run tests in the development systems, like
 arc-openocd.exp require a valid ``memory.x`` file in the current working

@@ -26,7 +26,7 @@ There are several variables that can be set to disable particular components,
 like Windows installer or OpenOCD, however those are not specifically tested, so
 may not really work. By default ``release.mk`` will build all of the possible
 components.  It is also possible to invoke particular Make targets directly to
-get only a limited set of distributales, however it is not possible to make
+get only a limited set of distributables, however it is not possible to make
 further targets like :option:`deploy` or :option:`upload` to use only this
 limited set of files (there is always an option to modify ``release.mk`` to get
 desired results).
@@ -272,7 +272,7 @@ that will be sourced by ``release.mk``.
 
 .. envvar:: RELEASE_TAG
 
-   Git tag for this release. Tag is used literaly and can be for example,
+   Git tag for this release. Tag is used literally and can be for example,
    arc-2016.03-alpha1.
 
 
@@ -392,7 +392,7 @@ branch is the base for the release.
 
 .. note::
    Currently ``tag-release.sh`` script used in the release process has a check
-   that ensures that current branch is a developemnt branch by checking that
+   that ensures that current branch is a development branch by checking that
    branch name ends in ``-dev``.
 
 First setup required make variables in the ``release.config`` file that will be

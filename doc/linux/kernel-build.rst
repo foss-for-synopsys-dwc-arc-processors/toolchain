@@ -264,9 +264,9 @@ This section is specific to ARC HS VDK which is distributed along with nSIM
 
 Buildroot defconfig for VDK differs from the one for a simple nSIM:
 
-* Linux defconfig is ``vdk_hs38_smp``
+* Linux defconfig is ``vdk_hs38_smp``.
 * Ext2 file of root file system should be created, instead of being linked into
-  the kernel
+  the kernel.
 
 With those changes Buildroot defconfig for ARC HS VDK is::
 

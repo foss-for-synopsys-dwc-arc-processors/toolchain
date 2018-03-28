@@ -170,7 +170,7 @@ Updating existing plugin
 
 To update the existing plugin, as shown in the figure below, and
 the version of this current plugin is for example "1.1.0.201402280630",
-follow same instructrions as plugin installation.
+follow same instructions as plugin installation.
 
 .. figure:: images/install/arc_gnu_plugin_features.png
 
@@ -198,7 +198,7 @@ follow same instructrions as plugin installation.
 
 .. figure:: images/install/update_existing_plugins_sucessfully.png
 
-   Upate exiting plugins successfully
+   Update exiting plugins successfully
 
 .. figure:: images/install/updated_arc_gnu_plugin_features.png
 
@@ -245,7 +245,7 @@ devices to allow OpenOCD to connect to those devices. Create file
 ``/etc/udev/rules.d/99-ftdi.rulesi`` with the following contents: ::
 
     # allow users to claim the device
-    # Digilent HS1 and similiar products
+    # Digilent HS1 and similar products
     SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", MODE="0664", GROUP="plugdev"
     # Digilent HS2
     SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0664", GROUP="plugdev"
