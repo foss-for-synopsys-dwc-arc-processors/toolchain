@@ -375,7 +375,7 @@ branch is the base for the release.
 
 .. note::
    Currently ``tag-release.sh`` script used in the release process has a check
-   that ensures that current branch is a developemnt branch by checking that
+   that ensures that current branch is a development branch by checking that
    branch name ends in ``-dev``.
 
 First setup required make variables in the ``release.config`` file that will be
