@@ -26,7 +26,7 @@ There are several variables that can be set to disable particular components,
 like Windows installer or OpenOCD, however those are not specifically tested, so
 may not really work. By default ``release.mk`` will build all of the possible
 components.  It is also possible to invoke particular Make targets directly to
-get only a limited set of distributales, however it is not possible to make
+get only a limited set of distributables, however it is not possible to make
 further targets like :option:`deploy` or :option:`upload` to use only this
 limited set of files (there is always an option to modify ``release.mk`` to get
 desired results).
