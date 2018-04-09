@@ -64,7 +64,7 @@ updated as support for more options get added to the GNU toolchain.
   em7d_nrg, em9d_mini. Note, however, that those ``mini`` templates has a
   reduced core register file, which is not supported by the GNU toolchain, so
   application compiled with such TCF or ``-mcpu=em4`` will not run on an nSIM
-  using this TCF - it is requried to add ``nsim_isa_rgf_num_regs=32`` to nSIM
+  using this TCF - it is required to add ``nsim_isa_rgf_num_regs=32`` to nSIM
   options.
 * ``-mcpu=arcem`` doesn't correspond to any specific template, it is legacy
   flag preserved for compatibility with older GNU toolchain versions, where

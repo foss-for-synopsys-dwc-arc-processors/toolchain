@@ -41,7 +41,7 @@ Other available options:
      is built with the ARC GCC compiler and ``--specs=nsim.specs`` flag is used.
    * **Enable Exception**, **Memory Exception** and **Invalid Instruction Exception**
      options, if checked, tell nSIM to simulate all exceptions, memory exceptions and
-     invalid instruction expections, respectively. If one of these options is unchecked
+     invalid instruction exceptions, respectively. If one of these options is unchecked
      and corresponding exception happens, nSIM will exit with an error instead.
    * **Working Directory** is a directory from which nSIM GDB server will be
      started. By default it is project location. This option might be useful if

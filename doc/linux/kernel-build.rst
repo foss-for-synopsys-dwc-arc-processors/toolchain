@@ -62,15 +62,15 @@ Check `Buildroot downloads page <http://buildroot.org/download.html>`_ for
 latest release. This guide further assumes latest snapshot. Get Buildroot
 sources::
 
-    $ mkdir arc-2017.09-linux-guide
-    $ cd arc-2017.09-linux-guide
+    $ mkdir arc-2018.03-linux-guide
+    $ cd arc-2018.03-linux-guide
     $ wget https://buildroot.org/downloads/buildroot-2017.08.tar.bz2
     $ tar xf buildroot-2017.08.tar.bz2
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
 this guide, a custom "defconfig" file will be created and then will be used to
 configure Buildroot. Custom "defconfig" file can be located anywhere and have
-any name. For example it can be ``arc-2017.09-linux-guide/hs_defconfig``.
+any name. For example it can be ``arc-2018.03-linux-guide/hs_defconfig``.
 Contents of this file should be following::
 
     BR2_arcle=y
@@ -78,7 +78,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.03-release/arc_gnu_2018.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
@@ -98,12 +98,26 @@ Important notes about modifying Buildroot defconfig:
 * ``BR2_TOOLCHAIN_EXTERNAL_URL`` should point to a valid URL of GNU Toolchain
   for ARC distributable.
 * ``BR2_TOOLCHAIN_EXTERNAL_HEADERS_X_XX`` should be aligned to Linux headers
-  version used for the toolchain build. It is 4.8 for toolchain release
-  2016.09, it is 4.6 for toolchain release 2016.03, it is 3.18 for toolchain
-  releases 2015.06 and 2015.12, it is 3.13 for earlier toolchain versions. This
-  parameter identifies version of Linux that was used to build toolchain and is
-  not related to version of Linux that will be *built by* toolchain or where
+  version used for the toolchain build.
+
+  =================== =======================
+  Toolchain version   Linux headers version
+  =================== =======================
+  2018.03             4.15
+  2017.09             4.12
+  2017.03             4.9
+  2016.09             4.8
+  2016.03             4.6
+  2015.06, 2015.12    3.18
+  earlier             3.13
+  =================== =======================
+
+  This parameter identifies version of Linux that was used to build toolchain and
+  is not related to version of Linux that will be *built by* the toolchain or where
   applications compiled by this toolchain will run.
+* For building big endian linux you have to replace ``BR2_arcle=y`` to
+  ``BR2_arceb=y`` and change value of ``BR2_TOOLCHAIN_EXTERNAL_URL`` to respective
+  URL for your processor.
 * Other Linux kernel defconfigs can be used.
 * Building GDB or GDBserver is not necessary.
 
@@ -125,7 +139,7 @@ It's necessary to pass an absolute path to Buildroot, because there is the issue
 with a relative path.
 
 After that there will be Linux kernel image file
-``arc-2017.09-linux-guide/output/images/vmlinux``.
+``arc-2018.03-linux-guide/output/images/vmlinux``.
 
 
 Running on nSIM
@@ -134,7 +148,7 @@ Running on nSIM
 Linux configuration in the provided Buildroot defconfig is for the standalone
 nSIM. This kernel image can be run directly on nSIM, without any other
 additional software. Assuming current directory is
-``arc-2017.09-linux-guide``::
+``arc-2018.03-linux-guide``::
 
     $ $NSIM_HOME/bin/nsimdrv -propsfile archs38.props output_hs/images/vmlinux
 
@@ -178,21 +192,21 @@ details about how to enable networking, HDMI and other hardware features of
 AXS10x SDP.
 
 Notable defconfigs available for ARC: ``axs101``, ``axs103``, ``axs103_smp``,
-``vsk_hs38_smp_defconfig``.
+``vdk_hs38_smp``.
 
 
 Using glibc toolchain
 ---------------------
 
 Configuration for glibc toolchain is fairly similar for uClibc, with only minor
-differences.::
+differences::
 
     BR2_arcle=y
     BR2_archs38=y
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.03-release/arc_gnu_2018.03_prebuilt_glibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
@@ -214,9 +228,9 @@ Process of building kernel for ARC 770 is similar to what is for ARC HS. It is
 required only to change several option in Buildroot defconfig:
 
   * ``BR2_archs38=y`` with ``BR2_arc770d=y``
-  * ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
+  * ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.03-release/arc_gnu_2018.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
     with
-    ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
+    ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.03-release/arc_gnu_2018.03_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
   * ``BR2_LINUX_KERNEL_DEFCONFIG="nsim_hs"`` with
     ``BR2_LINUX_KERNEL_DEFCONFIG="nsim_700"``
 
@@ -250,10 +264,9 @@ This section is specific to ARC HS VDK which is distributed along with nSIM
 
 Buildroot defconfig for VDK differs from the one for a simple nSIM:
 
-* Linux defconfig is ``vdk_hs38_smp`` for multicore simulation, ``vdk_hs38``
-  for single core simulation.
+* Linux defconfig is ``vdk_hs38_smp``.
 * Ext2 file of root file system should be created, instead of being linked into
-  the kernel
+  the kernel.
 
 With those changes Buildroot defconfig for ARC HS VDK is::
 
@@ -262,7 +275,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09-rc1/arc_gnu_2017.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.03-release/arc_gnu_2018.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
@@ -352,7 +365,7 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2017.09/arc_gnu_2017.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.03/arc_gnu_2018.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
