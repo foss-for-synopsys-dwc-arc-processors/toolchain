@@ -4,12 +4,12 @@ Major Changes in 2018.03 Release
 Toolchain and IDE Components Versions
 -------------------------------------
 
-* Binutils [[TBD]] with ARC patches
-* GCC [[TBD]] with ARC patches
-* GDB [[TBD]] with ARC patches
-* newlib [[TBD]] with ARC patches
-* uclibc-ng v1.0.27|[[TBD]]
-* Eclipse [[TBD]] with CDT [[TBD]]
+* Binutils 2.29.51 with ARC patches
+* GCC 7.3.1 with ARC patches
+* GDB 8.0.50 with ARC patches
+* newlib newlib-snapshot-20170922 with ARC patches
+* uclibc-ng v1.0.27
+* Eclipse Oxygen 4.7.1 with CDT 9.3.2
 * OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
 
 This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
@@ -20,26 +20,29 @@ New Features and Enhancements
 
 * Binary distributables
 	* Fixed missing "nano" libraries in Windows release.
-	* [[TBD]]
+	* Update to Linux 4.15 for toolchain headers.
 
 * Toolchain Build Scripts
-	* [[TBD]]
+	* Update documentation, including list of prerequisites.
 
 * GCC
-	* [[TBD]]
+	* Update to GCC 7.3.1
 
 * Binutils
-	* [[TBD]]
+	* Rebase on upstream commit 8e68731.
 
 * GDB
-	* [[TBD]]
+	* Rebase on upstream commit 6abc18b.
 
 * Eclipse plugins
-	* [[TBD]]
+	* Fix errors in template projects.
+	* Allow TCF path in compiler project to contain Eclipse variables.
+	* Add button to allow disable of application load.
+	* Migrate to cdtserial from RxTx.
+	* Use named -mpy-option values.
 
 * uClibc-ng
 	* Switched to upstream Git repository instead of ARC fork.
-	* [[TBD]]
 
 
 Major Changes in 2017.09 Release
