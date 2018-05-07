@@ -18,9 +18,9 @@ Board Configuration
 Board should be configured mostly the same way as for OpenOCD, see :ref:`Board Configuration
 <debugging-with-openocd-board-configuration>`.
 
-However, it might be necessary to change some jumper settings when comparing to
-OpenOCD configuration. For example, to use Opella-XD with EM Starter Kit 1.1 you should set J8 jumper.
-Refer to the User Guide of EM Starter Kit or AXC00x CPU Card you are using.
+However, for AXS it is necessary to change some jumper settings when comparing
+to OpenOCD configuration. Please refer to :ref:`AXS with Opella-XD board
+configuration <axs-opella-board-configuration>`.
 
 Specifying properties for Opella-XD
 -----------------------------------

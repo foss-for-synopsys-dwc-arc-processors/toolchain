@@ -25,6 +25,7 @@ Building an application
 To learn how to build applications for AXS SDP, please refer to corresponding
 section of :ref:`OpenOCD manual <label_building-an-application-axs>`.
 
+.. _axs-opella-board-configuration:
 
 Board configuration
 -------------------
