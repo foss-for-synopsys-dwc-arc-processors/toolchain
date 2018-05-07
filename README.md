@@ -302,19 +302,19 @@ This command will build toolchain for ARC HS Linux development with glibc:
     $ ./build-all.sh --no-elf32 --glibc --cpu hs38 --install-dir $INSTALL_ROOT
 
 This command will build bare metal toolchain for ARC EM7D in the ARC EM Starter
-Kit 2.03a:
+Kit 2.3:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_dmips
 
 This command will build bare metal toolchain for ARC EM9D in the ARC EM Starter
-Kit 2.03a:
+Kit 2.3:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpus --target-cflags "-O2 -g -mfpu=fpus_all"
 
 This command will build bare metal toolchain for ARC EM11D in the ARC EM Starter
-Kit 2.03a:
+Kit 2.3:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
@@ -468,7 +468,7 @@ https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev
 
 To run OpenOCD:
 
-    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk_v2.03a.cfg
+    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk_v2.3.cfg
 
 Compile test application and run:
 
