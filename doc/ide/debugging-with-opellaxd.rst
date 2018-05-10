@@ -48,6 +48,13 @@ leave **10 MHz**.
    so you will be able to debug your application only if you have just one core
    in your JTAG chain.
 
+Currently IDE always passes option ``--device arc`` to Opella-XD GDB-server
+which means that server would be configured to work with TPAOP-ARC20-R0 cable. Server
+configured in such way doesn't work with TPAOP-ARC20-R1 - this cable requires
+``--device arc-jtag-tpa-r1`` or ``--device arc-cjtag-tpa-r1`` option to be
+passed to Opella-XD GDB-server. As a consequence currently GNU IDE supports only
+TPAOP-ARC20-R0 cable.
+
 
 Starting a debug session
 ------------------------
