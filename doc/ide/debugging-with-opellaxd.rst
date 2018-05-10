@@ -34,6 +34,10 @@ files. Both these files you can find `here <https://github.com/foss-for-synopsys
 In the **Ashling XML File** field you should choose one of ``arc600-cpu.xml``,
 ``arc700-cpu.xml``, ``arc-em-cpu.xml`` and ``arc-hs-cpu.xml``. In the
 **Target description XML file** should be path to ``opella-YOUR_CPU-tdesc.xml``.
+Note that file ``aux-minimal.xml`` should be also downloaded from that folder
+and put into the same folder as ``opella-YOUR_CPU-tdesc.xml``. This file
+contains description common to all architectures and is included by all
+"tdesc" files.
 
 **JTAG frequency** should be set to **7 MHz** for EM Starter Kit 2.0 and 2.1.
 For EM Starter Kit 2.2 select **5 MHZ**. For other hardware development systems
