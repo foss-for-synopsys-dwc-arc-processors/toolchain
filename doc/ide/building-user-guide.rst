@@ -106,9 +106,9 @@ passed to this tool in the **All options** field.
 
    List of all the options to be passed to compilerx
 
-If **TCF** is selected, **Use memory map from TCF** checkbox becomes enabled.
+If **TCF** is selected, **Use memory map from TCF** and **Include C defines from TCF** checkboxes become enabled.
 If you check **Use memory map from TCF** box, memory map from TCF file will be
-passed to the linker.
+passed to the linker. Checking **Include C defines from TCF** includes C defines from TCF.
 
 Note that templates from **AXS10x Projects** and **EM Starter Kit Projects**
 already contain memory maps that are used if no other is provided. However,
