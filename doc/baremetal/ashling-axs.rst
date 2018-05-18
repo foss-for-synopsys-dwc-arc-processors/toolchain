@@ -25,6 +25,7 @@ Building an application
 To learn how to build applications for AXS SDP, please refer to corresponding
 section of :ref:`OpenOCD manual <label_building-an-application-axs>`.
 
+.. _axs-opella-board-configuration:
 
 Board configuration
 -------------------
@@ -95,11 +96,14 @@ for ``arc600-cpu.xml``, ``arc700-cpu.xml``, ``arc-em-cpu.xml`` and
 ``extras/opella-xd``, `direct link
 <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/tree/arc-staging/extras/opella-xd>`_.
 Provided files are: ``opella-arc600-tdesc.xml``, ``opella-arc700-tdesc.xml``,
-``opella-arcem-tdesc.xml`` and ``opella-archs-tdesc.xml``. It is important that
-``ARC_REG_FILE`` for Ashling GDB server and target description file for GDB
-match to each other, so if Opella's file has been modified, so should be the
-target description. Also due to incompatible changes in GDB, it is required to
-disable GDB p/P remote packet.::
+``opella-arcem-tdesc.xml`` and ``opella-archs-tdesc.xml``.
+File ``aux-minimal.xml`` should be also downloaded from that folder
+and put into the same folder as ``opella-*-tdesc.xml``. This file
+contains description common to all architectures and is included by all
+"tdesc" files.
+It is important that ``ARC_REG_FILE`` for Ashling GDB server and target
+description file for GDB match each other, so if Opella's file has been
+modified, so should be the target description.::
 
     (gdb) set tdesc filename <path/to/opella-CPU-tdesc.xml>
 

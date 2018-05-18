@@ -26,6 +26,7 @@ set_board_info target_install $target_triplet
 load_generic_config "gdb-comm"
 
 # Some extra procs for testing with nSim.
+search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
 search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 
 # GDB tests require special treatment, they ignore "gdb-comm" configuration

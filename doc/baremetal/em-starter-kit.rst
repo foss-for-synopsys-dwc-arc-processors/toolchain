@@ -37,9 +37,9 @@ should be renamed to ``memory.x``, because ``arcv2elfx`` linker emulation
 doesn't support ability to override that file name. Please refer to
 :doc:`linker` for more details about ``memory.x`` files.
 
-For example for EM Starter Kit v2.03a EM7D to build an application::
+For example for EM Starter Kit v2.3 EM7D to build an application::
 
-    $ cp -a toolchain/extras/dev_systems/sk2.03a_em7d.x memory.x
+    $ cp -a toolchain/extras/dev_systems/sk2.3_em7d.x memory.x
     $ arc-elf32-gcc -Wl,-marcv2elfx --specs=nosys.specs -mcpu=em4_dmips -O2 -g \
          test.c -o test.elf
 
@@ -73,7 +73,7 @@ For example for EM Starter Kit v2.03a EM7D to build an application::
    +------+--------+------------------------------------------------------------+
    |      | EM7D   | -mcpu=em4_dmips                                            |
    +      +--------+------------------------------------------------------------+
-   |v2.03a| EM9D   | -mcpu=em4_fpus -mfpu=fpus_all                              |
+   | v2.3 | EM9D   | -mcpu=em4_fpus -mfpu=fpus_all                              |
    +      +--------+------------------------------------------------------------+
    |      | EM11D  | -mcpu=em4_fpuda -mfpu=fpuda_all                            |
    +------+--------+------------------------------------------------------------+
@@ -116,25 +116,26 @@ different ARC EM Starter Kit versions:
 
 * ``snps_em_sk_v1.cfg`` - for ARC EM Starter Kit v1.x.
 * ``snps_em_sk_v2.1.cfg`` - for ARC EM Starter Kit versions 2.0 and 2.1.
-* ``snps_em_sk_v2.2.cfg`` - for ARC EM Starter Kit version 2.2 and 2.03a.
+* ``snps_em_sk_v2.2.cfg`` - for ARC EM Starter Kit version 2.2.
+* ``snps_em_sk_v2.3.cfg`` - for ARC EM Starter Kit version 2.3.
 * ``snps_em_sk.cfg`` - this is a configuration for ARC EM Starter Kit 2.0 and
   2.1, preserved for compatibility.
 
 Following documentation would assume the usage of the latest ARC EM Starter Kit
-version 2.03a which is similar to 2.2.
+version 2.3 which is similar to 2.2.
 
 Start OpenOCD::
 
     # On Linux (for manually built OpenOCD):
-    $ openocd  -c 'gdb_port 49101' -f board/snps_em_sk_v2.2.cfg
+    $ openocd  -c 'gdb_port 49101' -f board/snps_em_sk_v2.3.cfg
 
     # On Linux (for prebuilt OpenOCD from IDE package):
     $ $ide_dir/bin/openocd -s $ide_dir/share/openocd/scripts \
-        -c 'gdb_port 49101' -f board/snps_em_sk_v2.2.cfg
+        -c 'gdb_port 49101' -f board/snps_em_sk_v2.3.cfg
 
     @rem on Windows:
     > openocd -s C:\arc_gnu\share\openocd\scripts -c "gdb_port 49101" ^
-      -f board\snps_em_sk_v2.2.cfg
+      -f board\snps_em_sk_v2.3.cfg
 
 OpenOCD will be waiting for GDB connections on TCP port specified as an
 argument to ``gdb_port`` command, in this example it is 49101. When
@@ -176,7 +177,7 @@ Compile it - refer to "Building application" section for details, creation of
 ``memory.x`` is not shown in this example::
 
     $ arc-elf32-gcc -Wl,-marcv2elfx --specs=nosys.specs -mcpu=em4_dmips -O2 -g \
-        simple.c -o simple_sk2.2_em7d.elf
+        simple.c -o simple_sk2.3_em7d.elf
 
 Start GDB, connect to target and run it::
 

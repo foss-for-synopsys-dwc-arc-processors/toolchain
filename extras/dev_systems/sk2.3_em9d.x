@@ -1,4 +1,4 @@
-/* ARC EM Starter Kit v2.03a EM9D */
+/* ARC EM Starter Kit v2.3 EM9D */
 
 MEMORY
 {
