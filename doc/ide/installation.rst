@@ -70,26 +70,7 @@ Installing into Eclipse
 To run ARC plugins for Eclipse, it is required to have Target Terminal plugin
 installed in Eclipse.
 
-**For ARC GNU 2016.03 and earlier:**
-
-In Eclipse go to "Help", then "Install new Software",
-press "Add" button to the right of "Work with" combo box and add new software
-repository http://download.eclipse.org/tm/updates/3.7:
-
-.. figure:: images/install/adding_new_repository.png
-
-   Adding new repository
-
-Select this repository under "Work with" and install "Target Management
-Terminal (Deprecated)" plugin from "TM Terminal and RSE 3.7 Main Features" group.
-
-.. figure:: images/install/installation_of_eclipse_terminal_plugin.png
-
-   Installation of Eclipse terminal plugin
-
-**For more recent versions:**
-
-Install "TM Terminal" plugin from Neon repository.
+Install "TM Terminal" plugin from Oxygen repository.
 
 .. figure:: images/install/installation_of_tm_terminal.png
 
