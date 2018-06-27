@@ -93,7 +93,7 @@ fi
 echo "All repos checked out"
 
 # Sanity check that each branch has a remote
-for repo in binutils gcc gdb glibc newlib uClibc toolchain
+for repo in binutils gcc gdb glibc newlib toolchain
 do
     cd ../${repo} > /dev/null 2>&1
     if ! branch=`git symbolic-ref -q HEAD --short`
@@ -111,7 +111,7 @@ do
 done
 
 # Tag each component
-for repo in binutils gcc gdb glibc newlib uClibc
+for repo in binutils gcc gdb glibc newlib
 do
     cd ../${repo} > /dev/null 2>&1
 
@@ -154,7 +154,7 @@ gcc=gcc:$tagname
 gdb=gdb:$tagname-gdb
 glibc=glibc:$tagname
 newlib=newlib:$tagname
-uclibc=uClibc:$tagname
+uclibc=uclibc-ng:$tagname
 $(grep -e linux=linux config/arc-dev.sh)
 EOF
 

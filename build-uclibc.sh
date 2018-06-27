@@ -400,9 +400,9 @@ if [ $UCLIBC_IN_SRC_TREE = no ]; then
     # process is different from the rest of the tools.
     mkdir -p $build_dir/uclibc
     # Make command to operate on uClibc.
-    MAKE_UCLIBC="make -C $ARC_GNU/uClibc O=$build_dir/uclibc"
+    MAKE_UCLIBC="make -C $ARC_GNU/uclibc-ng O=$build_dir/uclibc"
 else
-    MAKE_UCLIBC="make -C $ARC_GNU/uClibc"
+    MAKE_UCLIBC="make -C $ARC_GNU/uclibc-ng"
 fi
 
 # make will fail if there is yet no .config file, but we can ignore this error.
@@ -418,7 +418,7 @@ $MAKE_UCLIBC distclean >> "$logfile" 2>&1 || true
 if [ $UCLIBC_IN_SRC_TREE = no ]; then
     uc_dot_config=$build_dir/uclibc/.config
 else
-    uc_dot_config=$ARC_GNU/uClibc/.config
+    uc_dot_config=$ARC_GNU/uclibc-ng/.config
 fi
 cp ${DEFCFG_DIR}${UCLIBC_DEFCFG} $uc_dot_config
 

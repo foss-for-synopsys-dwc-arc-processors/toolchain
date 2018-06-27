@@ -117,6 +117,23 @@ that will be sourced by ``release.mk``.
    Default value
       ``y``
 
+.. envvar:: ENABLE_IDE_MACOS
+
+   Whether to build and upload IDE distributable package on macOS.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``n``
+
+.. envvar:: ENABLE_IDE_PLUGINS_BUILD
+
+   Whether to build IDE plugins as part of ARC GNU Toolchain or download prebuilt ZIP.
+
+   Possible values
+      ``y`` and ``n``
+   Default value
+      ``y``
 
 .. envvar:: ENABLE_LINUX_IMAGES
 

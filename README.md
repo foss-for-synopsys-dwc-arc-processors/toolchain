@@ -51,17 +51,34 @@ website](http://gcc.gnu.org/install/prerequisites.html)
 On Ubuntu those can be installed with following command (as root):
 
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev texlive build-essential git wget
+      libexpat1-dev texlive build-essential git wget gawk bison
 
-On RHEL 6/7 those can be installed with following command (as root):
+On RHEL 6 those can be installed with following command (as root):
 
     # yum groupinstall "Development Tools"
     # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
       git texlive-ec texlive-cm-super wget gcc-c++
 
+On RHEL 7 those can be installed with following command:
+
+    # sudo yum install -y autoconf automake binutils bison byacc flex gcc \
+      gcc-c++ libtool patch
+    # sudo yum install -y texinfo-tex byacc flex ncurses-devel zlib-devel \
+      expat-devel git texlive-\* wget
+
+On Fedora:
+
+    # sudo dnf install -y autoconf automake binutils bison byacc flex gcc \
+      gcc-c++ git libtool patch texinfo-tex byacc flex ncurses-devel \
+      zlib-devel expat-devel git texlive-\* wget
+
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
 required.
+
+> Note: GNU binutils requires bison version 2, it doesn't work with bison 3.
+> But glibc suports only bison >= 2.7. If you have bison 3 installed and
+> toolchain build fails, try removing it.
 
 GCC depends on the GMP, MPFR and MPC packages, however there are problems with
 availability of those packages on the RHEL/CentOS 6 systems (packages has too
@@ -104,7 +121,7 @@ If PDF documentation is not needed, pass option `--no-pdf` to build-all.sh to
 disable its build, then mactex is not required.
 
 > NB! Linux/uClibc toolchain built on macOS has different uClibc configuration
-> then the one built on Linux hosts - **local support is disabled**. The reason
+> then the one built on Linux hosts - **locale support is disabled**. The reason
 > is that when locale support is enabled, uClibc makefiles will build an
 > application called `genlocale` that will run on host system, but on macOS
 > this application fails to build, therefore support for locales is disabled
@@ -130,8 +147,8 @@ Latest stable release from https://kernel.org/ is recommended, and only
 versions >= 3.9 are supported. Linux sources should be located in the directory
 named `linux` that is the sibling of this `toolchain` directory. For example:
 
-    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.12.12.tar.xz
-    $ tar xf linux-4.12.12.tar.xz --transform=s/linux-4.12.12/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.15.11.tar.xz
+    $ tar xf linux-4.15.11.tar.xz --transform=s/linux-4.15.11/linux/
 
 ### Using Git repositories
 
@@ -152,7 +169,7 @@ the toolchain. These should be peers of this `toolchain` directory.
         https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
     $ # For Linux uClibc toolchain:
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/uClibc.git
+    $ git clone https://github.com/wbx-github/uclibc-ng.git
     $ # or for Linux glibc toolchain:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git
     $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
@@ -171,12 +188,12 @@ the valid `-b <branch>` option so that Git will fetch a state of required
 branch or a tag. If branch is used, then current branches can be found in the
 config/arc-dev.sh file, which at the moment of this writing are:
 
-* binutils - arc-2017.03
-* gcc - arc-2017.03
-* gdb - arc-2016.09-gdb
-* newlib - arc-2017.03
-* uClibc - arc-2017.03
-* Linux - linux-4.12.y
+* binutils - arc-2018.03
+* gcc - arc-2018.03
+* gdb - arc-2018.03-gdb
+* newlib - arc-2018.03
+* uclibc-ng - v1.0.27
+* Linux - linux-4.15.y
 * glibc - vineet-glibc-master
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
@@ -285,27 +302,22 @@ This command will build toolchain for ARC HS Linux development with glibc:
     $ ./build-all.sh --no-elf32 --glibc --cpu hs38 --install-dir $INSTALL_ROOT
 
 This command will build bare metal toolchain for ARC EM7D in the ARC EM Starter
-Kit 2.03a:
+Kit 2.3:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_dmips
 
 This command will build bare metal toolchain for ARC EM9D in the ARC EM Starter
-Kit 2.03a:
+Kit 2.3:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpus --target-cflags "-O2 -g -mfpu=fpus_all"
 
 This command will build bare metal toolchain for ARC EM11D in the ARC EM Starter
-Kit 2.03a:
+Kit 2.3:
 
     $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
       --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
-
-Build bare metal toolchain for ARC EM4 and EM6 in the ARC EM Starter Kit 1.1:
-
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_dmips
 
 To build native ARC Linux uClibc toolchain (toolchain that runs on same system as for
 which it compiles, so host == target) it is required first to build a normal
@@ -456,7 +468,7 @@ https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev
 
 To run OpenOCD:
 
-    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk_v2.03a.cfg
+    $ openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk_v2.3.cfg
 
 Compile test application and run:
 

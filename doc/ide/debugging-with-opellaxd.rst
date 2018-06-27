@@ -18,9 +18,9 @@ Board Configuration
 Board should be configured mostly the same way as for OpenOCD, see :ref:`Board Configuration
 <debugging-with-openocd-board-configuration>`.
 
-However, it might be necessary to change some jumper settings when comparing to
-OpenOCD configuration. For example, to use Opella-XD with EM Starter Kit 1.1 you should set J8 jumper.
-Refer to the User Guide of EM Starter Kit or AXC00x CPU Card you are using.
+However, for AXS it is necessary to change some jumper settings when comparing
+to OpenOCD configuration. Please refer to :ref:`AXS with Opella-XD board
+configuration <axs-opella-board-configuration>`.
 
 Specifying properties for Opella-XD
 -----------------------------------
@@ -34,6 +34,10 @@ files. Both these files you can find `here <https://github.com/foss-for-synopsys
 In the **Ashling XML File** field you should choose one of ``arc600-cpu.xml``,
 ``arc700-cpu.xml``, ``arc-em-cpu.xml`` and ``arc-hs-cpu.xml``. In the
 **Target description XML file** should be path to ``opella-YOUR_CPU-tdesc.xml``.
+Note that file ``aux-minimal.xml`` should be also downloaded from that folder
+and put into the same folder as ``opella-YOUR_CPU-tdesc.xml``. This file
+contains description common to all architectures and is included by all
+"tdesc" files.
 
 **JTAG frequency** should be set to **7 MHz** for EM Starter Kit 2.0 and 2.1.
 For EM Starter Kit 2.2 select **5 MHZ**. For other hardware development systems
@@ -43,6 +47,13 @@ leave **10 MHz**.
    Note that if you are using Opella-XD, you can not specify the core to debug,
    so you will be able to debug your application only if you have just one core
    in your JTAG chain.
+
+Currently IDE always passes option ``--device arc`` to Opella-XD GDB-server
+which means that server would be configured to work with TPAOP-ARC20-R0 cable. Server
+configured in such way doesn't work with TPAOP-ARC20-R1 - this cable requires
+``--device arc-jtag-tpa-r1`` or ``--device arc-cjtag-tpa-r1`` option to be
+passed to Opella-XD GDB-server. As a consequence currently GNU IDE supports only
+TPAOP-ARC20-R0 cable.
 
 
 Starting a debug session

@@ -44,7 +44,7 @@
 # - set the following environment variables to the sub-directories to be used:
 #   - binutils
 #   - gcc
-#   - insight
+#   - gdb
 #   - newlib
 #   - uclibc
 
@@ -148,7 +148,7 @@ fi
 if [ ! -f "${ARC_GNU}"/toolchain/arc-versions.sh ]
 then
     echo "ERROR: Script requires arc-versions.sh to exist and define"
-    echo "       binutils, gcc, insight, newlib and uclibc versions."
+    echo "       binutils, gcc, gdb, newlib and uclibc versions."
     exit 1
 fi
 
@@ -513,7 +513,7 @@ get_multilibs() {
     # cross-compiling native compiler should be identical to the target
     # one.
     if [ $IS_CROSS_COMPILING = yes ]; then
-	echo $($orig_install_dir/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
+	echo $(${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
     else
 	echo $($INSTALLDIR/bin/${arch}-elf32-gcc -print-multi-lib 2>/dev/null)
     fi

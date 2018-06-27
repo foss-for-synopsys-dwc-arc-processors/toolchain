@@ -45,7 +45,7 @@ else
 fi
 
 # Push the tags for each component
-for repo in binutils gcc gdb glibc newlib uClibc toolchain
+for repo in binutils gcc gdb glibc newlib toolchain
 do
     cd ../${repo} > /dev/null 2>&1
     # Repositories are likely to be in detached state and `git symbolic-ref
