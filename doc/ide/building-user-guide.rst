@@ -80,6 +80,22 @@ Here are the options that are required for each of CPU values:
    option values are consistent with CPU and you can specify there values that
    are weaker than CPU value requires. So please be careful when editing TCFs.
 
+Linker options
+--------------
+
+Dropdown box in **ARC ELF32 GCC C/C++ Linker** > **General** allows to select 
+which spec-file to use. 
+
+* **nsim** (``--specs=nsim.specs``)
+* **nosys** (``--specs=nosys.specs``)
+* **emsk_em9d** (``--specs=emsk_em9d.specs``)
+* **emsk_em11d** (``--specs=emsk_em11d.specs``)
+* **None** (don't pass any option).
+  
+.. figure:: images/building/using_gcc_specs_file.png
+
+   Dropdown list to select GCC specs file
+   
 Other options and TCF
 ---------------------
 
