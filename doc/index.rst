@@ -16,6 +16,7 @@ Welcome to GNU Toolchain for ARC documentation!
    gcc/index
    maintainer/index
    faq
+   man-pages
 
 
 Indices and tables
