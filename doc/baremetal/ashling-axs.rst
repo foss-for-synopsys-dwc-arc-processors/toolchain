@@ -135,6 +135,9 @@ Known issues
   (e.g. ARC 700 and EM) you cannot debug them simultaneously, but you can debug
   multiple cores of they same type (e.g. all EM).
 
+* GDB on Windows can't read XML files with Windows line endings (CR/LF) - tdesc
+  XML file must be converted to UNIX line endings (LF).
+
 * HS36 core of the AXS102 cannot be used when both cores are in the JTAG chain
   - if "resume" operation is initiated on the core, GDB Server and GDB will
   behave like it is running and never halting, but in reality it never started

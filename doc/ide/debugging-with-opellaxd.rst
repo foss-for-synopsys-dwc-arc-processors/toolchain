@@ -55,6 +55,11 @@ configured in such way doesn't work with TPAOP-ARC20-R1 - this cable requires
 passed to Opella-XD GDB-server. As a consequence currently GNU IDE supports only
 TPAOP-ARC20-R0 cable.
 
+.. warning::
+
+   GDB on Windows can't read XML files with Windows line endings (CR/LF) - tdesc
+   XML file must be converted to UNIX line endings (LF).
+
 
 Starting a debug session
 ------------------------
