@@ -299,11 +299,18 @@ fi
 echo "Installing glibc headers ..." | tee -a "${logfile}"
 
 # Configure glibc build directory.
+# Path to make is set explicitly, becuase glibc's configure script searches
+# first for 'gnumake', then 'gmake' and them 'make'. This might cause troubles
+# on some systems which has old unsupported 'gmake' in the PATH and a new
+# 'make' - even though their directories are in proper order in the PATH, a
+# wrong tool is picked because of the glibc's insistence on prefering 'gmake'
+# over 'make'. Thus this script enforces usage if 'make'.
 build_dir_init glibc
 configure_for_arc $ARC_GNU/glibc $triplet \
     --build=$($ARC_GNU/gcc/config.guess) \
     --target=$triplet \
     --with-headers=$SYSROOTDIR/usr/include \
+    MAKE=`which make` \
     --enable-obsolete-rpc
 
 # Install headers.
