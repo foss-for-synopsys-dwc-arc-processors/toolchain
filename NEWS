@@ -1,3 +1,44 @@
+Major Changes in 2018.09 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* Binutils 2.31.51 with ARC patches
+* GCC 8.2.1 with ARC patches
+* GDB 8.0.50 with ARC patches
+* newlib newlib-snapshot-20170922 with ARC patches
+* uclibc-ng v1.0.29
+* Eclipse Oxygen 4.7.1 with CDT 9.3.2
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
+generator) version 1.0.53 and later.
+
+New Features and Enhancements
+-----------------------------
+
+* Toolchain Build Scripts
+	* Documentation update.
+
+* GCC
+	* Update to GCC 8.2.1.
+
+* Binutils
+	* Update to Binutils 2.31.
+
+* uClibc-ng
+	* Update to uClibc-ng 1.0.29.
+
+* Eclipse plugins
+	* Add support for --specs= options of ARC GCC.
+	* Add Support import of C_defines from TCF.
+	* Update template projects for EM Starter Kit to use new --specs values.
+	* Fix errors in template projects where -mcpu wasn't set correctly.
+	* Fix crash in uClibc plugin when building an application.
+	* Fix -mmpy-option not being updated properly when -mcpu was changed.
+
+
 Major Changes in 2018.03 Release
 ================================
 
