@@ -842,9 +842,9 @@ $O/.stamp_ide_linux_tar: \
 $O/.stamp_ide_macos_eclipse: $O/$(ECLIPSE_VANILLA_MACOS_TGZ) $O/$(IDE_PLUGINS_ZIP)
 	mkdir -m775 -p $O/$(IDE_MACOS_INSTALL)
 	tar xf $< -C $O/$(IDE_MACOS_INSTALL)
-	unzip $O/$(IDE_PLUGINS_ZIP) -d $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/MacOS/eclipse/dropins
-	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/MacOS/eclipse/dropins/artifacts.jar
-	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/MacOS/eclipse/dropins/content.jar
+	unzip $O/$(IDE_PLUGINS_ZIP) -d $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins
+	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins/artifacts.jar
+	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins/content.jar
 	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/eclipse.ini
 	touch $@
 
