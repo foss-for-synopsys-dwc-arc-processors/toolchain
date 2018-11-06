@@ -338,7 +338,7 @@ configure_linux_stage1() {
 	--with-endian=$ARC_ENDIAN \
 	$DISABLEWERROR \
 	--disable-multilib \
-	--enable-languages=c \
+	--enable-languages=c,c++ \
 	--prefix="$INSTALLDIR" \
 	--without-headers \
 	--enable-shared \
