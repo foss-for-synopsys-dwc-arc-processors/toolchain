@@ -64,8 +64,8 @@ sources::
 
     $ mkdir arc-2018.09-linux-guide
     $ cd arc-2018.09-linux-guide
-    $ wget https://buildroot.org/downloads/buildroot-2017.08.tar.bz2
-    $ tar xf buildroot-2017.08.tar.bz2
+    $ wget https://buildroot.org/downloads/buildroot-2018.08.2.tar.bz2
+    $ tar xf buildroot-2018.08.2.tar.bz2
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
 this guide, a custom "defconfig" file will be created and then will be used to
@@ -79,7 +79,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_GCC_8=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
@@ -208,7 +208,7 @@ differences::
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_glibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_GCC_8=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -277,7 +277,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_GCC_8=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
@@ -367,7 +367,7 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_7=y
+    BR2_TOOLCHAIN_EXTERNAL_GCC_8=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y

@@ -194,7 +194,7 @@ config/arc-dev.sh file, which at the moment of this writing are:
 * newlib - arc-2018.09
 * uclibc-ng - v1.0.29
 * Linux - linux-4.15.y
-* glibc - vineet-glibc-master
+* glibc - arc-glibc-2.28
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
 latest state, which is a default behaviour, then it will anyway fetch

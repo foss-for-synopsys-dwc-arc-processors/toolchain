@@ -238,7 +238,8 @@ then
     # needed. It doesn't really address the problem that it doesn't work on
     # Ubuntu 16.04, but in practice the only case where this hack was needed is
     # a Synopsys environment, which is based on RHEL
-    if [ ! -f /usr/share/texmf/tex/texinfo/texinfo.tex ]; then
+    # This trick breaks the build on MacOS.
+    if [ "$IS_MAC_OS" != "yes" -a ! -f /usr/share/texmf/tex/texinfo/texinfo.tex ]; then
 	export TEXINPUTS=$ARC_GNU/newlib/texinfo
     fi
     # Cannot use install-pdf because libgloss/doc does not support this target.
