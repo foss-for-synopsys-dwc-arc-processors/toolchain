@@ -26,9 +26,9 @@ with WinUSB.
 
    Zadig Dialog
 
-For ARC HS Development Kit and AXS10x SDP, the only thing that differs is that
-instead of **Digilent Adept USB Device (Interface 0)** you should select
-**Digilent Adept USB Device (Interface 1)**.
+For ARC HS Development Kit, IoT Development Kit and AXS10x SDP, the only thing
+that differs is that instead of **Digilent Adept USB Device (Interface 0)** you
+should select **Digilent Adept USB Device (Interface 1)**.
 
 Note that antivirus might complain about drivers files created by Zadig.
 
