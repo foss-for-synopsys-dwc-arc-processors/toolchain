@@ -1,0 +1,91 @@
+# Copyright (C) 2018 Free Software
+# Foundation, Inc.
+#
+# This file is part of DejaGnu.
+#
+# DejaGnu is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# DejaGnu is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with DejaGnu; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
+
+# This is a list of toolchains that are supported on this board.
+set_board_info target_install ${target_triplet}
+
+# Load the generic configuration for this board. This will define a basic set
+# of routines needed by the tool to communicate with the board.
+load_generic_config "sim"
+
+# basic-sim.exp is a basic description for the standard Cygnus simulator.
+load_base_board_description "basic-sim"
+
+# We need extra procedures to determine for which cpu we simulate.
+search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
+search_and_load_file "library file" "arc-common.exp" ${boards_dir}
+
+# Any multilib options are set in an environment variable.
+process_multilib_options [arc_get_multilib_options]
+
+set xldflags "--specs=qemu.specs -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
+    -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
+
+#set QEMU flags
+if ![info exists qemu_flags] {
+    set qemu_flags {}
+}
+
+# Select processor family. Also set nsim_isa_sat, which is mandatory for GCC.
+if { [check_target_arc700] } {
+    # GCC requires multiplier for ARC 700.
+    lappend qemu_flags \
+	-cpu arc700
+} elseif { [check_target_arc600] } {
+    lappend qemu_flags \
+	-cpu arc600
+} elseif { [check_target_archs] } {
+    lappend qemu_flags \
+	-cpu archs
+} elseif { [check_target_arcem] } {
+    lappend qemu_flags \
+	-cpu arcem
+} else {
+    perror "Unknown CPU configuration"
+}
+
+lappend qemu_flags \
+    -M arc-sim -m 2G -nographic -no-reboot -monitor none -serial stdio \
+    -kernel
+
+set qemu_wrapper "$::env(QEMU_HOME)/bin/qemu-system-arc"
+
+# Setup the metaware simulator.
+set_board_info sim "$qemu_wrapper [join $qemu_flags]"
+set_board_info sim_time_limit 1500
+set_board_info is_simulator 1
+
+# No multilib options needed by default.
+process_multilib_options ""
+
+set_board_info compiler  "[find_gcc]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+# No linker script needed.
+set_board_info ldscript ""
+
+# The simulator returns exit statuses
+set_board_info needs_status_wrapper 1
+
+# Doesn't pass arguments or signals, can't return results, and doesn't
+# do inferiorio.
+set_board_info noargs 1
+set_board_info gdb,nosignals 1
+set_board_info gdb,noresults 1
+set_board_info gdb,noinferiorio 1
