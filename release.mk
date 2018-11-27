@@ -86,7 +86,7 @@ GIT_REFERENCE_ROOT :=
 
 IDE_PLUGIN_LOCATION :=
 
-JAVA_VERSION := 8u152
+JAVA_VERSION := 8u191
 
 # libusb is used by the OpenOCD for Windows
 LIBUSB_VERSION := 1.0.20
@@ -268,13 +268,13 @@ TOOLS_UCLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_nat
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
 
 # IDE: vanilla Eclipse variables
-ECLIPSE_VERSION := oxygen-1a
+ECLIPSE_VERSION := photon-R
 ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32-x86_64.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.tar.gz
 
 # Coma separated list
-ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/oxygen/1a
+ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R
 
 # Java.
 JRE_LINUX_TGZ := jre-$(JAVA_VERSION)-linux-x64.tar.gz
