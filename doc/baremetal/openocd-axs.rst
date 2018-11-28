@@ -21,10 +21,6 @@ AXS SDP consists of a mainboard and one of the CPU cards:
 * AXS102 uses AXC002 CPU card;
 * AXS103 uses AXC003 CPU card.
 
-.. warning::
-    AXS103 with HS38x2 is not supported by OpenOCD - this system configuration
-    includes SLC, which is not supported by OpenOCD. SLC cannot be disabled.
-
 
 Prerequisites
 -------------
@@ -167,9 +163,6 @@ To run OpenOCD for the AXS103 platform with HS36::
 To run OpenOCD for the AXS103 platform with HS38x2::
 
     $ openocd -f board/snps_axs103_hs38.cfg
-
-Note, however, that as of version 2016.03 OpenOCD doesn't support SLC in
-HS38x2, rendering it mostly useless for HS38x2 debugging.
 
 OpenOCD will open a GDBserver connection for each CPU core on target (4 for
 AXS101, 2 for AXS102, 1 or 2 for AXS103). GDBserver for the first core listens

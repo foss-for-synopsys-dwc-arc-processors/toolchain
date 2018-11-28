@@ -272,12 +272,8 @@ ECLIPSE_VERSION := oxygen-1a
 ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32-x86_64.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.tar.gz
+
 # Coma separated list
-# Synopsys IT blocks some of the Eclipse mirrors, so an exact mirror is
-# specified - the one which is not blocked.
-ECLIPSE_REPO := http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/oxygen
-# Coma separated list
-ECLIPSE_PREREQ :=  org.eclipse.tm.terminal.control,org.eclipse.tm.terminal.view.core,org.eclipse.tm.terminal.view.ui
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/oxygen/1a
 
 # Java.
@@ -714,7 +710,7 @@ DIRS += $(BUILD_DIR)
 # Linux
 #
 
-BUILDROOT_VERSION = 2018.02
+BUILDROOT_VERSION = 2018.08.2
 BUILDROOT_TAR = buildroot-$(BUILDROOT_VERSION).tar.bz2
 BUILDROOT_URL = https://buildroot.org/downloads/$(BUILDROOT_TAR)
 BUILDROOT_SRC_DIR = $(BUILD_DIR)/buildroot
@@ -818,15 +814,9 @@ endif
 $O/.stamp_ide_linux_eclipse: $O/$(ECLIPSE_VANILLA_LINUX_TGZ) $O/$(IDE_PLUGINS_ZIP)
 	mkdir -m775 -p $O/$(IDE_LINUX_INSTALL)
 	tar xf $< -C $O/$(IDE_LINUX_INSTALL)
-	$O/$(IDE_LINUX_INSTALL)/eclipse/eclipse \
-	    -application org.eclipse.equinox.p2.director \
-	    -noSplash \
-	    -repository $(ECLIPSE_REPO),jar:file:$(realpath $O/$(IDE_PLUGINS_ZIP))\!/ \
-	    -installIU $(ECLIPSE_PREREQ),com.arc.cdt.feature.feature.group
-	# Eclipse will create a bunch of repos with local paths, that will not
-	# work for end-users, hence those repos must be manually removed.
-	sed -i -e "/$(subst /,_,$O)/ d" \
-	    $O/$(IDE_LINUX_INSTALL)/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
+	unzip $O/${IDE_PLUGINS_ZIP} -d $O/$(IDE_LINUX_INSTALL)/eclipse/dropins
+	rm -f $O/$(IDE_LINUX_INSTALL)/eclipse/dropins/artifacts.jar
+	rm -f $O/$(IDE_LINUX_INSTALL)/eclipse/dropins/content.jar
 	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_LINUX_INSTALL)/eclipse/eclipse.ini
 	touch $@
 
@@ -852,15 +842,9 @@ $O/.stamp_ide_linux_tar: \
 $O/.stamp_ide_macos_eclipse: $O/$(ECLIPSE_VANILLA_MACOS_TGZ) $O/$(IDE_PLUGINS_ZIP)
 	mkdir -m775 -p $O/$(IDE_MACOS_INSTALL)
 	tar xf $< -C $O/$(IDE_MACOS_INSTALL)
-	$O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/MacOS/eclipse \
-            -application org.eclipse.equinox.p2.director \
-            -noSplash \
-            -repository $(ECLIPSE_REPO),jar:file:$(realpath $O/$(IDE_PLUGINS_ZIP))\!/ \
-            -installIU $(ECLIPSE_PREREQ),com.arc.cdt.feature.feature.group
-	# Eclipse will create a bunch of repos with local paths, that will not
-	# work for end-users, hence those repos must be manually removed.
-	sed -i -e "/$(subst /,_,$O)/ d" \
-            $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
+	unzip $O/$(IDE_PLUGINS_ZIP) -d $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins
+	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins/artifacts.jar
+	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins/content.jar
 	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/eclipse.ini
 	touch $@
 

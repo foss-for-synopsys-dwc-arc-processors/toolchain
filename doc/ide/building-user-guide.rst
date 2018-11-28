@@ -80,6 +80,22 @@ Here are the options that are required for each of CPU values:
    option values are consistent with CPU and you can specify there values that
    are weaker than CPU value requires. So please be careful when editing TCFs.
 
+Linker options
+--------------
+
+Dropdown box in **ARC ELF32 GCC C/C++ Linker** > **General** allows to select 
+which spec-file to use. 
+
+* **nsim** (``--specs=nsim.specs``)
+* **nosys** (``--specs=nosys.specs``)
+* **emsk_em9d** (``--specs=emsk_em9d.specs``)
+* **emsk_em11d** (``--specs=emsk_em11d.specs``)
+* **None** (don't pass any option).
+  
+.. figure:: images/building/using_gcc_specs_file.png
+
+   Dropdown list to select GCC specs file
+   
 Other options and TCF
 ---------------------
 
@@ -106,9 +122,9 @@ passed to this tool in the **All options** field.
 
    List of all the options to be passed to compilerx
 
-If **TCF** is selected, **Use memory map from TCF** checkbox becomes enabled.
+If **TCF** is selected, **Use memory map from TCF** and **Include C defines from TCF** checkboxes become enabled.
 If you check **Use memory map from TCF** box, memory map from TCF file will be
-passed to the linker.
+passed to the linker. Checking **Include C defines from TCF** includes C defines from TCF.
 
 Note that templates from **AXS10x Projects** and **EM Starter Kit Projects**
 already contain memory maps that are used if no other is provided. However,

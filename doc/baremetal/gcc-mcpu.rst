@@ -62,10 +62,7 @@ updated as support for more options get added to the GNU toolchain.
   option.  It corresponds to the following ARC EM templates in ARChitect:
   em4_mini, em4_sensor, em4_ecc, em6_mini, em5d_mini, em5d_mini_v3, em5d_nrg,
   em7d_nrg, em9d_mini. Note, however, that those ``mini`` templates has a
-  reduced core register file, which is not supported by the GNU toolchain, so
-  application compiled with such TCF or ``-mcpu=em4`` will not run on an nSIM
-  using this TCF - it is required to add ``nsim_isa_rgf_num_regs=32`` to nSIM
-  options.
+  reduced core register file, while this option doesn't specify it.
 * ``-mcpu=arcem`` doesn't correspond to any specific template, it is legacy
   flag preserved for compatibility with older GNU toolchain versions, where
   ``-mcpu`` used to select only a CPU family, while optional features were
@@ -139,8 +136,7 @@ added to the GNU toolchain.
 * ``-mcpu=hs4x`` and ``-mcpu=hs4xd`` have same option set as ``-mcpu=hs38`` but compiler will
   optimize instruction scheduling for specified processors.
 * ``-mcpu=hs38_linux`` is a fully featured ARC HS with additional support for
-  double-precision FPU. It corresponds to the following ARC HS templates in
-  ARChitect: hs38_slc_full.
+  double-precision FPU.
 
 
 ARC 600 and ARC 700

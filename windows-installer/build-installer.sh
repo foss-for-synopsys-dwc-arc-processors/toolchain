@@ -19,11 +19,6 @@
 
 # This script requires 'unzip' cygwin package.
 
-# Params
-# Eclipse parameters copied from Makefile.release
-ECLIPSE_REPO=http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/oxygen
-ECLIPSE_PREREQ=org.eclipse.tm.terminal.feature.feature.group
-
 if [ -z "$RELEASE_TAG" ]; then
     echo "RELEASE_TAG env variable must be set"
     exit 1
@@ -94,23 +89,10 @@ tar -C tmp/jre/eclipse/jre -xaf packages/jre-*-windows-x64.tar.gz --strip-compon
 
 # Install ARC plugins
 # Same as in Makefile.release
-# There is some funny stuff going on here - if eclipse is invoked directly from
-# CygWin, then installation fails with error message about not being able to do
-# a backup and remove some files. I'm not entirely sure what's the problem, but
-# it seems that invoking eclipse through the Windows cmd fixes the problem.
-# That used to work properly before Mars.2, but with Mars.2 I first tried to
-# call eclipse.exe instead of eclipsec.exe and that seemed to solve the
-# problem, but it seems I was mistaken.
 echo "Installing ARC plugins into Eclipse..."
-cmd /c tmp\\eclipse\\eclipse\\eclipsec.exe \
-    -application org.eclipse.equinox.p2.director \
-    -noSplash \
-    -repository ${ECLIPSE_REPO},jar:file:$(cygpath -w -a $IDE_PLUGINS_ZIP)\!/ \
-    -installIU ${ECLIPSE_PREREQ},com.arc.cdt.feature.feature.group
-# Eclipse will create a bunch of repos with local paths, that will not work for
-# end-users, hence those repos must be manually removed.
-sed -i -e "/$(echo "$(cygpath -w -a tmp)" | tr \\ _ | sed 's/[A-Z]://')/ d" \
-    tmp/eclipse/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.cpp.profile/.data/.settings/org.eclipse.equinox.p2.*
+unzip $IDE_PLUGINS_ZIP -d tmp/eclipse/eclipse/dropins
+rm -f tmp/eclipse/eclipse/dropins/artifacts.jar
+rm -f tmp/eclipse/eclipse/dropins/content.jar
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/eclipse eclipse
 
 #

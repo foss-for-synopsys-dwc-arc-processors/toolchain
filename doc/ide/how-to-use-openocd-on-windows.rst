@@ -16,8 +16,9 @@ able to see **Digilent Adept USB Device** in the list of devices.
 
    Device List
 
-If your device is not shown by Zadig, tick **List all devices** in **Options**. For
-EM Starter Kit, select **Digilent Adept USB Device (Interface 0)**, choose
+If your device is not shown by Zadig, tick **List all devices** in **Options**.
+
+For EM Starter Kit, select **Digilent Adept USB Device (Interface 0)**, choose
 **WinUSB** driver and press **Replace Driver**. Your FTDI driver will be replaced
 with WinUSB.
 
@@ -25,9 +26,9 @@ with WinUSB.
 
    Zadig Dialog
 
-If you are using AXS10x board, the only thing that differs is that instead of
-**Digilent Adept USB Device (Interface 0)** you should select **Digilent Adept USB
-Device (Interface 1)**.
+For ARC HS Development Kit, IoT Development Kit and AXS10x SDP, the only thing
+that differs is that instead of **Digilent Adept USB Device (Interface 0)** you
+should select **Digilent Adept USB Device (Interface 1)**.
 
 Note that antivirus might complain about drivers files created by Zadig.
 
@@ -35,4 +36,4 @@ Note that antivirus might complain about drivers files created by Zadig.
 
    If you want to change driver for your device back for some reason, you can
    uninstall current driver in "Devices and Printers" and then reconnect your board
-   to the computer, Windows will install the driver automatically.
+   to the computer, Windows will install the default driver automatically.
