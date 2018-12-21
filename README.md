@@ -113,6 +113,9 @@ installed by default. This easily can be done with Homebrew:
 	# Install GNU sed
 	$ brew install gnu-sed
 
+	# Install xz, required to unpack GMP, MPC & MPFR tarballs.
+	$ brew install xz
+
 To build PDF documentation for toolchain TeX must be installed:
 
 	$ brew cask install mactex
