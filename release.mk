@@ -220,7 +220,11 @@ endef
 BUILDALLFLAGS := --disable-werror --strip --no-auto-pull \
 --no-auto-checkout --elf32-strip-target-libs
 
-EXTRA_CONFIG_FLAGS += --with-python=no
+# Disable Python and ISL, because those libraries are not shipped with the
+# toolchain, and without explicit 'no' ./configure might grab system version of
+# library as a dependency and it will not work for the user, who will have a
+# different version of library on their system.
+EXTRA_CONFIG_FLAGS += --with-python=no --with-isl=no
 ifeq ($(CONFIG_STATIC_TOOLCHAIN),y)
 EXTRA_CONFIG_FLAGS += LDFLAGS=-static
 endif
