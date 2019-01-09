@@ -191,10 +191,10 @@ the valid `-b <branch>` option so that Git will fetch a state of required
 branch or a tag. If branch is used, then current branches can be found in the
 config/arc-dev.sh file, which at the moment of this writing are:
 
-* binutils - arc-2018.09
+* binutils - arc-2019.03
 * gcc - arc-2018.09
-* gdb - arc-2018.09-gdb
-* newlib - arc-2018.09
+* gdb - arc-2019.03-gdb
+* newlib - arc-2019.03
 * uclibc-ng - v1.0.29
 * Linux - linux-4.15.y
 * glibc - arc-glibc-2.28
