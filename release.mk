@@ -84,6 +84,8 @@ GIT_URL_BASE := git@github.com:foss-for-synopsys-dwc-arc-processors
 # copies of all repositories that will be used.
 GIT_REFERENCE_ROOT :=
 
+# This path to prebuilt IDE plugins should be set only if
+# ENABLE_IDE_PLUGINS_BUILD is 'n'.
 IDE_PLUGIN_LOCATION :=
 
 JAVA_VERSION := 8u191
@@ -473,14 +475,14 @@ endif
 copy-external: | $O
 ifeq ($(ENABLE_IDE),y)
 
-ifeq ($(IDE_PLUGIN_LOCATION),)
-	$(error IDE_PLUGIN_LOCATION must be set to do copy-external)
-endif
 ifeq ($(THIRD_PARTY_SOFTWARE_LOCATION),)
 	$(error THIRD_PARTY_SOFTWARE_LOCATION must be set to do copy-external)
 endif
 
 ifneq ($(ENABLE_IDE_PLUGINS_BUILD),y)
+ifeq ($(IDE_PLUGIN_LOCATION),)
+	$(error IDE_PLUGIN_LOCATION must be set to do copy-external)
+endif
 	# Copy IDE Plugin
 	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
 endif
