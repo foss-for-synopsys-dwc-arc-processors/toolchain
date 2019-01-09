@@ -15,9 +15,7 @@ should be installed and/or built before running a ``release.mk`` which does most
 of the work. List of prerequisites to build toolchain is list in toolchain
 ``README.md`` file. Note that there are extra dependencies to build toolchain
 for Windows hosts, in addition to those that are required to build toolchain for
-Linux hosts. To build IDE distributables, both for Windows and for Linux, a zip
-file with Eclipse CDT plugins for ARC is required (see
-:envvar:`IDE_PLUGIN_LOCATION`). To create Windows installer several MinGW and
+Linux hosts. To create Windows installer several MinGW and
 MSYS components are required (path set by
 :envvar:`THIRD_PARTY_SOFTWARE_LOCATION`). For a list of MinGW and MSYS packages,
 please refer to `windows-installer/README.md` section "Prerequisites".
@@ -255,7 +253,8 @@ that will be sourced by ``release.mk``.
    Location of ARC plugin for Eclipse. This must be a directory and plugin file
    must have a name ``arc_gnu_${RELEASE_TAG##arc-}_ide_plugin.zip``. File will
    be copied with rsync therefore location may be prefixed with hostname
-   separated by semicolon, as in ``host:/path``.
+   separated by semicolon, as in ``host:/path``. This variable is used and must
+   be set only if :envvar:``ENABLE_IDE_PLUGINS_BUILD`` is set to ``n``.
 
 
 .. envvar:: LIBUSB_VERSION
@@ -347,7 +346,6 @@ Make targets
    Clone sources of toolchain components from GitHub. Copy external components
    from specified locations. Is affected by following environment variables:
    :envvar:`RELEASE_TAG`, :envvar:`GIT_REFERENCE_ROOT` (optional),
-   :envvar:`IDE_PLUGIN_LOCATION`,
    :envvar:`THIRD_PARTY_SOFTWARE_LOCATION`.
 
 .. option:: push-tag
@@ -400,7 +398,6 @@ sourced by ``release.mk`` (``...`` must be replaced with an actual paths)::
 
     $ cat release.config
     RELEASE_TAG=arc-2016.03
-    IDE_PLUGIN_LOCATION=...
     THIRD_PARTY_SOFTWARE_LOCATION=...
     GIT_REFERENCE_ROOT=...
     WINDOWS_WORKSPACE=...

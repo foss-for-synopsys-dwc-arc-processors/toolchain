@@ -84,9 +84,9 @@ GIT_URL_BASE := git@github.com:foss-for-synopsys-dwc-arc-processors
 # copies of all repositories that will be used.
 GIT_REFERENCE_ROOT :=
 
+# This path to prebuilt IDE plugins should be set only if
+# ENABLE_IDE_PLUGINS_BUILD is 'n'.
 IDE_PLUGIN_LOCATION :=
-
-JAVA_VERSION := 8u191
 
 # libusb is used by the OpenOCD for Windows
 LIBUSB_VERSION := 1.0.20
@@ -220,7 +220,11 @@ endef
 BUILDALLFLAGS := --disable-werror --strip --no-auto-pull \
 --no-auto-checkout --elf32-strip-target-libs
 
-EXTRA_CONFIG_FLAGS += --with-python=no
+# Disable Python and ISL, because those libraries are not shipped with the
+# toolchain, and without explicit 'no' ./configure might grab system version of
+# library as a dependency and it will not work for the user, who will have a
+# different version of library on their system.
+EXTRA_CONFIG_FLAGS += --with-python=no --with-isl=no
 ifeq ($(CONFIG_STATIC_TOOLCHAIN),y)
 EXTRA_CONFIG_FLAGS += LDFLAGS=-static
 endif
@@ -276,10 +280,18 @@ ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.
 # Coma separated list
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R
 
-# Java.
-JRE_LINUX_TGZ := jre-$(JAVA_VERSION)-linux-x64.tar.gz
-JRE_MACOS_TGZ := jre-$(JAVA_VERSION)-macosx-x64.tar.gz
-JRE_WIN_TGZ   := jre-$(JAVA_VERSION)-windows-x64.tar.gz
+# Java. Note that filenames differ from original OpenJ9 names for easier file
+# management via natural sorting. Also note that only the Linux tarball is
+# original one. For windows only zip is available, so it is repacked as tar.gz
+# (perhaps it would be better to adapt code handle zips instead). For macOS
+# original .dmg is unpacked and contents of "Home" is repacked as tar.gz (also
+# only JDK is available so tarball is huge, and in the past we haven't stripped
+# "Contents/Home", so maybe we shouldn't distributed JRE with macOS IDE in the
+# first place?).
+JAVA_VERSION := 11.0.1_13
+JRE_LINUX_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_linux_openj9.tar.gz
+JRE_MACOS_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_macos_openj9.tar.gz
+JRE_WIN_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_windows_openj9.tar.gz
 
 # IDE: output related variables
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
@@ -469,14 +481,14 @@ endif
 copy-external: | $O
 ifeq ($(ENABLE_IDE),y)
 
-ifeq ($(IDE_PLUGIN_LOCATION),)
-	$(error IDE_PLUGIN_LOCATION must be set to do copy-external)
-endif
 ifeq ($(THIRD_PARTY_SOFTWARE_LOCATION),)
 	$(error THIRD_PARTY_SOFTWARE_LOCATION must be set to do copy-external)
 endif
 
 ifneq ($(ENABLE_IDE_PLUGINS_BUILD),y)
+ifeq ($(IDE_PLUGIN_LOCATION),)
+	$(error IDE_PLUGIN_LOCATION must be set to do copy-external)
+endif
 	# Copy IDE Plugin
 	$(CP) $(IDE_PLUGIN_LOCATION)/$(IDE_PLUGINS_ZIP) $O
 endif
