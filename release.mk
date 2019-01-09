@@ -88,8 +88,6 @@ GIT_REFERENCE_ROOT :=
 # ENABLE_IDE_PLUGINS_BUILD is 'n'.
 IDE_PLUGIN_LOCATION :=
 
-JAVA_VERSION := 8u191
-
 # libusb is used by the OpenOCD for Windows
 LIBUSB_VERSION := 1.0.20
 
@@ -282,10 +280,18 @@ ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.
 # Coma separated list
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R
 
-# Java.
-JRE_LINUX_TGZ := jre-$(JAVA_VERSION)-linux-x64.tar.gz
-JRE_MACOS_TGZ := jre-$(JAVA_VERSION)-macosx-x64.tar.gz
-JRE_WIN_TGZ   := jre-$(JAVA_VERSION)-windows-x64.tar.gz
+# Java. Note that filenames differ from original OpenJ9 names for easier file
+# management via natural sorting. Also note that only the Linux tarball is
+# original one. For windows only zip is available, so it is repacked as tar.gz
+# (perhaps it would be better to adapt code handle zips instead). For macOS
+# original .dmg is unpacked and contents of "Home" is repacked as tar.gz (also
+# only JDK is available so tarball is huge, and in the past we haven't stripped
+# "Contents/Home", so maybe we shouldn't distributed JRE with macOS IDE in the
+# first place?).
+JAVA_VERSION := 11.0.1_13
+JRE_LINUX_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_linux_openj9.tar.gz
+JRE_MACOS_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_macos_openj9.tar.gz
+JRE_WIN_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_windows_openj9.tar.gz
 
 # IDE: output related variables
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
