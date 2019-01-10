@@ -275,7 +275,7 @@ PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_A
 ECLIPSE_VERSION := 2018-12-R
 ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32-x86_64.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
-ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.tar.gz
+ECLIPSE_VANILLA_MACOS_DMG := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.dmg
 
 # Coma separated list
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R
@@ -496,7 +496,7 @@ endif
 
 	# Copy Eclipse
 ifeq ($(HOST),macos)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_MACOS_TGZ) $O
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_MACOS_DMG) $O
 else
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_LINUX_TGZ) $O
 endif
@@ -844,13 +844,24 @@ $O/.stamp_ide_linux_tar: \
 #
 # IDE on macOS
 #
-$O/.stamp_ide_macos_eclipse: $O/$(ECLIPSE_VANILLA_MACOS_TGZ) $O/$(IDE_PLUGINS_ZIP)
+$O/.stamp_ide_macos_eclipse: $O/$(ECLIPSE_VANILLA_MACOS_DMG) $O/$(IDE_PLUGINS_ZIP)
 	mkdir -m775 -p $O/$(IDE_MACOS_INSTALL)
-	tar xf $< -C $O/$(IDE_MACOS_INSTALL)
-	unzip $O/$(IDE_PLUGINS_ZIP) -d $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins
-	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins/artifacts.jar
-	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins/content.jar
-	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/eclipse.ini
+
+	# Mount .dmg.
+	hdiutil attach -mountpoint /Volumes/eclipse_cpp $O/$(ECLIPSE_VANILLA_MACOS_DMG)
+
+	# Maintain standard ARC GNU IDE directory layout.
+	$(LOCAL_CP) /Volumes/eclipse_cpp/Eclipse.app/Contents/Eclipse $O/$(IDE_MACOS_INSTALL)/eclipse
+	$(LOCAL_CP) /Volumes/eclipse_cpp/Eclipse.app/Contents/MacOS/eclipse $O/$(IDE_MACOS_INSTALL)/eclipse
+
+	# Unmount.
+	hdiutil detach /Volumes/eclipse_cpp
+
+	# Install plugins.
+	unzip $O/$(IDE_PLUGINS_ZIP) -d $O/$(IDE_MACOS_INSTALL)/eclipse/dropins
+	rm -f $O/$(IDE_MACOS_INSTALL)/eclipse/dropins/artifacts.jar
+	rm -f $O/$(IDE_MACOS_INSTALL)/eclipse/dropins/content.jar
+	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_MACOS_INSTALL)/eclipse/eclipse.ini
 	touch $@
 
 $O/.stamp_ide_macos_tar: \
