@@ -281,14 +281,9 @@ ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R
 
 # Java. Note that filenames differ from original OpenJ9 names for easier file
-# management via natural sorting. Also note that the macOS is not the original
-# one original .tar.gz is unpacked and contents of "Home" is repacked as tar.gz
-# (also only JDK is available so tarball is huge, and in the past we haven't
-# stripped "Contents/Home", so maybe we shouldn't distributed JRE with macOS
-# IDE in the first place?).
+# management via natural sorting.
 JAVA_VERSION := 11.0.1_13
 JRE_LINUX_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_linux_openj9.tar.gz
-JRE_MACOS_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_macos_openj9.tar.gz
 JRE_WIN_ZIP := OpenJDK-$(JAVA_VERSION)-jre_x64_windows_openj9.zip
 
 # IDE: output related variables
@@ -492,9 +487,7 @@ endif
 endif
 
 	# Copy JRE.
-ifeq ($(HOST),macos)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_MACOS_TGZ) $O/$(JRE_MACOS_TGZ)
-else
+ifeq ($(HOST),linux)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_LINUX_TGZ) $O/$(JRE_LINUX_TGZ)
 endif
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
@@ -867,8 +860,6 @@ $O/.stamp_ide_macos_tar: \
 	$(LOCAL_CP) $O/$(TOOLS_ELFLE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	$(LOCAL_CP) $O/$(TOOLS_ELFBE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	mkdir -p -m775 $O/$(IDE_MACOS_INSTALL)/eclipse/jre
-	tar xf $O/$(JRE_MACOS_TGZ) -C $O/$(IDE_MACOS_INSTALL)/eclipse/jre \
-            --strip-components=1
 	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_MACOS_INSTALL)
 	tar czf $O/$(IDE_MACOS_TGZ) -C $O $(IDE_MACOS_INSTALL)
 	touch $@
