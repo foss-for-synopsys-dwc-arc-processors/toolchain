@@ -280,11 +280,11 @@ ECLIPSE_VANILLA_MACOS_DMG := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.
 # Coma separated list
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R
 
-# Java. Note that filenames differ from original OpenJ9 names for easier file
-# management via natural sorting.
+# Java. Note that filenames might differ from originals to ensure consistent
+# JAVA_VERSION content.
 JAVA_VERSION := 11.0.1_13
-JRE_LINUX_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_linux_openj9.tar.gz
-JRE_WIN_ZIP := OpenJDK-$(JAVA_VERSION)-jre_x64_windows_openj9.zip
+JRE_LINUX_TGZ := OpenJDK11-jre_x64_linux_openj9_$(JAVA_VERSION).tar.gz
+JRE_WIN_ZIP := OpenJDK11-jre_x64_windows_openj9_$(JAVA_VERSION).zip
 
 # IDE: output related variables
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
