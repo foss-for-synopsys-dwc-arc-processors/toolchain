@@ -272,26 +272,19 @@ TOOLS_UCLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_nat
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
 
 # IDE: vanilla Eclipse variables
-ECLIPSE_VERSION := photon-R
+ECLIPSE_VERSION := 2018-12-R
 ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32-x86_64.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
-ECLIPSE_VANILLA_MACOS_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.tar.gz
+ECLIPSE_VANILLA_MACOS_DMG := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.dmg
 
 # Coma separated list
 ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R
 
-# Java. Note that filenames differ from original OpenJ9 names for easier file
-# management via natural sorting. Also note that only the Linux tarball is
-# original one. For windows only zip is available, so it is repacked as tar.gz
-# (perhaps it would be better to adapt code handle zips instead). For macOS
-# original .dmg is unpacked and contents of "Home" is repacked as tar.gz (also
-# only JDK is available so tarball is huge, and in the past we haven't stripped
-# "Contents/Home", so maybe we shouldn't distributed JRE with macOS IDE in the
-# first place?).
+# Java. Note that filenames might differ from originals to ensure consistent
+# JAVA_VERSION content.
 JAVA_VERSION := 11.0.1_13
-JRE_LINUX_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_linux_openj9.tar.gz
-JRE_MACOS_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_macos_openj9.tar.gz
-JRE_WIN_TGZ := OpenJDK-$(JAVA_VERSION)-jre_x64_windows_openj9.tar.gz
+JRE_LINUX_TGZ := OpenJDK11-jre_x64_linux_openj9_$(JAVA_VERSION).tar.gz
+JRE_WIN_ZIP := OpenJDK11-jre_x64_windows_openj9_$(JAVA_VERSION).zip
 
 # IDE: output related variables
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
@@ -494,18 +487,16 @@ endif
 endif
 
 	# Copy JRE.
-ifeq ($(HOST),macos)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_MACOS_TGZ) $O/$(JRE_MACOS_TGZ)
-else
+ifeq ($(HOST),linux)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_LINUX_TGZ) $O/$(JRE_LINUX_TGZ)
 endif
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_WIN_TGZ) $O/$(JRE_WIN_TGZ)
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_WIN_ZIP) $O/$(JRE_WIN_ZIP)
 endif
 
 	# Copy Eclipse
 ifeq ($(HOST),macos)
-	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_MACOS_TGZ) $O
+	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_MACOS_DMG) $O
 else
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_LINUX_TGZ) $O
 endif
@@ -842,8 +833,10 @@ $O/.stamp_ide_linux_tar: \
 	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	mkdir -p -m775 $O/$(IDE_LINUX_INSTALL)/eclipse/jre
+	# OpenJ9 tarball has paths starting with `./jdk-11.0.1_13-jre`, thus it is
+	# needed to strip 2 components instead of 1.
 	tar xf $O/$(JRE_LINUX_TGZ) -C $O/$(IDE_LINUX_INSTALL)/eclipse/jre \
-	    --strip-components=1
+	    --strip-components=2
 	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	tar czf $O/$(IDE_LINUX_TGZ) -C $O $(IDE_LINUX_INSTALL)
 	touch $@
@@ -851,13 +844,24 @@ $O/.stamp_ide_linux_tar: \
 #
 # IDE on macOS
 #
-$O/.stamp_ide_macos_eclipse: $O/$(ECLIPSE_VANILLA_MACOS_TGZ) $O/$(IDE_PLUGINS_ZIP)
+$O/.stamp_ide_macos_eclipse: $O/$(ECLIPSE_VANILLA_MACOS_DMG) $O/$(IDE_PLUGINS_ZIP)
 	mkdir -m775 -p $O/$(IDE_MACOS_INSTALL)
-	tar xf $< -C $O/$(IDE_MACOS_INSTALL)
-	unzip $O/$(IDE_PLUGINS_ZIP) -d $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins
-	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins/artifacts.jar
-	rm -f $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/dropins/content.jar
-	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_MACOS_INSTALL)/Eclipse.app/Contents/Eclipse/eclipse.ini
+
+	# Mount .dmg.
+	hdiutil attach -mountpoint /Volumes/eclipse_cpp $O/$(ECLIPSE_VANILLA_MACOS_DMG)
+
+	# Maintain standard ARC GNU IDE directory layout.
+	$(LOCAL_CP) /Volumes/eclipse_cpp/Eclipse.app/Contents/Eclipse $O/$(IDE_MACOS_INSTALL)/eclipse
+	$(LOCAL_CP) /Volumes/eclipse_cpp/Eclipse.app/Contents/MacOS/eclipse $O/$(IDE_MACOS_INSTALL)/eclipse
+
+	# Unmount.
+	hdiutil detach /Volumes/eclipse_cpp
+
+	# Install plugins.
+	unzip $O/$(IDE_PLUGINS_ZIP) -d $O/$(IDE_MACOS_INSTALL)/eclipse/dropins
+	rm -f $O/$(IDE_MACOS_INSTALL)/eclipse/dropins/artifacts.jar
+	rm -f $O/$(IDE_MACOS_INSTALL)/eclipse/dropins/content.jar
+	echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" >> $O/$(IDE_MACOS_INSTALL)/eclipse/eclipse.ini
 	touch $@
 
 $O/.stamp_ide_macos_tar: \
@@ -867,8 +871,6 @@ $O/.stamp_ide_macos_tar: \
 	$(LOCAL_CP) $O/$(TOOLS_ELFLE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	$(LOCAL_CP) $O/$(TOOLS_ELFBE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
 	mkdir -p -m775 $O/$(IDE_MACOS_INSTALL)/eclipse/jre
-	tar xf $O/$(JRE_MACOS_TGZ) -C $O/$(IDE_MACOS_INSTALL)/eclipse/jre \
-            --strip-components=1
 	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_MACOS_INSTALL)
 	tar czf $O/$(IDE_MACOS_TGZ) -C $O $(IDE_MACOS_INSTALL)
 	touch $@
@@ -1051,7 +1053,7 @@ endif
 	      $O/$(IDE_PLUGINS_ZIP) \
 	      $O/$(OOCD_WIN_DIR)$(TAR_EXT) \
 	      $O/$(ECLIPSE_VANILLA_WIN_ZIP) \
-	      $O/$(JRE_WIN_TGZ) \
+	      $O/$(JRE_WIN_ZIP) \
 	      $(addprefix $(THIRD_PARTY_SOFTWARE_LOCATION)/,make coreutils) \
 	      $(WINDOWS_WORKSPACE)/packages/
 	$(CP) $(ROOT)/toolchain $(WINDOWS_WORKSPACE)/
