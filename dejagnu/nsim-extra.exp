@@ -65,7 +65,7 @@ proc nsim_open { portnum } {
     if [info exists env(ARC_NSIM_TCF)] {
 	spawn sh -c "[board_info $board nsim_exe] -port $portnum -tcf $env(ARC_NSIM_TCF) [join [board_info $board nsim_flags]] >/dev/null 2>/dev/null"
     } else {
-	spawn sh -c "[board_info $board nsim_exe] -port $portnum -propsfile $env(ARC_NSIM_PROPS) [join [board_info $board nsim_flags]] >/dev/null 2>/dev/null"
+	spawn sh -c "[board_info $board nsim_exe] -port $portnum -propsfile '$env(ARC_NSIM_PROPS)' [join [board_info $board nsim_flags]] >/dev/null 2>/dev/null"
     }
     unset_board_info nsim_id
     set_board_info nsim_id $spawn_id
