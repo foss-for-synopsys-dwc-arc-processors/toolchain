@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'GNU Toolchain for ARC User Manual'
-copyright = '2016-2017, Synopsys'
+copyright = '2016-2019, Synopsys'
 author = 'Synopsys'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -221,10 +221,9 @@ latex_elements = {
 
 # Additional stuff for the LaTeX preamble.
 # Increase limitations on the number of floats.
-'preamble': '\usepackage{morefloats}',
 'preamble': '\usepackage{float}',
 
-# Latex figure (float) alignment
+# Latex figure (float) alignment to fix image location in the document.
 'figure_align': 'H',
 }
 
