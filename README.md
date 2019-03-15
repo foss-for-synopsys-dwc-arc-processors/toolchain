@@ -192,7 +192,7 @@ branch or a tag. If branch is used, then current branches can be found in the
 config/arc-dev.sh file, which at the moment of this writing are:
 
 * binutils - arc-2019.03
-* gcc - arc-2018.09
+* gcc - arc-2019.03
 * gdb - arc-2019.03-gdb
 * newlib - arc-2019.03
 * uclibc-ng - v1.0.29
