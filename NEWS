@@ -9,6 +9,7 @@ Toolchain and IDE Components Versions
 * GDB 8.0.50 with ARC patches
 * newlib newlib-snapshot-20180831 with ARC patches
 * uclibc-ng v1.0.31
+* glibc 2.29 with ARC patches
 * Eclipse 2018-12 4.10.0 with CDT 9.6.0
 * OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
 
@@ -35,6 +36,10 @@ New Features and Enhancements
 
 * Binutils
 	* Update to Binutils 2.32.
+
+* glibc
+	* Upstream 2.29
+	* ARC patches submitted for upstream submission as of Jan 2019
 
 * Eclipse plugins
 	* Fix NPE in compiler plugin
