@@ -200,15 +200,7 @@ Git option `--depth=1` - Git will not fetch the whole history of repository and
 will instead only fetch the current state. This option should be accompanied by
 the valid `-b <branch>` option so that Git will fetch a state of required
 branch or a tag. If branch is used, then current branches can be found in the
-config/arc-dev.sh file, which at the moment of this writing are:
-
-* binutils - arc-2019.03
-* gcc - arc-2019.03
-* gdb - arc-2019.03-gdb
-* newlib - arc-2019.03
-* uclibc-ng - v1.0.29
-* Linux - linux-4.15.y
-* glibc - arc-glibc-2.28
+config/arc-dev.sh file
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
 latest state, which is a default behaviour, then it will anyway fetch
