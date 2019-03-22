@@ -8,7 +8,7 @@ Toolchain and IDE Components Versions
 * GCC 8.3.1 with ARC patches
 * GDB 8.0.50 with ARC patches
 * newlib newlib-snapshot-20180831 with ARC patches
-* uclibc-ng v1.0.29
+* uclibc-ng v1.0.31
 * Eclipse 2018-12 4.10.0 with CDT 9.6.0
 * OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
 
