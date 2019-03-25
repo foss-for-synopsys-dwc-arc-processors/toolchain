@@ -101,10 +101,12 @@ directly used by the linker. Second sections describes ``REGION_ALIAS`` es -
 this section translates arbitrary region names to standard region names
 expected by linker emulation. There are four such regions:
 
-* ``startup`` for interrupt vector table and initialization code. Note that
-  currently there is a limitation that this section must always start always at
-  address 0x0. That is - ``arcv2elfx`` emulation currently supports interrupt
-  vector table only at address 0x0.
+* ``startup`` for interrupt vector table and initialization code. Typically it
+  should be mapped to the address 0x0. If interrupt vector is mapped to a
+  different address, then in addition to respective value in ``memory.x`` it is
+  required to pass an option ``--defsym=ivtbase_addr=<your_ivt_address>`` to the
+  linker. If linker is invoked through the GCC driver, then the option should be
+  prefixed with ``-Wl,``.
 * ``text`` is a region where code will be located.
 * ``data`` is a regions where data will be located (unsurprisingly).
 * ``sdata`` is a region where small data section will be located.
