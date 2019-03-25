@@ -62,15 +62,15 @@ Check `Buildroot downloads page <http://buildroot.org/download.html>`_ for
 latest release. This guide further assumes latest snapshot. Get Buildroot
 sources::
 
-    $ mkdir arc-2018.09-linux-guide
-    $ cd arc-2018.09-linux-guide
-    $ wget https://buildroot.org/downloads/buildroot-2018.08.2.tar.bz2
-    $ tar xf buildroot-2018.08.2.tar.bz2
+    $ mkdir arc-2019.03-linux-guide
+    $ cd arc-2019.03-linux-guide
+    $ wget https://buildroot.org/downloads/buildroot-2019.02.tar.bz2
+    $ tar xf buildroot-2019.02.tar.bz2
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
 this guide, a custom "defconfig" file will be created and then will be used to
 configure Buildroot. Custom "defconfig" file can be located anywhere and have
-any name. For example it can be ``arc-2018.09-linux-guide/hs_defconfig``.
+any name. For example it can be ``arc-2019.03-linux-guide/hs_defconfig``.
 Contents of this file should be following::
 
     BR2_arcle=y
@@ -78,7 +78,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2019.03-rc1/arc_gnu_2019.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_8=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
@@ -103,6 +103,7 @@ Important notes about modifying Buildroot defconfig:
   =================== =======================
   Toolchain version   Linux headers version
   =================== =======================
+  2019.03             4.15
   2018.09             4.15
   2018.03             4.15
   2017.09             4.12
@@ -140,7 +141,7 @@ It's necessary to pass an absolute path to Buildroot, because there is the issue
 with a relative path.
 
 After that there will be Linux kernel image file
-``arc-2018.09-linux-guide/output/images/vmlinux``.
+``arc-2019.03-linux-guide/output/images/vmlinux``.
 
 
 Running on nSIM
@@ -149,7 +150,7 @@ Running on nSIM
 Linux configuration in the provided Buildroot defconfig is for the standalone
 nSIM. This kernel image can be run directly on nSIM, without any other
 additional software. Assuming current directory is
-``arc-2018.09-linux-guide``::
+``arc-2019.03-linux-guide``::
 
     $ $NSIM_HOME/bin/nsimdrv -propsfile archs38.props output_hs/images/vmlinux
 
@@ -193,7 +194,7 @@ details about how to enable networking, HDMI and other hardware features of
 AXS10x SDP.
 
 Notable defconfigs available for ARC: ``axs101``, ``axs103``, ``axs103_smp``,
-``vdk_hs38_smp``.
+``vdk_hs38_smp``, ``hsdk``.
 
 
 Using glibc toolchain
@@ -207,7 +208,7 @@ differences::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_glibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2019.03-rc1/arc_gnu_2019.03_prebuilt_glibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_8=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
@@ -229,9 +230,9 @@ Process of building kernel for ARC 770 is similar to what is for ARC HS. It is
 required only to change several option in Buildroot defconfig:
 
   * ``BR2_archs38=y`` with ``BR2_arc770d=y``
-  * ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
+  * ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2019.03-rc1/arc_gnu_2019.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
     with
-    ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
+    ``BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2019.03-rc1/arc_gnu_2019.03_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
   * ``BR2_LINUX_KERNEL_DEFCONFIG="nsim_hs"`` with
     ``BR2_LINUX_KERNEL_DEFCONFIG="nsim_700"``
 
@@ -276,7 +277,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2019.03-rc1/arc_gnu_2019.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_8=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
@@ -366,7 +367,7 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2018.09-rc1/arc_gnu_2018.09_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="http://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2019.03-rc1/arc_gnu_2019.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_8=y
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y

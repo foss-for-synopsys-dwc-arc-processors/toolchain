@@ -1,3 +1,57 @@
+Major Changes in 2019.03 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* Binutils 2.32.51.20190308 with ARC patches
+* GCC 8.3.1 with ARC patches
+* GDB 8.0.50 with ARC patches
+* newlib newlib-snapshot-20180831 with ARC patches
+* uclibc-ng v1.0.31
+* glibc 2.29 with ARC patches
+* Eclipse 2018-12 4.10.0 with CDT 9.6.0
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF
+generator) version 1.0.53 and later.
+
+New Features and Enhancements
+-----------------------------
+
+* Binary distriibution
+	* Replaced Oracle Java runtime with OpenJ9 Java runtime.
+
+* Toolchain Build Scripts
+	* Documentation update.
+
+* GCC
+	* Update to GCC 8.3.1.
+	* Enable code density frame option for elf targets
+	* Fix logic set UNALIGNED_ACCESS
+	* Emit blockage also in epilogue
+	* Remove d0d1 from GENERAL_REGS
+	* Emit blockage regardless to avoid delay slot scheduling
+	* Fix millicode wrong blink restore.
+
+* Binutils
+	* Update to Binutils 2.32.
+
+* glibc
+	* Upstream 2.29
+	* ARC patches submitted for upstream submission as of Jan 2019
+
+* Eclipse plugins
+	* Fix NPE in compiler plugin
+	* Add project templates for ARC EM SDP, HSDK and IoTDK
+	* Cleanup Hello world template sources
+	* Multiple improvements to the internal structure of project templates
+	* Fix error when viewing compiler or linker settings if build directory doesn't exist yet
+	* Update to OpenJDK11/OpenJ9
+	* Update to Eclipse 2018-12, CDT 9.6, Tycho 1.3.0
+	* Remove support for x86 runtime architecture for Linux and Windows
+
+
 Major Changes in 2018.09 Release
 ================================
 
