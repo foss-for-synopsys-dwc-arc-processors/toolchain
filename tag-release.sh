@@ -147,14 +147,15 @@ if ! git merge $branch </dev/null ; then
 fi
 
 # Create toolchain configuration file for release.
-# For Linux just copy whatever is in the arc-dev.sh at the moment.
+# For Linux and uClibc-ng just copy whatever is in the arc-dev.sh at the
+# moment, because those are upstream repositories.
 cat > config/$tagname.sh <<EOF
 binutils=binutils:$tagname
 gcc=gcc:$tagname
 gdb=gdb:$tagname-gdb
 glibc=glibc:$tagname
 newlib=newlib:$tagname
-uclibc=uclibc-ng:$tagname
+$(grep -e uclibc=uclibc-ng config/arc-dev.sh)
 $(grep -e linux=linux config/arc-dev.sh)
 EOF
 

@@ -40,6 +40,13 @@ OpenOCD. If you want to use another configuration file, you can choose **Custom
 configuration file** under **Development system** and select your own file in the
 enabled **OpenOCD configuration file** field.
 
+.. warning::
+
+   The ARC GNU IDE Debugger plugin doesn't support ARC EM SDP board in the GUI,
+   however board configuration is compatible with the ARC EM Starter Kit 2.3
+   board. Therefore to debug application on ARC EM SDP, select ARC EM Starter
+   Kit in the **Development system** menu.
+
 Choosing COM Port
 -----------------
 
