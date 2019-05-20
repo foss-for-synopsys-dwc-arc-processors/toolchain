@@ -58,5 +58,11 @@ yourself, or your application might not work properly.
 
    Memory map for **Hello World for EM SK 2.1 Project**
 
+.. note::
+
+   There is an ARC EM SDP project template which uses configuration for
+   emsdp_em11d_dfss FPGA image. Projects created with this template may not work
+   with other FPGA images of ARC EM SDP.
+
 
 
