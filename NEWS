@@ -19,7 +19,7 @@ generator) version 1.0.53 and later.
 New Features and Enhancements
 -----------------------------
 
-* Binary distriibution
+* Binary distribution
 	* Replaced Oracle Java runtime with OpenJ9 Java runtime.
 
 * Toolchain Build Scripts
