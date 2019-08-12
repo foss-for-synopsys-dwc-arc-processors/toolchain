@@ -83,8 +83,9 @@ echo "-Dosgi.instance.area.default=@user.home/ARC_GNU_IDE_Workspace" \
 
 # Copy Java runtime environment:
 echo "Preparing JRE..."
-mkdir -p tmp/jre/eclipse/jre
-tar -C tmp/jre/eclipse/jre -xaf packages/jre-*-windows-x64.tar.gz --strip-components=1
+mkdir -p tmp/jre/eclipse
+unzip packages/OpenJDK*-jre_x64_windows_openj9*.zip -d tmp/jre/eclipse
+mv tmp/jre/eclipse/jdk-*-jre tmp/jre/eclipse/jre
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/jre jre
 
 # Install ARC plugins

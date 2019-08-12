@@ -53,13 +53,13 @@ On Ubuntu those can be installed with following command (as root):
     # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
       libexpat1-dev texlive build-essential git wget gawk bison
 
-On RHEL 6 those can be installed with following command (as root):
+On CentOS 6 those can be installed with following command (as root):
 
     # yum groupinstall "Development Tools"
     # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
       git texlive-ec texlive-cm-super wget gcc-c++
 
-On RHEL 7 those can be installed with following command:
+On CentOS 7 those can be installed with following command:
 
     # sudo yum install -y autoconf automake binutils bison byacc flex gcc \
       gcc-c++ libtool patch
@@ -79,6 +79,17 @@ required.
 > Note: GNU binutils requires bison version 2, it doesn't work with bison 3.
 > But glibc suports only bison >= 2.7. If you have bison 3 installed and
 > toolchain build fails, try removing it.
+
+It is not possible to build the Linux Glibc toolchain on CentOS 7 because glibc
+requires newer versions of Python and make than available in official
+repositories. It might be possible to install those dependencies manually or
+from 3rd party repositories, however this topic is out of scope of this
+document.
+
+It has been observed that there is build failure on Ubuntu 17.10 - binutils
+compiled on that system refuses to accept valid input and that causes later
+failure when building the rest of the toolchain. This error wasn't observed on
+older Ubuntu versions, but it wasn't tested on newer Ubuntu versions.
 
 GCC depends on the GMP, MPFR and MPC packages, however there are problems with
 availability of those packages on the RHEL/CentOS 6 systems (packages has too
@@ -112,6 +123,9 @@ installed by default. This easily can be done with Homebrew:
 
 	# Install GNU sed
 	$ brew install gnu-sed
+
+	# Install xz, required to unpack GMP, MPC & MPFR tarballs.
+	$ brew install xz
 
 To build PDF documentation for toolchain TeX must be installed:
 
@@ -186,15 +200,7 @@ Git option `--depth=1` - Git will not fetch the whole history of repository and
 will instead only fetch the current state. This option should be accompanied by
 the valid `-b <branch>` option so that Git will fetch a state of required
 branch or a tag. If branch is used, then current branches can be found in the
-config/arc-dev.sh file, which at the moment of this writing are:
-
-* binutils - arc-2018.09
-* gcc - arc-2018.09
-* gdb - arc-2018.09-gdb
-* newlib - arc-2018.09
-* uclibc-ng - v1.0.29
-* Linux - linux-4.15.y
-* glibc - arc-glibc-2.28
+config/arc-dev.sh file
 
 Note, however that if `build-all.sh` will try to checkout repositories to their
 latest state, which is a default behaviour, then it will anyway fetch
@@ -359,7 +365,7 @@ Ubuntu that can be done with `mingw-w64` package:
 
     # apt-get install mingw-w64
 
-RHEL 6 has a very antique Mingw (4.4-something), so it is recommended to first
+CentOS 6 has a very antique Mingw (4.4-something), so it is recommended to first
 add EPEL repository, then install Mingw from it. In CentOS:
 
     # yum install epel-release
@@ -368,7 +374,7 @@ add EPEL repository, then install Mingw from it. In CentOS:
       mingw32-gcc-c++ mingw32-headers mingw32-winpthreads \
       mingw32-winpthreads-static
 
-For instruction how to install EPEL on RHEL, see
+For instruction how to install EPEL on CentOS, see
 <https://fedoraproject.org/wiki/EPEL/FAQ>.
 
 First stage of GCC build should be disabled, because libraries will be built
@@ -382,7 +388,7 @@ After prerequisites are installed do:
 
 Note that value of host triplet depends on what mingw toolchain is being used.
 Triplet `i686-w64-mingw32` is valid for mingw toolchain currently used in
-Ubuntu and EPEL, but, for example, mingw toolchain in standard RHEL 6 has
+Ubuntu and EPEL, but, for example, mingw toolchain in standard CentOS 6 has
 triplet `i686-pc-mingw32`.
 
 
