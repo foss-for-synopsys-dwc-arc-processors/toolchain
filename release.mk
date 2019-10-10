@@ -682,7 +682,7 @@ $O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built $(TOOLS_ALL_DEPS-y) \
 	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
-	$(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_WIN_DIR),arc-elf32)
+	# $(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_WIN_DIR),arc-elf32)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_WIN_DIR))
 	touch $@
 
@@ -695,7 +695,7 @@ $O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built $(TOOLS_ALL_DEPS-y) \
 	     --release-name "$(RELEASE)" \
 	     --host $(WINDOWS_TRIPLET) --no-system-expat \
 	     --no-elf32-gcc-stage1
-	$(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_WIN_DIR),arceb-elf32)
+	# $(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_WIN_DIR),arceb-elf32)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_WIN_DIR))
 	touch $@
 
