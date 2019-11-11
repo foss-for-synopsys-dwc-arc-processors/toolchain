@@ -423,6 +423,13 @@ And in second console (GDB output is omitted):
     (gdb) continue
     (gdb) quit
 
+GDB also might execute commands in a batch mode so that it could be done
+automatically:
+
+    $ arc-elf32-gdb -nx --batch -ex 'target remote :51000' -ex 'load' \
+                                -ex 'break main' -ex 'break exit' \
+                                -ex 'continue' -ex 'continue' -ex 'quit' a.out
+
 If one of the HS TCFs is used, then it is required to add `-on
 nsim_isa_ll64_option` to nSIM options, because GCC for ARC automatically
 generates double-world memory operations, which are not enabled in TCFs
