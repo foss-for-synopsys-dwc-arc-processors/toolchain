@@ -135,6 +135,24 @@ do
 	cd ${ARC_GNU}/${tool}
     fi
 
+    # Skip checkout of Linux if neither uClibc nor Glibs are being built
+    if [ "${DO_GLIBC}" = "no" ] && [ "${DO_UCLIBC}" = "no" ]
+    then
+        continue
+    fi
+
+    # Skip checkout of uClibc if we're not going to build it
+    if [ "${tool}" = "uclibc-ng" ] && [ "${DO_UCLIBC}" = "no" ]
+    then
+        continue
+    fi
+
+    # Skip checkout of Glibc if we're not going to build it
+    if [ "${tool}" = "glibc" ] && [ "${DO_GLIBC}" = "no" ]
+    then
+        continue
+    fi
+
     if [ "x${autopull}" = "x--auto-pull" ]
     then
 	# Fetch any new tags and branches.
