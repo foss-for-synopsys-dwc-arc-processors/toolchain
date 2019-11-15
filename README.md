@@ -50,27 +50,21 @@ website](http://gcc.gnu.org/install/prerequisites.html)
 
 On Ubuntu those can be installed with following command (as root):
 
-    # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev texlive build-essential git wget gawk bison
+    # sudo apt-get update
+    # sudo apt-get install -y texinfo byacc flex libncurses5-dev zlib1g-dev \
+      libexpat1-dev texlive build-essential git wget gawk bison xz-utils
 
-On CentOS 6 those can be installed with following command (as root):
-
-    # yum groupinstall "Development Tools"
-    # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
-      git texlive-ec texlive-cm-super wget gcc-c++
-
-On CentOS 7 those can be installed with following command:
+On CentOS/RHEL 6.x & 7.x those can be installed with following command:
 
     # sudo yum install -y autoconf automake binutils bison byacc flex gcc \
-      gcc-c++ libtool patch
-    # sudo yum install -y texinfo-tex byacc flex ncurses-devel zlib-devel \
-      expat-devel git texlive-\* wget
+      gcc-c++ libtool patch texinfo-tex byacc flex ncurses-devel zlib-devel \
+      expat-devel git texlive-\* wget make xz rsync diffutils
 
-On Fedora:
+On Fedora & CentOS/RHEL 8.x+:
 
     # sudo dnf install -y autoconf automake binutils bison byacc flex gcc \
-      gcc-c++ git libtool patch texinfo-tex byacc flex ncurses-devel \
-      zlib-devel expat-devel git texlive-\* wget
+      gcc-c++ libtool patch texinfo-tex byacc flex ncurses-devel zlib-devel \
+      expat-devel git texlive-\* wget make xz rsync diffutils
 
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
@@ -83,8 +77,19 @@ required.
 It is not possible to build the Linux Glibc toolchain on CentOS 7 because glibc
 requires newer versions of Python and make than available in official
 repositories. It might be possible to install those dependencies manually or
-from 3rd party repositories, however this topic is out of scope of this
-document.
+from 3rd party repositories. One of the options is to use so-called
+"Software Collections" (also known as "SCL") which is a community effort for
+providing more recent versions of core tools in both CentOS & Redhat distributions,
+see https://www.softwarecollections.org.
+
+To get Python 3.x & GNU Make 4.2.1 installed on CentOS/RHEL 7.x
+the following commands should be executed:
+
+    # yum install -y centos-release-scl
+    # yum install -y rh-python36
+    # yum install -y devtoolset-8-make
+    # scl enable rh-python36 bash
+    # scl enable devtoolset-8 bash
 
 It has been observed that there is build failure on Ubuntu 17.10 - binutils
 compiled on that system refuses to accept valid input and that causes later
