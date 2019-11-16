@@ -206,10 +206,6 @@ define git_clone_url
 endef
 endif
 
-define git_clone_dev
-	$(GIT) clone -b falaleev-dev -q $(GIT_URL_BASE)/$1 $(ROOT)/$2
-endef
-
 # Clone git repository
 # $1 - tool name
 # $2 - directory name
@@ -465,7 +461,7 @@ clone:
 	$(call git_clone,newlib,newlib)
 	$(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
 	$(call git_clone_url,git@github.com:wbx-github/uclibc-ng.git,uclibc-ng)
-	$(call git_clone_dev,arc_gnu_eclipse,arc_gnu_eclipse)
+	$(call git_clone,arc_gnu_eclipse,arc_gnu_eclipse)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
 endif
