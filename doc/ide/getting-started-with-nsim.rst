@@ -38,6 +38,18 @@ The resulting Hello World project created in Eclipse is:
 .. figure:: images/creating_project/c_project_for_nsim.png
 
    C Project for nSIM debugging
+   
+   To change -mcpu option: Right click on project and select **Properties** (or **Alt + Enter**)
+   
+.. figure:: images/creating_project/c_project_properties.png
+   
+   C Project Properties
+
+   Then click **C/C++ Build** -> **Target Processor** and choose required option option
+   
+.. figure:: images/creating_project/c_project_properties_mcpu.png
+
+   C Project -mcpu options
 
 Building the project
 --------------------
