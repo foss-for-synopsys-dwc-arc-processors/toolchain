@@ -119,6 +119,10 @@ nSIM has several TCF file templates in the folder ``../etc/tcf/templates`` relat
 to nSIM executable file. Choose `em6_dmips.tcf` file from templates. Then uncheck
 **Use nSIM properties file?** checkbox and click **Apply** button.
 
+If you choose big endian toolchain, then you need to change .tcf file
+because it is configured for little endian case. Open your .tcf file
+and find **nsim_isa_big_endian** option in nsim.props field. Set it's
+value to **1**. This way nSIM will be configured for big endian.
 
 5. To debug application using nSIM, press "Debug" button of IDE.
 
