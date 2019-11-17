@@ -1,6 +1,14 @@
 Getting Started with nSIM
 =========================
 
+Prerequisites
+--------------------
+
+You should have nSIM installed on your computer.
+
+You also might need to set environment variable **LM_LICENSE_FILE** =<your_license>
+in case if you have full nSIM version. Otherwise you will get licensing failure.
+
 Creating a C project
 --------------------
 
