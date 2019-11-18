@@ -26,7 +26,7 @@ components to versions corresponding to the toolchain branch. Build script from
 development branch of toolchain repository will by default check out latest
 development branches of components. Build script from release and staging
 branches will check out components to the corresponding git tag. For example
-build script for 2015.06 release will checkout out components to arc-2015.06
+build script for 2020.03 release will checkout out components to arc-2020.03-release
 tag.
 
 
@@ -235,10 +235,10 @@ If current working directory is not a "toolchain" directory, then change to it:
     $ cd toolchain
 
 This repository can be checked out to a specific GNU Toolchain for ARC release
-by specifying a particular release tag, for example for 2016.03 release that
+by specifying a particular release tag, for example for 2020.03 release that
 would be:
 
-    $ git checkout arc-2016.03
+    $ git checkout arc-2020.03-release
 
 
 Building the Toolchain
