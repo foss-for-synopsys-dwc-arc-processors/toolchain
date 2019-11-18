@@ -280,9 +280,9 @@ The most important options of `build-all.sh` are:
    chains. Combined with `--no-multilib` this option allows to build GNU
    toolhain that supports only one specific core. Valid values depend on what
    is available in GCC As of version 2016.03 values available in ARC GCC are:
-   em, arcem, em4, em4_dmips, em4_fpus, em4_fpuda, quarkse, hs, archs, hs34,
-   hs38, hs38_linux, arc600, arc600_norm, arc600_mul64, arc600_mul32x16,
-   arc601, arc601_norm, arc601_mul64, arc601_mul32x16, arc700. Note that only
+   `em`, `arcem`, `em4`, `em4_dmips`, `em4_fpus`, `em4_fpuda`, `quarkse`, `hs`, `archs`, `hs34`,
+   `hs38`, `hs38_linux`, `arc600`, `arc600_norm`, `arc600_mul64`, `arc600_mul32x16`,
+   `arc601`, `arc601_norm`, `arc601_mul64`, `arc601_mul32x16`, `arc700`. Note that only
    ARC 700 and ARC HS can be selected as a default core for Linux toolchain.
  * `--host <triplet>` - option to set host triplet of toolchain. That allows to
    do Canadian cross-compilation, where toolchain for ARC processors
