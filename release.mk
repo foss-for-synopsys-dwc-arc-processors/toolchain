@@ -264,6 +264,7 @@ TOOLS_UCLIBC_LE_HS38FPU_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fp
 
 # Toolchain: linux with glibc.
 TOOLS_GLIBC_LE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_$(HOST)_install
+TOOLS_GLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_be_archs_$(HOST)_install
 
 # Toolchain: native linux toolchain
 TOOLS_UCLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
@@ -326,6 +327,7 @@ UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_HS_HOST_DIR)$(TAR_EXT
 endif
 
 UPLOAD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_BE_HS_HOST_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 
@@ -362,6 +364,7 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_700_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_BE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_INSTALL)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_UCLIBC_LE_HS_NATIVE_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)
@@ -396,6 +399,7 @@ BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_uclibc_be_hs_tarball
 endif
 
 BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_le_hs_tarball
+BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_be_hs_tarball
 
 BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
@@ -444,6 +448,9 @@ elf-be: $O/.stamp_elf_be_tarball
 
 .PHONY: glibc-le
 glibc-le: $O/.stamp_glibc_le_hs_tarball
+
+.PHONY: glibc-be
+glibc-be: $O/.stamp_glibc_be_hs_tarball
 
 windows: $O/.stamp_elf_le_windows_tarball $O/.stamp_elf_be_windows_tarball
 
@@ -628,6 +635,16 @@ $O/.stamp_glibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_LE_HS_HOST_DIR))
 	touch $@
 
+$O/.stamp_glibc_be_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_GLIBC_BE_HS_HOST_DIR) \
+	    --release-name "$(RELEASE)" \
+	    --big-endian \
+	    --cpu hs38 \
+	    --no-uclibc --glibc \
+	    --no-elf32
+	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_BE_HS_HOST_DIR))
+	touch $@
+
 $O/.stamp_uclibc_le_700_tarball: $O/.stamp_uclibc_le_700_built
 	$(call create_tar,$(TOOLS_UCLIBC_LE_700_HOST_DIR))
 	touch $@
@@ -646,6 +663,10 @@ $O/.stamp_uclibc_be_hs_tarball: $O/.stamp_uclibc_be_hs_built
 
 $O/.stamp_glibc_le_hs_tarball: $O/.stamp_glibc_le_hs_built
 	$(call create_tar,$(TOOLS_GLIBC_LE_HS_HOST_DIR))
+	touch $@
+
+$O/.stamp_glibc_be_hs_tarball: $O/.stamp_glibc_be_hs_built
+	$(call create_tar,$(TOOLS_GLIBC_BE_HS_HOST_DIR))
 	touch $@
 
 #
