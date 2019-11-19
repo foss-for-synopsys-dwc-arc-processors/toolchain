@@ -52,26 +52,28 @@ On Ubuntu those can be installed with following command (as root):
 
     # sudo apt-get update
     # sudo apt-get install -y texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev texlive build-essential git wget gawk bison xz-utils
+      libexpat1-dev texlive build-essential git wget gawk bison xz-utils make
 
 On CentOS/RHEL 6.x & 7.x those can be installed with following command:
 
     # sudo yum install -y autoconf automake binutils bison byacc flex gcc \
-      gcc-c++ libtool patch texinfo-tex byacc flex ncurses-devel zlib-devel \
-      expat-devel git texlive-\* wget make xz rsync diffutils
+      gcc-c++ libtool patch texinfo-tex ncurses-devel ncurses-compat-libs \
+      flex zlib-devel expat-devel git texlive-\* wget make xz rsync diffutils \
+      which
 
 On Fedora & CentOS/RHEL 8.x+:
 
     # sudo dnf install -y autoconf automake binutils bison byacc flex gcc \
-      gcc-c++ libtool patch texinfo-tex byacc flex ncurses-devel zlib-devel \
-      expat-devel git texlive-\* wget make xz rsync diffutils
+      gcc-c++ libtool patch texinfo-tex ncurses-devel ncurses-compat-libs \
+      flex zlib-devel expat-devel git texlive-\* wget make xz rsync diffutils \
+      which
 
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
 required.
 
 > Note: GNU binutils requires bison version 2, it doesn't work with bison 3.
-> But glibc suports only bison >= 2.7. If you have bison 3 installed and
+> But glibc supports only bison >= 2.7. If you have bison 3 installed and
 > toolchain build fails, try removing it.
 
 It is not possible to build the Linux Glibc toolchain on CentOS 7 because glibc
