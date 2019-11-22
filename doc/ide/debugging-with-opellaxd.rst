@@ -64,7 +64,7 @@ TPAOP-ARC20-R0 cable.
 Starting a debug session
 ------------------------
 
-To debug an application using OpenOCD, press **Debug** button of IDE and confirm
+To debug an application using Opella-XD, press **Debug** button of IDE and confirm
 switching to Debug Perspective.
 
 .. figure:: images/debugging/ashling/ashling_properties.png
