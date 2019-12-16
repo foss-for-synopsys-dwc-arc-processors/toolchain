@@ -58,6 +58,10 @@ directory. In this directory there are ``arc600-cpu.xml``, ``arc700-cpu.xml``,
 ``arc-em-cpu.xml`` and ``arc-hs-cpu.xml`` files for GDB server, `direct link
 <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/tree/arc-staging/extras/opella-xd>`_.
 
+.. note::
+    Starting from Ashling ver. 1.2.6 **--device** option should contain specific cpu name of the board:
+    "arc-600", "arc-700", "arc-em", "arc-hs". Using simple "arc" would cause an error.
+    
 To run with AXS101 with all four cores in a chain::
 
     $ ./ash-arc-gdb-server --device arc --arc-reg-file <ARC_REG_FILE> \
