@@ -74,9 +74,12 @@ build host (otherwise build fails, for details see https://github.com/foss-for-s
 `en_US.UTF-8` is missing the following needs to be done:
 
 * Install package with locales. In case of Debian or Debian-based Linux
-distributions it is `locales`
+distributions it is `locales`.
 
-    # sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
+* Enable & generate `en_US.UTF-8` locale
+  ```
+  # sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
+  ```
 
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
