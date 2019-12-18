@@ -59,15 +59,15 @@ On CentOS/RHEL 6.x & 7.x those can be installed with following command:
 
     # sudo yum install -y autoconf automake binutils bison byacc flex gcc \
       gcc-c++ libtool patch texinfo-tex ncurses-devel ncurses-compat-libs \
-      flex zlib-devel expat-devel git texlive-\* wget make xz rsync diffutils \
-      which
+      flex zlib-devel expat-devel git texlive-collection-latexrecommended \
+      wget make xz rsync diffutils which
 
 On Fedora & CentOS/RHEL 8.x+:
 
     # sudo dnf install -y autoconf automake binutils bison byacc flex gcc \
       gcc-c++ libtool patch texinfo-tex ncurses-devel ncurses-compat-libs \
-      flex zlib-devel expat-devel git texlive-\* wget make xz rsync diffutils \
-      which
+      flex zlib-devel expat-devel git texlive-collection-latexrecommended \
+      wget make xz rsync diffutils which
 
 For building uClibc it is required to have `en_US.UTF-8` locale installed on the
 build host (otherwise build fails, for details see https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/issues/207). In case
