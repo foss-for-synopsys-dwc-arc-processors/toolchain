@@ -77,7 +77,7 @@ if args.release_id is not None:
             ide_fformat.format(t="Download", release=args.release_id, host="win", ext="exe"),
             fformat.format(t=le, release=args.release_id, type="glibc", cpu="le_archs",
                 host="linux"),
-            fformat.format(t=le, release=args.release_id, type="glibc", cpu="be_archs",
+            fformat.format(t=be, release=args.release_id, type="glibc", cpu="be_archs",
                 host="linux"),
             ide_fformat.format(t="Download", release=args.release_id, host="macos", ext="tar.gz"))
 
