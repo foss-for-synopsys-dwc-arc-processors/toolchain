@@ -12,7 +12,7 @@ More information can be found at `Synopsys web-site
 
 To debug applications on the AXS10x software development platforms you can use
 OpenOCD. Please consult with `OpenOCD readme
-<https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2016.03/doc/README.ARC>`_
+<https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2019.09/doc/README.ARC>`_
 for instructions to download, build and install it.
 
 AXS SDP consists of a mainboard and one of the CPU cards:
@@ -21,6 +21,10 @@ AXS SDP consists of a mainboard and one of the CPU cards:
 * AXS102 uses AXC002 CPU card;
 * AXS103 uses AXC003 CPU card.
 
+For AXS103 currently two firmware releaseses are supported:
+
+* Release 1.2: contains firmware for ARC HS36 CPU and ARC dualcore HS38 CPU
+* Release 1.3: contains firmware for ARC HS47D CPU and ARC dualcore HS48 CPU
 
 Prerequisites
 -------------
@@ -140,6 +144,9 @@ For the AXS103 following numbers should appear:
 * 2.0 for the HS34
 * 3.0 for the HS38 (core 0)
 * 4.0 for the HS38 (core 1)
+* 1.0 for the HS47D
+* 3.0 for the HS48 (core 0)
+* 4.0 for the HS48 (core 1)
 
 
 Running OpenOCD
