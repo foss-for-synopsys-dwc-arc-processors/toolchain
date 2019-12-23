@@ -138,12 +138,15 @@ For the AXS102 following numbers should appear:
 * 1.0 for the HS34
 * 2.0 for the HS36.
 
-For the AXS103 following numbers should appear:
+For the AXS103 firmware ver 1.2 following numbers should appear:
 
 * 1.0 for the HS36
 * 2.0 for the HS34
 * 3.0 for the HS38 (core 0)
 * 4.0 for the HS38 (core 1)
+
+For the AXS103 firmware ver 1.3 following numbers should appear:
+
 * 1.0 for the HS47D
 * 3.0 for the HS48 (core 0)
 * 4.0 for the HS48 (core 1)
