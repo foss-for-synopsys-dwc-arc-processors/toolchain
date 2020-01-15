@@ -50,41 +50,61 @@ website](http://gcc.gnu.org/install/prerequisites.html)
 
 On Ubuntu those can be installed with following command (as root):
 
-    # apt-get install texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev texlive build-essential git wget gawk bison
+    # sudo apt-get update
+    # sudo apt-get install -y texinfo byacc flex libncurses5-dev zlib1g-dev \
+      libexpat1-dev texlive build-essential git wget gawk bison xz-utils make \
+      python3 rsync locales
 
-On CentOS 6 those can be installed with following command (as root):
-
-    # yum groupinstall "Development Tools"
-    # yum install texinfo-tex byacc flex ncurses-devel zlib-devel expat-devel \
-      git texlive-ec texlive-cm-super wget gcc-c++
-
-On CentOS 7 those can be installed with following command:
+On CentOS/RHEL 6.x & 7.x those can be installed with following command:
 
     # sudo yum install -y autoconf automake binutils bison byacc flex gcc \
-      gcc-c++ libtool patch
-    # sudo yum install -y texinfo-tex byacc flex ncurses-devel zlib-devel \
-      expat-devel git texlive-\* wget
+      gcc-c++ libtool patch texinfo-tex ncurses-devel ncurses-compat-libs \
+      flex zlib-devel expat-devel git texlive-collection-latexrecommended \
+      wget make xz rsync diffutils which
 
-On Fedora:
+On Fedora & CentOS/RHEL 8.x+:
 
     # sudo dnf install -y autoconf automake binutils bison byacc flex gcc \
-      gcc-c++ git libtool patch texinfo-tex byacc flex ncurses-devel \
-      zlib-devel expat-devel git texlive-\* wget
+      gcc-c++ libtool patch texinfo-tex ncurses-devel ncurses-compat-libs \
+      flex zlib-devel expat-devel git texlive-collection-latexrecommended \
+      wget make xz rsync diffutils which
+
+For building uClibc it is required to have `en_US.UTF-8` locale installed on the
+build host (otherwise build fails, for details see https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/issues/207). In case
+`en_US.UTF-8` is missing the following needs to be done:
+
+* Install package with locales. In case of Debian or Debian-based Linux
+distributions it is `locales`.
+
+* Enable & generate `en_US.UTF-8` locale
+  ```
+  # sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
+  ```
 
 `git` package is required only if toolchain is being built from git
 repositories. If it is built from the source tarball, then `git` is not
 required.
 
 > Note: GNU binutils requires bison version 2, it doesn't work with bison 3.
-> But glibc suports only bison >= 2.7. If you have bison 3 installed and
+> But glibc supports only bison >= 2.7. If you have bison 3 installed and
 > toolchain build fails, try removing it.
 
 It is not possible to build the Linux Glibc toolchain on CentOS 7 because glibc
 requires newer versions of Python and make than available in official
 repositories. It might be possible to install those dependencies manually or
-from 3rd party repositories, however this topic is out of scope of this
-document.
+from 3rd party repositories. One of the options is to use so-called
+"Software Collections" (also known as "SCL") which is a community effort for
+providing more recent versions of core tools in both CentOS & Redhat distributions,
+see https://www.softwarecollections.org.
+
+To get Python 3.x & GNU Make 4.2.1 installed on CentOS/RHEL 7.x
+the following commands should be executed:
+
+    # yum install -y centos-release-scl
+    # yum install -y rh-python36
+    # yum install -y devtoolset-8-make
+    # scl enable rh-python36 bash
+    # scl enable devtoolset-8 bash
 
 It has been observed that there is build failure on Ubuntu 17.10 - binutils
 compiled on that system refuses to accept valid input and that causes later
@@ -422,6 +442,13 @@ And in second console (GDB output is omitted):
     (gdb) continue
     (gdb) continue
     (gdb) quit
+
+GDB also might execute commands in a batch mode so that it could be done
+automatically:
+
+    $ arc-elf32-gdb -nx --batch -ex 'target remote :51000' -ex 'load' \
+                                -ex 'break main' -ex 'break exit' \
+                                -ex 'continue' -ex 'continue' -ex 'quit' a.out
 
 If one of the HS TCFs is used, then it is required to add `-on
 nsim_isa_ll64_option` to nSIM options, because GCC for ARC automatically

@@ -30,15 +30,10 @@ The ARC GNU IDE provides support for the following functionality:
 
 ARC GNU plugins for Eclipse have following requirements to the system:
 
-* OS: Windows 7, Windows 10, Ubuntu Linux 14.04 LTS and RedHat Enterprise Linux 6
-  Development Host Systems
-* Eclipse Oxygen (4.7) (part of Windows installer)
-* CDT version 9.3.0 (part of Windows installer)
-* Java VM version >= 1.7 is required (part of Windows installer)
-* On Linux both 32bit and 64-bit versions of Eclipse are supported, on Windows only
-  32-bit Eclipse installations are supported. Eclipse 64-bit installation is not supported,
-  so it is required to run 32-bit version of Eclipse on 64-bit Windows versions, to overcome
-  this limitation.
+* OS: Windows 10, Ubuntu Linux 16.04 LTS and CentOS 7 development host systems
+* Eclipse 2018-12 (part of Windows installer)
+* CDT version 9.6.0 (part of Windows installer)
+* Java VM version >= 1.8 is required (part of Windows installer)
 
 .. note::
     Before you begin, refer to the EM Starter Kit

@@ -12,7 +12,7 @@ More information can be found at `Synopsys web-site
 
 To debug applications on the AXS10x software development platforms you can use
 OpenOCD. Please consult with `OpenOCD readme
-<https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2016.03/doc/README.ARC>`_
+<https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2019.09/doc/README.ARC>`_
 for instructions to download, build and install it.
 
 AXS SDP consists of a mainboard and one of the CPU cards:
@@ -21,6 +21,10 @@ AXS SDP consists of a mainboard and one of the CPU cards:
 * AXS102 uses AXC002 CPU card;
 * AXS103 uses AXC003 CPU card.
 
+For AXS103 currently two firmware releaseses are supported:
+
+* Release 1.2: contains firmware for ARC HS36 CPU and ARC dualcore HS38 CPU
+* Release 1.3: contains firmware for ARC HS47D CPU and ARC dualcore HS48 CPU
 
 Prerequisites
 -------------
@@ -78,6 +82,10 @@ For example to build an application for AXS103/HS36::
    | 103 |  HS36  | -mcpu=hs38_linux                                        |
    |     +--------+---------------------------------------------------------+
    |     |  HS38  | -mcpu=hs38_linux                                        |
+   |     +--------+---------------------------------------------------------+
+   |     |  HS47  | -mcpu=hs4x_rel31                                        |
+   |     +--------+---------------------------------------------------------+
+   |     |  HS48  | -mcpu=hs4x_rel31                                        |
    +-----+--------+---------------------------------------------------------+
 
 
@@ -130,12 +138,18 @@ For the AXS102 following numbers should appear:
 * 1.0 for the HS34
 * 2.0 for the HS36.
 
-For the AXS103 following numbers should appear:
+For the AXS103 firmware ver 1.2 following numbers should appear:
 
 * 1.0 for the HS36
 * 2.0 for the HS34
 * 3.0 for the HS38 (core 0)
 * 4.0 for the HS38 (core 1)
+
+For the AXS103 firmware ver 1.3 following numbers should appear:
+
+* 1.0 for the HS47D
+* 3.0 for the HS48 (core 0)
+* 4.0 for the HS48 (core 1)
 
 
 Running OpenOCD
@@ -163,6 +177,15 @@ To run OpenOCD for the AXS103 platform with HS36::
 To run OpenOCD for the AXS103 platform with HS38x2::
 
     $ openocd -f board/snps_axs103_hs38.cfg
+    
+To run OpenOCD for the AXS103 platform with HS47D::
+
+    $ openocd -f board/snps_axs103_hs47D.cfg
+    
+To run OpenOCD for the AXS103 platform with HS48x2::
+
+    $ openocd -f board/snps_axs103_hs48.cfg
+
 
 OpenOCD will open a GDBserver connection for each CPU core on target (4 for
 AXS101, 2 for AXS102, 1 or 2 for AXS103). GDBserver for the first core listens
@@ -180,10 +203,15 @@ For AXS102 ports are:
 *  3333 - ARC HS36
 *  3334 - ARC HS34.
 
-For AXS103 HS38x2 ports are:
+For AXS103 HS38x2 or HS48x2 ports are:
 
-*  3333 - ARC HS38 core 1
-*  3334 - ARC HS38 core 0.
+*  3333 - ARC HS38 or HS48 core 1
+*  3334 - ARC HS38 or HS48 core 0.
+
+For AXS103 HS47D ports are:
+
+*  3333 - ARC HS47D
+
 
 
 Running GDB

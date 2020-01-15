@@ -222,9 +222,11 @@ proc telnet_exec {boardname program args} {
     # from the command and args that might cause us grief.
     regsub -all "\\+" "$program $pargs" "." cmdpargs
     verbose "telnet_exec: command match string is \"$cmdpargs\""
+
+    set match [string range "$cmdpargs" 0 20]
     
     expect {
-	-i $spawn_id -re "$cmdpargs" {
+	-i $spawn_id -re "$match" {
 	    verbose "telnet_exec: got command echoed back"
 	}
 	-i $spawn_id default {

@@ -47,13 +47,13 @@ if args.release_id is not None:
     be = "Big endian"
 
     args.description += """
-|                     | Linux x86_64 | Windows x86_64 | Linux ARC HS |
-| ------------------- | ------------ | -------------- | ------------ |
-| Baremetal           | {0} \ {1}    |                |              |
-| Linux/uClibc ARC700 | {4} \ {5}    |                |              |
-| Linux/uClibc ARC HS | {6} \ {7}    |                | {10}         |
-| Linux/glibc ARC HS  | {13}         |                |              |
-| IDE                 | {11}         | {12}           |              |
+|                     | Linux x86_64 | Windows x86_64 | Linux ARC HS | macOS x86_64 |
+| ------------------- | ------------ | -------------- | ------------ | ------------ |
+| Baremetal           | {0} \ {1}    |                |              | {2} \ {3}    |
+| Linux/uClibc ARC700 | {4} \ {5}    |                |              |              |
+| Linux/uClibc ARC HS | {6} \ {7}    |                | {10}         |              |
+| Linux/glibc ARC HS  | {13} \ {14}  |                |              |              |
+| IDE                 | {11}         | {12}           |              | {15}         |
     """.format(
             fformat.format(t=le, release=args.release_id, type="elf32", cpu="le", host="linux"),
             fformat.format(t=be, release=args.release_id, type="elf32", cpu="be", host="linux"),
@@ -76,7 +76,10 @@ if args.release_id is not None:
             ide_fformat.format(t="Download", release=args.release_id, host="linux", ext="tar.gz"),
             ide_fformat.format(t="Download", release=args.release_id, host="win", ext="exe"),
             fformat.format(t=le, release=args.release_id, type="glibc", cpu="le_archs",
-                host="linux"))
+                host="linux"),
+            fformat.format(t=be, release=args.release_id, type="glibc", cpu="be_archs",
+                host="linux"),
+            ide_fformat.format(t="Download", release=args.release_id, host="macos", ext="tar.gz"))
 
 if args.md5sum_file is not None:
     with open(args.md5sum_file, "r") as f:

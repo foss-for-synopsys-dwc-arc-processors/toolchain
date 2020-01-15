@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Copyright (C) 2010, 2011, 2012 Embecosm Limited
+# Copyright (C) 2017 Synopsys Inc.
+
+# Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
+# Contributor Joern Rennecke <joern.rennecke@embecosm.com>
+
+# This file is additional DejaGnu procs to support telnet based testing.
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Make sure we tell people we are being executed.
+send_user "ARC Linux test setup\n"
+
+# Do a generic ARC Linux setup first.
+search_and_load_file "library file" "arc-linux-generic.exp" ${boards_dir}
+
+# get the address of the host where qemu is running on
+set addr $env(ARC_TEST_ADDR_UCLIBC)
+
+# Set up remote target generic login info. The hostname is specified
+# generically via the environment variable ARC_TEST_ADDR_UCLIBC.
+set_board_info hostname $addr
+set_board_info username root
+set_board_info password ""
+
+# Set up telnet connection details.
+set_board_info shell_prompt          "\[^\r\n\]*# "
+set_board_info telnet_username       "root"
+set_board_info telnet_password       ""
+set_board_info telnet_exec_timeout   120
+set_board_info netport               $addr:5556
+
+# Set up FTP connection details.
+set_board_info ftp_username          root
+set_board_info ftp_password          "\'\'"
+set_board_info ftp_download_timeout  10
+set_board_info ftp_upload_timeout    10
+set_board_info ftp_port              5555
+
+# This simulator isn't slow.
+set_board_info slow_simulator 0
+
+if { $tool == "gdb" } {
+    # IP address of target
+    set_board_info sockethost "$env(ARC_TEST_ADDR_UCLIBC):"
+}
+
+# vim: noexpandtab sts=4 ts=8:
