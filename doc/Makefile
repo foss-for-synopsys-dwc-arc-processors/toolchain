@@ -46,6 +46,7 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 	@echo "  coverage   to run coverage check of the documentation (if enabled)"
+	@echo "  pdf        to make pdf files"
 
 .PHONY: clean
 clean:
@@ -142,6 +143,11 @@ latexpdf:
 	cp -a newfloat.sty $(BUILDDIR)/latex
 	$(MAKE) -C $(BUILDDIR)/latex all-pdf
 	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
+
+.PHONY: pdf
+pdf:
+	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) $(BUILDDIR)/pdf
+	@echo "Pdf build finished; the PDF files are in $(BUILDDIR)/pdf."
 
 .PHONY: latexpdfja
 latexpdfja:
