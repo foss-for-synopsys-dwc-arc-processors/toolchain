@@ -514,7 +514,7 @@ else
     # Static options are same as when gdbserver is configured by the top-level
     # configure script.
     # See commment for native GDB about build-with-cxx.
-    config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdb/gdbserver
+    config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdbserver
     LDFLAGS="-static-libstdc++ -static-libgcc" \
 	configure_for_arc "$config_path" $triplet --disable-build-with-cxx
     make_target building
