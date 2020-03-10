@@ -1,0 +1,21 @@
+styles:
+    normal:
+        fontSize: 10
+
+    bodytext:
+        alignment: TA_LEFT
+        hyphenation: false
+
+    titleslideinfo:
+        parent: normal
+        alignment: TA_CENTER
+
+    literal:
+        textColor: #000000
+
+    code:
+        parent: literal
+        fontSize: 10
+        leftIndent: 0
+        spaceBefore: 8
+        spaceAfter: 8

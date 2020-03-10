@@ -313,7 +313,7 @@ pdf_documents = [
 ]
 
 # A comma-separated list of custom stylesheets. Example:
-pdf_stylesheets = ['sphinx','a4','freetype-serif']
+pdf_stylesheets = ['synopsys.style']
 
 # A list of folders to search for stylesheets. Example:
 pdf_style_path = ['.', '_styles']
@@ -344,13 +344,13 @@ pdf_style_path = ['.', '_styles']
 
 # Insert footnotes where they are defined instead of
 # at the end.
-#pdf_inline_footnotes = True
+pdf_inline_footnotes = True
 
 # verbosity level. 0 1 or 2
 #pdf_verbosity = 0
 
 # If false, no index is generated.
-#pdf_use_index = True
+pdf_use_index = True
 
 # If false, no modindex is generated.
 #pdf_use_modindex = True
@@ -385,7 +385,7 @@ pdf_style_path = ['.', '_styles']
 pdf_toc_depth = 2
 
 # Add section number to section references
-pdf_use_numbered_links = False
+pdf_use_numbered_links = True
 
 # Background images fitting mode
 pdf_fit_background_mode = 'scale'
