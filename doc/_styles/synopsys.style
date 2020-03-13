@@ -4,7 +4,6 @@ styles:
 
     bodytext:
         alignment: TA_LEFT
-        hyphenation: false
 
     titleslideinfo:
         parent: normal
@@ -12,6 +11,7 @@ styles:
 
     literal:
         textColor: #000000
+        hyphenation: false
 
     code:
         parent: literal
@@ -19,3 +19,30 @@ styles:
         leftIndent: 0
         spaceBefore: 8
         spaceAfter: 8
+
+    envvar:
+        parent:literal
+
+    file:
+        parent: normal
+
+    option:
+        parent: normal
+
+    desc:
+        parent: normal
+
+    descname:
+        parent: normal
+
+    descclassname:
+        parent: normal
+
+    std:
+        parent: normal
+
+    xref:
+        parent: normal
+
+    doc:
+        parent: normal
