@@ -46,3 +46,43 @@ styles:
 
     doc:
         parent: normal
+
+    heading1:
+      parent: heading
+      fontName: stdBold
+      fontSize: 175%
+
+    heading2:
+      parent: heading
+      fontName: stdBold
+      fontSize: 150%
+
+    heading3:
+      parent: heading
+      fontName: stdBold
+      fontSize: 125%
+
+    heading4:
+      parent: heading
+      fontName: stdBold
+
+    title:
+      parent: heading
+      fontName: stdBold
+      fontSize: 200%
+      alignment: TA_LEFT
+      keepWithNext: false
+      spaceAfter: 10
+
+    author:
+      parent: normal
+      alignment: TA_RIGHT
+
+    date:
+      parent: normal
+      alignment: TA_RIGHT
+
+    titleimage:
+      parent: image
+      alignment: TA_LEFT
+      scale: 60%
