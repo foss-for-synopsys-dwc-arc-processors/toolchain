@@ -331,7 +331,7 @@ pdf_style_path = ['.', '_styles']
 
 # Mode for literal blocks wider than the frame. Can be
 # overflow, shrink or truncate
-#pdf_fit_mode = "shrink"
+pdf_fit_mode = "truncate"
 
 # Section level that forces a break page.
 # For example: 1 means top-level sections start in a new page
@@ -356,10 +356,10 @@ pdf_use_index = True
 #pdf_use_modindex = True
 
 # If false, no coverpage is generated.
-#pdf_use_coverpage = True
+pdf_use_coverpage = True
 
 # Name of the cover page template to use
-#pdf_cover_template = 'sphinxcover.tmpl'
+pdf_cover_template = '_templates/synopsys.tmpl'
 
 # Documents to append as an appendix to all manuals.
 #pdf_appendices = []
@@ -392,3 +392,4 @@ pdf_fit_background_mode = 'scale'
 
 # Repeat table header on tables that cross a page boundary?
 pdf_repeat_table_rows = True
+
