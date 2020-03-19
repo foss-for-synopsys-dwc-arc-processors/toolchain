@@ -107,7 +107,7 @@ if [file exists $nsim_version_path] {
     set nsim_version_fid [open $nsim_version_path r]
     set nsim_version_text [read $nsim_version_fid]
     close $nsim_version_fid
-    regexp "Version : (\\d+)\.(\\d+)" $nsim_version_text -> \
+    regexp "Version\\s+: (\\d+)\.(\\d+)" $nsim_version_text -> \
 	nsim_version_year nsim_version_month
     if { $nsim_version_year > 2015 || \
 	($nsim_version_year == 2015 && $nsim_version_month > 6) } {
