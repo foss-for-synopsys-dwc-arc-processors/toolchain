@@ -309,7 +309,7 @@ texinfo_documents = [
 # regardless of the global pdf_compressed setting.
 
 pdf_documents = [
-    ('index', u'GNU_Toolchain_for_ARC_Documentation', u'GNU Toolchain for ARC Documentation', u'Synopsys'),
+    ('index', u'GNU_Toolchain_for_ARC', u'GNU Toolchain for ARC Documentation', u'Synopsys'),
 ]
 
 # A comma-separated list of custom stylesheets. Example:
