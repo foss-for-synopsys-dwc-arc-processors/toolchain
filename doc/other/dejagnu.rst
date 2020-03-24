@@ -72,7 +72,7 @@ Some actions are specific to particular GNU projects:
 
 * GDB requires::
 
-    $ testsuite=$/home/user/arc_gnu/gdb/gdb/testsuite
+    $ testsuite=$/home/user/arc_gnu/gdb/testsuite
     $ mkdir $(ls -1d $testsuite/gdb.* | grep -Po '(?<=\/)[^\/]+$')
 
 Also arc-nsim.exp board will require an environment variable ``ARC_NSIM_PROPS``
