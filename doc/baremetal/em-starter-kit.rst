@@ -161,7 +161,6 @@ Connecting GDB to OpenOCD
 Write a sample application:
 
 .. code-block:: c
-   :linenos:
 
     /* simple.c */
     int main(void) {
