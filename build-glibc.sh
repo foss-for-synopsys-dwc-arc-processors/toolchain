@@ -505,7 +505,8 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     # See comment for stripprog_opt for an explanation why this is needed.
     # Strip will strip complete symbol table, not just debug symbols.
-    make_target_ordered installing install-strip-gdb DESTDIR=$SYSROOTDIR \
+    make_target_ordered installing install-strip-gdb \
+    install-strip-gdbserver DESTDIR=$SYSROOTDIR \
 	STRIPPROG=${triplet}-strip
 else
     # If native GDB has been disabled, then simple gdbserver still will be
