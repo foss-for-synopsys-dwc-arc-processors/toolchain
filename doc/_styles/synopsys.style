@@ -1,3 +1,10 @@
+fontsAlias:
+    stdBold: Times-Bold
+    stdBoldItalic: Times-BoldItalic
+    stdFont: Times-Roman
+    stdItalic: Times-Italic
+    stdHeader: Helvetica-Bold
+
 styles:
     normal:
         fontSize: 10
@@ -49,26 +56,26 @@ styles:
 
     heading1:
       parent: heading
-      fontName: stdBold
+      fontName: stdHeader
       fontSize: 175%
 
     heading2:
       parent: heading
-      fontName: stdBold
+      fontName: stdHeader
       fontSize: 150%
 
     heading3:
       parent: heading
-      fontName: stdBold
+      fontName: stdHeader
       fontSize: 125%
 
     heading4:
       parent: heading
-      fontName: stdBold
+      fontName: stdHeader
 
     title:
       parent: heading
-      fontName: stdBold
+      fontName: stdHeader
       fontSize: 200%
       alignment: TA_LEFT
       keepWithNext: false
