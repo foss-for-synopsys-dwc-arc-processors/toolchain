@@ -22,7 +22,7 @@ styles:
 
     code:
         parent: literal
-        fontSize: 10
+        fontSize: 8
         leftIndent: 0
         spaceBefore: 8
         spaceAfter: 8
