@@ -313,7 +313,7 @@ pdf_documents = [
 ]
 
 # A comma-separated list of custom stylesheets. Example:
-pdf_stylesheets = ['sphinx','a4','freetype-serif']
+pdf_stylesheets = ['synopsys.style']
 
 # A list of folders to search for stylesheets. Example:
 pdf_style_path = ['.', '_styles']
@@ -331,7 +331,7 @@ pdf_style_path = ['.', '_styles']
 
 # Mode for literal blocks wider than the frame. Can be
 # overflow, shrink or truncate
-#pdf_fit_mode = "shrink"
+pdf_fit_mode = "truncate"
 
 # Section level that forces a break page.
 # For example: 1 means top-level sections start in a new page
@@ -344,22 +344,22 @@ pdf_style_path = ['.', '_styles']
 
 # Insert footnotes where they are defined instead of
 # at the end.
-#pdf_inline_footnotes = True
+pdf_inline_footnotes = True
 
 # verbosity level. 0 1 or 2
 #pdf_verbosity = 0
 
 # If false, no index is generated.
-#pdf_use_index = True
+pdf_use_index = True
 
 # If false, no modindex is generated.
 #pdf_use_modindex = True
 
 # If false, no coverpage is generated.
-#pdf_use_coverpage = True
+pdf_use_coverpage = True
 
 # Name of the cover page template to use
-#pdf_cover_template = 'sphinxcover.tmpl'
+pdf_cover_template = '_templates/synopsys.tmpl'
 
 # Documents to append as an appendix to all manuals.
 #pdf_appendices = []
@@ -385,10 +385,11 @@ pdf_style_path = ['.', '_styles']
 pdf_toc_depth = 2
 
 # Add section number to section references
-pdf_use_numbered_links = False
+pdf_use_numbered_links = True
 
 # Background images fitting mode
 pdf_fit_background_mode = 'scale'
 
 # Repeat table header on tables that cross a page boundary?
 pdf_repeat_table_rows = True
+

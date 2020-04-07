@@ -79,7 +79,6 @@ It also specifies parameters of heap and stack sections.
 For example, here is a sample ``memory.x`` map for ``hs34.tcf`` template:
 
 .. code-block:: text
-   :linenos:
 
    MEMORY {
        ICCM0    : ORIGIN = 0x00000000, LENGTH = 0x00004000

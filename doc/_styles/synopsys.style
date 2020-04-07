@@ -1,0 +1,95 @@
+fontsAlias:
+    stdBold: Times-Bold
+    stdBoldItalic: Times-BoldItalic
+    stdFont: Times-Roman
+    stdItalic: Times-Italic
+    stdHeader: Helvetica-Bold
+
+styles:
+    normal:
+        fontSize: 10
+
+    bodytext:
+        alignment: TA_LEFT
+
+    titleslideinfo:
+        parent: normal
+        alignment: TA_CENTER
+
+    literal:
+        textColor: #000000
+        hyphenation: false
+
+    code:
+        parent: literal
+        fontSize: 8
+        leftIndent: 0
+        spaceBefore: 8
+        spaceAfter: 8
+
+    envvar:
+        parent:literal
+
+    file:
+        parent: normal
+
+    option:
+        parent: normal
+
+    desc:
+        parent: normal
+
+    descname:
+        parent: normal
+
+    descclassname:
+        parent: normal
+
+    std:
+        parent: normal
+
+    xref:
+        parent: normal
+
+    doc:
+        parent: normal
+
+    heading1:
+      parent: heading
+      fontName: stdHeader
+      fontSize: 175%
+
+    heading2:
+      parent: heading
+      fontName: stdHeader
+      fontSize: 150%
+
+    heading3:
+      parent: heading
+      fontName: stdHeader
+      fontSize: 125%
+
+    heading4:
+      parent: heading
+      fontName: stdHeader
+
+    title:
+      parent: heading
+      fontName: stdHeader
+      fontSize: 200%
+      alignment: TA_LEFT
+      keepWithNext: false
+      spaceAfter: 10
+
+    author:
+      parent: normal
+      alignment: TA_RIGHT
+
+    date:
+      parent: normal
+      alignment: TA_RIGHT
+
+    titleimage:
+      parent: image
+      alignment: TA_LEFT
+      scale: 60%

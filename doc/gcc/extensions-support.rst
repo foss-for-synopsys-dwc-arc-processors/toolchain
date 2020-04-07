@@ -2,7 +2,6 @@ GCC's support for ARC custom extensions
 =======================================
 
 .. highlight:: c
-   :linenothreshold: 5
 
 The ARC extension instructions are supported by GNU toolchain by the GNU
 assembler. These extension instructions are not macros; the assembler creates

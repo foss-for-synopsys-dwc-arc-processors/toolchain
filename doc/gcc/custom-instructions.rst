@@ -91,7 +91,6 @@ Example 1
 .. Using nasm here instead of asm, because asm doesn't recognize OR symbol.
 
 .. code-block:: nasm
-   :linenos:
 
    .extInstruction insn1, 0x07, 0x2d, SUFFIX_NONE, SYNTAX_3OP|OP1_MUST_BE_IMM
 
@@ -99,7 +98,6 @@ Example 1
 will allow us the following syntax:
 
 .. code-block:: asm
-   :linenos:
 
    insn1  0,b,c
    insn1  0,b,u6
@@ -111,7 +109,6 @@ Example 2
 ^^^^^^^^^
 
 .. code-block:: nasm
-   :linenos:
 
    .extInstruction insn2, 0x07, 0x2d, SUFFIX_NONE, SYNTAX_2OP|OP1_IMM_IMPLIED
 
@@ -119,7 +116,6 @@ Example 2
 will allow us the following syntax:
 
 .. code-block:: asm
-   :linenos:
 
    insn2  b,c
    insn2  b,u6
@@ -135,7 +131,6 @@ Example 3
 ^^^^^^^^^
 
 .. code-block:: asm
-   :linenos:
 
    .extInstruction insn1, 7, 0x21, SUFFIX_NONE, SYNTAX_3OP
    .extInstruction insn2, 7, 0x21, SUFFIX_NONE, SYNTAX_2OP
@@ -151,7 +146,6 @@ Example 3
 will result in the following encodings:
 
 .. code-block:: objdump
-   :linenos:
 
    Disassembly of section .text:
 

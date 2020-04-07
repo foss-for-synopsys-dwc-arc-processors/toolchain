@@ -1,0 +1,43 @@
+.. role:: normal
+
+.. image:: arc.png
+    :scale: 50%
+    :align: left
+
+{% if title: %}
+
+.. cssclass:: title
+
+{{title}}
+
+{% endif %}
+
+{% if subtitle: %}
+
+.. cssclass:: subtitle
+
+{{subtitle}}
+
+{% endif %}
+
+.. raw:: pdf
+
+   Spacer 0 15cm
+
+{% for author in authors: %}
+
+.. cssclass:: author
+
+:normal:`{{author}}`
+
+{% endfor %}
+
+.. raw:: pdf
+
+.. cssclass:: author
+
+:normal:`{{date}}`
+
+.. raw:: pdf
+
+   OddPageBreak
