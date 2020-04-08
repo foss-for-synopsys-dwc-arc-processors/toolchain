@@ -1,3 +1,52 @@
+Major Changes in 2020.03 Release
+================================
+
+Toolchain and IDE Components Versions
+-------------------------------------
+
+* Binutils 2.34 with ARC patches
+* GCC 9.3 with ARC patches
+* GDB 10-prerelease with ARC patches
+* newlib 3.2.0 with ARC patches
+* uClibc-ng v1.0.31
+* glibc 2.30 with ARC patches
+* Eclipse 2018-12 4.10.0 with CDT 9.6.0
+* OpenOCD 0.9+ upstream commit 30203b3d8b, with ARC support.
+
+This release of GNU toolchain and IDE is supported by CGEN IPlib (TCF generator) version 1.0.53 and later.
+
+New Features and Enhancements
+-----------------------------
+
+* Binary distribution
+	* Supported host operating systems: Windows 10 64-bit, Ubuntu 16.04.x, 18.04.x, CentOS/RHEL 7.x
+	* No longer compatible with CentOS/RHEL 6.x due to GDB 8.3 requirement for C++11 support in the compiler.
+          Still it's perfectly possible to build Elf32 & uClibc toolchains without GDB on CentOS/RHEL 6.x.
+
+* Toolchain Build Scripts
+	* Documentation update
+
+* GCC
+	* Update to GCC 9.3, see upstream release notes for more details: https://gcc.gnu.org/pipermail/gcc/2020-March/000037.html
+	* Refurbished interrupt handling code
+	* Use of GP & FP registers as general-purpose registers
+	* Bug fixes
+
+* GDB
+	* Binutils & GDB now use the same code base. Though for simplisity & compatibility of build-system we still keep separate branches for each component.
+	* GDB code is based on what will become v10.0.
+
+* Binutils
+	* Updated to Binutils 2.34, see upstream release notes for more details: https://lists.gnu.org/archive/html/info-gnu/2020-02/msg00000.html
+	* Bug fixes
+
+* glibc
+	* No changes since 2019.09 release
+
+* Eclipse plugins
+	* Bug fixes
+
+
 Major Changes in 2019.09 Release
 ================================
 
@@ -41,6 +90,7 @@ New Features and Enhancements
 	* Updated to upstream 2.30, see upstream release notes for more details:  https://sourceware.org/ml/libc-alpha/2019-08/msg00029.html
 	* ARC patches submitted for upstream submission as of Jan 2019
 	* MMU page size gets detected automatically in run-time via getpagesize()
+	* Added hardware floating point support
 	* Enabled big-endian ARC support
 
 * Eclipse plugins
