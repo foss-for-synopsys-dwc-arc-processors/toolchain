@@ -12,8 +12,6 @@ Branches in this repository are:
   candidates. Head of this branch is either a latest stable release or latest
   release candidate for the upcoming release
 * `arc-dev` is the development branch for the current toolchain release
-* `arc-4.8-dev` is the development branch for the 4.8 toolchain release
-* `arc-4.4-dev` is the development branch for the 4.4 toolchain release
 
 While the top of *development* branches should build and run reliably, there
 is no guarantee of this. Users who encountered an error are welcomed to create
@@ -28,7 +26,7 @@ components to versions corresponding to the toolchain branch. Build script from
 development branch of toolchain repository will by default check out latest
 development branches of components. Build script from release and staging
 branches will check out components to the corresponding git tag. For example
-build script for 2015.06 release will checkout out components to arc-2015.06
+build script for 2020.03 release will checkout out components to arc-2020.03-release
 tag.
 
 
@@ -237,10 +235,10 @@ If current working directory is not a "toolchain" directory, then change to it:
     $ cd toolchain
 
 This repository can be checked out to a specific GNU Toolchain for ARC release
-by specifying a particular release tag, for example for 2016.03 release that
+by specifying a particular release tag, for example for 2020.03 release that
 would be:
 
-    $ git checkout arc-2016.03
+    $ git checkout arc-2020.03-release
 
 
 Building the Toolchain
@@ -282,9 +280,9 @@ The most important options of `build-all.sh` are:
    chains. Combined with `--no-multilib` this option allows to build GNU
    toolhain that supports only one specific core. Valid values depend on what
    is available in GCC As of version 2016.03 values available in ARC GCC are:
-   em, arcem, em4, em4_dmips, em4_fpus, em4_fpuda, quarkse, hs, archs, hs34,
-   hs38, hs38_linux, arc600, arc600_norm, arc600_mul64, arc600_mul32x16,
-   arc601, arc601_norm, arc601_mul64, arc601_mul32x16, arc700. Note that only
+   `em`, `arcem`, `em4`, `em4_dmips`, `em4_fpus`, `em4_fpuda`, `quarkse`, `hs`, `archs`, `hs34`,
+   `hs38`, `hs38_linux`, `arc600`, `arc600_norm`, `arc600_mul64`, `arc600_mul32x16`,
+   `arc601`, `arc601_norm`, `arc601_mul64`, `arc601_mul32x16`, `arc700`. Note that only
    ARC 700 and ARC HS can be selected as a default core for Linux toolchain.
  * `--host <triplet>` - option to set host triplet of toolchain. That allows to
    do Canadian cross-compilation, where toolchain for ARC processors
