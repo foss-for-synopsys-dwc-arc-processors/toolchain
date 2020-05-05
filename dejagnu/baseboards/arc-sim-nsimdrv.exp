@@ -164,6 +164,11 @@ if { [check_target_arc700] } {
 	-p nsim_isa_family=av2hs \
 	-p nsim_isa_core=3 \
 	-on nsim_isa_sat
+    # Assume the SQRT is defined when we use DSP extensions
+    if { [check_target_arc "__ARC_DSP__"] == 1 } {
+	lappend nsim_flags \
+	    -p nsim_isa_dsp_divsqrt_option=2
+    }
 } elseif { [check_target_arcem] } {
     lappend nsim_flags \
 	-p nsim_isa_family=av2em \
@@ -217,6 +222,7 @@ set nsim_gcc_mapping {
     "__ARC_MUL32BY16__"		1	nsim_isa_mul32x16=1
     "__ARC_NORM__"		0	nsim_isa_bitscan_option=0
     "__ARC_RF16__"		1	nsim_isa_rgf_num_regs=16
+    "__ARC_DSP__"               1       nsim_isa_dsp_option=3
 }
 
 foreach {gcc_define set_if_defined nsim_prop} $nsim_gcc_mapping {
