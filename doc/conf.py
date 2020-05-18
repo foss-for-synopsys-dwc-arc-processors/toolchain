@@ -382,7 +382,7 @@ pdf_cover_template = '_templates/synopsys.tmpl'
 #pdf_use_toc = True
 
 # How many levels deep should the table of contents be?
-pdf_toc_depth = 3
+pdf_toc_depth = 2
 
 # Add section number to section references
 pdf_use_numbered_links = True
