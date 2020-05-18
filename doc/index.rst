@@ -3,25 +3,43 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to GNU Toolchain for ARC documentation!
-===============================================
+.. only:: html
 
-.. toctree::
-   :maxdepth: 2
+   Welcome to GNU Toolchain for ARC documentation!
+   ===============================================
 
-   baremetal/index
-   linux/index
-   other/index
-   ide/index
-   gcc/index
-   maintainer/index
-   faq
-   man-pages
+   .. toctree::
+      :maxdepth: 2
 
+      baremetal/index
+      linux/index
+      other/index
+      ide/index
+      gcc/index
+      maintainer/index
+      faq
+      man-pages
 
-Indices and tables
-==================
+   Indices and tables
+   ==================
 
-* :ref:`genindex`
-* :ref:`search`
+   * :ref:`genindex`
+   * :ref:`search`
+
+.. only:: pdf
+
+   .. toctree::
+      :maxdepth: 2
+
+      baremetal/index
+      linux/index
+      other/index
+      ide/index
+      gcc/index
+      maintainer/index
+      faq
+      man-pages
+
+   * :ref:`genindex`
+   * :ref:`search`
 
