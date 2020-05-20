@@ -35,7 +35,7 @@ CPU option
 CPU option for ARC 600 and ARC 700 has only one value, but for ARC EM there
 are several possible values: ``arcem``, ``em``, ``em4``, ``em4_dmips``, ``em4_fpus``
 and ``em4_fpuda``. Possible values for ARC HS CPU are ``archs``, ``hs``, ``hs34``,
-``hs38`` and ``hs38_linux``. For each of these values there are precompiled standard
+``hs38``, ``hs38_linux``, ``hs4x`` and ``hs4xd``. For each of these values there are precompiled standard
 libraries that use some other target options. For example, if you choose ``hs34``
 as you CPU, standard library that uses atomic functions and multiply
 option "mpy" will be used. Values of these options are set in IDE when CPU is
@@ -72,6 +72,8 @@ Here are the options that are required for each of CPU values:
    hs34       mpy        none                       \-             \-                \+
    hs38       plus_qmacw none                       \+             \+                \+
    hs38_linux plus_qmacw DP FPU with all extensions \+             \+                \+
+   hs4x       plus_qmacw none                       \+             \+                \+
+   hs4xd      plus_qmacw none                       \+             \+                \+
    ========== ========== ========================== ============== ================= ======
 
 .. note::
