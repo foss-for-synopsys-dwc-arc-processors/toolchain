@@ -25,7 +25,7 @@ From MWDT to GCC
 
    option-matrix.rst
    apex.rst
-   builtins.rst
+   intrinsics.rst
 
 Improving GCC output
 --------------------
