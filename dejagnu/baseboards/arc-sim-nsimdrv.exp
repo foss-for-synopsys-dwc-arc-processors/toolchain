@@ -117,7 +117,12 @@ if [ string match arceb-* $target_triplet ] {
 }
 
 # Select processor family. Also set nsim_isa_sat, which is mandatory for GCC.
-if { [check_target_arc700] } {
+if { [check_target_arc64] } {
+    lappend nsim_flags \
+	-prop=nsim_isa_family=arc64 \
+	-p nsim_isa_div_rem_option=2 \
+	-p nsim_isa_mpy_option=3
+} elseif { [check_target_arc700] } {
     # GCC requires multiplier for ARC 700.
     lappend nsim_flags \
 	-p nsim_isa_family=a700 \

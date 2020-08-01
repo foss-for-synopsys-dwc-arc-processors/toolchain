@@ -86,6 +86,11 @@ proc compile_quarkse_em_nsim_apex { } {
     }
 }
 
+# Return 1 if we compile for ARC64
+proc check_target_arc64 { } {
+    return [check_target_arc "__ARC64__"]
+}
+
 # Return 1 if we compile for ARCv2 HS
 proc check_target_archs { } {
     return [check_target_arc "__ARCHS__"]
