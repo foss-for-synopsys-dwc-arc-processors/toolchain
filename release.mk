@@ -213,6 +213,14 @@ define git_clone
     $(call git_clone_url,$(GIT_URL_BASE)/$1.git,$2)
 endef
 
+# Copy prebuilt toolchain into workspace
+# $1 - name of source directory in directory with prebuilt toolchains
+# $2 - name of destination directory to save
+define copy_prebuilt
+	$(CP) --chmod=u+w --ignore-existing $(PREBUILT_TOOLCHAINS_DIR)/$1/ $O/$2/
+	chmod u+w $O/$2
+endef
+
 #
 # Build flags common to all toolchains
 #
@@ -545,6 +553,7 @@ $(PDF_DOC_FILE):
 # $1 - destination directory.
 ifeq ($(ENABLE_PDF_DOCS),y)
 define copy_pdf_doc_file
+	mkdir -p $1/share/doc/
 	$(CP) $(PDF_DOC_FILE) $1/share/doc/
 endef
 else
@@ -553,17 +562,12 @@ endef
 endif
 
 $O/.stamp_elf_le_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFLE_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --no-uclibc
+	$(call copy_prebuilt,arc-multilib-elf32,$(TOOLS_ELFLE_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_HOST_DIR))
 	touch $@
 
 $O/.stamp_elf_be_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_ELFBE_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --big-endian \
-	    --no-uclibc
+	$(call copy_prebuilt,arc-arc700-linux-uclibc,$(TOOLS_ELFBE_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_HOST_DIR))
 	touch $@
 
@@ -576,72 +580,31 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 	touch $@
 
 $O/.stamp_uclibc_le_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_LE_700_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --cpu arc700 \
-	    --no-elf32
-	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_700_HOST_DIR))
+	$(call copy_prebuilt,arc-arc700-linux-uclibc,$(TOOLS_UCLIBC_LE_700_HOST_DIR))
 	touch $@
 
-# Toolchain built with -mcpu=hs38_linux. This toolchain is never deistributed
-# itself, instead it's sysroot is copied into standard hs38 toolchain.
-$O/.stamp_uclibc_le_hs38fpu_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_LE_HS38FPU_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --cpu hs38_linux \
-	    --no-elf32
-	touch $@
-
-$O/.stamp_uclibc_le_hs_built: $O/.stamp_uclibc_le_700_built $O/.stamp_uclibc_le_hs38fpu_built \
-    $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --cpu hs38 \
-	    --no-elf32
-	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_LE_700_HOST_DIR)/arc-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)/arc-snps-linux-uclibc/sysroot-arc700
-	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_LE_HS38FPU_HOST_DIR)/arc-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)/arc-snps-linux-uclibc/sysroot-hs38_linux
+$O/.stamp_uclibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arc-archs-linux-uclibc,$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_uclibc_be_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_BE_700_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --big-endian \
-	    --cpu arc700 \
-	    --no-elf32
+	$(call copy_prebuilt,arceb-archs-linux-uclibc,$(TOOLS_UCLIBC_BE_700_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_BE_700_HOST_DIR))
 	touch $@
 
-$O/.stamp_uclibc_be_hs_built: $O/.stamp_uclibc_be_700_built $(TOOLS_ALL_DEPS-y) \
-	| $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --big-endian \
-	    --cpu hs38 \
-	    --no-elf32
-	$(LOCAL_CP) $O/$(TOOLS_UCLIBC_BE_700_HOST_DIR)/arceb-snps-linux-uclibc/sysroot \
-	    $O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR)/arceb-snps-linux-uclibc/sysroot-arc700
+$O/.stamp_uclibc_be_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arceb-archs-linux-uclibc,$(TOOLS_UCLIBC_BE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_glibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_GLIBC_LE_HS_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --cpu hs38 \
-	    --no-uclibc --glibc \
-	    --no-elf32
+	$(call copy_prebuilt,arc-archs-linux-gnu,$(TOOLS_GLIBC_LE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_LE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_glibc_be_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	./build-all.sh $(BUILDALLFLAGS) --install-dir $O/$(TOOLS_GLIBC_BE_HS_HOST_DIR) \
-	    --release-name "$(RELEASE)" \
-	    --big-endian \
-	    --cpu hs38 \
-	    --no-uclibc --glibc \
-	    --no-elf32
+	$(call copy_prebuilt,arceb-archs-linux-gnu,$(TOOLS_GLIBC_BE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_BE_HS_HOST_DIR))
 	touch $@
 
@@ -691,28 +654,13 @@ define copy_mingw_dlls
 endef
 endif
 
-$O/.stamp_elf_le_windows_built: $O/.stamp_elf_le_built $(TOOLS_ALL_DEPS-y) \
-	| $(TOOLS_ALL_ORDER_DEPS-y)
-	PATH=$(shell readlink -e $O/$(TOOLS_ELFLE_HOST_DIR)/bin):$$PATH \
-	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFLE_WIN_DIR) --no-uclibc \
-	     --release-name "$(RELEASE)" \
-	     --host $(WINDOWS_TRIPLET) --no-system-expat \
-	     --no-elf32-gcc-stage1
-	# $(call copy_mingw_dlls,$O/$(TOOLS_ELFLE_WIN_DIR),arc-elf32)
+$O/.stamp_elf_le_windows_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arc-elf32-win,$(TOOLS_ELFLE_WIN_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_WIN_DIR))
 	touch $@
 
-$O/.stamp_elf_be_windows_built: $O/.stamp_elf_be_built $(TOOLS_ALL_DEPS-y) \
-	| $(TOOLS_ALL_ORDER_DEPS-y)
-	# Install toolchain in the same dir as little endian
-	PATH=$(shell readlink -e $O/$(TOOLS_ELFBE_HOST_DIR))/bin:$$PATH \
-	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --install-dir $O/$(TOOLS_ELFBE_WIN_DIR) --no-uclibc --big-endian \
-	     --release-name "$(RELEASE)" \
-	     --host $(WINDOWS_TRIPLET) --no-system-expat \
-	     --no-elf32-gcc-stage1
-	# $(call copy_mingw_dlls,$O/$(TOOLS_ELFBE_WIN_DIR),arceb-elf32)
+$O/.stamp_elf_be_windows_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arceb-elf32-win,$(TOOLS_ELFBE_WIN_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_WIN_DIR))
 	touch $@
 
