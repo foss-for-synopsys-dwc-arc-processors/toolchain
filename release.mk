@@ -275,7 +275,7 @@ TOOLS_GLIBC_LE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_$(HOST)
 TOOLS_GLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_be_archs_$(HOST)_install
 
 # Toolchain: native linux toolchain
-TOOLS_UCLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
+TOOLS_GLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_native_install
 
 # Toolchain PDF User Guide.
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/pdf/GNU_Toolchain_for_ARC.pdf)
@@ -341,7 +341,7 @@ UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_TGZ)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
-UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_UCLIBC_LE_HS_NATIVE_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_GLIBC_LE_HS_NATIVE_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_WIN_EXE)
 
 # List of files that will be deployed internally. Is a superset of "upload"
@@ -374,7 +374,7 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_BE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_INSTALL)
-DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_UCLIBC_LE_HS_NATIVE_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_GLIBC_LE_HS_NATIVE_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_WIN_DIR)
@@ -416,7 +416,7 @@ BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
 endif
 BUILD_DEPS-$(ENABLE_IDE_MACOS) += $O/.stamp_ide_macos_tar
 BUILD_DEPS-$(ENABLE_IDE_PLUGINS_BUILD) += $O/$(IDE_PLUGINS_ZIP)
-BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_uclibc_le_hs_native_tarball
+BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_glibc_le_hs_native_tarball
 BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_HOST_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR).zip
@@ -736,22 +736,13 @@ linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 #
 # Native toolchain build
 #
-$O/.stamp_uclibc_le_hs_native_built: $O/.stamp_uclibc_le_hs_built $(TOOLS_ALL_DEPS-y) \
-	| $(TOOLS_ALL_ORDER_DEPS-y)
-	PATH=$(shell readlink -e $O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR)/bin):$$PATH \
-	     ./build-all.sh $(BUILDALLFLAGS) \
-	     --no-elf32 \
-	     --cpu hs38 \
-	     --release-name "$(RELEASE)" \
-	     --host arc-snps-linux-uclibc \
-	     --native \
-	     --no-system-expat \
-	     --install-dir $O/$(TOOLS_UCLIBC_LE_HS_NATIVE_DIR)
-	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_HS_NATIVE_DIR))
+$O/.stamp_glibc_le_hs_native_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arceb-archs-linux-gnu,$(TOOLS_GLIBC_LE_HS_NATIVE_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_LE_HS_NATIVE_DIR))
 	touch $@
 
-$O/.stamp_uclibc_le_hs_native_tarball: $O/.stamp_uclibc_le_hs_native_built
-	$(call create_tar,$(TOOLS_UCLIBC_LE_HS_NATIVE_DIR))
+$O/.stamp_glibc_le_hs_native_tarball: $O/.stamp_glibc_le_hs_native_built
+	$(call create_tar,$(TOOLS_GLIBC_LE_HS_NATIVE_DIR))
 	touch $@
 
 #
