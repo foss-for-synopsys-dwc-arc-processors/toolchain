@@ -38,18 +38,27 @@ cp toolchain/windows-installer/arcshell.bat tmp/common
 
 echo "Preparing core utils and MSYS runtime files..."
 mkdir tmp/coreutils
-tar -C tmp/coreutils -xaf packages/coreutils/coreutils-*-msys-*-bin.tar.lzma
-tar -C tmp/coreutils -xaf packages/coreutils/libiconv-*-msys-*-dll*.tar.lzma
-tar -C tmp/coreutils -xaf packages/coreutils/libintl-*-msys-*-dll*.tar.lzma
-tar -C tmp/coreutils -xaf packages/coreutils/msysCORE-*-msys-*-bin.tar.lzma
+xz -c --decompress --format=lzma packages/coreutils/coreutils-*-msys-*-bin.tar.lzma | \
+    tar -x -C tmp/coreutils
+xz -c --decompress --format=lzma packages/coreutils/libiconv-*-msys-*-dll*.tar.lzma | \
+    tar -x -C tmp/coreutils
+xz -c --decompress --format=lzma packages/coreutils/libintl-*-msys-*-dll*.tar.lzma | \
+    tar -x -C tmp/coreutils
+xz -c --decompress --format=lzma packages/coreutils/msysCORE-*-msys-*-bin.tar.lzma | \
+    tar -x -C tmp/coreutils
+
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/coreutils coreutils
 
 echo "Preparing Make and MinGW runtime files..."
 mkdir tmp/make
-tar -C tmp/make -xaf packages/make/gcc-core-*-mingw32-dll.tar.lzma
-tar -C tmp/make -xaf packages/make/gettext-*-mingw32-dll.tar.lzma
-tar -C tmp/make -xaf packages/make/libiconv-*-mingw32-dll.tar.lzma
-tar -C tmp/make -xaf packages/make/make-*-mingw32-cvs-*-bin.tar.lzma
+xz -c --decompress --format=lzma packages/make/gcc-core-*-mingw32-dll.tar.lzma | \
+    tar -x -C tmp/make
+xz -c --decompress --format=lzma packages/make/gettext-*-mingw32-dll.tar.lzma | \
+    tar -x -C tmp/make
+xz -c --decompress --format=lzma packages/make/libiconv-*-mingw32-dll.tar.lzma | \
+    tar -x -C tmp/make
+xz -c --decompress --format=lzma packages/make/make-*-mingw32-cvs-*-bin.tar.lzma | \
+    tar -x -C tmp/make
 mv tmp/make/bin/{mingw32-,}make.exe
 ./toolchain/windows-installer/gen-nsis-sections.sh tmp/make make
 
@@ -74,7 +83,7 @@ echo "Preparing Eclipse..."
 IDE_PLUGINS_ZIP=packages/arc_gnu_${RELEASE}_ide_plugins.zip
 mkdir tmp/eclipse
 unzip packages/eclipse-cpp-*-win32-x86_64.zip -d tmp/eclipse
-# For some reason some of important exec files don't have exec bit set by the 
+# For some reason some of important exec files don't have exec bit set by the
 # cygwin unzip, but eclipse.exe has it.
 chmod +x tmp/eclipse/eclipse/eclipsec.exe
 chmod +x tmp/eclipse/eclipse/plugins/org.eclipse.equinox.launcher.*/*.dll
