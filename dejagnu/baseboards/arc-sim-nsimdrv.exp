@@ -202,6 +202,7 @@ if { [check_target_arc64] } {
 # present and, presuambly, that nSIM property disable optional feature.
 set nsim_gcc_mapping {
     "__ARC_ATOMIC__"		1	nsim_isa_atomic_option=1
+    "__ARC64_ATOMIC__"		1	nsim_isa_atomic_option=1
     "__ARC_BARREL_SHIFTER__"	0	nsim_isa_shift_option=0
     "__ARC_CODE_DENSITY__"	1	nsim_isa_code_density_option=2
     "__ARC_DIVREM__"		1	nsim_isa_div_rem_option=2

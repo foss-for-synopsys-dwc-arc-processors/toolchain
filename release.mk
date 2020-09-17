@@ -422,6 +422,7 @@ BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_be_windows_tarball
+BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(IDE_WIN_EXE)
 
 BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
 BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
@@ -1025,11 +1026,13 @@ endif
 #
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 
-.PHONY: copy-windows-installer
-copy-windows-installer: $O/$(IDE_WIN_EXE)
-
 $O/$(IDE_WIN_EXE): $(WINDOWS_WORKSPACE)/$(IDE_WIN_EXE)
 	$(CP) $< $@
+
+$(WINDOWS_WORKSPACE)/$(IDE_WIN_EXE): $O/.stamp_windows_workspace \
+	| $(WINDOWS_WORKSPACE)
+	cd $(WINDOWS_WORKSPACE) && \
+		RELEASE_TAG=$(RELEASE_TAG) toolchain/windows-installer/build-installer.sh
 
 endif
 
