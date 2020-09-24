@@ -274,6 +274,10 @@ TOOLS_UCLIBC_LE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_$(HOS
 TOOLS_UCLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(HOST)_install
 TOOLS_UCLIBC_LE_HS38FPU_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_$(HOST)_install
 
+# Toolchain: macOS
+TOOLS_ELFLE_MAC_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_le_mac_install
+TOOLS_ELFBE_MAC_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_be_mac_install
+
 # Toolchain: linux with glibc.
 TOOLS_GLIBC_LE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_$(HOST)_install
 TOOLS_GLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_be_archs_$(HOST)_install
@@ -435,9 +439,6 @@ BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/$(IDE_WIN_EXE)
 BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_UIMAGE)
 BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_CPIO)
 BUILD_DEPS-$(ENABLE_LINUX_IMAGES) += $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
-
-# Cannot include IDE_WIN_EXE into BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER),
-# because it is generated on the Windows host, after `make build`.
 
 # Build all components that can be built on Linux hosts.
 .PHONY: build
@@ -639,6 +640,28 @@ $O/.stamp_glibc_le_hs_tarball: $O/.stamp_glibc_le_hs_built
 
 $O/.stamp_glibc_be_hs_tarball: $O/.stamp_glibc_be_hs_built
 	$(call create_tar,$(TOOLS_GLIBC_BE_HS_HOST_DIR))
+	touch $@
+
+#
+# macOS toolchain
+#
+
+$O/.stamp_elf_le_mac_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arc-elf32-macos,$(TOOLS_ELFLE_MAC_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_MAC_DIR))
+	touch $@
+
+$O/.stamp_elf_be_mac_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arceb-elf32-win,$(TOOLS_ELFBE_MAC_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_MAC_DIR))
+	touch $@
+
+$O/.stamp_elf_le_mac_tarball: $O/.stamp_elf_le_mac_built
+	$(call create_tar,$(TOOLS_ELFLE_MAC_DIR))
+	touch $@
+
+$O/.stamp_elf_be_mac_tarball: $O/.stamp_elf_be_mac_built
+	$(call create_tar,$(TOOLS_ELFBE_MAC_DIR))
 	touch $@
 
 #
