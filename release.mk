@@ -60,9 +60,10 @@ ENABLE_GLIBC_TOOLS := y
 # Whether to build and upload OpenOCD for Linux.
 ENABLE_OPENOCD := y
 
-# Whether to build and upload OpenOCD for Windows.
+# Whether to build and upload OpenOCD for Windows/macOS.
 # Requires ENABLE_OPENOCD to be set to 'y'.
 ENABLE_OPENOCD_WIN := y
+ENABLE_OPENOCD_MAC := y
 
 # Whether to build Toolchain PDF documentation. This affects only the
 # "toolchain" repository - PDF documents from gcc, binutils, etc are always
@@ -88,8 +89,8 @@ GIT_REFERENCE_ROOT :=
 # ENABLE_IDE_PLUGINS_BUILD is 'n'.
 IDE_PLUGIN_LOCATION :=
 
-# libusb is used by the OpenOCD for Windows
-LIBUSB_VERSION := 1.0.20
+# libusb is used by the OpenOCD for
+LIBUSB_VERSION := 1.0.23
 
 ROOT := $(realpath ..)
 
@@ -97,6 +98,9 @@ THIRD_PARTY_SOFTWARE_LOCATION :=
 
 # Triplet of Mingw toolchain.
 WINDOWS_TRIPLET := i686-w64-mingw32
+
+# Triplet of osxcross toolchain
+MACOS_TRIPLET := x86_64-apple-darwin14
 
 # Must be a folder available to Windows host, e.g. Linux folder shared via
 # Samba.
@@ -312,9 +316,11 @@ LINUX_AXS103_ROOTFS_TAR = rootfs_axs103.tgz
 # OpenOCD
 OOCD_HOST_DIR := arc_gnu_$(RELEASE)_openocd_$(HOST)_install
 OOCD_WIN_DIR := arc_gnu_$(RELEASE)_openocd_win_install
+OOCD_MAC_DIR := arc_gnu_$(RELEASE)_openocd_mac_install
 OOCD_SRC_DIR := $(ROOT)/openocd
 OOCD_BUILD_HOST_DIR := $(BUILD_DIR)/openocd_$(HOST)
 OOCD_BUILD_WIN_DIR := $(BUILD_DIR)/openocd_win
+OOCD_BUILD_MAC_DIR := $(BUILD_DIR)/openocd_mac
 
 # Documentation package
 DOCS_DIR := arc_gnu_$(RELEASE)_docs
@@ -351,6 +357,7 @@ DEPLOY_ARTIFACTS = \
     $(DEPLOY_ARTIFACTS-y)
 
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)$(TAR_EXT)
+DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_MAC) += $(OOCD_MAC_DIR)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR).zip
 DEPLOY_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_WIN_DIR)$(TAR_EXT)
@@ -418,6 +425,7 @@ BUILD_DEPS-$(ENABLE_IDE_MACOS) += $O/.stamp_ide_macos_tar
 BUILD_DEPS-$(ENABLE_IDE_PLUGINS_BUILD) += $O/$(IDE_PLUGINS_ZIP)
 BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_glibc_le_hs_native_tarball
 BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_HOST_DIR)$(TAR_EXT)
+BUILD_DEPS-$(ENABLE_OPENOCD_MAC) += $O/$(OOCD_MAC_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR).zip
 BUILD_DEPS-$(ENABLE_WINDOWS_INSTALLER) += $O/.stamp_elf_le_windows_tarball
@@ -841,7 +849,6 @@ endif
 #
 # OpenOCD
 #
-ifeq ($(ENABLE_OPENOCD),y)
 
 .PHONY: openocd-linux
 openocd-linux: $O/$(OOCD_HOST_DIR)$(TAR_EXT)
@@ -900,8 +907,6 @@ $O/$(OOCD_HOST_DIR)$(TAR_EXT): $O/$(OOCD_HOST_DIR)/bin/openocd
 #
 # OpenOCD for Windows
 #
-ifeq ($(ENABLE_OPENOCD_WIN),y)
-
 .PHONY: openocd-win
 openocd-win: $O/$(OOCD_WIN_DIR)$(TAR_EXT) $O/$(OOCD_WIN_DIR).zip
 
@@ -914,7 +919,7 @@ $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2: | $(BUILD_DIR)
 
 $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2:
 	$(WGET) $(WGETFLAGS) -O $@ \
-		'http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2?r=&use_mirror=kent'
+		'https://github.com/libusb/libusb/releases/download/v$(LIBUSB_VERSION)/libusb-$(LIBUSB_VERSION).tar.bz2'
 
 
 $(BUILD_DIR)/libusb_$(HOST)_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
@@ -988,9 +993,66 @@ $O/$(OOCD_WIN_DIR)$(TAR_EXT): $O/$(OOCD_WIN_DIR)/bin/openocd.exe
 $O/$(OOCD_WIN_DIR).zip: $O/$(OOCD_WIN_DIR)/bin/openocd.exe
 	$(call create_zip,$(OOCD_WIN_DIR))
 
-endif # ifeq ($(ENABLE_OPENOCD_WIN),y)
+#
+# OpenOCD for macOS
+#
 
-endif # ifeq ($(ENABLE_OPENOCD),y)
+.PHONY: openocd-mac
+openocd-mac: $O/$(OOCD_MAC_DIR)$(TAR_EXT)
+
+DIRS += $(OOCD_BUILD_MAC_DIR)
+
+#
+# Libusb for macOS
+#
+$(BUILD_DIR)/libusb_mac_src: $(BUILD_DIR)/libusb-$(LIBUSB_VERSION).tar.bz2
+	tar -C $(BUILD_DIR) -xf $< --transform='s/libusb-$(LIBUSB_VERSION)/libusb_mac_src/'
+
+
+# It looks like that libusb Makefile is not parallel-friendly, it fails with error
+# 	mv: cannot stat `.deps/libusb_1_0_la-core.Tpo': No such file or directory
+# in parallel build, therefore we have to force sequential build on it.
+.PHONY: libusb-mac-install
+libusb-mac-install: $(BUILD_DIR)/libusb_mac_install/lib/libusb-1.0.a
+$(BUILD_DIR)/libusb_mac_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_mac_src
+	cd $< && \
+	CC=o64-clang ./configure --host=$(MACOS_TRIPLET) --disable-shared --enable-static \
+		--prefix=$(abspath $(BUILD_DIR)/libusb_mac_install)
+	$(MAKE) -C $< -j1
+	$(MAKE) -C $< install
+
+
+# Configure OpenOCD for macOS.
+$(OOCD_BUILD_MAC_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_MAC_DIR)/Makefile: $(BUILD_DIR)/libusb_mac_install/lib/libusb-1.0.a
+$(OOCD_BUILD_MAC_DIR)/Makefile: | $(OOCD_BUILD_MAC_DIR)
+
+$(OOCD_BUILD_MAC_DIR)/Makefile:
+	cd $(OOCD_BUILD_MAC_DIR) && \
+	LDFLAGS="-framework IOKit -framework CoreFoundation" \
+	CC=o64-clang $(OOCD_SRC_DIR)/configure \
+	    --enable-ftdi --disable-werror \
+	    --disable-shared --enable-static \
+	    --disable-libusb0 \
+	    --host=$(MACOS_TRIPLET) \
+	    PKG_CONFIG=pkg-config \
+		PKG_CONFIG_PATH=$(abspath $(BUILD_DIR)/libusb_mac_install)/lib/pkgconfig \
+	    --prefix=$(abspath $O/$(OOCD_MAC_DIR))
+
+
+# Build OpenOCD for macOS.
+$(OOCD_BUILD_MAC_DIR)/src/openocd: $(OOCD_BUILD_MAC_DIR)/Makefile
+	$(call OOCD_BUILD_CMD,MAC)
+
+
+# Install OpenOCD for macOS.
+$O/$(OOCD_MAC_DIR)/bin/openocd: $(OOCD_BUILD_MAC_DIR)/src/openocd
+	$(call OOCD_INSTALL_CMD,MAC)
+
+
+# Create tarball for OpenOCD for macOS.
+$O/$(OOCD_MAC_DIR)$(TAR_EXT): $O/$(OOCD_MAC_DIR)/bin/openocd
+	$(call create_tar,$(OOCD_MAC_DIR))
 
 
 #
