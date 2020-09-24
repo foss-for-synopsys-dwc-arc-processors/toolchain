@@ -40,7 +40,7 @@ ENABLE_DOCS_PACKAGE := n
 ENABLE_IDE := y
 
 # Whether to build and upload IDE on macOS
-ENABLE_IDE_MACOS := n
+ENABLE_IDE_MACOS := y
 
 # Whether to build or download GNU IDE Plugins
 ENABLE_IDE_PLUGINS_BUILD := y
@@ -305,7 +305,7 @@ JRE_WIN_ZIP := OpenJDK11-jre_x64_windows_openj9_$(JAVA_VERSION).zip
 
 # IDE: output related variables
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
-IDE_MACOS_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
+IDE_MACOS_INSTALL := arc_gnu_$(RELEASE)_ide_mac_install
 IDE_WIN_EXE := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_LINUX_TGZ := $(IDE_LINUX_INSTALL).tar.gz
 IDE_MACOS_TGZ := $(IDE_MACOS_INSTALL).tar.gz
@@ -422,9 +422,7 @@ BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_be_hs_tarball
 
 BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
-ifneq ($(HOST),macos)
 BUILD_DEPS-$(ENABLE_IDE) += $O/.stamp_ide_linux_tar
-endif
 BUILD_DEPS-$(ENABLE_IDE_MACOS) += $O/.stamp_ide_macos_tar
 BUILD_DEPS-$(ENABLE_IDE_PLUGINS_BUILD) += $O/$(IDE_PLUGINS_ZIP)
 BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_glibc_le_hs_native_tarball
@@ -512,19 +510,16 @@ endif
 endif
 
 	# Copy JRE.
-ifeq ($(HOST),linux)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_LINUX_TGZ) $O/$(JRE_LINUX_TGZ)
-endif
+
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(JRE_WIN_ZIP) $O/$(JRE_WIN_ZIP)
 endif
 
 	# Copy Eclipse
-ifeq ($(HOST),macos)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_MACOS_TGZ) $O
-else
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_LINUX_TGZ) $O
-endif
+
 ifeq ($(ENABLE_WINDOWS_INSTALLER),y)
 	$(CP) $(THIRD_PARTY_SOFTWARE_LOCATION)/$(ECLIPSE_VANILLA_WIN_ZIP) $O
 endif
@@ -846,13 +841,13 @@ $O/.stamp_ide_macos_eclipse: $O/$(ECLIPSE_VANILLA_MACOS_TGZ) $O/$(IDE_PLUGINS_ZI
 	touch $@
 
 $O/.stamp_ide_macos_tar: \
-	$O/$(OOCD_HOST_DIR)$(TAR_EXT) \
+	$O/$(OOCD_MAC_DIR)$(TAR_EXT) \
 	$O/.stamp_ide_macos_eclipse \
-	$O/.stamp_elf_be_built $O/.stamp_elf_le_built
-	$(LOCAL_CP) $O/$(TOOLS_ELFLE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
-	$(LOCAL_CP) $O/$(TOOLS_ELFBE_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
+	$O/.stamp_elf_le_mac_built $O/.stamp_elf_be_mac_built
+	$(LOCAL_CP) $O/$(TOOLS_ELFLE_MAC_DIR)/* $O/$(IDE_MACOS_INSTALL)
+	$(LOCAL_CP) $O/$(TOOLS_ELFBE_MAC_DIR)/* $O/$(IDE_MACOS_INSTALL)
 	mkdir -p -m775 $O/$(IDE_MACOS_INSTALL)/eclipse/jre
-	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_MACOS_INSTALL)
+	$(LOCAL_CP) $O/$(OOCD_MAC_DIR)/* $O/$(IDE_MACOS_INSTALL)
 	tar czf $O/$(IDE_MACOS_TGZ) -C $O $(IDE_MACOS_INSTALL)
 	touch $@
 
@@ -878,11 +873,8 @@ $(OOCD_SRC_DIR)/git2cl:
 
 
 # Configure OpenOCD
-$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
-ifneq ($(HOST),macos)
-$(OOCD_BUILD_HOST_DIR)/Makefile: $(BUILD_DIR)/libusb_$(HOST)_install/lib/libusb-1.0.a
-endif
-$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_BUILD_HOST_DIR)
+$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl \
+	$(OOCD_BUILD_HOST_DIR)
 
 $(OOCD_BUILD_HOST_DIR)/Makefile:
 	cd $(OOCD_BUILD_HOST_DIR) && \
