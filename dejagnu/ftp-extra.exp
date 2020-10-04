@@ -51,7 +51,7 @@ proc ftp_open {host} {
     set spawn_id -1
     set count 3
     while {$spawn_id < 0 && $count >= 0} {
-	spawn ftp -n $remotehost $remoteport
+	spawn ftp -A -n $remotehost $remoteport
 	expect {
 	    -i $spawn_id -re ".*220.*$prompt" { }
 	    -i $spawn_id -re ".*Connection refused.*$prompt" {
