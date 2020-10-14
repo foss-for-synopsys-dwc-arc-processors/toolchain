@@ -8,38 +8,22 @@
    Welcome to GNU Toolchain for ARC documentation!
    ===============================================
 
-   .. toctree::
-      :maxdepth: 2
+.. toctree::
+   :maxdepth: 2
 
-      baremetal/index
-      linux/index
-      other/index
-      ide/index
-      gcc/index
-      maintainer/index
-      faq
-      man-pages
+   baremetal/index
+   linux/index
+   other/index
+   ide/index
+   gcc/index
+   maintainer/index
+   faq
+   man-pages
+
+.. only:: html
 
    Indices and tables
    ==================
 
-   * :ref:`genindex`
-   * :ref:`search`
-
-.. only:: pdf
-
-   .. toctree::
-      :maxdepth: 2
-
-      baremetal/index
-      linux/index
-      other/index
-      ide/index
-      gcc/index
-      maintainer/index
-      faq
-      man-pages
-
-   * :ref:`genindex`
-   * :ref:`search`
-
+* :ref:`genindex`
+* :ref:`search`
