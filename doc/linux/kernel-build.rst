@@ -64,7 +64,7 @@ sources::
 
     $ mkdir arc-2020.09-linux-guide
     $ cd arc-2020.09-linux-guide
-    $ wget https://buildroot.org/downloads/buildroot-2020.02.7.tar.bz2
+    $ wget https://buildroot.org/downloads/buildroot-2020.08.1.tar.bz2
     $ tar xf buildroot-2020.08.1.tar.bz2
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
@@ -134,7 +134,7 @@ Building
 To build Linux kernel image using that defconfig::
 
     $ mkdir output_hs
-    $ cd buildroot-20.02
+    $ cd buildroot-2020.08.01
     $ make O=`readlink -e ../output_hs` defconfig DEFCONFIG=`readlink -e ../hs_defconfig`
     $ cd ../output_hs
     $ make
