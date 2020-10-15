@@ -242,9 +242,9 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2020.03-rc1/arc_gnu_2020.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_9=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2020.09-rc1/arc_gnu_2020.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_7=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -331,9 +331,9 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2020.03-rc1/arc_gnu_2020.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_9=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_4_15=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2020.09-rc1/arc_gnu_2020.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_7=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
