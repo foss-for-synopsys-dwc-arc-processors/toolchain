@@ -179,8 +179,8 @@ Latest stable release from https://kernel.org/ is recommended, and only
 versions >= 3.9 are supported. Linux sources should be located in the directory
 named `linux` that is the sibling of this `toolchain` directory. For example:
 
-    $ wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.15.11.tar.xz
-    $ tar xf linux-4.15.11.tar.xz --transform=s/linux-4.15.11/linux/
+    $ wget https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.8.3.tar.xz
+    $ tar xf linux-5.8.3.tar.xz --transform=s/linux-5.8.3/linux/
 
 ### Using Git repositories
 
