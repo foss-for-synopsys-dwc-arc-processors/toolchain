@@ -35,4 +35,3 @@ gdbserver_startup_delay_step
 nsim_pass_reconnect_option
    Whether to start nSIM with option -reconnect. This is required for adaptive
    delay to work with nSIM. Default value is true.
-

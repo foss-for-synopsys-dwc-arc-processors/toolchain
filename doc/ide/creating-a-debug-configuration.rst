@@ -88,5 +88,3 @@ Starting a debug session
 
 
 2. Click **Yes** in the confirmation dialog to switch to the Debug perspective.
-
-

@@ -65,4 +65,3 @@ To debug application using nSIM, press **Debug** button of IDE.
 .. figure:: images/debugging/nsim/nsim_output.png
 
    nSIM gdbserver output in console
-

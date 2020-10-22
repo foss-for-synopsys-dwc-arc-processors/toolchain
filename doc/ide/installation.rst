@@ -241,4 +241,3 @@ Then restart udev and relogin to system, so changes will take effect.::
     # Disconnect JTAG cable from host, then connect again.
 
 Even better is to reboot the system.
-

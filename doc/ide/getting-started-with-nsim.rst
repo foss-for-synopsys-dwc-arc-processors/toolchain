@@ -145,4 +145,3 @@ value to **1**. This way nSIM will be configured for big endian.
 .. figure:: images/debugging/nsim/nsim_output.png
 
    nSIM gdbserver output in console
-

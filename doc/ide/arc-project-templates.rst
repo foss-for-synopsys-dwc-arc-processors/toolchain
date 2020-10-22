@@ -63,6 +63,3 @@ yourself, or your application might not work properly.
    There is an ARC EM SDP project template which uses configuration for
    emsdp_em11d_dfss FPGA image. Projects created with this template may not work
    with other FPGA images of ARC EM SDP.
-
-
-

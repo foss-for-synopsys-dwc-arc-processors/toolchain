@@ -180,4 +180,3 @@ ADD/MPYD    N   N   N   N   N   N   Y   N
 MAC         N   N   N   N   N   N   N   N
 MACD        N   N   N   N   N   N   N   Y
 ========== === === === === === === === ===
-

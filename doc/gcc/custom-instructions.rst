@@ -154,4 +154,3 @@ will result in the following encodings:
       4:   382f 0061               insn2   r0,r1
       8:   392f 407f               insn3   r1
       c:   396f 403f               insn4
-
