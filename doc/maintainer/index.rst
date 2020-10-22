@@ -6,4 +6,3 @@ Information for Toolchain maintainers
 
    release
    manual-build
-

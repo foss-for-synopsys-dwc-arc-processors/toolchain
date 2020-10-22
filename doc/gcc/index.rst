@@ -33,4 +33,3 @@ Improving GCC output
 .. toctree::
 
    optimizations.rst
-
