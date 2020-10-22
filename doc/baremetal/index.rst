@@ -17,4 +17,3 @@ Debugging baremetal applications
    em-starter-kit.rst
    openocd-axs.rst
    ashling-axs.rst
-

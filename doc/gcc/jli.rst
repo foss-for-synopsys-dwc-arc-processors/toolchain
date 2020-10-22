@@ -137,4 +137,3 @@ In general the GNU jli implementation is compatible with MWDT implementation,
 except for the code that invokes the MetaWare runtime initialization code that
 sets the JLI_BASE register to address the JLI table. GNU additionally introduces
 the ``jli_fixed`` attribute to closely mimic the MWDT ``jli_call_fixed`` pragma.
-

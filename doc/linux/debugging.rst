@@ -175,4 +175,3 @@ native GDB binary can be found in sysroot directory:
 
 With native GDB it is possible to debug applications the same way as it is done
 on the host system without gdbserver.
-
