@@ -270,16 +270,16 @@ TOOLS_GLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_be_archs_$(HOST)
 TOOLS_UCLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_archs_native_install
 
 # Toolchain PDF User Guide.
-PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/latex/GNU_Toolchain_for_ARC.pdf)
+PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/pdf/GNU_Toolchain_for_ARC.pdf)
 
 # IDE: vanilla Eclipse variables
-ECLIPSE_VERSION := 2018-12-R
+ECLIPSE_VERSION := 2020-03-R-incubation
 ECLIPSE_VANILLA_WIN_ZIP := eclipse-cpp-$(ECLIPSE_VERSION)-win32-x86_64.zip
 ECLIPSE_VANILLA_LINUX_TGZ := eclipse-cpp-$(ECLIPSE_VERSION)-linux-gtk-x86_64.tar.gz
 ECLIPSE_VANILLA_MACOS_DMG := eclipse-cpp-$(ECLIPSE_VERSION)-macosx-cocoa-x86_64.dmg
 
 # Coma separated list
-ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R
+ECLIPSE_DL_LINK_BASE := http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2020-03/R
 
 # Java. Note that filenames might differ from originals to ensure consistent
 # JAVA_VERSION content.
@@ -540,7 +540,7 @@ $(PDF_DOC_FILE): $O/.stamp_source_tarball
 endif
 $(PDF_DOC_FILE):
 	$(MAKE) -C doc clean
-	$(MAKE) -C doc latexpdf
+	$(MAKE) -C doc pdf
 
 # $1 - destination directory.
 ifeq ($(ENABLE_PDF_DOCS),y)

@@ -89,7 +89,7 @@ if [file exists $nsim_version_path] {
     set nsim_version_fid [open $nsim_version_path r]
     set nsim_version_text [read $nsim_version_fid]
     close $nsim_version_fid
-    regexp "Version : (\\d+)\.(\\d+)" $nsim_version_text -> \
+    regexp "Version\\s+: (\\d+)\.(\\d+)" $nsim_version_text -> \
 	nsim_version_year nsim_version_month
     if { $nsim_version_year > 2015 || \
 	($nsim_version_year == 2015 && $nsim_version_month > 6) } {
@@ -117,7 +117,12 @@ if [ string match arceb-* $target_triplet ] {
 }
 
 # Select processor family. Also set nsim_isa_sat, which is mandatory for GCC.
-if { [check_target_arc700] } {
+if { [check_target_arc64] } {
+    lappend nsim_flags \
+	-prop=nsim_isa_family=arc64 \
+	-p nsim_isa_div_rem_option=2 \
+	-p nsim_isa_mpy_option=3
+} elseif { [check_target_arc700] } {
     # GCC requires multiplier for ARC 700.
     lappend nsim_flags \
 	-p nsim_isa_family=a700 \
@@ -164,6 +169,11 @@ if { [check_target_arc700] } {
 	-p nsim_isa_family=av2hs \
 	-p nsim_isa_core=3 \
 	-on nsim_isa_sat
+    # Assume the SQRT is defined when we use DSP extensions
+    if { [check_target_arc "__ARC_DSP__"] == 1 } {
+	lappend nsim_flags \
+	    -p nsim_isa_dsp_divsqrt_option=2
+    }
 } elseif { [check_target_arcem] } {
     lappend nsim_flags \
 	-p nsim_isa_family=av2em \
@@ -192,6 +202,7 @@ if { [check_target_arc700] } {
 # present and, presuambly, that nSIM property disable optional feature.
 set nsim_gcc_mapping {
     "__ARC_ATOMIC__"		1	nsim_isa_atomic_option=1
+    "__ARC64_ATOMIC__"		1	nsim_isa_atomic_option=1
     "__ARC_BARREL_SHIFTER__"	0	nsim_isa_shift_option=0
     "__ARC_CODE_DENSITY__"	1	nsim_isa_code_density_option=2
     "__ARC_DIVREM__"		1	nsim_isa_div_rem_option=2
@@ -217,6 +228,7 @@ set nsim_gcc_mapping {
     "__ARC_MUL32BY16__"		1	nsim_isa_mul32x16=1
     "__ARC_NORM__"		0	nsim_isa_bitscan_option=0
     "__ARC_RF16__"		1	nsim_isa_rgf_num_regs=16
+    "__ARC_DSP__"               1       nsim_isa_dsp_option=3
 }
 
 foreach {gcc_define set_if_defined nsim_prop} $nsim_gcc_mapping {

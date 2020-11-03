@@ -18,5 +18,5 @@ export TEXINPUTS=.:$p/titlesec:$p/ltxmisc:$p/wrapfig:$p/upquote:$p/multirow:$p/e
 
 make clean
 make html
-make latexpdf
+make pdf
 

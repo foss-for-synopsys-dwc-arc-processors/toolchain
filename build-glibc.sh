@@ -505,7 +505,8 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     # See comment for stripprog_opt for an explanation why this is needed.
     # Strip will strip complete symbol table, not just debug symbols.
-    make_target_ordered installing install-strip-gdb DESTDIR=$SYSROOTDIR \
+    make_target_ordered installing install-strip-gdb \
+    install-strip-gdbserver DESTDIR=$SYSROOTDIR \
 	STRIPPROG=${triplet}-strip
 else
     # If native GDB has been disabled, then simple gdbserver still will be
@@ -514,9 +515,11 @@ else
     # Static options are same as when gdbserver is configured by the top-level
     # configure script.
     # See commment for native GDB about build-with-cxx.
-    config_path=$(calcConfigPath "${ARC_GNU}")/gdb/gdb/gdbserver
+    config_path=$(calcConfigPath "${ARC_GNU}")/gdb
     LDFLAGS="-static-libstdc++ -static-libgcc" \
-	configure_for_arc "$config_path" $triplet --disable-build-with-cxx
+	configure_for_arc "$config_path" $triplet \
+        --disable-build-with-cxx \
+        --disable-gdb
     make_target building
 
     # gdbserver makefile lacks install-strip target. It is possible to trick
@@ -525,7 +528,7 @@ else
     # stripped from all symbols, not just debug symbols.
     # Note that $SYSROOTDIR/bin might not exist yet.
     mkdir -p $SYSROOTDIR$install_prefix/bin
-    ${triplet}-objcopy -g gdbserver $SYSROOTDIR$install_prefix/bin/gdbserver
+    ${triplet}-objcopy -g gdbserver/gdbserver $SYSROOTDIR$install_prefix/bin/gdbserver
 fi
 
 echo "DONE  GLIBC: $(date)" | tee -a "${logfile}"

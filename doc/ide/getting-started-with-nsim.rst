@@ -1,6 +1,14 @@
 Getting Started with nSIM
 =========================
 
+Prerequisites
+--------------------
+
+You should have nSIM installed on your computer.
+
+You also might need to set environment variable **LM_LICENSE_FILE** =<your_license>
+in case if you have full nSIM version. Otherwise you will get licensing failure.
+
 Creating a C project
 --------------------
 
@@ -38,6 +46,18 @@ The resulting Hello World project created in Eclipse is:
 .. figure:: images/creating_project/c_project_for_nsim.png
 
    C Project for nSIM debugging
+   
+   To change -mcpu option: Right click on project and select **Properties** (or **Alt + Enter**)
+   
+.. figure:: images/creating_project/c_project_properties.png
+   
+   C Project Properties
+
+   Then click **C/C++ Build** -> **Target Processor** and choose required option option
+   
+.. figure:: images/creating_project/c_project_properties_mcpu.png
+
+   C Project -mcpu options
 
 Building the project
 --------------------
@@ -107,6 +127,10 @@ nSIM has several TCF file templates in the folder ``../etc/tcf/templates`` relat
 to nSIM executable file. Choose `em6_dmips.tcf` file from templates. Then uncheck
 **Use nSIM properties file?** checkbox and click **Apply** button.
 
+If you choose big endian toolchain, then you need to change .tcf file
+because it is configured for little endian case. Open your .tcf file
+and find **nsim_isa_big_endian** option in nsim.props field. Set it's
+value to **1**. This way nSIM will be configured for big endian.
 
 5. To debug application using nSIM, press "Debug" button of IDE.
 

@@ -102,7 +102,7 @@ esac
 case $tool in
     gdb)
 	rm -rf gdb.*
-	testsuite=$tools_src/gdb/gdb/testsuite
+	testsuite=$tools_src/gdb/testsuite
 	mkdir $(ls -1d $testsuite/gdb.* | grep -Po '(?<=\/)[^\/]+$')
 	;;
     newlib)

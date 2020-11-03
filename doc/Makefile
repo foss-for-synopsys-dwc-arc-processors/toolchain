@@ -32,9 +32,6 @@ help:
 	@echo "  applehelp  to make an Apple Help Book"
 	@echo "  devhelp    to make HTML files and a Devhelp project"
 	@echo "  epub       to make an epub"
-	@echo "  latex      to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
-	@echo "  latexpdf   to make LaTeX files and run them through pdflatex"
-	@echo "  latexpdfja to make LaTeX files and run them through platex/dvipdfmx"
 	@echo "  text       to make text files"
 	@echo "  man        to make manual pages"
 	@echo "  texinfo    to make Texinfo files"
@@ -46,6 +43,7 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 	@echo "  coverage   to run coverage check of the documentation (if enabled)"
+	@echo "  pdf        to make pdf files"
 
 .PHONY: clean
 clean:
@@ -123,32 +121,10 @@ epub:
 	@echo
 	@echo "Build finished. The epub file is in $(BUILDDIR)/epub."
 
-.PHONY: latex
-latex:
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-	@echo
-	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
-	@echo "Run \`make' in that directory to run these through (pdf)latex" \
-	      "(use \`make latexpdf' here to do that automatically)."
-
-# Sphinx PDF requires newfloat.sty, which is not available on CentOS. Therefore
-# it is part of this distribution and is copied to the build directory in the
-# Makefile.
-.PHONY: latexpdf
-latexpdf:
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-	@echo "Running LaTeX files through pdflatex..."
-	mkdir -p $(BUILDDIR)/latex
-	cp -a newfloat.sty $(BUILDDIR)/latex
-	$(MAKE) -C $(BUILDDIR)/latex all-pdf
-	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
-
-.PHONY: latexpdfja
-latexpdfja:
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-	@echo "Running LaTeX files through platex and dvipdfmx..."
-	$(MAKE) -C $(BUILDDIR)/latex all-pdf-ja
-	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
+.PHONY: pdf
+pdf:
+	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) $(BUILDDIR)/pdf
+	@echo "Pdf build finished; the PDF files are in $(BUILDDIR)/pdf."
 
 .PHONY: text
 text:
