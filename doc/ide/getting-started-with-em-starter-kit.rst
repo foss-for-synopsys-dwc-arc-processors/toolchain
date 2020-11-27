@@ -132,4 +132,3 @@ To debug the project, create a new debug configuration.
 .. figure:: images/debugging/openocd/debugging_process.png
 
    Debugging Process
-

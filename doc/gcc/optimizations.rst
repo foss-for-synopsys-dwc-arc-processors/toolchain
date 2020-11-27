@@ -212,4 +212,3 @@ ARC700   On    On               On     Off    Off      N.A.    N.A.           N.
 ARC EM   On    On               Off    Off    Off      On      Off            Off      N.A.
 ARC HS   On    On               On     On     On       On      On             On       On
 ======= ===== ================ ====== ====== ======== ======= ============== ======== =========
-
