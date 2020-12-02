@@ -55,10 +55,7 @@ lappend nsim_flags \
 
 set nsim_bin "$::env(NSIM_HOME)/bin/nsimdrv"
 
-# newlib.string/strcmp-1.c may run for around 2 minutes without Turbo on nSIM
-# and a bit more under heavy load on machine.  Hence to avoid false timeouts
-# limit should be more than 2 minutes.
-set_board_info sim_time_limit 150
+set_board_info sim_time_limit 300
 
 # Detect if nSIM Turbo is available and libstdc++ is being tested.  Most of the
 # Dejagnu tests do not benefit from Turbo mode, because they are extremely
