@@ -169,7 +169,8 @@ if { [check_target_arc64] } {
     # Assume the SQRT is defined when we use DSP extensions
     if { [check_target_arc "__ARC_DSP__"] == 1 } {
 	lappend nsim_flags \
-	    -p nsim_isa_dsp_divsqrt_option=2
+	    -p nsim_isa_dsp_divsqrt_option=2 \
+	    -p nsim_isa_dsp_wide_option=1
     }
 } elseif { [check_target_arcem] } {
     lappend nsim_flags \
