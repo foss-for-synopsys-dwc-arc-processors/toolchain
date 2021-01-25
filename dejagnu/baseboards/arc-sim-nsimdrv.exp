@@ -118,7 +118,9 @@ if { [check_target_arc64] } {
     lappend nsim_flags \
 	-prop=nsim_isa_family=arc64 \
 	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_mpy_option=3
+	-p nsim_isa_mpy_option=3 \
+	-p nsim_isa_mpy64=1 \
+	-p nsim_isa_div64_option=1
 } elseif { [check_target_arc700] } {
     # GCC requires multiplier for ARC 700.
     lappend nsim_flags \
