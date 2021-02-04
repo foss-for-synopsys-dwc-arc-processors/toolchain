@@ -102,10 +102,23 @@ if [file exists $nsim_version_path] {
 if { [info exists env(ARC_HOSTLINK_LIBRARY)] } {
     set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) \
         -Wl,--no-whole-archive"
+} elseif { [info exists env(ARC_NSIM_HOSTLINK)] } {
+    set_board_info arc,hostlink $env(ARC_NSIM_HOSTLINK)
+
+    if { [board_info $board arc,hostlink] != "metaware" && \
+	 [board_info $board arc,hostlink] != "nsim" } {
+        perror "Unknown nSIM HOSTLINK type $env(ARC_NSIM_HOSTLINK)"
+        exit 1
+    }
 } else {
-    # Use nSIM GNU IO hostlink, instead of a MetaWare compatible one.
-    lappend nsim_flags -on nsim_emt
+    # Use nSIM GNU IO hostlink by default
     set_board_info arc,hostlink "nsim"
+}
+
+if { [board_info $board arc,hostlink] == "metaware" } {
+    lappend nsim_flags -prop=nsim_hlink_gnu_io_ext=1
+} elseif { [board_info $board arc,hostlink] == "nsim" } {
+    lappend nsim_flags -prop=nsim_emt=1
 }
 
 # Big-endian?
@@ -274,11 +287,15 @@ set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 # No linker script needed.
 set_board_info ldscript ""
 
-# Doesn't pass arguments or signals, can't return results, and doesn't
-# do inferiorio.
+# Metaware hostlink can return values.
+if { [board_info $board arc,hostlink] == "metaware" } {
+    set_board_info gdb,noresults 0
+} else {
+    set_board_info gdb,noresults 1
+}
+# Doesn't pass arguments and signals, and doesn't do inferiorio.
 set_board_info noargs 1
 set_board_info gdb,nosignals 1
-set_board_info gdb,noresults 1
 set_board_info gdb,noinferiorio 1
 
 if [string is true -strict [board_info $board arc,is_gcc_compat_suite]] {

@@ -53,6 +53,8 @@ proc arc_get_cflags {} {
 	if [board_info $board exists arc,hostlink] {
 	    if { [board_info $board arc,hostlink] == "nsim" } {
 		lappend cflags --specs=nsim.specs
+	    } elseif { [board_info $board arc,hostlink] == "metaware" } {
+		lappend cflags --specs=hl.specs
 	    } else {
 		lappend cflags --specs=nosys.specs
 	    }
