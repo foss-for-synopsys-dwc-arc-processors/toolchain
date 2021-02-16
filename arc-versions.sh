@@ -136,7 +136,7 @@ do
     fi
 
     # Skip checkout of Linux if neither uClibc nor Glibs are being built
-    if [ "${DO_GLIBC}" = "no" ] && [ "${DO_UCLIBC}" = "no" ]
+    if [ "${tool}" = "linux" ] && [ "${DO_GLIBC}" = "no" ] && [ "${DO_UCLIBC}" = "no" ]
     then
         continue
     fi

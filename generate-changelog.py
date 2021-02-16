@@ -48,7 +48,12 @@ for repo in repos:
 
     # First get commit ids. Use ^{} to get an ID of an actual commit, not an ID of a tag.
     new_commit_id = git_command("rev-parse", new_tag_effective + "^{}")
-    old_commit_id = git_command("rev-parse", old_tag_effective + "^{}")
+    try:
+        old_commit_id = git_command("rev-parse", old_tag_effective + "^{}")
+    except:
+        print("Cannot get previous commit id. Most likely {} is not exist. Skipping changelog generation."
+                    .format(old_tag_effective))
+        continue
 
     # Same? Nothing to do.
     if old_commit_id == new_commit_id:
