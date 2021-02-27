@@ -25,22 +25,32 @@ def process_options()
 
 end
 
+FAILING_SENARIOS = ["FAIL", "UNSUPPORTED", "XPASS", "UNRESOLVED"]
+PASSING_SENARIOS = ["PASS", "XFAIL"]
 
 def parse_sum(filename)
-  valid_results = ['PASS', 'FAIL', 'XFAIL', 'XPASS', 'UNRESOLVED']
+  #valid_results = FAILING_SENARIOS & PASSING_SENARIOS
+  valid_results = ['PASS', 'FAIL', 'XFAIL', 'XPASS', 'UNRESOLVED', 'UNSUPPORTED']
   content = File.read(filename)
   data = {}
   content.each_line do |l|
     if(l =~ /([A-Z]+): (.+)/)
-      data[$2] = $1 if(valid_results.include?($1))
+      if(data[$2] == nil)
+        data[$2] = $1 if(valid_results.include?($1))
+      elsif(valid_results.include?($1))
+        count = 1
+        tmp = "#{$2} (#{count})"
+        while(data[tmp] != nil) 
+          count += 1
+          tmp = "#{$2} (#{count})"
+        end
+        data[tmp] = data[$2] = $1
+      end
     end
   end
   return data
 end
 
-
-FAILING_SENARIOS = ["FAIL", "UNSUPPORTED", "XPASS", "UNRESOLVED"]
-PASSING_SENARIOS = ["PASS", "XFAIL"]
 
 
 @ret = {
@@ -84,11 +94,13 @@ def analyse_test(test, r1, r2, filter)
   if(r1 != nil)
     @ret[:baseline_results][:pass] += 1 if (PASSING_SENARIOS.include?(r1))
     @ret[:baseline_results][:fail] += 1 if (FAILING_SENARIOS.include?(r1))
+    @ret[:baseline_results][:not_considered] += 1 if ((!PASSING_SENARIOS.include?(r1) && !FAILING_SENARIOS.include?(r1)))
     puts "#{test} = OTHER #{r1}" unless (PASSING_SENARIOS.include?(r1) || FAILING_SENARIOS.include?(r1))
   end
   if(r2 != nil)
     @ret[:results][:pass] += 1 if (PASSING_SENARIOS.include?(r2))
     @ret[:results][:fail] += 1 if (FAILING_SENARIOS.include?(r2))
+    @ret[:baseline_results][:not_considered] += 1 if ((!PASSING_SENARIOS.include?(r2) && !FAILING_SENARIOS.include?(r2)))
     puts "#{test} = OTHER #{r1}" unless (PASSING_SENARIOS.include?(r2) || FAILING_SENARIOS.include?(r2))
   end
 
@@ -131,6 +143,8 @@ end
 process_options
 data1 = parse_sum(ARGV[0])
 data2 = parse_sum(ARGV[1])
+
+File.write("debug.json", JSON.pretty_generate(data1))
 
 tests1 = data1.keys
 tests2 = data2.keys
