@@ -75,10 +75,11 @@ def analyse_test(test, r1, r2, filter)
 
   filter["known_to_fail"] = filter["known_to_fail"] || {}
   filter["flacky_tests"] = filter["flacky_tests"] || {}
+  filter["filter_out"] = {} unless filter["filter_out"]
   filter_report = filter["filter_out"][test]
   reason_filter = ""
-  reason_filter += filter["filter_out"][test].to_s
-  reason_filter += filter["comments"][test].to_s
+  reason_filter += filter["filter_out"][test].to_s if filter["filter_out"]
+  reason_filter += filter["comments"][test].to_s if filter["comments"]
 
   if(r1 != nil)
     @ret[:baseline_results][:pass] += 1 if (PASSING_SENARIOS.include?(r1))
