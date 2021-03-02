@@ -8,16 +8,16 @@ EOF
 @filters = {}
 
 def process_options()
-  while(ARGV[0] =~ /-[a-z]/)
-    opt = ARGV.shift 
-    if(opt =~ /\-v/)
+  while(ARGV[0] =~ /^-[a-z]$/)
+    opt = ARGV.shift
+    if(opt == '-v')
       @enable_logging = true
-    elsif(opt =! /\-a/)
+    elsif(opt == '-a')
       filename = ARGV.shift
       @filters = JSON.parse(File.read(filename))
     end
   end
-  
+
   if(ARGV.length != 2)
     puts HELP_MESSAGE
     exit -1
@@ -40,7 +40,7 @@ def parse_sum(filename)
       elsif(valid_results.include?($1))
         count = 1
         tmp = "#{$2} (#{count})"
-        while(data[tmp] != nil) 
+        while(data[tmp] != nil)
           count += 1
           tmp = "#{$2} (#{count})"
         end
@@ -57,7 +57,7 @@ end
   changes: {},
 
   baseline_results: {
-    pass: 0, 
+    pass: 0,
     fail: 0,
     not_considered: 0
   },
