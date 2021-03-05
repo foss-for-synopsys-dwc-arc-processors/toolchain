@@ -478,19 +478,19 @@ ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
 
 .PHONY: clone
 clone:
-	$(call git_clone,binutils-gdb,binutils)
-	$(call git_clone,gcc,gcc)
-	$(call git_clone,binutils-gdb,gdb)
-	$(call git_clone,newlib,newlib)
-	$(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
-	$(call git_clone_url,git@github.com:wbx-github/uclibc-ng.git,uclibc-ng)
+	# $(call git_clone,binutils-gdb,binutils)
+	# $(call git_clone,gcc,gcc)
+	# $(call git_clone,binutils-gdb,gdb)
+	# $(call git_clone,newlib,newlib)
+	# $(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
+	# $(call git_clone_url,git@github.com:wbx-github/uclibc-ng.git,uclibc-ng)
 	$(call git_clone,arc_gnu_eclipse,arc_gnu_eclipse)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
 endif
-ifeq ($(ENABLE_GLIBC_TOOLS),y)
-	$(call git_clone,glibc,glibc)
-endif
+# ifeq ($(ENABLE_GLIBC_TOOLS),y)
+# 	$(call git_clone,glibc,glibc)
+# endif
 
 
 .PHONY: copy-external
