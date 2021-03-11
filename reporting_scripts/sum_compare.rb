@@ -110,8 +110,8 @@ def analyse_test(test, r1, r2, filter)
   if(r2 == nil && r1 != nil)
     #puts "REM_TEST: #{test}    (#{r1} => (null))" if @enable_logging
     @ret[:changes][test] = { before: r1, after: "(null)", comments: reason_filter }
-    @ret[:results_delta][:rem_test] += 1 if filter_report
-    @ret[:filtered_results][:rem_test] += 1 unless filter_report
+    @ret[:results_delta][:rem_test] += 1 unless filter_report
+    @ret[:filtered_results][:rem_test] += 1 if filter_report
   elsif(r1 == nil && r2 != nil)
     #puts "ADD_TEST: #{test}   ((null) => #{r2})" if @enable_logging
     @ret[:changes][test] = { before: "(null)", after: r2, comments: reason_filter }
