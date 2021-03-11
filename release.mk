@@ -1114,8 +1114,7 @@ $O/$(DOCS_DIR)$(TAR_EXT): $O/.stamp_elf_le_built | $O/$(DOCS_DIR)
 #
 # Create tag
 #
-create-tag:
-	./tag-release.sh $(RELEASE_TAG)
+create-openocd-tag:
 ifeq ($(ENABLE_OPENOCD),y)
 	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
 	# Initially I used --git-dir, however it doesn't work properly with
@@ -1128,8 +1127,7 @@ endif
 #
 # Push tag
 #
-push-tag:
-	./push-release.sh $(RELEASE_TAG)
+push-openocd-tag:
 ifeq ($(ENABLE_OPENOCD),y)
 	cd $(OOCD_SRC_DIR) && \
 	    $(GIT) push origin $(RELEASE_TAG)
