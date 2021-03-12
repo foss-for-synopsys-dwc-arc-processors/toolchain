@@ -46,7 +46,7 @@ ENABLE_IDE_MACOS := y
 ENABLE_IDE_PLUGINS_BUILD := y
 
 # Whether to build Linux images
-ENABLE_LINUX_IMAGES := y
+ENABLE_LINUX_IMAGES := n
 
 # Whether to build Toolchain for Linux targets.
 ENABLE_UCLIBC_TOOLS := y
