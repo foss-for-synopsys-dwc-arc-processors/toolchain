@@ -46,7 +46,7 @@ ENABLE_IDE_MACOS := y
 ENABLE_IDE_PLUGINS_BUILD := y
 
 # Whether to build Linux images
-ENABLE_LINUX_IMAGES := y
+ENABLE_LINUX_IMAGES := n
 
 # Whether to build Toolchain for Linux targets.
 ENABLE_UCLIBC_TOOLS := y
@@ -478,19 +478,19 @@ ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
 
 .PHONY: clone
 clone:
-	$(call git_clone,binutils-gdb,binutils)
-	$(call git_clone,gcc,gcc)
-	$(call git_clone,binutils-gdb,gdb)
-	$(call git_clone,newlib,newlib)
-	$(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
-	$(call git_clone_url,git@github.com:wbx-github/uclibc-ng.git,uclibc-ng)
+	# $(call git_clone,binutils-gdb,binutils)
+	# $(call git_clone,gcc,gcc)
+	# $(call git_clone,binutils-gdb,gdb)
+	# $(call git_clone,newlib,newlib)
+	# $(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
+	# $(call git_clone_url,git@github.com:wbx-github/uclibc-ng.git,uclibc-ng)
 	$(call git_clone,arc_gnu_eclipse,arc_gnu_eclipse)
 ifeq ($(ENABLE_OPENOCD),y)
 	$(call git_clone,openocd,openocd)
 endif
-ifeq ($(ENABLE_GLIBC_TOOLS),y)
-	$(call git_clone,glibc,glibc)
-endif
+# ifeq ($(ENABLE_GLIBC_TOOLS),y)
+# 	$(call git_clone,glibc,glibc)
+# endif
 
 
 .PHONY: copy-external
@@ -1114,8 +1114,7 @@ $O/$(DOCS_DIR)$(TAR_EXT): $O/.stamp_elf_le_built | $O/$(DOCS_DIR)
 #
 # Create tag
 #
-create-tag:
-	./tag-release.sh $(RELEASE_TAG)
+create-openocd-tag:
 ifeq ($(ENABLE_OPENOCD),y)
 	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
 	# Initially I used --git-dir, however it doesn't work properly with
@@ -1128,8 +1127,7 @@ endif
 #
 # Push tag
 #
-push-tag:
-	./push-release.sh $(RELEASE_TAG)
+push-openocd-tag:
 ifeq ($(ENABLE_OPENOCD),y)
 	cd $(OOCD_SRC_DIR) && \
 	    $(GIT) push origin $(RELEASE_TAG)
