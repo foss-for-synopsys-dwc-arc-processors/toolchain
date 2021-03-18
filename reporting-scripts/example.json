@@ -1,7 +1,8 @@
 {
 	"filter_out": {
 		"gcc.dg/tree-prof/crossmodule-indir-call-topn0.c execution,    -fprofile-use -D_PROFILE_USE": "Just a comment",
-		"test_name": "Reason !!!"
+		"test_name": "Reason !!!",
+		"gcc.dg/tree-prof/cold_partition_label.c scan-tree-dump-not optimized \"Invalid sum\"": "This is a test"
 	},
 
 	"comments": {
