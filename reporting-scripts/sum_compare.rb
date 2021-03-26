@@ -153,8 +153,8 @@ data2 = parse_sum(ARGV[1])
 
 File.write("debug.json", JSON.pretty_generate(data1))
 
-tests1 = data1.keys
-tests2 = data2.keys
+tests1 = data1.keys.sort
+tests2 = data2.keys.sort
 
 tests_added = tests2 - tests1
 tests_removed   = tests1 - tests2
