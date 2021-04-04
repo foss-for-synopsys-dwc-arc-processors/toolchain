@@ -572,7 +572,7 @@ $O/.stamp_elf_le_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	touch $@
 
 $O/.stamp_elf_be_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	$(call copy_prebuilt,arc-arc700-linux-uclibc,$(TOOLS_ELFBE_HOST_DIR))
+	$(call copy_prebuilt,arceb-multilib-elf32,$(TOOLS_ELFBE_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_HOST_DIR))
 	touch $@
 
@@ -764,7 +764,7 @@ linux-images: $O/$(LINUX_IMAGES_DIR)/$(LINUX_AXS103_ROOTFS_TAR)
 # Native toolchain build
 #
 $O/.stamp_glibc_le_hs_native_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	$(call copy_prebuilt,arceb-archs-linux-gnu,$(TOOLS_GLIBC_LE_HS_NATIVE_DIR))
+	$(call copy_prebuilt,arc-archs-native-gnu,$(TOOLS_GLIBC_LE_HS_NATIVE_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_LE_HS_NATIVE_DIR))
 	touch $@
 
