@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'GNU Toolchain for ARC User Manual'
-copyright = '2016-2020, Synopsys'
+copyright = '2016-2021, Synopsys'
 author = 'Synopsys'
 
 # The version info for the project you're documenting, acts as replacement for
