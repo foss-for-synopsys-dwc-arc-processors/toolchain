@@ -495,7 +495,7 @@ please see [documentation](https://foss-for-synopsys-dwc-arc-processors.github.i
 > https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/em-starter-kit.html
 
 Build instructions for OpenOCD are available at its page:
-https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2017.09/doc/README.ARC
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2021.03/doc/README.ARC
 
 To run OpenOCD:
 
