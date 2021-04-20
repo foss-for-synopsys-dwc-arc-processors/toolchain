@@ -204,7 +204,7 @@ the toolchain. These should be peers of this `toolchain` directory.
     $ git clone https://github.com/wbx-github/uclibc-ng.git
     $ # or for Linux glibc toolchain:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git
-    $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
+    $ git clone --branch linux-5.1.y https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
 		linux
 
 The binutils and gdb share the same repository, but must be in separate
