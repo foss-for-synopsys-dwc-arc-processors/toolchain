@@ -43,7 +43,7 @@ if ![info exists qemu_flags] {
 }
 
 lappend qemu_flags \
-    -M arc-sim -cpu arc64 -m 2G -nographic -no-reboot -monitor none -serial stdio \
+    -M arc-sim -cpu hs6x -m 2G -nographic -no-reboot -monitor none -serial stdio \
     -kernel
 
 set qemu_wrapper "$::env(QEMU_HOME)/bin/qemu-system-arc64"
