@@ -80,7 +80,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -102,7 +102,7 @@ Important notes about modifying Buildroot defconfig:
   =================== =======================
   Toolchain version   Linux headers version
   =================== =======================
-  2021.03             5.7
+  2021.03             5.4
   2020.09             5.7
   2020.03             4.15
   2019.09             4.15
@@ -193,7 +193,7 @@ differences::
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_LINUX_KERNEL=y
@@ -245,7 +245,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -334,7 +334,7 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
     BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_7=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
