@@ -78,19 +78,15 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc2/arc_gnu_2021.03-rc2_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_1=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_DEFCONFIG="haps_hs"
     BR2_LINUX_KERNEL_VMLINUX=y
-    BR2_PACKAGE_GDB=y
-    BR2_PACKAGE_GDB_DEBUGGER=y
     BR2_TARGET_ROOTFS_INITRAMFS=y
-    # BR2_TARGET_ROOTFS_TAR is not set
 
 Important notes about modifying Buildroot defconfig:
 
@@ -102,7 +98,7 @@ Important notes about modifying Buildroot defconfig:
   =================== =======================
   Toolchain version   Linux headers version
   =================== =======================
-  2021.03             5.4
+  2021.03             5.1
   2020.09             5.7
   2020.03             4.15
   2019.09             4.15
@@ -191,19 +187,30 @@ differences::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc2/arc_gnu_2021.03-rc2_prebuilt_glibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_1=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_DEFCONFIG="haps_hs"
     BR2_LINUX_KERNEL_VMLINUX=y
-    BR2_PACKAGE_GDB=y
-    BR2_PACKAGE_GDB_DEBUGGER=y
     BR2_TARGET_ROOTFS_INITRAMFS=y
-    # BR2_TARGET_ROOTFS_TAR is not set
 
+But please note due to use of glibc 2.33 it's required to disable use of built-in Sun RPC, which as of today is force-enabled for external glibc-based toolchains.
+This has to be done with removal of 1 line in Buildroot sources, see diff of the change below::
+
+    diff --git a/toolchain/toolchain-external/toolchain-external-custom/Config.in.options b/toolchain/toolchain-external/toolchain-external-custom/Config.in.options
+    index 992fd2c150..45dfacaff1 100644
+    --- a/toolchain/toolchain-external/toolchain-external-custom/Config.in.options
+    +++ b/toolchain/toolchain-external/toolchain-external-custom/Config.in.options
+    @@ -452,7 +452,6 @@ config BR2_TOOLCHAIN_EXTERNAL_HAS_SSP_STRONG
+    
+     config BR2_TOOLCHAIN_EXTERNAL_INET_RPC
+            bool "Toolchain has RPC support?"
+    -       default y if BR2_TOOLCHAIN_EXTERNAL_GLIBC
+            depends on !BR2_TOOLCHAIN_EXTERNAL_MUSL
+            select BR2_TOOLCHAIN_HAS_NATIVE_RPC
+            help
 
 Linux for ARC 770 processors
 ----------------------------
@@ -212,9 +219,9 @@ Process of building kernel for ARC 770 is similar to what is for ARC HS. It is
 required only to change several option in Buildroot defconfig:
 
   * ``BR2_archs38=y`` with ``BR2_arc770d=y``
-  * ``BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
+  * ``BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc2/arc_gnu_2021.03-rc2_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
     with
-    ``BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
+    ``BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc2/arc_gnu_2021.03-rc2_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
   * ``BR2_LINUX_KERNEL_DEFCONFIG="haps_hs"`` with
     ``BR2_LINUX_KERNEL_DEFCONFIG="nsim_700"``
 
@@ -243,19 +250,15 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc2/arc_gnu_2021.03-rc2_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_1=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_DEFCONFIG="vdk_hs38_smp"
     BR2_LINUX_KERNEL_VMLINUX=y
-    BR2_PACKAGE_GDB=y
-    BR2_PACKAGE_GDB_DEBUGGER=y
     BR2_TARGET_ROOTFS_EXT2=y
-    # BR2_TARGET_ROOTFS_TAR is not set
 
 Save this defconfig to some file (for example ``vdk_defconfig``). Then use same
 process as in :ref:`linux-building-label` section.::
@@ -332,18 +335,14 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc1/arc_gnu_2021.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_GCC_10=y
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.03-rc2/arc_gnu_2021.03-rc2_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_1=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_DEFCONFIG="axs103_smp"
-    BR2_PACKAGE_GDB=y
-    BR2_PACKAGE_GDB_DEBUGGER=y
     BR2_TARGET_ROOTFS_INITRAMFS=y
-    # BR2_TARGET_ROOTFS_TAR is not set
 
 This defconfig will create a uImage file instead of vmlinux. Please refer to
 `ARC Linux wiki
