@@ -649,7 +649,7 @@ $O/.stamp_elf_le_mac_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	touch $@
 
 $O/.stamp_elf_be_mac_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	$(call copy_prebuilt,arceb-elf32-win,$(TOOLS_ELFBE_MAC_DIR))
+	$(call copy_prebuilt,arceb-elf32-macos,$(TOOLS_ELFBE_MAC_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_MAC_DIR))
 	touch $@
 
