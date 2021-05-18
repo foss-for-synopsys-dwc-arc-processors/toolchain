@@ -871,17 +871,13 @@ openocd-linux: $O/$(OOCD_HOST_DIR)$(TAR_EXT)
 DIRS += $(OOCD_BUILD_HOST_DIR)
 
 
-# Git submodules are common to Linux and Windows.  Note, that this is not a
-# standard approach - typically one should call openocd/bootstrap script that
-# will run autoconf and git sumbodules. But CentOS 6 doesn't have a required
-# version of autoconf, hence it cannot run bootstrap.
-$(OOCD_SRC_DIR)/git2cl:
-	cd $(OOCD_SRC_DIR) && $(GIT) submodule init
-	cd $(OOCD_SRC_DIR) && $(GIT) submodule update
+# Bootstrap is common to Linux and Windows.
+$(OOCD_SRC_DIR)/configure:
+	cd $(OOCD_SRC_DIR) && ./bootstrap
 
 
 # Configure OpenOCD
-$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl \
+$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_SRC_DIR)/configure \
 	$(OOCD_BUILD_HOST_DIR)
 
 $(OOCD_BUILD_HOST_DIR)/Makefile:
@@ -970,7 +966,7 @@ $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_win_src
 
 
 # Configure OpenOCD for Windows.
-$(OOCD_BUILD_WIN_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_WIN_DIR)/Makefile: | $(OOCD_SRC_DIR)/configure
 $(OOCD_BUILD_WIN_DIR)/Makefile: $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a
 $(OOCD_BUILD_WIN_DIR)/Makefile: | $(OOCD_BUILD_WIN_DIR)
 
@@ -1035,7 +1031,7 @@ $(BUILD_DIR)/libusb_mac_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_mac_src
 
 
 # Configure OpenOCD for macOS.
-$(OOCD_BUILD_MAC_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_MAC_DIR)/Makefile: | $(OOCD_SRC_DIR)/configure
 $(OOCD_BUILD_MAC_DIR)/Makefile: $(BUILD_DIR)/libusb_mac_install/lib/libusb-1.0.a
 $(OOCD_BUILD_MAC_DIR)/Makefile: | $(OOCD_BUILD_MAC_DIR)
 
