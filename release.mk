@@ -1089,6 +1089,7 @@ endif
 	      $(WINDOWS_WORKSPACE)/packages/
 	$(CP) $(ROOT)/toolchain $(WINDOWS_WORKSPACE)/
 
+	touch $@
 endif
 
 #
