@@ -55,10 +55,7 @@ lappend nsim_flags \
 
 set nsim_bin "$::env(NSIM_HOME)/bin/nsimdrv"
 
-# newlib.string/strcmp-1.c may run for around 2 minutes without Turbo on nSIM
-# and a bit more under heavy load on machine.  Hence to avoid false timeouts
-# limit should be more than 2 minutes.
-set_board_info sim_time_limit 150
+set_board_info sim_time_limit 300
 
 # Detect if nSIM Turbo is available and libstdc++ is being tested.  Most of the
 # Dejagnu tests do not benefit from Turbo mode, because they are extremely
@@ -121,7 +118,9 @@ if { [check_target_arc64] } {
     lappend nsim_flags \
 	-prop=nsim_isa_family=arc64 \
 	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_mpy_option=3
+	-p nsim_isa_mpy_option=3 \
+	-p nsim_isa_mpy64=1 \
+	-p nsim_isa_div64_option=1
 } elseif { [check_target_arc700] } {
     # GCC requires multiplier for ARC 700.
     lappend nsim_flags \
@@ -172,7 +171,8 @@ if { [check_target_arc64] } {
     # Assume the SQRT is defined when we use DSP extensions
     if { [check_target_arc "__ARC_DSP__"] == 1 } {
 	lappend nsim_flags \
-	    -p nsim_isa_dsp_divsqrt_option=2
+	    -p nsim_isa_dsp_divsqrt_option=2 \
+	    -p nsim_isa_dsp_wide_option=1
     }
 } elseif { [check_target_arcem] } {
     lappend nsim_flags \
@@ -201,8 +201,10 @@ if { [check_target_arc64] } {
 # value in second column is 0, then nSIM property is set only of C define is not
 # present and, presuambly, that nSIM property disable optional feature.
 set nsim_gcc_mapping {
+    "__ARC64_ATOMIC_1__"	1	nsim_isa_atomic_option=1
+    "__ARC64_ATOMIC_2__"	1	nsim_isa_atomic_option=2
+    "__ARC64_ATOMIC_3__"	1	nsim_isa_atomic_option=3
     "__ARC_ATOMIC__"		1	nsim_isa_atomic_option=1
-    "__ARC64_ATOMIC__"		1	nsim_isa_atomic_option=1
     "__ARC_BARREL_SHIFTER__"	0	nsim_isa_shift_option=0
     "__ARC_CODE_DENSITY__"	1	nsim_isa_code_density_option=2
     "__ARC_DIVREM__"		1	nsim_isa_div_rem_option=2
@@ -243,7 +245,7 @@ if { [info exists env(ARC_NSIM_OPTS) ] } {
 }
 
 # Setup nSIM.
-set_board_info sim "$nsim_bin [join $nsim_flags]"
+set_board_info sim "time -p $nsim_bin [join $nsim_flags]"
 # is_simulator should be set already by 'load_generic_config "sim"'. Do it here
 # to be safe.
 set_board_info is_simulator 1

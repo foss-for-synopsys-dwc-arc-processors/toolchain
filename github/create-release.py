@@ -51,8 +51,8 @@ if args.release_id is not None:
 | ------------------- | ------------ | -------------- | ------------ | ------------ |
 | Baremetal           | {0} \ {1}    |                |              | {2} \ {3}    |
 | Linux/uClibc ARC700 | {4} \ {5}    |                |              |              |
-| Linux/uClibc ARC HS | {6} \ {7}    |                | {10}         |              |
-| Linux/glibc ARC HS  | {13} \ {14}  |                |              |              |
+| Linux/uClibc ARC HS | {6} \ {7}    |                |              |              |
+| Linux/glibc ARC HS  | {13} \ {14}  |                | {10}         |              |
 | IDE                 | {11}         | {12}           |              | {15}         |
     """.format(
             fformat.format(t=le, release=args.release_id, type="elf32", cpu="le", host="linux"),

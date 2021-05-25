@@ -26,7 +26,7 @@ components to versions corresponding to the toolchain branch. Build script from
 development branch of toolchain repository will by default check out latest
 development branches of components. Build script from release and staging
 branches will check out components to the corresponding git tag. For example
-build script for 2020.09 release will checkout out components to arc-2020.09-release
+build script for 2021.03 release will checkout out components to arc-2021.03-release
 tag.
 
 
@@ -204,7 +204,7 @@ the toolchain. These should be peers of this `toolchain` directory.
     $ git clone https://github.com/wbx-github/uclibc-ng.git
     $ # or for Linux glibc toolchain:
     $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git
-    $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
+    $ git clone --branch linux-5.1.y https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
 		linux
 
 The binutils and gdb share the same repository, but must be in separate
@@ -235,10 +235,10 @@ If current working directory is not a "toolchain" directory, then change to it:
     $ cd toolchain
 
 This repository can be checked out to a specific GNU Toolchain for ARC release
-by specifying a particular release tag, for example for 2020.09 release that
+by specifying a particular release tag, for example for 2021.03 release that
 would be:
 
-    $ git checkout arc-2020.09-release
+    $ git checkout arc-2021.03-release
 
 
 Building the Toolchain
@@ -485,17 +485,17 @@ implementations. One reason to prefer `nsim.specs` over `nosys.specs` even when
 developing for hardware platform which doesn't have hostlink support is that
 `nsim` will halt target core on call to function "exit" and on many errors,
 while `exit` functions `nosys.specs` is an infinite loop. For more details
-please see [documentation](http://embarc.org/toolchain/baremetal/index.html).
+please see [documentation](https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/index.html).
 
 
 ### Using EM Starter Kit to run bare metal ARC EM application
 
 > A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building application" of our EM Starter Kit page:
-> http://embarc.org/toolchain/baremetal/em-starter-kit.html
+> Refer to the section "Building an application" of our EM Starter Kit page:
+> https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/em-starter-kit.html
 
 Build instructions for OpenOCD are available at its page:
-https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2017.09/doc/README.ARC
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2021.03/doc/README.ARC
 
 To run OpenOCD:
 
@@ -519,8 +519,8 @@ Compile test application and run:
 ### Using Ashling Opella-XD debug probe to debug bare metal applications
 
 > A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building application" of our EM Starter Kit page:
-> http://embarc.org/toolchain/baremetal/em-starter-kit.html
+> Refer to the section "Building an application" of our EM Starter Kit page:
+> https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/em-starter-kit.html
 > For different hardware configurations other changes might be required.
 
 > The Ashling Opella-XD debug probe and its drivers are not part of the GNU

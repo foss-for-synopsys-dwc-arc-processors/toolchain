@@ -73,7 +73,7 @@ done
 # That should be a separate variable to allow for a straightforward creation of
 # new releases, where we want default to point to release, instead of dev
 # branch.
-default_toolchain_config=arc-2020.09-1-release
+default_toolchain_config=arc-2021.03-eng017
 
 # Specify the default versions to use as a string <tool>:<branch>. Those are
 # taken from the checkout configuration file. Only actually matters if
@@ -136,7 +136,7 @@ do
     fi
 
     # Skip checkout of Linux if neither uClibc nor Glibs are being built
-    if [ "${DO_GLIBC}" = "no" ] && [ "${DO_UCLIBC}" = "no" ]
+    if [ "${tool}" = "linux" ] && [ "${DO_GLIBC}" = "no" ] && [ "${DO_UCLIBC}" = "no" ]
     then
         continue
     fi
