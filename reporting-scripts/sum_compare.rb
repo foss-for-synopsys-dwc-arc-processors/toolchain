@@ -16,6 +16,10 @@ def process_options()
       @enable_logging = true
     elsif(opt == '-a')
       filename = ARGV.shift
+      if not File.file?(filename)
+        puts "Error: #{filename} is not exist"
+        exit -1
+      end
       @filters = JSON.parse(File.read(filename))
     end
   end
