@@ -84,6 +84,12 @@ end
     rem_test: 0
   },
   filtered_results: {
+    changes: {
+      new_fail: {},
+      new_pass: {},
+      add_test: {},
+      rem_test: {}
+      },
     new_fail: 0,
     new_pass: 0,
     add_test: 0,
@@ -102,6 +108,14 @@ def analyse_test(test, r1, r2, filter)
   reason_filter += filter["filter_out"][test].to_s if filter["filter_out"]
   reason_filter += filter["comments"][test].to_s if filter["comments"]
 
+  if(filter_report)
+    changes_dict = @ret[:filtered_results][:changes]
+    count_dict = @ret[:filtered_results]
+  else
+    changes_dict = @ret[:changes]
+    count_dict = @ret[:results_delta]
+  end
+
   if(r1 != nil)
     @ret[:baseline_results][:pass] += 1 if (PASSING_SENARIOS.include?(r1))
     @ret[:baseline_results][:fail] += 1 if (FAILING_SENARIOS.include?(r1))
@@ -118,36 +132,30 @@ def analyse_test(test, r1, r2, filter)
 
   if(r2 == nil && r1 != nil)
     #puts "REM_TEST: #{test}    (#{r1} => (null))" if @enable_logging
-    @ret[:changes][:rem_test][test] = { before: r1, after: "(null)", comments: reason_filter }
-    @ret[:results_delta][:rem_test] += 1 unless filter_report
-    @ret[:filtered_results][:rem_test] += 1 if filter_report
+    changes_dict[:rem_test][test] = { before: r1, after: "(null)", comments: reason_filter }
+    count_dict[:rem_test] += 1
   elsif(r1 == nil && r2 != nil)
     #puts "ADD_TEST: #{test}   ((null) => #{r2})" if @enable_logging
-    @ret[:changes][:add_test][test] = { before: "(null)", after: r2, comments: reason_filter }
-    @ret[:results_delta][:add_test] += 1 unless filter_report
-    @ret[:filtered_results][:add_test] += 1 if filter_report
+    changes_dict[:add_test][test] = { before: "(null)", after: r2, comments: reason_filter }
+    count_dict[:add_test] += 1
   end
 
   if((r1 == 'FAIL' || r1 == 'UNRESOLVED' || r1 == nil) && r2 == 'PASS')
     #puts "NEWLY_PASS: #{test}   (#{r1} => #{r2})" if @enable_logging
-    @ret[:changes][:new_pass][test] = { before: r1, after: r2, comments: reason_filter }
-    @ret[:results_delta][:new_pass] += 1 unless filter_report
-    @ret[:filtered_results][:new_pass] += 1 if filter_report
+    changes_dict[:new_pass][test] = { before: r1, after: r2, comments: reason_filter }
+    count_dict[:new_pass] += 1
   elsif((r1 == 'PASS' || r1 == nil) && (r2 == 'FAIL' || r2 == 'UNRESOLVED'))
     #puts "NEWLY_FAIL: #{test}   (#{r1} => #{r2})" if @enable_logging
-    @ret[:changes][:new_fail][test] = { before: r1, after: r2, comments: reason_filter }
-    @ret[:results_delta][:new_fail] += 1 unless filter_report
-    @ret[:filtered_results][:new_fail] += 1 if filter_report
+    changes_dict[:new_fail][test] = { before: r1, after: r2, comments: reason_filter }
+    count_dict[:new_fail] += 1
   elsif(r1 == 'UNSUPPORTED' && r1 != r2)
     #puts "ADD_TEST: #{test}   (#{r1} => #{r2})" if @enable_logging
-    @ret[:changes][:add_test][test] = { before: r1, after: r2, comments: reason_filter }
-    @ret[:results_delta][:add_test] += 1 unless filter_report
-    @ret[:filtered_results][:add_test] += 1 if filter_report
+    changes_dict[:add_test][test] = { before: r1, after: r2, comments: reason_filter }
+    count_dict[:add_test] += 1
   elsif(r2 == 'UNSUPPORTED' && r1 != r2)
     #puts "REM_TEST: #{test}   (#{r1} => #{r2})" if @enable_logging
-    @ret[:changes][:rem_test][test] = { before: r1, after: r2, comments: reason_filter }
-    @ret[:results_delta][:rem_test] += 1 unless filter_report
-    @ret[:filtered_results][:rem_test] += 1 if filter_report
+    changes_dict[:rem_test][test] = { before: r1, after: r2, comments: reason_filter }
+    count_dict[:rem_test] += 1
   end
 end
 
