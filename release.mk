@@ -353,6 +353,9 @@ UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_TGZ)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
 UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_GLIBC_LE_HS_NATIVE_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_WIN_EXE)
+UPLOAD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(IDE_MACOS_TGZ)
+UPLOAD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(TOOLS_ELFLE_MAC_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(TOOLS_ELFBE_MAC_DIR)$(TAR_EXT)
 
 # List of files that will be deployed internally. Is a superset of "upload"
 # artifacts.
@@ -390,6 +393,9 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_WIN_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_WIN_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(TOOLS_ELFLE_MAC_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(TOOLS_ELFBE_MAC_DIR)
+
 # Linux images are not in this list, because directory names in this list are
 # processed, but linux_images doesn't conform to the convention expected by the
 # processing.
@@ -865,17 +871,13 @@ openocd-linux: $O/$(OOCD_HOST_DIR)$(TAR_EXT)
 DIRS += $(OOCD_BUILD_HOST_DIR)
 
 
-# Git submodules are common to Linux and Windows.  Note, that this is not a
-# standard approach - typically one should call openocd/bootstrap script that
-# will run autoconf and git sumbodules. But CentOS 6 doesn't have a required
-# version of autoconf, hence it cannot run bootstrap.
-$(OOCD_SRC_DIR)/git2cl:
-	cd $(OOCD_SRC_DIR) && $(GIT) submodule init
-	cd $(OOCD_SRC_DIR) && $(GIT) submodule update
+# Bootstrap is common to Linux and Windows.
+$(OOCD_SRC_DIR)/configure:
+	cd $(OOCD_SRC_DIR) && ./bootstrap
 
 
 # Configure OpenOCD
-$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl \
+$(OOCD_BUILD_HOST_DIR)/Makefile: | $(OOCD_SRC_DIR)/configure \
 	$(OOCD_BUILD_HOST_DIR)
 
 $(OOCD_BUILD_HOST_DIR)/Makefile:
@@ -964,7 +966,7 @@ $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_win_src
 
 
 # Configure OpenOCD for Windows.
-$(OOCD_BUILD_WIN_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_WIN_DIR)/Makefile: | $(OOCD_SRC_DIR)/configure
 $(OOCD_BUILD_WIN_DIR)/Makefile: $(BUILD_DIR)/libusb_win_install/lib/libusb-1.0.a
 $(OOCD_BUILD_WIN_DIR)/Makefile: | $(OOCD_BUILD_WIN_DIR)
 
@@ -1029,7 +1031,7 @@ $(BUILD_DIR)/libusb_mac_install/lib/libusb-1.0.a: $(BUILD_DIR)/libusb_mac_src
 
 
 # Configure OpenOCD for macOS.
-$(OOCD_BUILD_MAC_DIR)/Makefile: | $(OOCD_SRC_DIR)/git2cl
+$(OOCD_BUILD_MAC_DIR)/Makefile: | $(OOCD_SRC_DIR)/configure
 $(OOCD_BUILD_MAC_DIR)/Makefile: $(BUILD_DIR)/libusb_mac_install/lib/libusb-1.0.a
 $(OOCD_BUILD_MAC_DIR)/Makefile: | $(OOCD_BUILD_MAC_DIR)
 
@@ -1087,6 +1089,7 @@ endif
 	      $(WINDOWS_WORKSPACE)/packages/
 	$(CP) $(ROOT)/toolchain $(WINDOWS_WORKSPACE)/
 
+	touch $@
 endif
 
 #
