@@ -221,7 +221,7 @@ latex_elements = {
 
 # Additional stuff for the LaTeX preamble.
 # Increase limitations on the number of floats.
-'preamble': '\usepackage{float}',
+'preamble': r'\usepackage{float}',
 
 # Latex figure (float) alignment to fix image location in the document.
 'figure_align': 'H',
