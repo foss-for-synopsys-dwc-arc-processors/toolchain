@@ -41,14 +41,23 @@ set_board_info shell_prompt          "\[^\r\n\]*# "
 set_board_info telnet_username       "root"
 set_board_info telnet_password       ""
 set_board_info telnet_exec_timeout   120
-set_board_info netport               $addr:5556
+if { [info exists ::env(TARGET_TELNET_PORT)] } {
+    set_board_info netport           $addr:$env(TARGET_TELNET_PORT)
+} else {
+    set_board_info netport           $addr:5556
+}
+
 
 # Set up FTP connection details.
 set_board_info ftp_username          root
 set_board_info ftp_password          "\'\'"
 set_board_info ftp_download_timeout  10
 set_board_info ftp_upload_timeout    10
-set_board_info ftp_port              5555
+if { [info exists ::env(TARGET_FTP_PORT)] } {
+    set_board_info ftp_port          $env(TARGET_FTP_PORT)
+} else {
+    set_board_info ftp_port          5555
+}
 
 # This simulator isn't slow.
 set_board_info slow_simulator 0
