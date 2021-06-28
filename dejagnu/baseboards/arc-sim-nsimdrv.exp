@@ -118,9 +118,15 @@ if { [check_target_arc64] } {
     lappend nsim_flags \
 	-prop=nsim_isa_family=arc64 \
 	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_mpy_option=3 \
+	-p nsim_isa_mpy_option=9 \
 	-p nsim_isa_mpy64=1 \
-	-p nsim_isa_div64_option=1
+	-p nsim_isa_div64_option=1 \
+	-p nsim_isa_has_fp=1 \
+	-p nsim_isa_fp_vec_option=1 \
+	-p nsim_isa_fp_hp_option=1 \
+	-p nsim_isa_fp_dp_option=1 \
+	-p nsim_isa_fp_div_option=1 \
+	-p nsim_isa_fp_num_regs=32
 } elseif { [check_target_arc700] } {
     # GCC requires multiplier for ARC 700.
     lappend nsim_flags \
@@ -204,6 +210,8 @@ set nsim_gcc_mapping {
     "__ARC64_ATOMIC_1__"	1	nsim_isa_atomic_option=1
     "__ARC64_ATOMIC_2__"	1	nsim_isa_atomic_option=2
     "__ARC64_ATOMIC_3__"	1	nsim_isa_atomic_option=3
+    "__ARC64_M128__"		1	nsim_isa_m128_option=1
+    "__ARC64_WIDE_VECTOR__"	1	nsim_isa_fp_wide_option=1
     "__ARC_ATOMIC__"		1	nsim_isa_atomic_option=1
     "__ARC_BARREL_SHIFTER__"	0	nsim_isa_shift_option=0
     "__ARC_CODE_DENSITY__"	1	nsim_isa_code_density_option=2
