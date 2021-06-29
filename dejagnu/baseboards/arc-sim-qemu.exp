@@ -72,7 +72,7 @@ if { $tool == "libstdc++" } {
 }
 
 # Setup the QEMU simulator.
-set_board_info sim "time -p $qemu_bin [join $qemu_flags]"
+set_board_info sim "$qemu_bin [join $qemu_flags]"
 set_board_info is_simulator 1
 
 set_board_info compiler  "[find_gcc]"
