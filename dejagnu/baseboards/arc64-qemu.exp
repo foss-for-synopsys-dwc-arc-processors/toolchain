@@ -34,7 +34,7 @@ search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 # Any multilib options are set in an environment variable.
 #process_multilib_options [arc_get_multilib_options]
 
-set xldflags "--specs=qemu.specs -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
+set xldflags "--specs=nsim.specs -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
 
 #set QEMU flags
@@ -43,7 +43,7 @@ if ![info exists qemu_flags] {
 }
 
 lappend qemu_flags \
-    -M arc-sim -cpu hs6x -m 2G -nographic -no-reboot -monitor none -serial stdio \
+    -M arc-sim -cpu hs6x -m 2G -nographic -no-reboot -monitor none -semihosting\
     -kernel
 
 set qemu_wrapper "$::env(QEMU_HOME)/bin/qemu-system-arc64"

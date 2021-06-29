@@ -34,7 +34,7 @@ search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 # Any multilib options are set in an environment variable.
 process_multilib_options [arc_get_multilib_options]
 
-set xldflags "--specs=qemu.specs -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
+set xldflags "--specs=nsim.specs -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
 
 #set QEMU flags
@@ -42,37 +42,38 @@ if ![info exists qemu_flags] {
     set qemu_flags {}
 }
 
-# Select processor family. Also set nsim_isa_sat, which is mandatory for GCC.
-if { [check_target_arc700] } {
-    # GCC requires multiplier for ARC 700.
-    lappend qemu_flags \
-	-cpu arc700
-} elseif { [check_target_arc600] } {
-    lappend qemu_flags \
-	-cpu arc600
-} elseif { [check_target_archs] } {
+# Select processor family.
+if { [check_target_archs] } {
     lappend qemu_flags \
 	-cpu archs
+    set qemu_arch "arc"
 } elseif { [check_target_arcem] } {
     lappend qemu_flags \
 	-cpu arcem
+    set qemu_arch "arc"
+} elseif { [check_target_arc64] } {
+    lappend qemu_flags \
+	-cpu hs6x
+    set qemu_arch "arc64"
 } else {
     perror "Unknown CPU configuration"
 }
 
 lappend qemu_flags \
-    -M arc-sim -m 2G -nographic -no-reboot -monitor none -serial stdio \
+    -M arc-sim -m 2G -nographic -no-reboot -monitor none -semihosting \
     -kernel
 
-set qemu_wrapper "$::env(QEMU_HOME)/bin/qemu-system-arc"
+set qemu_bin "$::env(QEMU_HOME)/bin/qemu-system-${qemu_arch}"
 
-# Setup the metaware simulator.
-set_board_info sim "$qemu_wrapper [join $qemu_flags]"
-set_board_info sim_time_limit 1500
+set_board_info sim_time_limit 300
+# If we test libstdc++ increase the time.
+if { $tool == "libstdc++" } {
+    set_board_info sim_time_limit 1200
+}
+
+# Setup the QEMU simulator.
+set_board_info sim "time -p $qemu_bin [join $qemu_flags]"
 set_board_info is_simulator 1
-
-# No multilib options needed by default.
-process_multilib_options ""
 
 set_board_info compiler  "[find_gcc]"
 set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
