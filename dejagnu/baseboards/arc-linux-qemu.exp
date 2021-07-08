@@ -28,7 +28,7 @@ send_user "ARC Linux test setup\n"
 search_and_load_file "library file" "arc-linux-generic.exp" ${boards_dir}
 
 # get the address of the host where qemu is running on
-if { [info exits ::env(ARC_TEST_ADDR_UCLIBC)] } {
+if { [info exists ::env(ARC_TEST_ADDR_UCLIBC)] } {
     set addr $env(ARC_TEST_ADDR_UCLIBC)
 } else {
     set addr 127.0.0.1
