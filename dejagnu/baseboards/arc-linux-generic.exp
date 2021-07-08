@@ -60,12 +60,6 @@ set_board_info file_transfer  ftp
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
 
-# We need to define this flag to generate default .gcda files if we are using
-# a stock compiler, without the profopt.exp changes. No problem with doubling
-# up the argument in normal circumstances.
-set_board_info cflags    "-fprofile-dir=."
-set_board_info cxxflags  "-fprofile-dir=."
-
 # No linker script needed.
 set_board_info ldscript ""
 
