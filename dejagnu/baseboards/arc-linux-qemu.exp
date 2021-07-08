@@ -28,7 +28,11 @@ send_user "ARC Linux test setup\n"
 search_and_load_file "library file" "arc-linux-generic.exp" ${boards_dir}
 
 # get the address of the host where qemu is running on
-set addr $env(ARC_TEST_ADDR_UCLIBC)
+if { [info exits ::env(ARC_TEST_ADDR_UCLIBC)] } {
+    set addr $env(ARC_TEST_ADDR_UCLIBC)
+} else {
+    set addr 127.0.0.1
+}
 
 # Set up remote target generic login info. The hostname is specified
 # generically via the environment variable ARC_TEST_ADDR_UCLIBC.
@@ -64,7 +68,7 @@ set_board_info slow_simulator 0
 
 if { $tool == "gdb" } {
     # IP address of target
-    set_board_info sockethost "$env(ARC_TEST_ADDR_UCLIBC):"
+    set_board_info sockethost "$addr:"
 }
 
 # vim: noexpandtab sts=4 ts=8:
