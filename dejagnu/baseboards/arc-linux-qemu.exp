@@ -28,7 +28,11 @@ send_user "ARC Linux test setup\n"
 search_and_load_file "library file" "arc-linux-generic.exp" ${boards_dir}
 
 # get the address of the host where qemu is running on
-set addr $env(ARC_TEST_ADDR_UCLIBC)
+if { [info exists ::env(ARC_TEST_ADDR_UCLIBC)] } {
+    set addr $env(ARC_TEST_ADDR_UCLIBC)
+} else {
+    set addr 127.0.0.1
+}
 
 # Set up remote target generic login info. The hostname is specified
 # generically via the environment variable ARC_TEST_ADDR_UCLIBC.
@@ -41,21 +45,30 @@ set_board_info shell_prompt          "\[^\r\n\]*# "
 set_board_info telnet_username       "root"
 set_board_info telnet_password       ""
 set_board_info telnet_exec_timeout   120
-set_board_info netport               $addr:5556
+if { [info exists ::env(TARGET_TELNET_PORT)] } {
+    set_board_info netport           $addr:$env(TARGET_TELNET_PORT)
+} else {
+    set_board_info netport           $addr:5556
+}
+
 
 # Set up FTP connection details.
 set_board_info ftp_username          root
 set_board_info ftp_password          "\'\'"
 set_board_info ftp_download_timeout  10
 set_board_info ftp_upload_timeout    10
-set_board_info ftp_port              5555
+if { [info exists ::env(TARGET_FTP_PORT)] } {
+    set_board_info ftp_port          $env(TARGET_FTP_PORT)
+} else {
+    set_board_info ftp_port          5555
+}
 
 # This simulator isn't slow.
 set_board_info slow_simulator 0
 
 if { $tool == "gdb" } {
     # IP address of target
-    set_board_info sockethost "$env(ARC_TEST_ADDR_UCLIBC):"
+    set_board_info sockethost "$addr:"
 }
 
 # vim: noexpandtab sts=4 ts=8:
