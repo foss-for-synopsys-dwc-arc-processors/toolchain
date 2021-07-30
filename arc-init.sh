@@ -411,7 +411,7 @@ configure_linux_stage2() {
 	--enable-fast-install=N/A \
 	--with-endian=$ARC_ENDIAN \
 	$DISABLEWERROR \
-	--enable-languages=c,c++ \
+	--enable-languages=c,c++,fortran \
 	--prefix="$INSTALLDIR" \
 	--enable-shared \
 	--without-newlib \
