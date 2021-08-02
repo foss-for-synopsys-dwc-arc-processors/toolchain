@@ -111,8 +111,8 @@ def test_baremetal(name, options)
   `mkdir -p #{workspace_dir}/dump1`
   `mkdir -p #{workspace_dir}/dump2`
   File.write("#{workspace_dir}/site.exp", site_exp(options['type'], options))
-  envs_extra = "#{options[:extra_env_variables]} PATH=#{options["install_dir"]}/bin:$PATH"
-  `bash -c "cd #{workspace_dir}; #{envs_extra} export; #{envs_extra} runtest"`
+  envs_extra = "#{options["extra_env_variables"]} PATH=#{options["install_dir"]}/bin:$PATH"
+  `bash -c "cd #{workspace_dir}; #{envs_extra} runtest"`
 end
 
 def test_linux(name, options)
@@ -133,7 +133,7 @@ def test_linux(name, options)
   puts "Finish waiting"
 
   File.write("#{workspace_dir}/site.exp", site_exp(options['type'], options))
-  envs_extra = "#{options[:extra_env_variables]} PATH=#{options["install_dir"]}/bin:$PATH"
+  envs_extra = "#{options["extra_env_variables"]} PATH=#{options["install_dir"]}/bin:$PATH"
   envs_extra += " TARGET_TELNET_PORT=#{options["qemu_telnet_port"]}"
   envs_extra += " TARGET_FTP_PORT=#{options["qemu_ftp_port"]}"
   `bash -c "cd #{workspace_dir}; #{envs_extra} runtest"`
