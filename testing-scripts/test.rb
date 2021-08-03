@@ -90,6 +90,34 @@ EOF
   }
 EOF
   end
+  if(config_type == "linux-qemu-user")
+    ret = <<EOF
+  set rootme "."
+  set tmpdir "./tmp"
+  set srcdir "#{options["gcc_dir"]}/gcc/testsuite"
+
+  set target_triplet #{options["toolchain_tripplet"]}
+  set target_alias   #{options["target_alias"]}
+
+  set tool gcc
+  set target_board #{options["target_list"]}
+  set target_list  #{options["target_list"]}
+
+  set qemu_flags   {#{options["qemu_opts"]}}
+
+  set CFLAGS ""
+  set CXXFLAGS ""
+
+  set arc_board_dir "#{options["toolchain_dir"]}"
+  if ![info exists boards_dir] {
+            lappend boards_dir "$arc_board_dir/dejagnu"
+                      lappend boards_dir "$arc_board_dir/dejagnu/baseboards"
+  } else {
+          set boards_dir "$arc_board_dir/dejagnu"
+                    lappend boards_dir "$arc_board_dir/dejagnu/baseboards"
+  }
+EOF
+  end
 end
 
 def verify_opts(msg, opts, req)
@@ -111,8 +139,8 @@ def test_baremetal(name, options)
   `mkdir -p #{workspace_dir}/dump1`
   `mkdir -p #{workspace_dir}/dump2`
   File.write("#{workspace_dir}/site.exp", site_exp(options['type'], options))
-  envs_extra = "#{options[:extra_env_variables]} PATH=#{options["install_dir"]}/bin:$PATH"
-  `bash -c "cd #{workspace_dir}; #{envs_extra} export; #{envs_extra} runtest"`
+  envs_extra = "#{options["extra_env_variables"]} PATH=#{options["install_dir"]}/bin:$PATH"
+  `bash -c "cd #{workspace_dir}; #{envs_extra} runtest"`
 end
 
 def test_linux(name, options)
@@ -133,12 +161,24 @@ def test_linux(name, options)
   puts "Finish waiting"
 
   File.write("#{workspace_dir}/site.exp", site_exp(options['type'], options))
-  envs_extra = "#{options[:extra_env_variables]} PATH=#{options["install_dir"]}/bin:$PATH"
+  envs_extra = "#{options["extra_env_variables"]} PATH=#{options["install_dir"]}/bin:$PATH"
   envs_extra += " TARGET_TELNET_PORT=#{options["qemu_telnet_port"]}"
   envs_extra += " TARGET_FTP_PORT=#{options["qemu_ftp_port"]}"
   `bash -c "cd #{workspace_dir}; #{envs_extra} runtest"`
 
   Process.kill("KILL", @pid)
+end
+
+def test_linux_user(name, options)
+  verify_opts(name, options, ["qemu_path", "qemu_arch", "extra_env_variables"])
+  pwd = Dir.pwd
+  workspace_dir = "#{pwd}/workspace/#{options["workspace_dir"]}"
+  `mkdir -p #{workspace_dir}/tmp`
+  `mkdir -p #{workspace_dir}/dump1`
+  `mkdir -p #{workspace_dir}/dump2`
+  File.write("#{workspace_dir}/site.exp", site_exp(options['type'], options))
+  envs_extra = "#{options["extra_env_variables"]} PATH=#{options["install_dir"]}/bin:$PATH"
+  `bash -c "cd #{workspace_dir}; #{envs_extra} runtest"`
 end
 
 def test(name, options)
@@ -148,6 +188,8 @@ def test(name, options)
     test_baremetal(name, options)
   elsif(options["type"] == "linux-qemu")
     test_linux(name, options)
+  elsif(options["type"] == "linux-qemu-user")
+    test_linux_user(name, options)
   else
 
   end
