@@ -154,7 +154,7 @@ section ""
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\GNU Toolchain User Guide.lnk" \
 	"$INSTDIR\share\doc\GNU_Toolchain_for_ARC.pdf"
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Documentation online.lnk" \
-      "http://embarc.org/toolchain/ide/index.html"
+      "https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/ide/index.html"
     CreateShortCut "$SMPROGRAMS\${startmenu_dir}\IDE Releases on GitHub.lnk" \
       "https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases"
 SectionEnd
