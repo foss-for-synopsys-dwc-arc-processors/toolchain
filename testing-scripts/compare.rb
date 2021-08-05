@@ -94,7 +94,7 @@ table = Terminal::Table.new do |t|
     row[16] = results2["UNSUPPORTED"] || 0
   
     `mkdir -p ./comparisson`
-    txt = `ruby sum_compare.rb -v #{file1} #{file2}`
+    txt = `ruby ../reporting-scripts/sum_compare.rb -v #{file1} #{file2}`
   
     json = JSON.parse(txt)
   
