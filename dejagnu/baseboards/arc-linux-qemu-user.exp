@@ -67,7 +67,7 @@ set_board_info is_simulator 1
 set_board_info compiler  "[find_gcc]"
 
 # The simulator returns exit statuses
-set_board_info needs_status_wrapper 1
+set_board_info needs_status_wrapper ""
 
 # Doesn't pass arguments or signals, can return results, and doesn't
 # do inferiorio.
