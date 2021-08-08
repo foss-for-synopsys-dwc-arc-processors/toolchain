@@ -1,0 +1,77 @@
+# Copyright (C) 2018 Free Software
+# Foundation, Inc.
+#
+# This file is part of DejaGnu.
+#
+# DejaGnu is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# DejaGnu is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with DejaGnu; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
+
+# This is a list of toolchains that are supported on this board.
+set_board_info target_install ${target_triplet}
+
+# Load the generic configuration for this board. This will define a basic set
+# of routines needed by the tool to communicate with the board.
+load_generic_config "sim"
+
+# basic-sim.exp is a basic description for the standard Cygnus simulator.
+load_base_board_description "basic-sim"
+
+# We need extra procedures to determine for which cpu we simulate.
+search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
+search_and_load_file "library file" "arc-common.exp" ${boards_dir}
+
+# Any multilib options are set in an environment variable.
+process_multilib_options [arc_get_multilib_options]
+
+#set QEMU flags
+if ![info exists qemu_flags] {
+    set qemu_flags {}
+}
+
+# Select processor family.
+if { [check_target_archs] } {
+    lappend qemu_flags \
+	-cpu archs
+    set qemu_arch "arc"
+} elseif { [check_target_arc64] } {
+    lappend qemu_flags \
+	-cpu hs6x
+    set qemu_arch "arc64"
+} else {
+    perror "Unknown CPU configuration"
+}
+
+set qemu_bin "$::env(QEMU_HOME)/bin/qemu-${qemu_arch}"
+
+set_board_info sim_time_limit 300
+# If we test libstdc++ increase the time.
+if { $tool == "libstdc++" } {
+    set_board_info sim_time_limit 1200
+}
+
+# Setup the QEMU simulator.
+set_board_info sim "$qemu_bin [join $qemu_flags]"
+set_board_info is_simulator 1
+
+set_board_info compiler  "[find_gcc]"
+
+# The simulator returns exit statuses
+set_board_info needs_status_wrapper ""
+
+# Doesn't pass arguments or signals, can return results, and doesn't
+# do inferiorio.
+set_board_info noargs 1
+set_board_info gdb,nosignals 1
+set_board_info gdb,noresults 0
+set_board_info gdb,noinferiorio 1
