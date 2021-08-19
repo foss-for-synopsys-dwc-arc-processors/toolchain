@@ -53,6 +53,8 @@ if args.release_id is not None:
 | Linux/uClibc ARC700 | {4} \ {5}    |                |              |              |
 | Linux/uClibc ARC HS | {6} \ {7}    |                |              |              |
 | Linux/glibc ARC HS  | {13} \ {14}  |                | {10}         |              |
+| ARC64 Baremetal     | {16}         |                |              |              |
+| ARC64 Linux         | {17}         |                |              |              |
 | IDE                 | {11}         | {12}           |              | {15}         |
     """.format(
             fformat.format(t=le, release=args.release_id, type="elf32", cpu="le", host="linux"),
@@ -79,7 +81,11 @@ if args.release_id is not None:
                 host="linux"),
             fformat.format(t=be, release=args.release_id, type="glibc", cpu="be_archs",
                 host="linux"),
-            ide_fformat.format(t="Download", release=args.release_id, host="macos", ext="tar.gz"))
+            ide_fformat.format(t="Download", release=args.release_id, host="macos", ext="tar.gz"),
+            fformat.format(t=le, release=args.release_id, type="arc64", cpu="elf",
+                host="linux"),
+            fformat.format(t=le, release=args.release_id, type="arc64", cpu="glibc",
+                host="linux"))
 
 if args.md5sum_file is not None:
     with open(args.md5sum_file, "r") as f:
