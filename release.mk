@@ -57,6 +57,9 @@ ENABLE_NATIVE_TOOLS := y
 # Whether to build toolchain for Linux/glibc targets.
 ENABLE_GLIBC_TOOLS := y
 
+# Whether to build toolchain for arc64 targets.
+ENABLE_ARC64_TOOLS := y
+
 # Whether to build and upload OpenOCD for Linux.
 ENABLE_OPENOCD := y
 
@@ -285,6 +288,10 @@ TOOLS_GLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_be_archs_$(HOST)
 # Toolchain: native linux toolchain
 TOOLS_GLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_native_install
 
+# Toolchain: arc64
+TOOLS_ELF_ARC64_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_arc64_elf_$(HOST)_install
+TOOLS_LINUX_ARC64_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_arc64_glibc_$(HOST)_install
+
 # Toolchain PDF User Guide.
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/pdf/GNU_Toolchain_for_ARC.pdf)
 
@@ -347,6 +354,9 @@ endif
 UPLOAD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_BE_HS_HOST_DIR)$(TAR_EXT)
 
+UPLOAD_ARTIFACTS-$(ENABLE_ARC64_TOOLS) += $(TOOLS_ELF_ARC64_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_ARC64_TOOLS) += $(TOOLS_LINUX_ARC64_HOST_DIR)$(TAR_EXT)
+
 UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_TGZ)
@@ -396,6 +406,9 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFBE_WIN_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(TOOLS_ELFLE_MAC_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(TOOLS_ELFBE_MAC_DIR)
 
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_ARC64_TOOLS) += $(TOOLS_ELF_ARC64_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_ARC64_TOOLS) += $(TOOLS_LINUX_ARC64_HOST_DIR)
+
 # Linux images are not in this list, because directory names in this list are
 # processed, but linux_images doesn't conform to the convention expected by the
 # processing.
@@ -425,6 +438,9 @@ endif
 
 BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_le_hs_tarball
 BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_be_hs_tarball
+
+BUILD_DEPS-$(ENABLE_ARC64_TOOLS) += $O/.stamp_arc64_elf_tarball
+BUILD_DEPS-$(ENABLE_ARC64_TOOLS) += $O/.stamp_arc64_linux_tarball
 
 BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
@@ -621,6 +637,14 @@ $O/.stamp_glibc_be_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_BE_HS_HOST_DIR))
 	touch $@
 
+$O/.stamp_arc64_elf_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arc64-unknown-elf,$(TOOLS_ELF_ARC64_HOST_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_ELF_ARC64_HOST_DIR))
+
+$O/.stamp_arc64_linux_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arc64-unknown-elf,$(TOOLS_LINUX_ARC64_HOST_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUX_ARC64_HOST_DIR))
+
 $O/.stamp_uclibc_le_700_tarball: $O/.stamp_uclibc_le_700_built
 	$(call create_tar,$(TOOLS_UCLIBC_LE_700_HOST_DIR))
 	touch $@
@@ -643,6 +667,14 @@ $O/.stamp_glibc_le_hs_tarball: $O/.stamp_glibc_le_hs_built
 
 $O/.stamp_glibc_be_hs_tarball: $O/.stamp_glibc_be_hs_built
 	$(call create_tar,$(TOOLS_GLIBC_BE_HS_HOST_DIR))
+	touch $@
+
+$O/.stamp_arc64_elf_tarball: $O/.stamp_arc64_elf_built
+	$(call create_tar,$(TOOLS_ELF_ARC64_HOST_DIR))
+	touch $@
+
+$O/.stamp_arc64_linux_tarball: $O/.stamp_arc64_linux_built
+	$(call create_tar,$(TOOLS_LINUX_ARC64_HOST_DIR))
 	touch $@
 
 #
