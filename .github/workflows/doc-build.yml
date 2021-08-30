@@ -1,0 +1,57 @@
+name: Documentation Build and Deploy
+
+on:
+  push:
+    branches:
+      - arc-dev
+    paths:
+    - 'doc/**'
+    - '.github/workflows/doc-build.yml'
+
+jobs:
+  doc-build-html:
+    name: "Documentation Build (HTML)"
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: install-pkgs
+      run: |
+        sudo apt-get install -y doxygen
+
+    - name: cache-pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ hashFiles('doc/requirements-doc.txt') }}
+
+    - name: install-pip
+      run: |
+        sudo pip3 install -U setuptools wheel pip
+        pip3 install -r doc/requirements-doc.txt
+
+    - name: build-docs
+      run: |
+        SPHINXOPTS="-q -W -j auto" make -C doc html
+
+    - name: Deploy to GitHub Page Repo
+      env:
+        REPO_KEY: ${{ secrets.ACTION_TOKEN }}
+      run: |
+        git config --global user.email "svc-arcoss_auto@synopsys.com"
+        git config --global user.name "svc-arcoss_auto arc"
+
+        REPO_NAME="github.com/$GITHUB_ACTOR/foss-for-synopsys-dwc-arc-processors.github.io.git"
+        REPO_LINK="https://""${GITHUB_ACTOR}:${REPO_KEY}""@""${REPO_NAME}"
+
+        git clone --single-branch --branch master ${REPO_LINK} "${HOME}/gh-pages"
+        cp -R "${GITHUB_WORKSPACE}"/doc/_build/html/* ${HOME}/gh-pages/toolchain
+        cd ${HOME}/gh-pages
+
+        if [[ $(git status --porcelain toolchain | wc -l) != 0 ]]; then
+          git add -A toolchain
+          git commit -s -m "toolchain: Generate pages for commit ${GITHUB_SHA}" --author="svc-arcoss_auto <svc-arcoss_auto@synopsys.com>"
+          git push ${REPO_LINK} master
+        fi

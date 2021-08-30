@@ -1,0 +1,7 @@
+# DOC: used to generate docs
+
+breathe
+sphinx~=3.3
+sphinx_rtd_theme>=0.5.2,<1.0
+rst2pdf
+
