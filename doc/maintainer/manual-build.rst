@@ -220,7 +220,7 @@ Build Stage 2 GCC::
         --enable-fast-install=N/A \
         --with-endian=little \
         --disable-werror \
-        --enable-languages=c,c++ \
+        --enable-languages=c,c++,fortran \
         --prefix=${INSTALLDIR} \
         --enable-shared \
         --without-newlib \
