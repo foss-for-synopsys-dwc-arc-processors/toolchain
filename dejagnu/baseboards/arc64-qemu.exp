@@ -32,7 +32,7 @@ search_and_load_file "library file" "tool-extra.exp" ${boards_dir}
 search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 
 # Any multilib options are set in an environment variable.
-#process_multilib_options [arc_get_multilib_options]
+process_multilib_options [arc_get_multilib_options]
 
 set xldflags "--specs=nsim.specs -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
@@ -53,11 +53,8 @@ set_board_info sim "$qemu_wrapper [join $qemu_flags]"
 set_board_info sim_time_limit 15
 set_board_info is_simulator 1
 
-# No multilib options needed by default.
-process_multilib_options ""
-
 set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
 set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 # No linker script needed.
 set_board_info ldscript ""
