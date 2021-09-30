@@ -612,14 +612,14 @@ $O/.stamp_uclibc_le_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-arc700-linux-uclibc,$(TOOLS_UCLIBC_LE_700_HOST_DIR))
 	touch $@
 
+$O/.stamp_uclibc_be_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arceb-arc700-linux-uclibc,$(TOOLS_UCLIBC_BE_700_HOST_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_BE_700_HOST_DIR))
+	touch $@
+
 $O/.stamp_uclibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-archs-linux-uclibc,$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
-	touch $@
-
-$O/.stamp_uclibc_be_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	$(call copy_prebuilt,arceb-archs-linux-uclibc,$(TOOLS_UCLIBC_BE_700_HOST_DIR))
-	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_BE_700_HOST_DIR))
 	touch $@
 
 $O/.stamp_uclibc_be_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
