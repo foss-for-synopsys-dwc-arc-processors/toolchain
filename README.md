@@ -1,8 +1,9 @@
 ARC GNU Tool Chain
 ==================
 
-This is the main Git repository for the ARC GNU toolchain. It contains just
-the scripts required to build the entire toolchain.
+This is the main Git repository for the ARC GNU toolchain. It contains
+documentation & various supplimentary meterials required for development,
+verification & releasing of pre-built toolchain artifacts.
 
 Branches in this repository are:
 * `arc-releases` is the stable branch for the toolchain release. Head of
@@ -14,55 +15,89 @@ While the top of *development* branches should build and run reliably, there
 is no guarantee of this. Users who encountered an error are welcomed to create
 a new bug report at GitHub Issues for this `toolchain` project.
 
-The build script in this repository can be used for different versions of
-toolchain components, however such cross-version compatibility is not
-guaranteed.
+# Build environment
 
-The build script from this repository by default will automatically check out
-components to versions corresponding to the toolchain branch. Build script from
-development branch of toolchain repository will by default check out latest
-development branches of components. Build script from release and staging
-branches will check out components to the corresponding git tag. For example
-build script for 2021.03 release will checkout out components to arc-2021.03-release
-tag.
+Real toolchain building is being done by [Crosstool-NG](https://github.com/crosstool-ng/crosstool-ng)
+and so we inherit all the capabilities provided by that powerful and flexible tool.
+We recommend those interested in rebuilding of ARc GNU tools to become familiar with
+Crosstool-NG coumentation available here: https://crosstool-ng.github.io/docs
+to better understand its capabilities and limitations.
 
+Crosstool-NG is meant to be used in Unix-like environment and so the best user experience
+could be achieved in up-to-date mainstream Linux distributions, which have all needed
+tools in their repositories.
 
-Prerequisites
--------------
+Also Crosstool-NG is known to work on macOS with Intel processors
+and hopefully will soon be usable on macOS with ARM processors as well. That said ARC GNU
+cross-toolchain for macOS might be built natively on macOS. Or it's possible to built it
+in a canadian cross manner (see https://crosstool-ng.github.io/docs/toolchain-types) on a Linux
+host with use of [OSXCross](https://github.com/tpoechtrager/osxcross) as a cross-toolchain for macOS.
 
-Linux-like environment is required to build GNU toolchain for ARC. To build a
-toolchain for Windows, it is recommended to cross-compile it using MinGW on
-Linux. Refer to "Building toolchain on Windows" section of this document.
+There're ways to build ARC GNU cross-toolchain on Windows as well, and the most convenient would be
+use of [Windows Subsystem for Linux v2, WSL2](https://docs.microsoft.com/en-us/windows/wsl/compare-versions)
+or any other full-scale virtual machine with Linux inside. Fortunately though it's possible to
+use canadian-cross approach for Windows as well with use of MinGW cross-toolchain on Linux host.
+Moreover even MinGW cross-toolchain might be built with Crosstool-NG right in place, limiting
+amount of external deoendencies.
 
-Note that GDB requires compiler with C++ 11 support, therefore it is not
-possible to build toolchain with GCC 4.4 on RHEL/CentOS 6. Toolchain still can
-be built on RHEL/CentOS 6 when using manually installed newer compiler, however
-it is out of scope of this document to describe how to do that.
+So our recommendation is to either use pre-built toolchain for Linux, Windows or macOS
+(could be found on [releases](https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases) page)
+or build in a true Linux environment, be it real Linux host or a virtual machine.
+
+And due to requirements of some toolchain components for building from source as well as for
+execution of a prebuilt toolchain it's necessary to use up-to-date Linux distribution.
+
+As of today the oldest supported distributions are:
+* CentOS/RHEL 7
+* Ubuntu 18.04 LTS
+
+# Prerequisites
 
 GNU toolchain for ARC has same standard prerequisites as an upstream GNU tool
 chain as documented in the GNU toolchain user guide or on the [GCC
 website](http://gcc.gnu.org/install/prerequisites.html)
 
-On Ubuntu those can be installed with following command (as root):
+## Ubuntu 18.04 and newer
 
-    # sudo apt-get update
-    # sudo apt-get install -y texinfo byacc flex libncurses5-dev zlib1g-dev \
-      libexpat1-dev texlive build-essential git wget gawk bison xz-utils make \
-      python3 rsync locales
+```shell
+sudo apt update
+sudo apt install -y texinfo byacc flex libncurses5-dev zlib1g-dev \
+                    libexpat1-dev texlive build-essential git wget gawk \
+                    bison xz-utils make python3 rsync locales
+```
 
-On CentOS/RHEL 6.x & 7.x those can be installed with following command:
+## CentOS/RHEL 7.x
 
-    # sudo yum install -y autoconf automake binutils bison byacc flex gcc \
-      gcc-c++ libtool patch texinfo-tex ncurses-devel ncurses-compat-libs \
-      flex zlib-devel expat-devel git texlive-collection-latexrecommended \
-      wget make xz rsync diffutils which
+```
+sudo yum install -y autoconf bison bzip2 file flex gcc-c++ git gperf \
+                    help2man libtool make ncurses-devel patch \
+                    perl-Thread-Queue python3 rsync texinfo unzip wget \
+                    which xz
+```
 
-On Fedora & CentOS/RHEL 8.x+:
+## Fedora & CentOS/RHEL 8.x
 
-    # sudo dnf install -y autoconf automake binutils bison byacc flex gcc \
-      gcc-c++ libtool patch texinfo-tex ncurses-devel ncurses-compat-libs \
-      flex zlib-devel expat-devel git texlive-collection-latexrecommended \
-      wget make xz rsync diffutils which
+### Enabling "PowerTools" repository for CentOS/RHEL 8.x
+Some packages like `gperf`, `help2man` & `texinfo` are not available in a base
+package repositories, instead they are distributed via so-called "PowerTools Repository",
+to enable it, do the following:
+```
+sudo dnf -y install dnf-plugins-core
+sudo dnf config-manager --set-enabled powertools
+```
+
+Then install all the packages in the same way as it is done for Fedora in the next
+section.
+
+### Packages installation in Fedora, CentOS/RHEL 8.x
+```
+sudo dnf install -y autoconf bison bzip2 diffutils file flex gcc-c++ git \
+                    gperf help2man libtool make ncurses-devel patch \
+                    perl-Thread-Queue python3 rsync texinfo unzip wget \
+                    which xz
+```
+
+## Locale installation for building uClibc
 
 For building uClibc it is required to have `en_US.UTF-8` locale installed on the
 build host (otherwise build fails, for details see https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/issues/207). In case
@@ -76,285 +111,69 @@ distributions it is `locales`.
   # sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
   ```
 
-`git` package is required only if toolchain is being built from git
-repositories. If it is built from the source tarball, then `git` is not
-required.
+# Preparing Crosstool-NG
 
-> Note: GNU binutils requires bison version 2, it doesn't work with bison 3.
-> But glibc supports only bison >= 2.7. If you have bison 3 installed and
-> toolchain build fails, try removing it.
+To simplify toolchain building process we use a powerful, flexible and rather
+user-friendly tool called "Crosstool-NG. In its nature it's a mixture of Makefiles
+and bash scripts which hide all the magic & complexity needed to properly
+configure, build & install all the components of the GNU toolchain.
 
-It is not possible to build the Linux Glibc toolchain on CentOS 7 because glibc
-requires newer versions of Python and make than available in official
-repositories. It might be possible to install those dependencies manually or
-from 3rd party repositories. One of the options is to use so-called
-"Software Collections" (also known as "SCL") which is a community effort for
-providing more recent versions of core tools in both CentOS & Redhat distributions,
-see https://www.softwarecollections.org.
-
-To get Python 3.x & GNU Make 4.2.1 installed on CentOS/RHEL 7.x
-the following commands should be executed:
-
-    # yum install -y centos-release-scl
-    # yum install -y rh-python36
-    # yum install -y devtoolset-8-make
-    # scl enable rh-python36 bash
-    # scl enable devtoolset-8 bash
-
-It has been observed that there is build failure on Ubuntu 17.10 - binutils
-compiled on that system refuses to accept valid input and that causes later
-failure when building the rest of the toolchain. This error wasn't observed on
-older Ubuntu versions, but it wasn't tested on newer Ubuntu versions.
-
-GCC depends on the GMP, MPFR and MPC packages, however there are problems with
-availability of those packages on the RHEL/CentOS 6 systems (packages has too
-old versions or not available at all). To avoid this problem our build script
-will download sources of those packages from the official web-sites.  If option
-`--no-download-external` is passed to the `build-all.sh` script, when building
-toolchain, then those dependencies will not be downloaded automatically,
-instead versions of those libraries installed on the build host will be used.
-In most cases this is not required.
-
-
-### macOS Prerequisites
-
-By default HFS on macOS is configured to be case-insensitive, which is known to
-cause issues with Linux sources (there are files which differ only in character
-case). As a result to build uClibc toolchain for ARC it is required to use
-partition that is configured to be case sensitive (use Disk Utility to create a
-new partition, at least 16 GiB are needed to build uClibc toolchain, 32 GiB are
-needed to build a complete baremetal toolchain. With baremetal (elf) toolchain
-there are no such problems.
-
-To build toolchain on macOS it is required to install several prerequisites
-which are either not installed by default or non-GNU-compatible versions are
-installed by default. This easily can be done with Homebrew:
-
-	# Install homebrew itself (https://brew.sh/)
-	$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-	# Install wget
-	$ brew install wget
-
-	# Install GNU sed
-	$ brew install gnu-sed
-
-	# Install xz, required to unpack GMP, MPC & MPFR tarballs.
-	$ brew install xz
-
-To build PDF documentation for toolchain TeX must be installed:
-
-	$ brew cask install mactex
-
-If PDF documentation is not needed, pass option `--no-pdf` to build-all.sh to
-disable its build, then mactex is not required.
-
-> NB! Linux/uClibc toolchain built on macOS has different uClibc configuration
-> then the one built on Linux hosts - **locale support is disabled**. The reason
-> is that when locale support is enabled, uClibc makefiles will build an
-> application called `genlocale` that will run on host system, but on macOS
-> this application fails to build, therefore support for locales is disabled
-> when Linux/uClibc toolchain is built on macOS.
-
-
-Getting sources
----------------
-
-GNU toolchain build process doesn't support source directories that contain
-whitespaces in it. Please make sure that ARC GNU source directory path doesn't
-contain any whitespaces.
-
-###  Using source tarball
-
-GNU Toolchain for ARC source tarball can be downloaded from project GitHub
-page https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases.
-
-GNU toolchain source tarball already contains all of the necessary sources
-except for Linux which is a separate product. Linux sources are required only
-for Linux toolchain, they are not required for bare-metal elf32 toolchain.
-Latest stable release from https://kernel.org/ is recommended, and only
-versions >= 3.9 are supported. Linux sources should be located in the directory
-named `linux` that is the sibling of this `toolchain` directory. For example:
-
-    $ wget https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.8.3.tar.xz
-    $ tar xf linux-5.8.3.tar.xz --transform=s/linux-5.8.3/linux/
-
-### Using Git repositories
-
-Source tarballs are available only for releases of GNU Toolchain. To build
-toolchain from different components versions (for example from current trunk)
-it is recommended to use Git.
-Repositories for each of the toolchain components (its not all one big
-repository), including the Linux repository, should be cloned before building
-the toolchain. These should be peers of this `toolchain` directory.
-
-    $ mkdir arc_gnu
-    $ cd arc_gnu
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git \
-        binutils
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git
-    $ git clone --reference binutils \
-        https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git gdb
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/newlib.git
-    $ # For Linux uClibc toolchain:
-    $ git clone https://github.com/wbx-github/uclibc-ng.git
-    $ # or for Linux glibc toolchain:
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git
-    $ git clone --branch linux-5.1.y https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git \
-		linux
-
-The binutils and gdb share the same repository, but must be in separate
-directories, because they use different branches. Option `--reference` passed
-when cloning gdb repository will tell Git to share internal Git files between
-binutils and gdb repository. This will greatly reduce amount of disk space
-consumed and time to clone the repository.
-
-Note that it is possible to save disk space and time to fetch sources by using
-Git option `--depth=1` - Git will not fetch the whole history of repository and
-will instead only fetch the current state. This option should be accompanied by
-the valid `-b <branch>` option so that Git will fetch a state of required
-branch or a tag. If branch is used, then current branches can be found in the
-config/arc-dev.sh file
-
-Note, however that if `build-all.sh` will try to checkout repositories to their
-latest state, which is a default behaviour, then it will anyway fetch
-additional branches and tags, due to usage of `git fetch --all --tags`. To
-avoid this problem, pass `--no-auto-pull --no-auto-checkout` to `build-all.sh`
-- in this case it will leave Git repositories alone, leaving control in the
-hands of the user.
-
-By default `toolchain` repository will be checked out to the current
-release branch `arc-releases`.
-
-If current working directory is not a "toolchain" directory, then change to it:
-
-    $ cd toolchain
-
-This repository can be checked out to a specific GNU Toolchain for ARC release
-by specifying a particular release tag, for example for 2021.03 release that
-would be:
-
-    $ git checkout arc-2021.03-release
-
-
-Building the Toolchain
------------------------
-
-The script `build-all.sh` will build and install both _arc*-elf32-_ and
-_arc*-snps-linux-uclibc-_ toolchains. The comments at the head of this script
-explain how it works and the parameters to use.
-
-The script `arc-versions.sh` checks out each component Git repository to a
-specified branch. Branches to checkout are specified in files in `config`
-directory. Which file is default depends on current `toolchain` branch:
-`arc-dev` branch default to `config/arc-dev.sh` file, while `arc-releases` and
-`arc-staging` will default to a file corresponding to a particular release or
-release candidate. Default choice of `config` file can be overridden with
-`--checkout-config` option of `build-all.sh` script.
-
-After checking out correct branches  `build-all.sh` in turn uses
-`build-elf32.sh` and `build-uclibc.sh`. These build respectively the
-_arc*-elf32_ and _arc*-snps-linux-uclibc_ toolchains. Details of the operation
-are provided as comments in each script file. Both these scripts use a common
-initialization script, `arc-init.sh`.
-
-The most important options of `build-all.sh` are:
-
- * `--install-dir <dir>` - define where toolchain will be installed.
- * `--no-elf32`, `--no-uclibc`, `--glibc` - choose type of toolchain to build. By
-   default elf32 and uclibc are built. Specify `--no-uclibc` if you intend to work
-   exclusively with bare metal applications, specify `--no-elf32` of you intend
-   to work exclusively with Linux applications. Specify `--glibc` if you want to
-   build glibc toolchain instead of uClibc. Linux kernel is built with uClibc or
-   glibc toolchain.
- * `--no-multilib` - do not build multilib standard libraries. Use it when you
-   are going to work with bare metal applications for a particular core. This
-   option does not affect uClibc toolchain.
- * `--cpu <cpu>` - configure GNU toolchain to use specific core as a default
-   choice (default core is a core for which GCC will compile for when `-mcpu=`
-   option is not passed). Default is arc700 for both bare metal and Linux tool
-   chains. Combined with `--no-multilib` this option allows to build GNU
-   toolhain that supports only one specific core. Valid values depend on what
-   is available in GCC As of version 2016.03 values available in ARC GCC are:
-   `em`, `arcem`, `em4`, `em4_dmips`, `em4_fpus`, `em4_fpuda`, `quarkse`, `hs`, `archs`, `hs34`,
-   `hs38`, `hs38_linux`, `arc600`, `arc600_norm`, `arc600_mul64`, `arc600_mul32x16`,
-   `arc601`, `arc601_norm`, `arc601_mul64`, `arc601_mul32x16`, `arc700`. Note that only
-   ARC 700 and ARC HS can be selected as a default core for Linux toolchain.
- * `--host <triplet>` - option to set host triplet of toolchain. That allows to
-   do Canadian cross-compilation, where toolchain for ARC processors
-   (`--target`) will run on Windows hosts (`--host`) but will be built on Linux
-   host (`--build`).
-
-Please consult head of the `./build-all.sh` file to get a full list of
-supported options and their detailed descriptions.
-
-Note about `--cpu` and `--target-cflags` options. They allow to build toolchain
-tailored for a particular core. Option `--cpu` will change default CPU of GCC.
-Option `--target-cflags` on the other hand will change only CFLAGS used to
-compile toolchain standard library, but will not affect default compiler
-options. Consequently, when using a toolchain configured this way it still will
-be required to provide corresponding compiler options except for the `-mcpu`.
-Option `--target-cflags` sets C[XX]FLAGS_FOR_TARGET. Those two variables
-override default C[XX]FLAGS of standard libraries which are "-O2 -g". Hence to
-specify custom architecture flags, but preserve optimizations it is required to
-pass optimization flags to --target-cflags as well. Libraries optimized for
-size will override any -Ox flag passed via --target-cflags, while other flags
-will not be overridden.
-
-
-### Build options examples
-
-This command will build default toolchain - bare metal toolchain will support
-all ARC cores, while Linux toolchain will support ARC 700:
-
-    $ ./build-all.sh --install-dir $INSTALL_ROOT
-
-This command will build toolchain for ARC 700 Linux development:
-
-    $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT
-
-This command will build toolchain for ARC HS Linux development:
-
-    $ ./build-all.sh --no-elf32 --cpu hs38 --install-dir $INSTALL_ROOT
-
-This command will build toolchain for ARC HS Linux development with glibc:
-
-    $ ./build-all.sh --no-elf32 --glibc --cpu hs38 --install-dir $INSTALL_ROOT
-
-This command will build bare metal toolchain for ARC EM7D in the ARC EM Starter
-Kit 2.3:
-
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_dmips
-
-This command will build bare metal toolchain for ARC EM9D in the ARC EM Starter
-Kit 2.3:
-
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_fpus --target-cflags "-O2 -g -mfpu=fpus_all"
-
-This command will build bare metal toolchain for ARC EM11D in the ARC EM Starter
-Kit 2.3:
-
-    $ ./build-all.sh --no-uclibc --install-dir $INSTALL_ROOT --no-multilib \
-      --cpu em4_fpuda --target-cflags "-O2 -g -mfpu=fpuda_all"
-
-To build native ARC Linux uClibc toolchain (toolchain that runs on same system as for
-which it compiles, so host == target) it is required first to build a normal
-cross toolchain for this system. Then it should be added it to the PATH, after
-that `build-all.sh` can be run:
-
-    $ ./build-all.sh --no-elf32 --install-dir $INSTALL_ROOT_NATIVE \
-      --cpu hs38 --native --host arc-snps-linux-uclibc
-
-In this command line, argument to `--cpu` option must correspond to the target
-CPU and argument to `--host` options depends on whether this is a big or little
-endian target. Install directory must be different than the one where
-cross-toolchain is installed.
-
-
-### Building toolchain on Windows
+Still Crosstool-NG is distributed in sources and needs to be built before use.
+Though it is as simple as:
+```shell
+# Get the sources
+git clone https://github.com/foss-for-synopsys-dwc-arc-processors/crosstool-ng.git
+
+# Step into the just obtained source tree
+cd crosstool-ng
+
+# Optionally select its version of choise, for example the one used for creation of `arc-2021.09` release
+git checkout arc-2021.09-release
+
+# Configure & build Crosstool-NG
+./bootstrap && ./configure --enable-local && make
+```
+
+# Building the Toolchain
+
+Once Crosstool-NG is built and ready fo use it's very easy to get a toolchain
+of choice to be built. One just needs to decide on configuration options
+to be used for toolchain building or use one of the existing pre-defined
+settings (which mirror configuration of pre-built toolchains we distribute
+via https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases).
+
+## Crosstool-NG configuration: use pre-configured "samples"
+
+The following pre-defined configurations (they are called "samples" on Crosstool's parlance) are available at the moment:
+1. `snps-arc-arc700-linux-uclibc` - Linux uClibc cross-toolchain for ARC700 processors for 64-bit Linux hosts
+2. `snps-arc-archs-linux-gnu` - Linux glibc cross-toolchain for ARC HS3x & HS4x processors for 64-bit Linux hosts
+3. `snps-arc-archs-linux-uclibc` - Linux uClibc cross-toolchain for ARC HS3x & HS4x processors for 64-bit Linux hosts
+4. `snps-arc-archs-native-gnu` - Linux glibc "native" toolchain from ARC HS3x & ARC HS4x processors
+5. `snps-arc-elf32-macos` - Bare-metal cross-toolchain for wide range of ARCompact & ARCv2 processors (ARC600, ARC700, AEC EM & HS) for 64-bit macOS hosts
+6. `snps-arc-elf32-win` - Bare-metal cross-toolchain for wide range of ARCompact & ARCv2 processors (ARC600, ARC700, AEC EM & HS) for 64
+-bit Windows hosts
+7. `snps-arc-multilib-elf32` - Bare-metal cross-toolchain for wide range of ARCompact & ARCv2 processors (ARC600, ARC700, AEC EM & HS) for 64-bit Linux hosts
+8. `snps-arc64-snps-linux-gnu` - Linux glibc cross-toolchain for for ARC HS6x processors for 64-bit Linux hosts
+9. `snps-arc64-snps-native-gnu` -  Linux glibc "native" toolchain from ARC HS6x processors
+9. `snps-arc64-unknown-elf` - Bare-metal cross-toolchain for ARC HS6x processors for 64-bit Linux hosts
+
+And to get Crosstool-NG configured with either of those samples just say: `./ct-ng sample_name`. For example, to get bare-metal toolchain for ARCompact/ARCv2 processors say: `./ct-ng snps-arc-multilib-elf32`.
+
+> :warning: Please note though, all of these samples are meant to be used for building on a Linux host. And while some samples will work perfectly fine if they are used for Crosstool-NG configuration on say macOS host, those which employ so-called "canadian cross" build methodology (see if `CT_CANADIAN=y` is defined in the sample's `crosstool.config`) won't work on non-Linux hosts as they use existing cross-toolchain for the target host ([MinGW32](https://www.mingw-w64.org) if we build a cross-toolchain for Windows hosts or [OSXCross](https://github.com/tpoechtrager/osxcross) if we build for macOS hosts).
+
+## Crosstool-NG configuration: manual tuning
+
+If pre-defined "sample" doesn't meet one's requirements it's possible to either fine-tune some existing sample or start over from scratch 
+and make all the settings manually. For that just say `./ct-ng menuconfig` and use [menuconfig](https://en.wikipedia.org/wiki/Menuconfig) interface in the same way as it's done in many other projects like the Linux kernel, uClibc, Buildroot and many others.
+
+> :warning: To start configuration from scratch make sure `.config` file doesn't exist in the Crosstool's root directory or say `./ct-ng distclean`.
+
+The most interesting options for toolchain users might be:
+* Selection of the default target CPU model. To change it go to `Target options -> Emit assembly for CPU` and specify one of the possible values for GCC's `-mcpu` option, see https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/Understanding-GCC-mcpu-option for the reference.
+* Selection of ARC64 processors. For that go to  `Target options -> Bitness` and select `64-bit`.
+* `CFLAGS` to be used for compilation of libraries for the target. Those might be set in  `Target options -> Targte CFLAGS`.
+
+### Building toolchain for Windows
 
 To build toolchain for Windows hosts it is recommended to do a "Canadian
 cross-compilation" on Linux, that is toolchain for ARC targets that runs on
@@ -366,55 +185,38 @@ officially supported and not recommended by Synopsys, due to severe performance
 penalty of those environments on build time and possible compatibility issue.
 
 Some limitation apply:
-- Only bare metal (elf32) toolchain can be built this way.
+- Only bare metal toolchain can be built this way.
 - It is required to have toolchain for Linux hosts in the `PATH` for Canadian
   cross-build to succeed - it will be used to compile standard library of tool
   chain.
-- Expat library is required for GDB to parse XML target description files. This
-  library might be not available in some Mingw setup. Easiest solution is to
-  let `build-all.sh` script to build Expat by passing option
-  `--no-system-expat`.
 
-To cross-compile toolchain on Linux, Mingw toolchain should be installed. On
-Ubuntu that can be done with `mingw-w64` package:
+To do a canadian-cross toolchain on Linux, MinGW toolchain must be installed on the build host.
+There're muliple ways to get MinGW installed:
+* On Ubuntu 18.04 & 20.04 that can be done with: `sudo apt install mingw-w64`
+* On CentOS/RHEL 8.x it's a bit more challenging:
+    ```
+    sudo dnf -y install dnf-plugins-core
+    sudo dnf config-manager --set-enabled powertools
+    sudo dnf install -y mingw32-gcc
+    ```
+* Or it could be built with help of that same Crosstool-NG:
+    ```
+    ./ct-ng x86_64-w64-mingw32
+    ./ct-ng build
+    ```
 
-    # apt-get install mingw-w64
-
-CentOS 6 has a very antique Mingw (4.4-something), so it is recommended to first
-add EPEL repository, then install Mingw from it. In CentOS:
-
-    # yum install epel-release
-    # yum install mingw-binutils-generic mingw-filesystem-base \
-      mingw32-binutils mingw32-cpp mingw32-crt mingw32-filesystem mingw32-gcc \
-      mingw32-gcc-c++ mingw32-headers mingw32-winpthreads \
-      mingw32-winpthreads-static
-
-For instruction how to install EPEL on CentOS, see
-<https://fedoraproject.org/wiki/EPEL/FAQ>.
-
-First stage of GCC build should be disabled, because libraries will be built
-with the Linux host toolchain.
-
-After prerequisites are installed do:
-
-    $ export PATH=$LINUX_HOST_TOOLS_PATH/bin:$PATH
-    $ ./build-all.sh --no-uclibc --host i686-w64-mingw32 \
-      --no-system-expat --no-elf32-gcc-stage1
-
-Note that value of host triplet depends on what mingw toolchain is being used.
-Triplet `i686-w64-mingw32` is valid for mingw toolchain currently used in
-Ubuntu and EPEL, but, for example, mingw toolchain in standard CentOS 6 has
-triplet `i686-pc-mingw32`.
+Once the MinGW is available on the build host just make sure its binaries are avaialble via a standard system path, or otherwise add path to them in local `PATH` environment variable.
 
 
 Usage examples
 --------------
 
 In all of the following examples it is expected that GNU toolchain for ARC has
-been added to the PATH:
+been added to the user's `PATH` environment variable. Please note that built toolchain by default gets installed in the current users's `~/x-tools/TOOLCHAIN_TUPLE` folder, where `TOOLCHAIN_TUPLE` is by default dynamically generated based on the toolchain type (bare-metal, glibc or uclibc), CPU's bitness (32- or 64-bit), provided vendor name etc.
 
-    $ export PATH=$INSTALL_ROOT/bin:$PATH
-
+For example:
+* With `snps-arc-multilib-elf32` sample built toolchain will be installed in `~/x-tools/arc-snps-elf`
+* With `snps-arc64-unknown-elf` sample built toolchain will be installed in `~/x-tools/arc64-snps-elf`
 
 ### Using nSIM simulator to run bare metal ARC applications
 
