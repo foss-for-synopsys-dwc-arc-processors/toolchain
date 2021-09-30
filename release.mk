@@ -181,7 +181,7 @@ endef
 #
 # :param $1 - name of directory to tar. Directory must be in the $O.
 define create_tar
-       cd $O && tar czf $1$(TAR_EXT) $1/
+	tar czf $1$(TAR_EXT) -C $O --owner=0 --group=0 $1/
 endef
 
 # Create windows tarball for release. Difference with standard `create_tar` is
@@ -191,7 +191,7 @@ endef
 # :param $1 - name of directory to tar. Directory must
 # be in the $O.
 define create_windows_tar
-       cd $O && tar czf $1$(TAR_EXT) --hard-dereference $1/
+	tar czf $1$(TAR_EXT) -C $O --owner=0 --group=0 --hard-dereference $1/
 endef
 
 # :param $1 - name of directory to zip.
@@ -865,7 +865,7 @@ $O/.stamp_ide_linux_tar: \
 	tar xf $O/$(JRE_LINUX_TGZ) -C $O/$(IDE_LINUX_INSTALL)/eclipse/jre \
 	    --strip-components=2
 	$(LOCAL_CP) $O/$(OOCD_HOST_DIR)/* $O/$(IDE_LINUX_INSTALL)
-	tar czf $O/$(IDE_LINUX_TGZ) -C $O $(IDE_LINUX_INSTALL)
+	tar czf $O/$(IDE_LINUX_TGZ) -C $O --owner=0 --group=0 $(IDE_LINUX_INSTALL)
 	touch $@
 
 #
@@ -888,7 +888,7 @@ $O/.stamp_ide_macos_tar: \
 	$(LOCAL_CP) $O/$(TOOLS_ELFBE_MAC_DIR)/* $O/$(IDE_MACOS_INSTALL)
 	mkdir -p -m775 $O/$(IDE_MACOS_INSTALL)/eclipse/jre
 	$(LOCAL_CP) $O/$(OOCD_MAC_DIR)/* $O/$(IDE_MACOS_INSTALL)
-	tar czf $O/$(IDE_MACOS_TGZ) -C $O $(IDE_MACOS_INSTALL)
+	tar czf $O/$(IDE_MACOS_TGZ) -C $O --owner=0 --group=0 $(IDE_MACOS_INSTALL)
 	touch $@
 
 endif
