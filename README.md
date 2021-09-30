@@ -8,9 +8,6 @@ Branches in this repository are:
 * `arc-releases` is the stable branch for the toolchain release. Head of
   this branch is a latest stable release. It is a branch recommended for most
   users
-* `arc-staging` is the semi-stable branch for the toolchain release
-  candidates. Head of this branch is either a latest stable release or latest
-  release candidate for the upcoming release
 * `arc-dev` is the development branch for the current toolchain release
 
 While the top of *development* branches should build and run reliably, there
