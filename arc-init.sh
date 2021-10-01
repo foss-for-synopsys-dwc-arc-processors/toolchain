@@ -596,6 +596,39 @@ build_ncurses() {
     make_target_ordered installing install DESTDIR=$SYSROOTDIR
 }
 
+# Helper to build gmp, used by native gdb.  Starting from
+# GDB 11.1, it requires libgmp to be built natively [1].
+# Arguments:
+#   $1 - target triplet
+#
+# [1] gdb: Make GMP a required dependency for buidling GDB
+# https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=1b4ac058f7d
+build_gmp() {
+    local triplet=$1
+    gmp_version=6.1.2
+    gmp_url_base=https://gmplib.org/download/gmp
+    gmp_tar=gmp-${gmp_version}.tar.xz
+    gmp_url=$gmp_url_base/$gmp_tar
+
+
+    mkdir -p $toolchain_build_dir/_download_tmp
+    cd $toolchain_build_dir/_download_tmp
+    if [ ! -s $gmp_tar ]; then
+	$WGET -O $gmp_tar $gmp_url
+    fi
+
+    build_dir_init gmp
+    tar xf $toolchain_build_dir/_download_tmp/$gmp_tar --strip-components=1
+
+    configure_for_arc . $triplet \
+	--prefix=/usr \
+	--sysconfdir=/etc \
+	--program-prefix= \
+	--enable-static
+    make_target building
+    make_target_ordered installing install DESTDIR=$SYSROOTDIR
+}
+
 # $1 - a configuration file or a directory with .config
 # $2 - option to enable
 kconfig_enable_option() {
