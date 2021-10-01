@@ -48,6 +48,9 @@ ENABLE_IDE_PLUGINS_BUILD := y
 # Whether to build Linux images
 ENABLE_LINUX_IMAGES := n
 
+# Whether to build Toolchain for elf32 targets.
+ENABLE_ELF_TOOLS := y
+
 # Whether to build Toolchain for Linux targets.
 ENABLE_UCLIBC_TOOLS := y
 
@@ -337,15 +340,18 @@ OOCD_BUILD_MAC_DIR := $(BUILD_DIR)/openocd_mac
 DOCS_DIR := arc_gnu_$(RELEASE)_docs
 
 # List of files that will be uploaded to GitHub Release.
-UPLOAD_ARTIFACTS = \
-    $(TOOLS_ELFLE_HOST_DIR)$(TAR_EXT) \
-    $(UPLOAD_ARTIFACTS-y)
+UPLOAD_ARTIFACTS = $(UPLOAD_ARTIFACTS-y)
+
+UPLOAD_ARTIFACTS-$(ENABLE_ELF_TOOLS) += $(TOOLS_ELFLE_HOST_DIR)$(TAR_EXT)
+
+ifeq ($(ENABLE_ELF_TOOLS),y)
+UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_HOST_DIR)$(TAR_EXT)
+endif
 
 UPLOAD_ARTIFACTS-$(ENABLE_SOURCE_TARBALL) += $(TOOLS_SOURCE_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_UCLIBC_TOOLS) += $(TOOLS_UCLIBC_LE_700_HOST_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_UCLIBC_TOOLS) += $(TOOLS_UCLIBC_LE_HS_HOST_DIR)$(TAR_EXT)
 
-UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_ELFBE_HOST_DIR)$(TAR_EXT)
 ifeq ($(ENABLE_UCLIBC_TOOLS),y)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_700_HOST_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_HS_HOST_DIR)$(TAR_EXT)
@@ -369,9 +375,7 @@ UPLOAD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(TOOLS_ELFBE_MAC_DIR)$(TAR_EXT)
 
 # List of files that will be deployed internally. Is a superset of "upload"
 # artifacts.
-DEPLOY_ARTIFACTS = \
-    $(UPLOAD_ARTIFACTS) \
-    $(DEPLOY_ARTIFACTS-y)
+DEPLOY_ARTIFACTS = $(UPLOAD_ARTIFACTS) $(DEPLOY_ARTIFACTS-y)
 
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)$(TAR_EXT)
 DEPLOY_ARTIFACTS-$(ENABLE_OPENOCD_MAC) += $(OOCD_MAC_DIR)$(TAR_EXT)
@@ -422,15 +426,18 @@ CHECKSUM_FILE := checksum.txt
     windows ide openocd-win \
     openocd-linux
 
-BUILD_DEPS += \
-    $O/.stamp_elf_le_tarball \
-    $(BUILD_DEPS-y)
+BUILD_DEPS = $(BUILD_DEPS-y)
+
+BUILD_DEPS-$(ENABLE_ELF_TOOLS) += $O/.stamp_elf_le_tarball
+
+ifeq ($(ENABLE_ELF_TOOLS),y)
+BUILD_DEPS-$(ENABLE_ELF_TOOLS) += $O/.stamp_elf_be_tarball
+endif
 
 BUILD_DEPS-$(ENABLE_SOURCE_TARBALL) += $O/.stamp_source_tarball
 BUILD_DEPS-$(ENABLE_UCLIBC_TOOLS) += $O/.stamp_uclibc_le_700_tarball
 BUILD_DEPS-$(ENABLE_UCLIBC_TOOLS) += $O/.stamp_uclibc_le_hs_tarball
 
-BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_elf_be_tarball
 ifeq ($(ENABLE_UCLIBC_TOOLS),y)
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_uclibc_be_700_tarball
 BUILD_DEPS-$(ENABLE_BIG_ENDIAN) += $O/.stamp_uclibc_be_hs_tarball
