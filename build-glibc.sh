@@ -438,6 +438,8 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     build_ncurses $triplet
 
+    build_gmp $triplet
+
     build_dir_init native_gdb
 
     # Due to STAR 9001066513 GDB crashes when throwing an exception.  Due to a
@@ -449,6 +451,7 @@ if [ $DO_NATIVE_GDB = yes ]; then
     # C builds.
     config_path=$(calcConfigPath "${ARC_GNU}")/gdb
     configure_for_arc "$config_path" $triplet \
+	--with-libgmp-type=static \
 	--disable-build-with-cxx \
 	--disable-gas --disable-ld --disable-binutils
     make_target building
