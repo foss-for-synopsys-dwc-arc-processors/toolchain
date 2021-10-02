@@ -144,11 +144,13 @@ $(error Unknown OS: $(shell uname -s). Only Linux and macOS (Darwin) are support
 endif
 endif
 
-CP = rsync -a
-GIT = git
-PYTHON = /depot/Python-3.4.3/bin/python3
-SSH = ssh
-WGET = wget
+CP := rsync -a
+GIT := git
+PYTHON := python3
+SSH := ssh
+TAR := tar
+WGET := wget
+
 # Always have `-nv`.
 override WGETFLAGS += -nv
 CHECKSUM := shasum -a256 -b
