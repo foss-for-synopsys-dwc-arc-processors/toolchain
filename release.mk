@@ -654,7 +654,7 @@ $O/.stamp_arc64_elf_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELF_ARC64_HOST_DIR))
 
 $O/.stamp_arc64_linux_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
-	$(call copy_prebuilt,arc64-unknown-elf,$(TOOLS_LINUX_ARC64_HOST_DIR))
+	$(call copy_prebuilt,arc64-snps-linux-gnu,$(TOOLS_LINUX_ARC64_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUX_ARC64_HOST_DIR))
 
 $O/.stamp_uclibc_le_700_tarball: $O/.stamp_uclibc_le_700_built
