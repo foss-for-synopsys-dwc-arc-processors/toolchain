@@ -153,7 +153,7 @@ WGET := wget
 
 # Always have `-nv`.
 override WGETFLAGS += -nv
-CHECKSUM := shasum -a256 -b
+CHECKSUM := sha256sum -b
 
 ifneq ($(HOST),macos)
 LOCAL_CP := cp -al
