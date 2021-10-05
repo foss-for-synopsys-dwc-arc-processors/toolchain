@@ -1264,13 +1264,17 @@ endif
 # This is not a part of a default target. Upload should be triggered manually.
 # RELEASE_TAG and RELEASE_NAME mustbe set to something
 upload: $O/$(CHECKSUM_FILE)
-	$(PYTHON) github/create-release.py --owner=foss-for-synopsys-dwc-arc-processors \
-	    --project=toolchain --tag=$(RELEASE_TAG) --draft \
-	    --release-id=$(RELEASE) \
-	    --name="$(RELEASE_NAME)" \
-	    --prerelease --oauth-token=$(shell cat ~/.github_oauth_token) \
-	    --checksum-file=$O/$(CHECKSUM_FILE) \
-	    $(addprefix $O/,$(UPLOAD_ARTIFACTS))
+	$(PYTHON) github/create-release.py \
+		--owner=foss-for-synopsys-dwc-arc-processors \
+		--project=toolchain \
+		--tag=$(RELEASE_TAG) \
+		--draft \
+		--release-id=$(RELEASE) \
+		--name="$(RELEASE_NAME)" \
+		--prerelease \
+		--oauth-token=$(OAUTH_TOKEN) \
+		--checksum-file=$O/$(CHECKSUM_FILE) \
+		$(addprefix $O/,$(UPLOAD_ARTIFACTS))
 
 #
 # Generic directory creator
