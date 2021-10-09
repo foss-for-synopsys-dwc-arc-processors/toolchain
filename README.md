@@ -590,18 +590,6 @@ Start GDB on the host:
     (gdb) quit
 
 
-Testing the toolchain
-----------------------
-
-The script `run-tests.sh` will run the regression test suites against all the
-main toolchain components. The comments at the head of this script explain
-how it works and the parameters to use. It in turn uses the run-elf32-tests.sh
-and run-uclibc-tests.sh scripts.
-
-You should be familiar with DejaGnu testing before using these scripts. Some
-configuration of the target board specifications (in the `dejagnu/baseboards`
-directory) may be required for your particular test target.
-
 Getting help
 ------------
 
