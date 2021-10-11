@@ -353,3 +353,53 @@ This defconfig will create a uImage file instead of vmlinux. Please refer to
 `ARC Linux wiki
 <https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki/Getting-Started-with-Linux-on-ARC-AXS103-Software-Development-Platform-(SDP)>`_
 for more details on using u-boot with AXS103.
+
+
+Linux for ARC64
+--------------------
+
+Get Buildroot sources::
+
+    $ mkdir arc64-2021.09-linux-guide
+    $ cd arc64-2021.09-linux-guide
+    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
+
+To build Linux and rootfs Buildroot should be configured. For the purpose of
+this guide, a custom "defconfig" file will be created and then will be used to
+configure Buildroot. Custom "defconfig" file can be located anywhere and have
+any name. For example it can be ``arc64-2021.09-linux-guide/arc64_defconfig``.
+Contents of this file should be following::
+
+    BR2_arcle=y
+    BR2_arc64=y
+    BR2_TOOLCHAIN_BUILDROOT_GLIBC=y
+    BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_6=y
+    BR2_PACKAGE_LINUX_TOOLS_PERF=y
+    BR2_PACKAGE_ELFUTILS=y
+    BR2_LINUX_KERNEL=y
+    BR2_LINUX_KERNEL_CUSTOM_GIT=y
+    BR2_LINUX_KERNEL_CUSTOM_REPO_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git"
+    BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION="arc64"
+    BR2_LINUX_KERNEL_DEFCONFIG="haps_arc64"
+    BR2_LINUX_KERNEL_VMLINUX=y
+    BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
+    BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc64-2021.09-rc1/arc_gnu_2021.09-rc1_prebuilt_arc64_glibc_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_6=y
+    BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
+    BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
+    BR2_TOOLCHAIN_EXTERNAL_CXX=y
+    BR2_GCC_VERSION_11_X=y
+    BR2_TARGET_ROOTFS_INITRAMFS=y  
+
+To build Linux kernel image using that defconfig::
+
+    $ mkdir output_arc64
+    $ cd buildroot
+    $ make O=`readlink -e ../output_arc64` defconfig DEFCONFIG=`readlink -e ../arc64_defconfig`
+    $ cd ../output_arc64
+    $ make
+
+After that there will be Linux kernel image file
+``arc64-2021.09-linux-guide/output_arc64/images``.
