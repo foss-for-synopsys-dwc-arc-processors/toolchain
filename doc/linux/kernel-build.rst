@@ -401,5 +401,9 @@ To build Linux kernel image using that defconfig::
     $ cd ../output_arc64
     $ make
 
-After that there will be Linux kernel image file
+After that there will be Linux kernel image file:
 ``arc64-2021.09-linux-guide/output_arc64/images``.
+
+It can be run with nSim:: 
+
+    $ nsimdrv -prop=nsim_fast=0 -prop=nsim_isa_dual_issue_option=1 -prop=nsim_isa_has_hw_pf=1 -prop=nsim_isa_m128_option=1 -prop=nsim_isa_has_hw_pf=1 -prop=nsim_isa_vec64=1 -prop=nsim_isa_family=arc64 -prop=nsim_isa_enable_timer_0=1 -prop=nsim_isa_enable_timer_1=1 -prop=nsim_isa_addr_size=64 -prop=nsim_isa_pc_size=64 -prop=icache=16384,64,4,o -prop=dcache=16384,64,4,o -prop=mmu_version=6 -prop=mmu_pagesize=4096 -prop=mmu_address_space=48 -prop=nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24 -prop=nsim_isa_mpy_option=9 -prop=nsim_isa_mpy64=1 -prop=nsim_isa_div64_option=1 -prop=nsim_isa_div_rem_option=2 -prop=nsim_isa_atomic_option=1 -prop=nsim_isa_fpud_option=1 -prop=nsim_isa_fpus_option=1 ./vmlinux
