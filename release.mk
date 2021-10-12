@@ -287,8 +287,8 @@ TOOLS_UCLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_be_archs_$(HOS
 TOOLS_UCLIBC_LE_HS38FPU_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_uclibc_le_hs38fpu_$(HOST)_install
 
 # Toolchain: macOS
-TOOLS_ELFLE_MAC_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_le_mac_install
-TOOLS_ELFBE_MAC_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_be_mac_install
+TOOLS_ELFLE_MAC_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_le_macos_install
+TOOLS_ELFBE_MAC_DIR := arc_gnu_$(RELEASE)_prebuilt_elf32_be_macos_install
 
 # Toolchain: linux with glibc.
 TOOLS_GLIBC_LE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_$(HOST)_install
@@ -321,7 +321,7 @@ JRE_WIN_ZIP := OpenJDK11-jre_x64_windows_openj9_$(JAVA_VERSION).zip
 
 # IDE: output related variables
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
-IDE_MACOS_INSTALL := arc_gnu_$(RELEASE)_ide_mac_install
+IDE_MACOS_INSTALL := arc_gnu_$(RELEASE)_ide_macos_install
 IDE_WIN_EXE := arc_gnu_$(RELEASE)_ide_win_install.exe
 IDE_LINUX_TGZ := $(IDE_LINUX_INSTALL).tar.gz
 IDE_MACOS_TGZ := $(IDE_MACOS_INSTALL).tar.gz
