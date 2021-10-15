@@ -119,6 +119,89 @@ to ``__end_heap``. Therefore heap and stack grow towards each other and eventual
 may collide and overwrite each over. This linker emulation doesn't provide any
 protection against this scenario.
 
+Linker file for HSDK and HSDK-4xD
+"""""""""""""""""""""""""""""""""
+
+Linker files for HSDK and HSDK-4xD are differs depending on amout of cores.
+Due to limited space on a cristal ICCM and DCCM are present only for odd numbered
+cores.
+
+HSDK ``memory.x`` map for an even number of cores:
+
+.. code-block:: text
+
+    MEMORY {
+        SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0x100000000
+        }
+    REGION_ALIAS("startup", SYSTEM0)
+    REGION_ALIAS("text", SYSTEM0)
+    REGION_ALIAS("data", SYSTEM0)
+    REGION_ALIAS("sdata", SYSTEM0)
+    PROVIDE (__stack_top = (0xffffffff & -4 ));
+    PROVIDE (__end_heap =  (0xffffffff ));
+
+HSDK ``memory.x`` map for an odd number of cores:
+
+.. code-block:: text
+
+    MEMORY {
+        SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0x70000000
+        ICCM0    : ORIGIN = 0x70000000, LENGTH = 0x00040000
+        CCMWRAP0 : ORIGIN = 0x70040000, LENGTH = 0x0ffc0000
+        DCCM     : ORIGIN = 0x80000000, LENGTH = 0x00040000
+        CCMWRAP1 : ORIGIN = 0x80040000, LENGTH = 0x0ffc0000
+        SYSTEM1  : ORIGIN = 0x90000000, LENGTH = 0x70000000
+        }
+    REGION_ALIAS("startup", ICCM0)
+    REGION_ALIAS("text", ICCM0)
+    REGION_ALIAS("data", DCCM)
+    REGION_ALIAS("sdata", DCCM)
+    PROVIDE (__stack_top = (0x8003ffff & -4 ));
+    PROVIDE (__end_heap =  (0x8003ffff ));
+
+
+HSDK-4xD ``memory.x`` map for an even number of cores:
+
+.. code-block:: text
+
+    MEMORY {
+        SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0xb0000000
+        CSM      : ORIGIN = 0xb0000000, LENGTH = 0x00040000
+        CCMWRAP0 : ORIGIN = 0xb0040000, LENGTH = 0x0ffc0000
+        SYSTEM1  : ORIGIN = 0xc0000000, LENGTH = 0x40000000
+        }
+    REGION_ALIAS("startup", SYSTEM0)
+    REGION_ALIAS("text", SYSTEM0)
+    REGION_ALIAS("data", SYSTEM0)
+    REGION_ALIAS("sdata", SYSTEM0)
+    PROVIDE (__stack_top = (0xafffffff & -4 ));
+    PROVIDE (__end_heap =  (0xafffffff ));
+
+HSDK-4xD ``memory.x`` map for an odd number of cores:
+
+.. code-block:: text
+
+    MEMORY {
+        SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0x60000000
+        DCCM     : ORIGIN = 0x60000000, LENGTH = 0x00010000
+        ICCM0    : ORIGIN = 0x60000000, LENGTH = 0x00040000
+        CCMWRAP0 : ORIGIN = 0x60010000, LENGTH = 0x0fff0000
+        SYSTEM1  : ORIGIN = 0x60010000, LENGTH = 0xffff0000
+        CCMWRAP1 : ORIGIN = 0x60040000, LENGTH = 0x0ffc0000
+        SYSTEM2  : ORIGIN = 0x60040000, LENGTH = 0xfffd0000
+        SYSTEM3  : ORIGIN = 0x70000000, LENGTH = 0xf0040000
+        SYSTEM4  : ORIGIN = 0x70000000, LENGTH = 0x40000000
+        CSM      : ORIGIN = 0xb0000000, LENGTH = 0x00040000
+        CCMWRAP2 : ORIGIN = 0xb0040000, LENGTH = 0x0ffc0000
+        SYSTEM5  : ORIGIN = 0xc0000000, LENGTH = 0x40000000
+        }
+    REGION_ALIAS("startup", ICCM0)
+    REGION_ALIAS("text", ICCM0)
+    REGION_ALIAS("data", DCCM)
+    REGION_ALIAS("sdata", DCCM)
+    PROVIDE (__stack_top = (0x6000ffff & -4 ));
+    PROVIDE (__end_heap =  (0x6000ffff ));
+
 
 Custom linker scripts
 ^^^^^^^^^^^^^^^^^^^^^
