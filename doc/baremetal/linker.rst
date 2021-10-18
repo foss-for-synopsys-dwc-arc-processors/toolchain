@@ -85,14 +85,6 @@ For example, here is a sample ``memory.x`` map for ``hs34.tcf`` template:
        DCCM     : ORIGIN = 0x80000000, LENGTH = 0x00004000
    }
 
-   REGION_ALIAS("startup", ICCM0)
-   REGION_ALIAS("text", ICCM0)
-   REGION_ALIAS("data", DCCM)
-   REGION_ALIAS("sdata", DCCM)
-
-   PROVIDE (__stack_top = (0x80003fff & -4 ));
-   PROVIDE (__end_heap =  (0x80003fff ));
-
 This ``memory.x`` consists of three logical sections. First sections ``MEMORY``
 specifies a list of memory regions - their base address and size. Names of
 those regions can be arbitrary, and also it may describe regions that are not
@@ -132,13 +124,7 @@ HSDK ``memory.x`` map for an even number of cores:
 
     MEMORY {
         SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0x100000000
-        }
-    REGION_ALIAS("startup", SYSTEM0)
-    REGION_ALIAS("text", SYSTEM0)
-    REGION_ALIAS("data", SYSTEM0)
-    REGION_ALIAS("sdata", SYSTEM0)
-    PROVIDE (__stack_top = (0xffffffff & -4 ));
-    PROVIDE (__end_heap =  (0xffffffff ));
+    }
 
 HSDK ``memory.x`` map for an odd number of cores:
 
@@ -151,13 +137,7 @@ HSDK ``memory.x`` map for an odd number of cores:
         DCCM     : ORIGIN = 0x80000000, LENGTH = 0x00040000
         CCMWRAP1 : ORIGIN = 0x80040000, LENGTH = 0x0ffc0000
         SYSTEM1  : ORIGIN = 0x90000000, LENGTH = 0x70000000
-        }
-    REGION_ALIAS("startup", ICCM0)
-    REGION_ALIAS("text", ICCM0)
-    REGION_ALIAS("data", DCCM)
-    REGION_ALIAS("sdata", DCCM)
-    PROVIDE (__stack_top = (0x8003ffff & -4 ));
-    PROVIDE (__end_heap =  (0x8003ffff ));
+    }
 
 
 HSDK-4xD ``memory.x`` map for an even number of cores:
@@ -169,13 +149,7 @@ HSDK-4xD ``memory.x`` map for an even number of cores:
         CSM      : ORIGIN = 0xb0000000, LENGTH = 0x00040000
         CCMWRAP0 : ORIGIN = 0xb0040000, LENGTH = 0x0ffc0000
         SYSTEM1  : ORIGIN = 0xc0000000, LENGTH = 0x40000000
-        }
-    REGION_ALIAS("startup", SYSTEM0)
-    REGION_ALIAS("text", SYSTEM0)
-    REGION_ALIAS("data", SYSTEM0)
-    REGION_ALIAS("sdata", SYSTEM0)
-    PROVIDE (__stack_top = (0xafffffff & -4 ));
-    PROVIDE (__end_heap =  (0xafffffff ));
+    }
 
 HSDK-4xD ``memory.x`` map for an odd number of cores:
 
@@ -194,13 +168,7 @@ HSDK-4xD ``memory.x`` map for an odd number of cores:
         CSM      : ORIGIN = 0xb0000000, LENGTH = 0x00040000
         CCMWRAP2 : ORIGIN = 0xb0040000, LENGTH = 0x0ffc0000
         SYSTEM5  : ORIGIN = 0xc0000000, LENGTH = 0x40000000
-        }
-    REGION_ALIAS("startup", ICCM0)
-    REGION_ALIAS("text", ICCM0)
-    REGION_ALIAS("data", DCCM)
-    REGION_ALIAS("sdata", DCCM)
-    PROVIDE (__stack_top = (0x6000ffff & -4 ));
-    PROVIDE (__end_heap =  (0x6000ffff ));
+    }
 
 
 Custom linker scripts
