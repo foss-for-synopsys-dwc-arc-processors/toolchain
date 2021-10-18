@@ -627,6 +627,7 @@ if [ $DO_NATIVE_GDB = yes ]; then
     config_path=$(calcConfigPath "${ARC_GNU}")/gdb
     configure_for_arc "$config_path" $triplet \
 	--with-libgmp-type=static \
+	--with-libgmp-prefix=$SYSROOTDIR/usr \
 	--disable-build-with-cxx \
 	--disable-gas --disable-ld --disable-binutils
     make_target building
