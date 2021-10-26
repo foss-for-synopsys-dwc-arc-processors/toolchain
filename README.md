@@ -21,7 +21,12 @@ Real toolchain building is being done by [Crosstool-NG](https://github.com/cross
 and so we inherit all the capabilities provided by that powerful and flexible tool.
 We recommend those interested in rebuilding of ARc GNU tools to become familiar with
 Crosstool-NG coumentation available here: https://crosstool-ng.github.io/docs
-to better understand its capabilities and limitations.
+to better understand its capabilities and limitations. But in a nutshell when all the environment
+is set (that's described in details below) what needs to be done is as easy as:
+```shell
+./ct-ng sample_name
+./ct-ng build
+```
 
 Crosstool-NG is meant to be used in Unix-like environment and so the best user experience
 could be achieved in up-to-date mainstream Linux distributions, which have all needed
@@ -173,7 +178,15 @@ The most interesting options for toolchain users might be:
 * Selection of ARC64 processors. For that go to  `Target options -> Bitness` and select `64-bit`.
 * `CFLAGS` to be used for compilation of libraries for the target. Those might be set in  `Target options -> Targte CFLAGS`.
 
-### Building toolchain for Windows
+## Building a toolchain with Crosstool-NG
+
+All the information above was on how to get Crosstool-NG prepared for operation and how to get it configured to perform a toolchain build with needed settings.
+And now when all the preparations are done it's required only to start build process with:
+```shell
+./ct-ng build
+```
+
+## Building toolchain for Windows
 
 To build toolchain for Windows hosts it is recommended to do a "Canadian
 cross-compilation" on Linux, that is toolchain for ARC targets that runs on
