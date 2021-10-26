@@ -59,9 +59,15 @@ if { [check_target_archs] } {
     perror "Unknown CPU configuration"
 }
 
+# Check if we want a semihosting run
+if ![info exists qemu_serial_io] {
+    lappend qemu_flags  -semihosting
+} else {
+    lappend qemu_flags -serial stdio
+}
+
 lappend qemu_flags \
-    -M arc-sim -m 2G -nographic -no-reboot -monitor none -semihosting \
-    -kernel
+    -M arc-sim -m 2G -nographic -no-reboot -monitor none -kernel
 
 set qemu_bin "$::env(QEMU_HOME)/bin/qemu-system-${qemu_arch}"
 
