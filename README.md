@@ -66,7 +66,7 @@ website](http://gcc.gnu.org/install/prerequisites.html)
 
 ```shell
 sudo apt update
-sudo apt install -y texinfo byacc flex libncurses5-dev zlib1g-dev \
+sudo apt install -y autoconf help2man libtool texinfo byacc flex libncurses5-dev zlib1g-dev \
                     libexpat1-dev texlive build-essential git wget gawk \
                     bison xz-utils make python3 rsync locales
 ```
