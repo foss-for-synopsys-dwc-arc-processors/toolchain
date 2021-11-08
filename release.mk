@@ -66,6 +66,9 @@ ENABLE_ARC64_TOOLS := y
 # Whether to build and upload OpenOCD for Linux.
 ENABLE_OPENOCD := y
 
+# Whether to install tcftool for targets.
+ENABLE_TCF_TOOLS := y
+
 # Whether to build and upload OpenOCD for Windows/macOS.
 # Requires ENABLE_OPENOCD to be set to 'y'.
 ENABLE_OPENOCD_WIN := y
@@ -152,6 +155,7 @@ PYTHON := python3
 SSH := ssh
 TAR := tar
 WGET := wget
+INSTALL := install
 
 # Always have `-nv`.
 override WGETFLAGS += -nv
@@ -344,6 +348,9 @@ OOCD_BUILD_MAC_DIR := $(BUILD_DIR)/openocd_mac
 
 # Documentation package
 DOCS_DIR := arc_gnu_$(RELEASE)_docs
+
+# Extras
+EXTRAS_DIR := $(abspath $(ROOT)/toolchain/extras)
 
 # List of files that will be uploaded to GitHub Release.
 UPLOAD_ARTIFACTS = $(UPLOAD_ARTIFACTS-y)
@@ -608,13 +615,37 @@ define copy_pdf_doc_file
 endef
 endif
 
+# Copy linux tcftool version into workspace
+# $1 - destination directory.
+ifeq ($(ENABLE_TCF_TOOLS),y)
+define copy_tcftool_linux
+	$(INSTALL) -m 0775 $(EXTRAS_DIR)/tcftool/tcftool_x86_linux $(1)/bin
+endef
+else
+define copy_tcftool_linux
+endef
+endif
+
+# Copy windows tcftool version into workspace
+# $1 - destination directory.
+ifeq ($(ENABLE_TCF_TOOLS),y)
+define copy_tcftool_win
+	$(INSTALL) -m 0775 $(EXTRAS_DIR)/tcftool/tcftool_x86_windows.exe $(1)/bin
+endef
+else
+define copy_tcftool_win
+endef
+endif
+
 $O/.stamp_elf_le_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-multilib-elf32,$(TOOLS_ELFLE_HOST_DIR))
+	$(call copy_tcftool_linux,$O/$(TOOLS_ELFLE_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_HOST_DIR))
 	touch $@
 
 $O/.stamp_elf_be_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arceb-multilib-elf32,$(TOOLS_ELFBE_HOST_DIR))
+	$(call copy_tcftool_linux,$O/$(TOOLS_ELFBE_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_HOST_DIR))
 	touch $@
 
@@ -628,30 +659,37 @@ $O/.stamp_elf_be_tarball: $O/.stamp_elf_be_built
 
 $O/.stamp_uclibc_le_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-arc700-linux-uclibc,$(TOOLS_UCLIBC_LE_700_HOST_DIR))
+	$(call copy_tcftool_linux,$O/$(TOOLS_UCLIBC_LE_700_HOST_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_700_HOST_DIR))
 	touch $@
 
 $O/.stamp_uclibc_be_700_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arceb-arc700-linux-uclibc,$(TOOLS_UCLIBC_BE_700_HOST_DIR))
+	$(call copy_tcftool_linux,$O/$(TOOLS_UCLIBC_BE_700_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_BE_700_HOST_DIR))
 	touch $@
 
 $O/.stamp_uclibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-archs-linux-uclibc,$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
+	$(call copy_tcftool_linux,$O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_LE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_uclibc_be_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arceb-archs-linux-uclibc,$(TOOLS_UCLIBC_BE_HS_HOST_DIR))
+	$(call copy_tcftool_linux,$O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_BE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_glibc_le_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-archs-linux-gnu,$(TOOLS_GLIBC_LE_HS_HOST_DIR))
+	$(call copy_tcftool_linux,$O/$(TOOLS_GLIBC_LE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_LE_HS_HOST_DIR))
 	touch $@
 
 $O/.stamp_glibc_be_hs_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arceb-archs-linux-gnu,$(TOOLS_GLIBC_BE_HS_HOST_DIR))
+	$(call copy_tcftool_linux,$O/$(TOOLS_GLIBC_BE_HS_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_BE_HS_HOST_DIR))
 	touch $@
 
@@ -741,11 +779,13 @@ endif
 
 $O/.stamp_elf_le_windows_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-elf32-win,$(TOOLS_ELFLE_WIN_DIR))
+	$(call copy_tcftool_win,$O/$(TOOLS_ELFLE_WIN_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_WIN_DIR))
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arceb-elf32-win,$(TOOLS_ELFBE_WIN_DIR))
+	$(call copy_tcftool_win,$O/$(TOOLS_ELFBE_WIN_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_WIN_DIR))
 	touch $@
 
