@@ -615,37 +615,41 @@ define copy_pdf_doc_file
 endef
 endif
 
-# Copy linux tcftool version into workspace
-# $1 - destination directory.
+# Copy tcf handler and linux tcftool version into the workspace
+# $1 - arch prefix.
+# $2 - destination directory.
 ifeq ($(ENABLE_TCF_TOOLS),y)
-define copy_tcftool_linux
-	$(INSTALL) -m 0775 $(EXTRAS_DIR)/tcftool/tcftool_x86_linux $(1)/bin
+define copy_tcf_linux
+	$(INSTALL) -m 0775 $(EXTRAS_DIR)/arc-tcf-gcc $O/$(2)/bin/$(1)-elf32-tcf-gcc
+	$(INSTALL) -m 0775 $(EXTRAS_DIR)/tcftool/tcftool_x86_linux $O/$(2)/bin/tcftool
 endef
 else
-define copy_tcftool_linux
+define copy_tcf_linux
 endef
 endif
 
-# Copy windows tcftool version into workspace
-# $1 - destination directory.
+# Copy tcf handler and windows tcftool version into the workspace
+# $1 - arch prefix.
+# $2 - destination directory.
 ifeq ($(ENABLE_TCF_TOOLS),y)
-define copy_tcftool_win
-	$(INSTALL) -m 0775 $(EXTRAS_DIR)/tcftool/tcftool_x86_windows.exe $(1)/bin
+define copy_tcf_win
+	$(INSTALL) -m 0775 $(EXTRAS_DIR)/arc-tcf-gcc $O/$(2)/bin/$(1)-elf32-tcf-gcc
+	$(INSTALL) -m 0775 $(EXTRAS_DIR)/tcftool/tcftool_x86_windows.exe $O/$(2)/bin/tcftool.exe
 endef
 else
-define copy_tcftool_win
+define copy_tcf_win
 endef
 endif
 
 $O/.stamp_elf_le_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-multilib-elf32,$(TOOLS_ELFLE_HOST_DIR))
-	$(call copy_tcftool_linux,$O/$(TOOLS_ELFLE_HOST_DIR))
+	$(call copy_tcf_linux,arc,$(TOOLS_ELFLE_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_HOST_DIR))
 	touch $@
 
 $O/.stamp_elf_be_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arceb-multilib-elf32,$(TOOLS_ELFBE_HOST_DIR))
-	$(call copy_tcftool_linux,$O/$(TOOLS_ELFBE_HOST_DIR))
+	$(call copy_tcf_linux,arceb,$(TOOLS_ELFBE_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_HOST_DIR))
 	touch $@
 
@@ -773,13 +777,13 @@ endif
 
 $O/.stamp_elf_le_windows_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc-elf32-win,$(TOOLS_ELFLE_WIN_DIR))
-	$(call copy_tcftool_win,$O/$(TOOLS_ELFLE_WIN_DIR))
+	$(call copy_tcf_win,arc,$(TOOLS_ELFLE_WIN_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFLE_WIN_DIR))
 	touch $@
 
 $O/.stamp_elf_be_windows_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arceb-elf32-win,$(TOOLS_ELFBE_WIN_DIR))
-	$(call copy_tcftool_win,$O/$(TOOLS_ELFBE_WIN_DIR))
+	$(call copy_tcf_win,arceb,$(TOOLS_ELFBE_WIN_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_ELFBE_WIN_DIR))
 	touch $@
 
