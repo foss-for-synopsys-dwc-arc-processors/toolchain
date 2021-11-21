@@ -20,11 +20,11 @@ import mimetypes
 import os.path
 import ssl
 
+
 class GitHubApi:
 
     def __init__(self, owner, project, oauth_token, server="api.github.com",
-            uploads_server="uploads.github.com", debuglevel=0):
-
+                 uploads_server="uploads.github.com", debuglevel=0):
         logging.debug("Creating GitHub API connection for %s/%s", owner, project)
         self._server = server
         self._connection = http.client.HTTPSConnection(server)
@@ -44,7 +44,7 @@ class GitHubApi:
         uploads_ssl_context.check_hostname = False
         self._uploads_server = uploads_server
         self._uploads_connection = http.client.HTTPSConnection(uploads_server,
-                context=uploads_ssl_context)
+                                                               context=uploads_ssl_context)
         self._uploads_connection.set_debuglevel(debuglevel)
 
     def create_release(self, git_tag, name, description, draft, prerelease):
@@ -52,15 +52,15 @@ class GitHubApi:
         logging.info("Creating release %s at %s/%s", name, self._owner, self._project)
         url = self._project_url + "/releases"
         req = {
-                "tag_name": git_tag,
-                "name": name,
-                "body": description,
-                "draft": draft,
-                "prerelease": prerelease,
+            "tag_name": git_tag,
+            "name": name,
+            "body": description,
+            "draft": draft,
+            "prerelease": prerelease,
         }
         self._connection.request("POST", url, json.dumps(req), self._http_headers)
         response = self._connection.getresponse()
-        response_text = response.read().decode("utf-8") # read() returns 'bytes' not 'string'
+        response_text = response.read().decode("utf-8")  # read() returns 'bytes' not 'string'
         logging.debug(response_text)
         response_data = json.loads(response_text)
         return response_data["id"]
@@ -69,14 +69,12 @@ class GitHubApi:
         logging.info("Uploading asset: %s", asset)
         name = os.path.basename(asset)
         url = "{0}/releases/{1}/assets?name={2}".format(self._project_url, release_id, name)
-        (mime_type, mime_encoding) = mimetypes.guess_type(asset)
+        (mime_type, _) = mimetypes.guess_type(asset)
         asset_headers = self._http_headers.copy()
         asset_headers["Content-Type"] = mime_type
         logging.debug("Asset Content-Type: %s", mime_type)
-        with open(asset, "rb") as f:
-            data = f.read()
+        with open(asset, "rb") as asset_file:
+            data = asset_file.read()
             self._uploads_connection.request("POST", url, data, asset_headers)
             response = self._uploads_connection.getresponse()
             logging.debug(response.read())
-
-# vi: set expandtab sw=4:
