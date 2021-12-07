@@ -1234,7 +1234,7 @@ deploy: $O/$(CHECKSUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
 ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
-	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE)
+	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE_TAG)
 	$(DEPLOY_LINK_CMD)
 
 #
@@ -1251,13 +1251,13 @@ LATEST_SYMLINK_NAME := latest-arc64
 endif
 
 ifeq ($(findstring :,$(DEPLOY_BUILD_DESTINATION)),)
-  DEPLOY_BUILD_DESTINATION_CMD=mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)
+  DEPLOY_BUILD_DESTINATION_CMD=mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE_TAG)
   DEPLOY_BUILD_LINK_CMD=ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION)/$(LATEST_SYMLINK_NAME)
 else
   DEPLOY_BUILD_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_BUILD_DESTINATION)")
   DEPLOY_BUILD_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_BUILD_DESTINATION)")
   DEPLOY_BUILD_DESTINATION_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
-    'mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE)'
+    'mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE_TAG)'
   DEPLOY_BUILD_LINK_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
     'ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION_PATH)/$(LATEST_SYMLINK_NAME)'
 endif
@@ -1282,7 +1282,7 @@ endif
 # Cannot make "prebuilt" part of the pattern to get it stripped, because we
 # have an IDE package, which has "ide" insead of "prebuilt".
 .deploy-toolchain-build-%: $O/arc_gnu_$(RELEASE)_%_install .deploy_build_destdir
-	$(CP) $</ $(DEPLOY_BUILD_DESTINATION)/$(RELEASE)/$(*:prebuilt_%=%)
+	$(CP) $</ $(DEPLOY_BUILD_DESTINATION)/$(RELEASE_TAG)/$(*:prebuilt_%=%)
 
 # Copying is done by dependency targets.
 .PHONY: .deploy-toolchain-build
