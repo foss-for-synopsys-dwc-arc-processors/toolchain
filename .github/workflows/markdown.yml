@@ -1,0 +1,26 @@
+name: Markdown Lint
+on:
+  push:
+    paths:
+    - README.md
+    branches:
+    - arc-dev
+    - arc-releases
+  pull_request:
+    paths:
+    - README.md
+    branches:
+    - arc-dev
+    - arc-releases
+jobs:
+  markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10'
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+      - name: Run Markdownlint
+        run: markdownlint ${GITHUB_WORKSPACE}/README.md -c ${GITHUB_WORKSPACE}/.markdownlint.yml
