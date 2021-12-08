@@ -1205,27 +1205,6 @@ DIRS += $O/$(DOCS_DIR)
 $O/$(DOCS_DIR)$(TAR_EXT): $O/.stamp_elf_le_built | $O/$(DOCS_DIR)
 	$(CP) $O/$(TOOLS_ELFLE_HOST_DIR)/share/doc/ $O/$(DOCS_DIR)
 	$(call create_tar,$(DOCS_DIR))
-#
-# Create tag
-#
-create-openocd-tag:
-ifeq ($(ENABLE_OPENOCD),y)
-	# Semihardcoded OpeOCD branch is ugly, but is OK for now.
-	# Initially I used --git-dir, however it doesn't work properly with
-	# `checkout' - actual files were left in original state.
-	cd $(OOCD_SRC_DIR) && \
-	    $(GIT) checkout arc-0.9-dev-$(RELEASE_BRANCH) && \
-	    $(GIT) tag $(RELEASE_TAG)
-endif
-
-#
-# Push tag
-#
-push-openocd-tag:
-ifeq ($(ENABLE_OPENOCD),y)
-	cd $(OOCD_SRC_DIR) && \
-	    $(GIT) push origin $(RELEASE_TAG)
-endif
 
 #
 # Deploy to shared file system
