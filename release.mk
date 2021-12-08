@@ -1283,7 +1283,7 @@ endif
 # This is not a part of a default target. Upload should be triggered manually.
 # RELEASE_TAG and RELEASE_NAME mustbe set to something
 upload: $O/$(CHECKSUM_FILE)
-	$(PYTHON) github/create-release.py \
+	github/gh-release \
 		--owner=$(GITHUB_OWNER) \
 		--project=toolchain \
 		--tag=$(RELEASE_TAG) \
