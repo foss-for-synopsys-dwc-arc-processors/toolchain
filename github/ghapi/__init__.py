@@ -21,17 +21,30 @@ import os.path
 import ssl
 
 
+class GitHubApiException(Exception):
+    """General exception type for GitHub related REST API failures"""
+
+
+def create_ssl_context():
+    """Create an insecure context for SSL connection"""
+    context = ssl.create_default_context()
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+    return context
+
+
 class GitHubApi:
 
-    def __init__(self, owner, project, oauth_token, server="api.github.com",
+    def __init__(self, owner, repo, oauth_token, server="api.github.com",
                  uploads_server="uploads.github.com", debuglevel=0):
-        logging.debug("Creating GitHub API connection for %s/%s", owner, project)
+        logging.debug("Creating GitHub API connection for %s/%s", owner, repo)
         self._server = server
-        self._connection = http.client.HTTPSConnection(server)
+        self._connection = http.client.HTTPSConnection(server,
+                                                       context=create_ssl_context())
         self._connection.set_debuglevel(debuglevel)
         self._owner = owner
-        self._project = project
-        self._project_url = "/repos/{0}/{1}".format(owner, project)
+        self._project = repo
+        self._project_url = f"/repos/{owner}/{repo}"
         self._http_headers = {
             "Authorization": "token " + oauth_token,
             "User-Agent": "Python",
@@ -47,28 +60,81 @@ class GitHubApi:
                                                                context=uploads_ssl_context)
         self._uploads_connection.set_debuglevel(debuglevel)
 
-    def create_release(self, git_tag, name, description, draft, prerelease):
+    def _request(self, method, url, request=None):
+        self._connection.request(
+            method, url, json.dumps(request), self._http_headers)
+        response = self._connection.getresponse()
+        response_body = response.read().decode("utf-8")
+
+        try:
+            response_data = json.loads(str(response_body))
+        except json.decoder.JSONDecodeError:
+            response_data = str(response_body)
+
+        return response.status, response_data
+
+    def create_release(self, tag, name, description, draft, prerelease):
         """Returns release id"""
-        logging.info("Creating release %s at %s/%s", name, self._owner, self._project)
+        logging.info("Creating release \'%s\' at \'%s/%s\'", tag, self._owner,
+                     self._project)
         url = self._project_url + "/releases"
         req = {
-            "tag_name": git_tag,
+            "tag_name": tag,
             "name": name,
             "body": description,
             "draft": draft,
             "prerelease": prerelease,
         }
-        self._connection.request("POST", url, json.dumps(req), self._http_headers)
-        response = self._connection.getresponse()
-        response_text = response.read().decode("utf-8")  # read() returns 'bytes' not 'string'
-        logging.debug(response_text)
-        response_data = json.loads(response_text)
+        status, response_data = self._request("POST", url, req)
+        if status != 201:
+            raise GitHubApiException(response_data["message"])
+
         return response_data["id"]
 
+    def last_commit_hash_on_branch(self, branch):
+        """Get last commit hash on branch"""
+        logging.info("Get last commit on branch: \'%s\' at \'%s/%s\'", branch,
+                     self._owner,
+                     self._project)
+        url = self._project_url + f"/commits/{branch}"
+        status, response_data = self._request("GET", url)
+
+        if status != 200:
+            raise GitHubApiException(response_data["message"])
+
+        return response_data["sha"]
+
+    def create_tag_reference(self, ref, sha):
+        """Create a tag reference with GitHub REST API"""
+        logging.info("Create tag reference \'%s\' at \'%s/%s\'", ref, self._owner,
+                     self._project)
+        url = self._project_url + "/git/refs"
+
+        req = {
+            "ref": f"refs/tags/{ref}",
+            "sha": sha
+        }
+        status, response_data = self._request("POST", url, req)
+        if status != 201:
+            raise GitHubApiException(response_data["message"])
+
+    def delete_tag_reference(self, ref):
+        """Delete a tag reference with GitHub REST API"""
+        logging.info("Delete tag \'%s\' at \'%s/%s\'",
+                     ref, self._owner, self._project)
+        url = self._project_url + f"/git/refs/tags/{ref}"
+
+        status, response_data = self._request("DELETE", url)
+
+        if status != 204:
+            raise GitHubApiException(response_data['message'])
+
     def upload_asset(self, release_id, asset):
+        """Upload release assets with GitHub REST API"""
         logging.info("Uploading asset: %s", asset)
         name = os.path.basename(asset)
-        url = "{0}/releases/{1}/assets?name={2}".format(self._project_url, release_id, name)
+        url = "{0}/releases/{1}/assets?name={2}".format(self._project_url, release_id,
+                                                        name)
         (mime_type, _) = mimetypes.guess_type(asset)
         asset_headers = self._http_headers.copy()
         asset_headers["Content-Type"] = mime_type
