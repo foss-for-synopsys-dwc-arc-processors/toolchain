@@ -171,8 +171,11 @@ endif
 # RELEASE_TAG is a literal Git tag, like arc-2016.09-rc1.
 # RELEASE in this case would be 2016.09-rc1. However remove -release suffix
 # that is used for final release tags.
+# RELEASE_DIR in this case would be arc-2016.09-rc1. However remove -release
+# suffix that is used for final release tags.
 # RELEASE_BRANCH in this case would be 2016.09.
 RELEASE := $(patsubst %-release,%,$(shell cut -s -d- -f2- <<< $(RELEASE_TAG)))
+RELEASE_DIR:= $(patsubst %-release,%,$(RELEASE_TAG))
 RELEASE_BRANCH := $(shell cut -s -d- -f2 <<< $(RELEASE_TAG))
 
 ifeq ($(RELEASE_BRANCH),)
@@ -1202,8 +1205,6 @@ DIRS += $O/$(DOCS_DIR)
 $O/$(DOCS_DIR)$(TAR_EXT): $O/.stamp_elf_le_built | $O/$(DOCS_DIR)
 	$(CP) $O/$(TOOLS_ELFLE_HOST_DIR)/share/doc/ $O/$(DOCS_DIR)
 	$(call create_tar,$(DOCS_DIR))
-
-
 #
 # Create tag
 #
@@ -1234,7 +1235,7 @@ deploy: $O/$(CHECKSUM_FILE) $(addprefix $O/,$(DEPLOY_ARTIFACTS))
 ifeq ($(DEPLOY_DESTINATION),)
 	$(error DEPLOY_DESTINATION must be set to run 'deploy' target)
 endif
-	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE_TAG)
+	$(CP) $^ $(DEPLOY_DESTINATION)/$(RELEASE_DIR)
 	$(DEPLOY_LINK_CMD)
 
 #
@@ -1251,24 +1252,24 @@ LATEST_SYMLINK_NAME := latest-arc64
 endif
 
 ifeq ($(findstring :,$(DEPLOY_BUILD_DESTINATION)),)
-  DEPLOY_BUILD_DESTINATION_CMD=mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE_TAG)
-  DEPLOY_BUILD_LINK_CMD=ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION)/$(LATEST_SYMLINK_NAME)
+  DEPLOY_BUILD_DESTINATION_CMD=mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE_DIR)
+  DEPLOY_BUILD_LINK_CMD=ln -fsT $(RELEASE_DIR) $(DEPLOY_BUILD_DESTINATION)/$(LATEST_SYMLINK_NAME)
 else
   DEPLOY_BUILD_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_BUILD_DESTINATION)")
   DEPLOY_BUILD_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_BUILD_DESTINATION)")
   DEPLOY_BUILD_DESTINATION_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
-    'mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE_TAG)'
+    'mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE_DIR)'
   DEPLOY_BUILD_LINK_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
-    'ln -fsT $(RELEASE) $(DEPLOY_BUILD_DESTINATION_PATH)/$(LATEST_SYMLINK_NAME)'
+    'ln -fsT $(RELEASE_DIR) $(DEPLOY_BUILD_DESTINATION_PATH)/$(LATEST_SYMLINK_NAME)'
 endif
 
 ifeq ($(findstring :,$(DEPLOY_DESTINATION)),)
-  DEPLOY_LINK_CMD=ln -fsT $(RELEASE) $(DEPLOY_DESTINATION)/$(LATEST_SYMLINK_NAME)
+  DEPLOY_LINK_CMD=ln -fsT $(RELEASE_DIR) $(DEPLOY_DESTINATION)/$(LATEST_SYMLINK_NAME)
 else
   DEPLOY_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_DESTINATION)")
   DEPLOY_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_DESTINATION)")
   DEPLOY_LINK_CMD=$(SSH) $(DEPLOY_DESTINATION_HOST) \
-    'ln -fsT $(RELEASE) $(DEPLOY_DESTINATION_PATH)/$(LATEST_SYMLINK_NAME)'
+    'ln -fsT $(RELEASE_DIR) $(DEPLOY_DESTINATION_PATH)/$(LATEST_SYMLINK_NAME)'
 endif
 
 .PHONY: .deploy_build_destdir
@@ -1282,7 +1283,7 @@ endif
 # Cannot make "prebuilt" part of the pattern to get it stripped, because we
 # have an IDE package, which has "ide" insead of "prebuilt".
 .deploy-toolchain-build-%: $O/arc_gnu_$(RELEASE)_%_install .deploy_build_destdir
-	$(CP) $</ $(DEPLOY_BUILD_DESTINATION)/$(RELEASE_TAG)/$(*:prebuilt_%=%)
+	$(CP) $</ $(DEPLOY_BUILD_DESTINATION)/$(RELEASE_DIR)/$(*:prebuilt_%=%)
 
 # Copying is done by dependency targets.
 .PHONY: .deploy-toolchain-build
