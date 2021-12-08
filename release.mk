@@ -220,20 +220,21 @@ endef
 # $2 - directory name
 ifeq ($(GIT_REFERENCE_ROOT),)
 define git_clone_url
-	$(GIT) clone -q $1 $(ROOT)/$2
+	$(GIT) clone -q $(1) -b $(2) $(ROOT)/$(3)
 endef
 else
 define git_clone_url
-	$(GIT) clone -q --reference=$(GIT_REFERENCE_ROOT)/$2 \
-	    $1 $(ROOT)/$2
+	$(GIT) clone -q -b $(2) --reference=$(GIT_REFERENCE_ROOT)/$(3) \
+		$(1) $(ROOT)/$(3)
 endef
 endif
 
 # Clone git repository
 # $1 - tool name
-# $2 - directory name
+# $2 - git branch or tag
+# $3 - directory name
 define git_clone
-    $(call git_clone_url,$(GIT_URL_BASE)/$1.git,$2)
+    $(call git_clone_url,$(GIT_URL_BASE)/$(1).git,$(2),$(3))
 endef
 
 # Copy prebuilt toolchain into workspace
@@ -327,6 +328,7 @@ JRE_LINUX_TGZ := OpenJDK11-jre_x64_linux_openj9_$(JAVA_VERSION).tar.gz
 JRE_WIN_ZIP := OpenJDK11-jre_x64_windows_openj9_$(JAVA_VERSION).zip
 
 # IDE: output related variables
+IDE_VERSION := arc-2021.09
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
 IDE_MACOS_INSTALL := arc_gnu_$(RELEASE)_ide_macos_install
 IDE_WIN_EXE := arc_gnu_$(RELEASE)_ide_win_install.exe
@@ -341,6 +343,7 @@ LINUX_AXS103_ROOTFS_CPIO = rootfs_axs103.cpio
 LINUX_AXS103_ROOTFS_TAR = rootfs_axs103.tgz
 
 # OpenOCD
+OOCD_VERSION := arc-2021.09
 OOCD_HOST_DIR := arc_gnu_$(RELEASE)_openocd_$(HOST)_install
 OOCD_WIN_DIR := arc_gnu_$(RELEASE)_openocd_win_install
 OOCD_MAC_DIR := arc_gnu_$(RELEASE)_openocd_mac_install
@@ -530,19 +533,10 @@ ide: $O/.stamp_ide_linux_tar $O/$(IDE_PLUGINS_ZIP)
 
 .PHONY: clone
 clone:
-	# $(call git_clone,binutils-gdb,binutils)
-	# $(call git_clone,gcc,gcc)
-	# $(call git_clone,binutils-gdb,gdb)
-	# $(call git_clone,newlib,newlib)
-	# $(call git_clone_url,https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,linux)
-	# $(call git_clone_url,git@github.com:wbx-github/uclibc-ng.git,uclibc-ng)
-	$(call git_clone,arc_gnu_eclipse,arc_gnu_eclipse)
+	$(call git_clone,arc_gnu_eclipse,$(IDE_VERSION),arc_gnu_eclipse)
 ifeq ($(ENABLE_OPENOCD),y)
-	$(call git_clone,openocd,openocd)
+	$(call git_clone,openocd,$(OOCD_VERSION),openocd)
 endif
-# ifeq ($(ENABLE_GLIBC_TOOLS),y)
-# 	$(call git_clone,glibc,glibc)
-# endif
 
 
 .PHONY: copy-external
