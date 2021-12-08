@@ -1,7 +1,7 @@
-# ARC GNU Tool Chain
+# ARC GNU Toolchain
 
 This is the main Git repository for the ARC GNU toolchain. It contains
-documentation & various supplimentary meterials required for development,
+documentation & various supplementary materials required for development,
 verification & releasing of pre-built toolchain artifacts.
 
 Branches in this repository are:
@@ -17,11 +17,11 @@ a new bug report at GitHub Issues for this `toolchain` project.
 
 ## Build environment
 
-Real toolchain building is being done by [Crosstool-NG](https://github.com/crosstool-ng/crosstool-ng)
+The toolchain building is being done by [Crosstool-NG](https://github.com/crosstool-ng/crosstool-ng)
 and so we inherit all the capabilities provided by that powerful and flexible tool.
 We recommend those interested in rebuilding of ARc GNU tools to become familiar with
-Crosstool-NG coumentation available here: <https://crosstool-ng.github.io/docs>
-to better understand its capabilities and limitations. But in a nutshell when all the environment
+Crosstool-NG documentation available here: <https://crosstool-ng.github.io/docs>
+to better understand its capabilities and limitations. But in a nutshell, when all the environment
 is set (that's described in details below) what needs to be done is as easy as:
 
 ```shell
@@ -29,39 +29,39 @@ is set (that's described in details below) what needs to be done is as easy as:
 ./ct-ng build
 ```
 
-Crosstool-NG is meant to be used in Unix-like environment and so the best user experience
+Crosstool-NG is meant to be used in a Unix-like environment and so the best user experience
 could be achieved in up-to-date mainstream Linux distributions, which have all needed
 tools in their repositories.
 
 Also Crosstool-NG is known to work on macOS with Intel processors
 and hopefully will soon be usable on macOS with ARM processors as well. That said ARC GNU
-cross-toolchain for macOS might be built natively on macOS. Or it's possible to built it
+cross-toolchain for macOS might be built natively on macOS. Or it's possible to build it
 in a canadian cross manner (see <https://crosstool-ng.github.io/docs/toolchain-types>) on a Linux
-host with use of [OSXCross](https://github.com/tpoechtrager/osxcross) as a cross-toolchain for macOS.
+host with the use of [OSXCross](https://github.com/tpoechtrager/osxcross) as a cross-toolchain for macOS.
 
 There're ways to build ARC GNU cross-toolchain on Windows as well, and the most convenient would be
 use of [Windows Subsystem for Linux v2, WSL2](https://docs.microsoft.com/en-us/windows/wsl/compare-versions)
-or any other full-scale virtual machine with Linux inside. Fortunately though it's possible to
-use canadian-cross approach for Windows as well with use of MinGW cross-toolchain on Linux host.
-Moreover even MinGW cross-toolchain might be built with Crosstool-NG right in place, limiting
-amount of external deoendencies.
+or any other full-scale virtual machine with Linux inside. Fortunately, though, it's possible to
+use the canadian-cross approach for Windows as well with use of MinGW cross-toolchain on Linux host.
+Moreover, even MinGW cross-toolchain might be built with Crosstool-NG right in place, limiting
+amount of external dependencies.
 
-So our recommendation is to either use pre-built toolchain for Linux, Windows or macOS
+So our recommendation is to either use a pre-built toolchain for Linux, Windows or macOS
 (could be found on [releases](https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases) page)
-or build in a true Linux environment, be it real Linux host or a virtual machine.
+or build in a true Linux environment, be it a real Linux host or a virtual machine.
 
 And due to requirements of some toolchain components for building from source as well as for
 execution of a prebuilt toolchain it's necessary to use up-to-date Linux distribution.
 
-As of today the oldest supported distributions are:
+As of today, the oldest supported distributions are:
 
 * CentOS/RHEL 7
 * Ubuntu 18.04 LTS
 
 ## Prerequisites
 
-GNU toolchain for ARC has same standard prerequisites as an upstream GNU tool
-chain as documented in the GNU toolchain user guide or on the [GCC
+GNU toolchain for ARC has the same standard prerequisites as an upstream GNU
+toolchain as documented in the GNU toolchain user guide or on the [GCC
 website](http://gcc.gnu.org/install/prerequisites.html)
 
 ### Ubuntu 18.04 and newer
@@ -129,7 +129,7 @@ user-friendly tool called "Crosstool-NG. In its nature it's a mixture of Makefil
 and bash scripts which hide all the magic & complexity needed to properly
 configure, build & install all the components of the GNU toolchain.
 
-Still Crosstool-NG is distributed in sources and needs to be built before use.
+Still, Crosstool-NG is distributed in sources and needs to be built before use.
 Though it is as simple as:
 
 ```shell
@@ -139,7 +139,7 @@ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/crosstool-ng.g
 # Step into the just obtained source tree
 cd crosstool-ng
 
-# Optionally select its version of choise, for example the one used for creation of `arc-2021.09` release
+# Optionally select its version of choice, for example the one used for creation of `arc-2021.09` release
 git checkout arc-2021.09-release
 
 # Configure & build Crosstool-NG
@@ -148,7 +148,7 @@ git checkout arc-2021.09-release
 
 ## Building the Toolchain
 
-Once Crosstool-NG is built and ready fo use it's very easy to get a toolchain
+Once Crosstool-NG is built and ready for use it's very easy to get a toolchain
 of choice to be built. One just needs to decide on configuration options
 to be used for toolchain building or use one of the existing pre-defined
 settings (which mirror configuration of pre-built toolchains we distribute
@@ -176,21 +176,21 @@ And to get Crosstool-NG configured with either of those samples just say: `./ct-
 
 ## Crosstool-NG configuration: manual tuning
 
-If pre-defined "sample" doesn't meet one's requirements it's possible to either fine-tune some existing sample or start over from scratch
+If pre-defined "sample" doesn't meet one's requirements, it's possible to either fine-tune some existing sample or start over from scratch
 and make all the settings manually. For that just say `./ct-ng menuconfig` and use [menuconfig](https://en.wikipedia.org/wiki/Menuconfig) interface in the same way as it's done in many other projects like the Linux kernel, uClibc, Buildroot and many others.
 
-> :warning: To start configuration from scratch make sure `.config` file doesn't exist in the Crosstool's root directory or say `./ct-ng distclean`.
+> :warning: To start configuration from scratch, make sure `.config` file doesn't exist in the Crosstool's root directory or say `./ct-ng distclean`.
 
 The most interesting options for toolchain users might be:
 
 * Selection of the default target CPU model. To change it go to `Target options -> Emit assembly for CPU` and specify one of the possible values for GCC's `-mcpu` option, see <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/Understanding-GCC-mcpu-option> for the reference.
 * Selection of ARC64 processors. For that go to  `Target options -> Bitness` and select `64-bit`.
-* `CFLAGS` to be used for compilation of libraries for the target. Those might be set in  `Target options -> Targte CFLAGS`.
+* `CFLAGS` to be used for compilation of libraries for the target. Those might be set in  `Target options -> Target CFLAGS`.
 
 ## Building a toolchain with Crosstool-NG
 
 All the information above was on how to get Crosstool-NG prepared for operation and how to get it configured to perform a toolchain build with needed settings.
-And now when all the preparations are done it's required only to start build process with:
+And now, when all the preparations are done, it's required only to start build process with:
 
 ```shell
 ./ct-ng build
@@ -198,21 +198,20 @@ And now when all the preparations are done it's required only to start build pro
 
 ## Building toolchain for Windows
 
-To build toolchain for Windows hosts it is recommended to do a "Canadian
-cross-compilation" on Linux, that is toolchain for ARC targets that runs on
-Windows hosts is built on Linux host. Build scripts expect to be run in
+To build a toolchain for Windows hosts it is recommended to do a "Canadian
+cross-compilation" on Linux, that is a toolchain for ARC targets that runs on
+Windows hosts is built on Linux host. Build scripts expected to be run in
 Unix-like environment, so it is often faster and easier to build toolchain on
 Linux, than do this on Windows using environments like Cygwin and MSYS. While
 those allow toolchain to be built on Windows natively this way is not
 officially supported and not recommended by Synopsys, due to severe performance
 penalty of those environments on build time and possible compatibility issue.
 
-Some limitation apply:
+Some limitations apply:
 
 * Only bare metal toolchain can be built this way.
 * It is required to have toolchain for Linux hosts in the `PATH` for Canadian
-  cross-build to succeed - it will be used to compile standard library of tool
-  chain.
+  cross-build to succeed - it will be used to compile standard library of toolchain.
 
 To do a canadian-cross toolchain on Linux, MinGW toolchain must be installed on the build host.
 There're muliple ways to get MinGW installed:
@@ -237,7 +236,7 @@ Once the MinGW is available on the build host just make sure its binaries are av
 
 ## Usage examples
 
-In all of the following examples it is expected that GNU toolchain for ARC has
+In all of the following examples, it is expected that GNU toolchain for ARC has
 been added to the user's `PATH` environment variable. Please note that built toolchain by default gets installed in the current users's `~/x-tools/TOOLCHAIN_TUPLE` folder, where `TOOLCHAIN_TUPLE` is by default dynamically generated based on the toolchain type (bare-metal, glibc or uclibc), CPU's bitness (32- or 64-bit), provided vendor name etc.
 
 For example:
@@ -364,8 +363,8 @@ $ arc-elf32-gdb --quiet a.out
 > The Ashling Opella-XD debug probe and its drivers are not part of the GNU
 > tools distribution and should be obtained separately.
 
-The Ashling Opella-XD drivers distribution contains gdbserver for GNU tool
-chain.  Command to start it:
+The Ashling Opella-XD drivers distribution contains gdbserver for GNU toolchain.
+Command to start it:
 
 ```shell
 $ ./ash-arc-gdb-server --jtag-frequency 8mhz --device arc \
@@ -377,7 +376,7 @@ The Ashling drivers distribution contain files for ARC 600 (arc600-core.xml)
 and ARC 700 (arc700-core.xml). However due to recent changes in GDB with
 regards of support of XML target descriptions those files will not work out of
 the box, as order of some registers changed. To use Ashling GDB server with GDB
-starting from 2015.06 release it is required to use modified files that can be
+starting from 2015.06 release, it is required to use modified files that can be
 found in this `toolchain` repository in `extras/opella-xd` directory.
 
 *Before* connecting GDB to an Opella-XD gdbserver it is essential to specify
@@ -444,7 +443,7 @@ $ arc-linux-gdb --quiet hello_world
 ## Getting help
 
 For all inquiries Synopsys customers are advised to use
-[SolvNet](https://solvnet.synopsys.com). Everyone else is welcomed to open an
+[SolvNet](https://solvnet.synopsys.com). Everyone is welcome to open an
 issue against
 [toolchain](https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain)
 repository on GitHub.
