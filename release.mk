@@ -265,7 +265,7 @@ BUILDALLFLAGS += --config-extra '$(EXTRA_CONFIG_FLAGS)'
 #
 # Output artifacts
 #
-O := ../release_output
+O := $(ROOT)/release_output
 # Use -a when invoking tar, then we can easily change to .tar.xz if we want.
 TAR_EXT := .tar.gz
 
