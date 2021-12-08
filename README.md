@@ -168,7 +168,7 @@ And to get Crosstool-NG configured with either of those samples just say: `./ct-
 
 ## Crosstool-NG configuration: manual tuning
 
-If pre-defined "sample" doesn't meet one's requirements it's possible to either fine-tune some existing sample or start over from scratch 
+If pre-defined "sample" doesn't meet one's requirements it's possible to either fine-tune some existing sample or start over from scratch
 and make all the settings manually. For that just say `./ct-ng menuconfig` and use [menuconfig](https://en.wikipedia.org/wiki/Menuconfig) interface in the same way as it's done in many other projects like the Linux kernel, uClibc, Buildroot and many others.
 
 > :warning: To start configuration from scratch make sure `.config` file doesn't exist in the Crosstool's root directory or say `./ct-ng distclean`.
@@ -307,7 +307,7 @@ please see [documentation](https://foss-for-synopsys-dwc-arc-processors.github.i
 > https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/em-starter-kit.html
 
 Build instructions for OpenOCD are available at its page:
-https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-0.9-dev-2021.09/doc/README.ARC
+https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-2021.09/doc/README.ARC
 
 To run OpenOCD:
 
@@ -413,4 +413,3 @@ For all inquiries Synopsys customers are advised to use
 issue against
 [toolchain](https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain)
 repository on GitHub.
-
