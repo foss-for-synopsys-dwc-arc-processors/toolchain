@@ -174,9 +174,9 @@ endif
 # RELEASE_DIR in this case would be arc-2016.09-rc1. However remove -release
 # suffix that is used for final release tags.
 # RELEASE_BRANCH in this case would be 2016.09.
-RELEASE := $(patsubst %-release,%,$(shell cut -s -d- -f2- <<< $(RELEASE_TAG)))
+RELEASE := $(patsubst %-release,%,$(shell echo $(RELEASE_TAG) | cut -s -d- -f2-))
 RELEASE_DIR:= $(patsubst %-release,%,$(RELEASE_TAG))
-RELEASE_BRANCH := $(shell cut -s -d- -f2 <<< $(RELEASE_TAG))
+RELEASE_BRANCH := $(shell echo $(RELEASE_TAG) | cut -s -d- -f2)
 
 ifeq ($(RELEASE_BRANCH),)
 $(error RELEASE_TAG variable must be in format xxx-YYYY.MM)
@@ -1255,8 +1255,8 @@ ifeq ($(findstring :,$(DEPLOY_BUILD_DESTINATION)),)
   DEPLOY_BUILD_DESTINATION_CMD=mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE_DIR)
   DEPLOY_BUILD_LINK_CMD=ln -fsT $(RELEASE_DIR) $(DEPLOY_BUILD_DESTINATION)/$(LATEST_SYMLINK_NAME)
 else
-  DEPLOY_BUILD_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_BUILD_DESTINATION)")
-  DEPLOY_BUILD_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_BUILD_DESTINATION)")
+  DEPLOY_BUILD_DESTINATION_HOST=$(shell echo "$(DEPLOY_BUILD_DESTINATION)" | cut -d: -f1)
+  DEPLOY_BUILD_DESTINATION_PATH=$(shell echo "$(DEPLOY_BUILD_DESTINATION)" | cut -d: -f2)
   DEPLOY_BUILD_DESTINATION_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
     'mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION_PATH)/$(RELEASE_DIR)'
   DEPLOY_BUILD_LINK_CMD=$(SSH) $(DEPLOY_BUILD_DESTINATION_HOST) \
@@ -1266,8 +1266,8 @@ endif
 ifeq ($(findstring :,$(DEPLOY_DESTINATION)),)
   DEPLOY_LINK_CMD=ln -fsT $(RELEASE_DIR) $(DEPLOY_DESTINATION)/$(LATEST_SYMLINK_NAME)
 else
-  DEPLOY_DESTINATION_HOST=$(shell cut -d: -f1 <<< "$(DEPLOY_DESTINATION)")
-  DEPLOY_DESTINATION_PATH=$(shell cut -d: -f2 <<< "$(DEPLOY_DESTINATION)")
+  DEPLOY_DESTINATION_HOST=$(shell echo "$(DEPLOY_DESTINATION)" | cut -d: -f1)
+  DEPLOY_DESTINATION_PATH=$(shell echo "$(DEPLOY_DESTINATION)" | cut -d: -f2)
   DEPLOY_LINK_CMD=$(SSH) $(DEPLOY_DESTINATION_HOST) \
     'ln -fsT $(RELEASE_DIR) $(DEPLOY_DESTINATION_PATH)/$(LATEST_SYMLINK_NAME)'
 endif
