@@ -77,10 +77,10 @@ ENABLE_OPENOCD_MAC := y
 # Whether to build Toolchain PDF documentation. This affects only the
 # "toolchain" repository - PDF documents from gcc, binutils, etc are always
 # created, regardless of this option.
-ENABLE_PDF_DOCS := y
+ENABLE_PDF_DOCS := n
 
 # Whether to create a source tarball.
-ENABLE_SOURCE_TARBALL := y
+ENABLE_SOURCE_TARBALL := n
 
 # Whether to build and upload windows installer.
 # Requires ENABLE_OPENOCD_WIN to be set to 'y'.
