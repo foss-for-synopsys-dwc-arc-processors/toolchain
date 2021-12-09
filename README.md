@@ -223,7 +223,7 @@ There're muliple ways to get MinGW installed:
     sudo dnf -y install dnf-plugins-core
     sudo dnf config-manager --set-enabled powertools
     sudo dnf install -y mingw32-gcc
-    ```shell
+    ```
 
 * Or it could be built with help of that same Crosstool-NG:
 
