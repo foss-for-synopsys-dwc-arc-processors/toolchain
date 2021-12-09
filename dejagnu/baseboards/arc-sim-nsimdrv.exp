@@ -277,7 +277,7 @@ if { [info exists env(ARC_NSIM_OPTS) ] } {
 }
 
 # Setup nSIM.
-set_board_info sim "time -p $nsim_bin [join $nsim_flags]"
+set_board_info sim "$nsim_bin [join $nsim_flags]"
 # is_simulator should be set already by 'load_generic_config "sim"'. Do it here
 # to be safe.
 set_board_info is_simulator 1
