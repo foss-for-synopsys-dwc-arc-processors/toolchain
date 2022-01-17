@@ -44,7 +44,7 @@ if { [check_target_archs] } {
     lappend qemu_flags \
 	-cpu archs
     set qemu_arch "arc"
-} elseif { [check_target_arc64] } {
+} elseif { [check_target_arc64_64] } {
     lappend qemu_flags \
 	-cpu hs6x
     set qemu_arch "arc64"
