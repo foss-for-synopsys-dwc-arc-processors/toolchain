@@ -55,6 +55,10 @@ if { [check_target_archs] } {
     lappend qemu_flags \
 	-cpu hs6x
     set qemu_arch "arc64"
+} elseif { [check_target_arc64_32] } {
+    lappend qemu_flags \
+	-cpu hs5x
+    set qemu_arch "arc"
 } else {
     perror "Unknown CPU configuration"
 }
