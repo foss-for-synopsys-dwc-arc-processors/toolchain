@@ -57,26 +57,6 @@ set nsim_bin "$::env(NSIM_HOME)/bin/nsimdrv"
 
 set_board_info sim_time_limit 300
 
-# Detect if nSIM Turbo is available and libstdc++ is being tested.  Most of the
-# Dejagnu tests do not benefit from Turbo mode, because they are extremely
-# small, hence they finish before Turbo can kick in.  However there is two
-# certain floating point tests in libstdc++ that take quite a lot of time to
-# execute with soft-FP - around 15 minutes on Xeon@3.5GHz host.  Enabling Turbo
-# reduces this time to mere 1 minute.
-if { $tool == "libstdc++" } {
-    spawn $nsim_bin -on nsim_fast
-    expect {
-	"Download failed: no file name specified" {
-	    verbose "nSIM Turbo is available"
-	    lappend nsim_flags -on nsim_fast
-	}
-	default {
-	    # nSIM would spit out an error message if Turbo is not supported.
-	    verbose "nSIM Turbo is not available, increasing timeout"
-	    set_board_info sim_time_limit 1200
-	}
-    }
-}
 
 # Check if nsim_download_elf_sections option is required - whether nSIM version
 # is > 2015.06. If revision.txt doesn't exist - this is a private verification
