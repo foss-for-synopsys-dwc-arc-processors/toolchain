@@ -64,18 +64,19 @@ set_board_info sim_time_limit 300
 # execute with soft-FP - around 15 minutes on Xeon@3.5GHz host.  Enabling Turbo
 # reduces this time to mere 1 minute.
 if { $tool == "libstdc++" } {
-    spawn $nsim_bin -on nsim_fast
-    expect {
-	"Download failed: no file name specified" {
-	    verbose "nSIM Turbo is available"
-	    lappend nsim_flags -on nsim_fast
-	}
-	default {
-	    # nSIM would spit out an error message if Turbo is not supported.
-	    verbose "nSIM Turbo is not available, increasing timeout"
+#    Disable nsim TURBO feature as it is buggy.
+#    spawn $nsim_bin -on nsim_fast
+#    expect {
+#	"Download failed: no file name specified" {
+#	    verbose "nSIM Turbo is available"
+#	    lappend nsim_flags -on nsim_fast
+#	}
+#	default {
+#	    # nSIM would spit out an error message if Turbo is not supported.
+#	    verbose "nSIM Turbo is not available, increasing timeout"
 	    set_board_info sim_time_limit 1200
-	}
-    }
+#	}
+#    }
 }
 
 # Check if nsim_download_elf_sections option is required - whether nSIM version
