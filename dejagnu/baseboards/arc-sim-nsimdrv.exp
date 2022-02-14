@@ -235,6 +235,7 @@ set nsim_gcc_mapping {
     "__ARC64_ATOMIC_1__"	1	nsim_isa_atomic_option=1
     "__ARC64_ATOMIC_2__"	1	nsim_isa_atomic_option=2
     "__ARC64_ATOMIC_3__"	1	nsim_isa_atomic_option=3
+    "__ARC64_LL64__"		1	nsim_isa_ll64_option=1
     "__ARC64_M128__"		1	nsim_isa_m128_option=1
     "__ARC64_WIDE_VECTOR__"	1	nsim_isa_fp_wide_option=1
     "__ARC_ATOMIC__"		1	nsim_isa_atomic_option=1
