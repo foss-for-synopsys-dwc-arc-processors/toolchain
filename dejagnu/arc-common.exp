@@ -63,8 +63,6 @@ proc arc_get_cflags {} {
 	}
     }
 
-    lappend cflags [arc_get_multilib_options]
-
     # GCC generates improper DWARF info when frame-pointer is involved - all
     # variables in debug information are specified relatively to FP register
     # instead of a virtual frame base, hence this information is invalid in
