@@ -89,7 +89,7 @@ ENABLE_WINDOWS_INSTALLER := y
 # The user who owns the repository
 GITHUB_OWNER := foss-for-synopsys-dwc-arc-processors
 # URL base for git repositories.
-GIT_URL_BASE := git@github.com:$(GITHUB_OWNER)
+GIT_URL_BASE := https://github.com/$(GITHUB_OWNER)
 
 # Whether there is a directory that contains already cloned git repositories
 # that can be used as a git reference. If specified than it *must* contain
