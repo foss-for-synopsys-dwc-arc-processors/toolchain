@@ -308,6 +308,7 @@ TOOLS_GLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_nativ
 # Toolchain: arc64
 TOOLS_ELF_ARC64_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_arc64_elf_$(HOST)_install
 TOOLS_LINUX_ARC64_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_arc64_glibc_$(HOST)_install
+TOOLS_UCLIBC_ARC32_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_arc32_uclibc_$(HOST)_install
 
 # Toolchain PDF User Guide.
 PDF_DOC_FILE := $(abspath $(ROOT)/toolchain/doc/_build/pdf/GNU_Toolchain_for_ARC.pdf)
@@ -374,6 +375,7 @@ UPLOAD_ARTIFACTS-$(ENABLE_UCLIBC_TOOLS) += $(TOOLS_UCLIBC_LE_HS_HOST_DIR)$(TAR_E
 ifeq ($(ENABLE_UCLIBC_TOOLS),y)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_700_HOST_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_HS_HOST_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_ARC64_TOOLS) += $(TOOLS_UCLIBC_ARC32_HOST_DIR)$(TAR_EXT)
 endif
 
 UPLOAD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)$(TAR_EXT)
@@ -421,6 +423,7 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_UCLIBC_TOOLS) += $(TOOLS_UCLIBC_LE_HS_HOST_DIR)
 ifeq ($(ENABLE_UCLIBC_TOOLS),y)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_700_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_BIG_ENDIAN) += $(TOOLS_UCLIBC_BE_HS_HOST_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_ARC64_TOOLS) += $(TOOLS_UCLIBC_ARC32_HOST_DIR)
 endif
 
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)
@@ -696,6 +699,11 @@ $O/.stamp_arc64_linux_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
 	$(call copy_prebuilt,arc64-snps-linux-gnu,$(TOOLS_LINUX_ARC64_HOST_DIR))
 	$(call copy_pdf_doc_file,$O/$(TOOLS_LINUX_ARC64_HOST_DIR))
 
+$O/.stamp_uclibc_arc32_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arc32-linux-uclibc,$(TOOLS_UCLIBC_ARC32_HOST_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_ARC32_HOST_DIR))
+	touch $@
+
 $O/.stamp_uclibc_le_700_tarball: $O/.stamp_uclibc_le_700_built
 	$(call create_tar,$(TOOLS_UCLIBC_LE_700_HOST_DIR))
 	touch $@
@@ -726,6 +734,10 @@ $O/.stamp_arc64_elf_tarball: $O/.stamp_arc64_elf_built
 
 $O/.stamp_arc64_linux_tarball: $O/.stamp_arc64_linux_built
 	$(call create_tar,$(TOOLS_LINUX_ARC64_HOST_DIR))
+	touch $@
+
+$O/.stamp_uclibc_arc32_tarball: $O/.stamp_uclibc_arc32_built
+	$(call create_tar,$(TOOLS_UCLIBC_ARC32_HOST_DIR))
 	touch $@
 
 #
