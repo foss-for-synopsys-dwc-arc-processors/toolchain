@@ -475,6 +475,7 @@ BUILD_DEPS-$(ENABLE_GLIBC_TOOLS) += $O/.stamp_glibc_be_hs_tarball
 
 BUILD_DEPS-$(ENABLE_ARC64_TOOLS) += $O/.stamp_arc64_elf_tarball
 BUILD_DEPS-$(ENABLE_ARC64_TOOLS) += $O/.stamp_arc64_linux_tarball
+BUILD_DEPS-$(ENABLE_ARC64_TOOLS) += $O/.stamp_uclibc_arc32_tarball
 
 BUILD_DEPS-$(ENABLE_DOCS_PACKAGE) += $O/$(DOCS_DIR)$(TAR_EXT)
 
