@@ -1220,9 +1220,6 @@ endif
 # required to create build directory before copying into it.
 
 LATEST_SYMLINK_NAME := latest
-ifeq ($(ENABLE_ARC64_TOOLS),y)
-LATEST_SYMLINK_NAME := latest-arc64
-endif
 
 ifeq ($(findstring :,$(DEPLOY_BUILD_DESTINATION)),)
   DEPLOY_BUILD_DESTINATION_CMD=mkdir -m775 -p $(DEPLOY_BUILD_DESTINATION)/$(RELEASE_DIR)
