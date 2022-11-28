@@ -28,13 +28,9 @@ ARC_DOWNLOAD_TABLE = r"""
 | Linux/uClibc ARC HS | {6} \ {7}    |                |              |              |
 | Linux/glibc ARC HS  | {8} \ {9}    |                | {10}         |              |
 | IDE                 | {11}         | {12}           |              | {13}         |
-"""
-
-ARC64_DOWNLOAD_TABLE = r"""
-|                     | Linux x86_64 | Windows x86_64 | Linux ARC HS | macOS x86_64 |
-| ------------------- | ------------ | -------------- | ------------ | ------------ |
-| ARC64 Baremetal     | {0}          |                |              |              |
-| ARC64 Linux         | {1}          |                |              |              |
+| ARC64 Baremetal     | {14}         |                |              |              |
+| ARC64 Linux         | {15}         |                |              |              |
+| Linux/uClibc ARCv3  | {16}         |                |              |              |
 """
 
 
@@ -91,29 +87,21 @@ def create_arc_table(release_id, owner, project, tag):
                        host="native"),
         ide_fformat.format(t="Download", release=release_id, host="linux", ext="tar.gz"),
         ide_fformat.format(t="Download", release=release_id, host="win", ext="exe"),
-        ide_fformat.format(t="Download", release=release_id, host="macos", ext="tar.gz"))
-
-
-def create_arc64_table(release_id, owner, project, tag):
-    url = create_download_url(owner, project, tag)
-    fformat = "[{t}](" + url + "/arc_gnu_{release}_prebuilt_{type}_{cpu}_{host}_install.tar.gz)"
-    le = "Little endian"
-
-    return ARC64_DOWNLOAD_TABLE.format(
+        ide_fformat.format(t="Download", release=release_id, host="macos", ext="tar.gz"),
         fformat.format(t=le, release=release_id, type="arc64", cpu="elf",
                        host="linux"),
         fformat.format(t=le, release=release_id, type="arc64", cpu="glibc",
-                       host="linux"))
+                       host="linux"),
+        fformat.format(t=le, release=release_id, type="arc32", cpu="uсlibc",
+                       host="linux"),
+    )
 
 
 def create_description(release_id, owner, project, tag, md5sum_file, checksum_file):
     description = ""
 
     if release_id is not None:
-        if tag.startswith('arc64'):
-            description += create_arc64_table(release_id, owner, project, tag)
-        else:
-            description += create_arc_table(release_id, owner, project, tag)
+        description += create_arc_table(release_id, owner, project, tag)
 
     if md5sum_file is not None:
         with open(md5sum_file, "r") as f:
