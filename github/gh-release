@@ -21,16 +21,16 @@ import logging
 import ghapi
 
 ARC_DOWNLOAD_TABLE = r"""
-|                     | Linux x86_64 | Windows x86_64 | Linux ARC HS | macOS x86_64 |
-| ------------------- | ------------ | -------------- | ------------ | ------------ |
-| Baremetal           | {0} \ {1}    |                |              | {2} \ {3}    |
-| Linux/uClibc ARC700 | {4} \ {5}    |                |              |              |
-| Linux/uClibc ARC HS | {6} \ {7}    |                |              |              |
-| Linux/glibc ARC HS  | {8} \ {9}    |                | {10}         |              |
-| IDE                 | {11}         | {12}           |              | {13}         |
-| ARC64 Baremetal     | {14}         |                |              |              |
-| ARC64 Linux         | {15}         |                |              |              |
-| Linux/uClibc ARCv3  | {16}         |                |              |              |
+|                       | Linux x86_64 | Windows x86_64 | Linux ARC HS | macOS x86_64 |
+| --------------------- | ------------ | -------------- | ------------ | ------------ |
+| Baremetal             | {0} \ {1}    |                |              | {2} \ {3}    |
+| Linux/uClibc ARC700   | {4} \ {5}    |                |              |              |
+| Linux/uClibc ARC HS   | {6} \ {7}    |                |              |              |
+| Linux/glibc ARC HS    | {8} \ {9}    |                | {10}         |              |
+| IDE                   | {11}         | {12}           |              | {13}         |
+| Baremetal ARCv3       | {14}         |                |              |              |
+| Linux/glibc ARC HS68  | {15}         |                |              |              |
+| Linux/uClibc ARC HS58 | {16}         |                |              |              |
 """
 
 
