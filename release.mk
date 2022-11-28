@@ -304,6 +304,8 @@ TOOLS_GLIBC_BE_HS_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_be_archs_$(HOST)
 
 # Toolchain: native linux toolchain
 TOOLS_GLIBC_LE_HS_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_glibc_le_archs_native_install
+TOOLS_GLIBC_ARC64_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_arc64_glibc_native_install
+TOOLS_UCLIBC_ARC32_NATIVE_DIR := arc_gnu_$(RELEASE)_prebuilt_arc32_uclibc_native_install
 
 # Toolchain: arc64
 TOOLS_ELF_ARC64_HOST_DIR := arc_gnu_$(RELEASE)_prebuilt_arc64_elf_$(HOST)_install
@@ -389,6 +391,8 @@ UPLOAD_ARTIFACTS-$(ENABLE_DOCS_PACKAGE) += $(DOCS_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_TGZ)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_PLUGINS_ZIP)
 UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_GLIBC_LE_HS_NATIVE_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_GLIBC_ARC64_NATIVE_DIR)$(TAR_EXT)
+UPLOAD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_UCLIBC_ARC32_NATIVE_DIR)$(TAR_EXT)
 UPLOAD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(IDE_WIN_EXE)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(IDE_MACOS_TGZ)
 UPLOAD_ARTIFACTS-$(ENABLE_IDE_MACOS) += $(TOOLS_ELFLE_MAC_DIR)$(TAR_EXT)
@@ -430,6 +434,8 @@ DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_LE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_GLIBC_TOOLS) += $(TOOLS_GLIBC_BE_HS_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_IDE) += $(IDE_LINUX_INSTALL)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_GLIBC_LE_HS_NATIVE_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_GLIBC_ARC64_NATIVE_DIR)
+DEPLOY_BUILD_ARTIFACTS-$(ENABLE_NATIVE_TOOLS) += $(TOOLS_UCLIBC_ARC32_NATIVE_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD) += $(OOCD_HOST_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_OPENOCD_WIN) += $(OOCD_WIN_DIR)
 DEPLOY_BUILD_ARTIFACTS-$(ENABLE_WINDOWS_INSTALLER) += $(TOOLS_ELFLE_WIN_DIR)
@@ -485,6 +491,8 @@ BUILD_DEPS-$(ENABLE_IDE_MACOS) += $O/.stamp_elf_le_mac_tarball
 BUILD_DEPS-$(ENABLE_IDE_MACOS) += $O/.stamp_elf_be_mac_tarball
 BUILD_DEPS-$(ENABLE_IDE_PLUGINS_BUILD) += $O/$(IDE_PLUGINS_ZIP)
 BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_glibc_le_hs_native_tarball
+BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_glibc_arc64_native_tarball
+BUILD_DEPS-$(ENABLE_NATIVE_TOOLS) += $O/.stamp_uclibc_arc32_native_tarball
 BUILD_DEPS-$(ENABLE_OPENOCD) += $O/$(OOCD_HOST_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_MAC) += $O/$(OOCD_MAC_DIR)$(TAR_EXT)
 BUILD_DEPS-$(ENABLE_OPENOCD_WIN) += $O/$(OOCD_WIN_DIR)$(TAR_EXT)
@@ -877,6 +885,25 @@ $O/.stamp_glibc_le_hs_native_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS
 $O/.stamp_glibc_le_hs_native_tarball: $O/.stamp_glibc_le_hs_native_built
 	$(call create_tar,$(TOOLS_GLIBC_LE_HS_NATIVE_DIR))
 	touch $@
+
+$O/.stamp_glibc_arc64_native_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arc64-snps-native-gnu,$(TOOLS_GLIBC_ARC64_NATIVE_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_GLIBC_ARC64_NATIVE_DIR))
+	touch $@
+
+$O/.stamp_glibc_arc64_native_tarball: $O/.stamp_glibc_arc64_native_built
+	$(call create_tar,$(TOOLS_GLIBC_ARC64_NATIVE_DIR))
+	touch $@
+
+$O/.stamp_uclibc_arc32_native_built: $(TOOLS_ALL_DEPS-y) | $(TOOLS_ALL_ORDER_DEPS-y)
+	$(call copy_prebuilt,arc32-native-uclibc,$(TOOLS_UCLIBC_ARC32_NATIVE_DIR))
+	$(call copy_pdf_doc_file,$O/$(TOOLS_UCLIBC_ARC32_NATIVE_DIR))
+	touch $@
+
+$O/.stamp_uclibc_arc32_native_tarball: $O/.stamp_uclibc_arc32_native_built
+	$(call create_tar,$(TOOLS_UCLIBC_ARC32_NATIVE_DIR))
+	touch $@
+
 
 #
 # IDE related targets
