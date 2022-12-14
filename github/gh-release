@@ -92,7 +92,7 @@ def create_arc_table(release_id, owner, project, tag):
                        host="linux"),
         fformat.format(t=le, release=release_id, type="arc64", cpu="glibc",
                        host="linux"),
-        fformat.format(t=le, release=release_id, type="arc32", cpu="uсlibc",
+        fformat.format(t=le, release=release_id, type="arc32", cpu="uclibc",
                        host="linux"),
     )
 
