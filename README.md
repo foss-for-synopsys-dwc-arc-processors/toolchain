@@ -159,13 +159,20 @@ via <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases>
 The following pre-defined configurations (they are called "samples" on Crosstool's parlance) are available at the moment:
 
 1. `snps-arc-arc700-linux-uclibc` - Linux uClibc cross-toolchain for ARC700 processors for 64-bit Linux hosts
+1. `snps-arceb-arc700-linux-uclibc` - Linux uClibc cross-toolchain for ARC700 processors (big endian) for 64-bit Linux hosts
 1. `snps-arc-archs-linux-gnu` - Linux glibc cross-toolchain for ARC HS3x & HS4x processors for 64-bit Linux hosts
+1. `snps-arceb-archs-linux-gnu` - Linux glibc cross-toolchain for ARC HS3x & HS4x processors (big endian) for 64-bit Linux hosts
 1. `snps-arc-archs-linux-uclibc` - Linux uClibc cross-toolchain for ARC HS3x & HS4x processors for 64-bit Linux hosts
+1. `snps-arceb-archs-linux-uclibc` - Linux uClibc cross-toolchain for ARC HS3x & HS4x processors (big endian) for 64-bit Linux hosts
 1. `snps-arc-archs-native-gnu` - Linux glibc "native" toolchain from ARC HS3x & ARC HS4x processors
-1. `snps-arc-elf32-macos` - Bare-metal cross-toolchain for wide range of ARCompact & ARCv2 processors (ARC600, ARC700, AEC EM & HS) for 64-bit macOS hosts
 1. `snps-arc-elf32-win` - Bare-metal cross-toolchain for wide range of ARCompact & ARCv2 processors (ARC600, ARC700, AEC EM & HS) for 64
 -bit Windows hosts
+1. `snps-arceb-elf32-win` - Bare-metal cross-toolchain for wide range of ARCompact & ARCv2 processors (ARC600, ARC700, AEC EM & HS - big endian) for 64
+-bit Windows hosts
 1. `snps-arc-multilib-elf32` - Bare-metal cross-toolchain for wide range of ARCompact & ARCv2 processors (ARC600, ARC700, AEC EM & HS) for 64-bit Linux hosts
+1. `snps-arceb-multilib-elf32` - Bare-metal cross-toolchain for wide range of ARCompact & ARCv2 processors (ARC600, ARC700, AEC EM & HS - big endian) for 64-bit Linux hosts
+1. `snps-arc32-linux-uclibc` - Linux uClibc cross-toolchain for ARC HS5x processors for 64-bit Linux hosts
+1. `snps-arc32-native-uclibc` - Linux uClibc "native" toolchain from ARC HS5x processors
 1. `snps-arc64-snps-linux-gnu` - Linux glibc cross-toolchain for for ARC HS6x processors for 64-bit Linux hosts
 1. `snps-arc64-snps-native-gnu` -  Linux glibc "native" toolchain from ARC HS6x processors
 1. `snps-arc64-unknown-elf` - Bare-metal cross-toolchain for ARC HS6x processors for 64-bit Linux hosts
