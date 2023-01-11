@@ -4,7 +4,7 @@ ARC Project Templates
 =====================
 
 There are several ARC projects types available in the C project dialog:
-**ARC Cross ELF32 Target Application**, **ARC Cross ELF32 Target Static
+**ARC Baremetal Application**, **ARC Cross ELF32 Target Static
 Library**, **ARC AXS10x Projects**, **ARC EM Starter Kit Projects**,
 **ARC EM SDP Projects**, **ARC HS Development Kit Projects** and
 **ARC IoT Development Kit Projects**.
@@ -13,7 +13,7 @@ Library**, **ARC AXS10x Projects**, **ARC EM Starter Kit Projects**,
     Note: for each of these project types there is a list of toolchains which
     are supported by it.
 
-    * **ARC Cross ELF32 Target Application** and **ARC Cross ELF32 Target Static
+    * **ARC Baremetal Application** and **ARC Cross ELF32 Target Static
       Library** support all of the toolchains;
     * **ARC AXS101 Projects** supports ARC 600, ARC 700 and ARC EM toolchains;
     * **ARC AXS103 Projects** support only ARC HS toolchain;
@@ -33,7 +33,7 @@ Library**, **ARC AXS10x Projects**, **ARC EM Starter Kit Projects**,
 
    List of available toolchains for a template
 
-If you want to create an application for nSIM, choose **ARC Cross ELF32 Target
+If you want to create an application for nSIM, choose **ARC Baremetal
 Application**. There you can choose either an empty or "Hello World" project
 template. Please note that this "Hello World" project calls ``printf()`` function,
 so it can not be used on hardware development systems, since they use UART for
