@@ -6,8 +6,11 @@ might be found in upstream documentation here:
 `<https://gcc.gnu.org/onlinedocs/gcc/ARC-Built-in-Functions.html>`_.
 
 Note to use listed below intrinsics it's required to include
-``arcle.h`` in your source file that way::
-   #include <arcle.h>
+``arcle.h`` in your source file that way:
+
+.. code:: c
+
+    #include <arcle.h>
 
 .. table:: List of ARC intrinsics supported by MetaWare & GCC compilers
    :widths: auto

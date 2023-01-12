@@ -1,4 +1,4 @@
-.. highlightlang:: shell
+.. highlight:: shell
 
 .. index:: OpenOCD, SDP, AXS101, AXS102, AXS103, arcv2elfx, GDB
 

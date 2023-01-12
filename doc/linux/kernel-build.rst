@@ -1,4 +1,4 @@
-.. highlightlang:: none
+.. highlight:: none
 
 How to build Linux with GNU tools and run on simulator
 ======================================================
