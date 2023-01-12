@@ -1,4 +1,4 @@
-.. highlightlang:: shell
+.. highlight:: shell
 
 .. index:: Ashling, SDP, AXS101, AXS102, AXS103, GDB
 
