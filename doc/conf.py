@@ -30,7 +30,7 @@ import os
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.todo','rst2pdf.pdfbuilder'
+    'sphinx.ext.todo', 'rst2pdf.pdfbuilder'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -66,7 +66,7 @@ release = '2022.09'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -76,7 +76,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', 'embARC']
+exclude_patterns = ['_build', 'embARC', '.venv']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -140,12 +140,7 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
-html_context = {
-    'css_files': [
-        '_static/style_overrides.css',
-        ],
-}
+html_css_files = ['style_overrides.css']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -309,11 +304,11 @@ texinfo_documents = [
 # regardless of the global pdf_compressed setting.
 
 pdf_documents = [
-    ('index', u'GNU_Toolchain_for_ARC', u'GNU Toolchain for ARC Documentation', u'Synopsys'),
+    ('index', 'GNU_Toolchain_for_ARC', 'GNU Toolchain for ARC Documentation', 'Synopsys'),
 ]
 
 # A comma-separated list of custom stylesheets. Example:
-pdf_stylesheets = ['synopsys.style']
+pdf_stylesheets = ['twocolumn', 'synopsys.style']
 
 # A list of folders to search for stylesheets. Example:
 pdf_style_path = ['.', '_styles']
@@ -331,7 +326,7 @@ pdf_style_path = ['.', '_styles']
 
 # Mode for literal blocks wider than the frame. Can be
 # overflow, shrink or truncate
-pdf_fit_mode = "truncate"
+pdf_fit_mode = 'truncate'
 
 # Section level that forces a break page.
 # For example: 1 means top-level sections start in a new page
@@ -392,4 +387,3 @@ pdf_fit_background_mode = 'scale'
 
 # Repeat table header on tables that cross a page boundary?
 pdf_repeat_table_rows = True
-
