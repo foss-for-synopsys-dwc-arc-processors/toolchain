@@ -1,4 +1,4 @@
-.. highlightlang:: shell
+.. highlight:: shell
 
 How to Build GNU Toolchain for ARC Manually
 ===========================================

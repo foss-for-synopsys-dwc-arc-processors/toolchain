@@ -1,4 +1,4 @@
-.. highlightlang:: shell
+.. highlight:: shell
 
 .. index:: OpenOCD, GDB, EM Starter Kit
 
