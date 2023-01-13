@@ -1,0 +1,38 @@
+name: "Build and deploy doumentation"
+on:
+  push:
+    paths:
+      - doc/**
+
+  pull_request:
+    paths:
+      - doc/**
+
+  workflow_dispatch:
+    inputs:
+      perform_deploy:
+        description: 'Perform deploy to GitHub Pages branch'
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  doc-build-and-deploy:
+    name: Build and deploy documentation
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build documentation
+        uses: ammaraskar/sphinx-action@0.4
+        with:
+          docs-folder: doc
+
+      - name: Deploy documentation
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.perform_deploy }}
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: doc/_build/html
