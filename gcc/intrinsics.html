@@ -1,0 +1,956 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Intrinsics in ARC GNU vs MWDT &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Understanding compiler options" href="optimizations.html" />
+    <link rel="prev" title="Migrating ARChitect APEX generated header to GNU" href="apex.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">GCC documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#arc-specific-tech-discussion">ARC specific tech discussion</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#from-mwdt-to-gcc">From MWDT to GCC</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="option-matrix.html">MWDT vs. GCC option matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apex.html">Migrating ARChitect APEX generated header to GNU</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Intrinsics in ARC GNU vs MWDT</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#improving-gcc-output">Improving GCC output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">GCC documentation</a> &raquo;</li>
+        
+      <li>Intrinsics in ARC GNU vs MWDT</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/gcc/intrinsics.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="intrinsics-in-arc-gnu-vs-mwdt">
+<h1>Intrinsics in ARC GNU vs MWDT<a class="headerlink" href="#intrinsics-in-arc-gnu-vs-mwdt" title="Permalink to this heading">¶</a></h1>
+<p>If one is interested in ARC-specific GCC built-ins those
+might be found in upstream documentation here:
+<a class="reference external" href="https://gcc.gnu.org/onlinedocs/gcc/ARC-Built-in-Functions.html">https://gcc.gnu.org/onlinedocs/gcc/ARC-Built-in-Functions.html</a>.</p>
+<p>Note to use listed below intrinsics it’s required to include
+<code class="docutils literal notranslate"><span class="pre">arcle.h</span></code> in your source file that way:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;arcle.h&gt;</span>
+</pre></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">List of ARC intrinsics supported by MetaWare &amp; GCC compilers</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>MetaWare compiler</p></th>
+<th class="head"><p>GCC compiler</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>_abss</p></td>
+<td><p>_abss</p></td>
+</tr>
+<tr class="row-odd"><td><p>_abssh</p></td>
+<td><p>_abssh</p></td>
+</tr>
+<tr class="row-even"><td><p>_adcs</p></td>
+<td><p>_adcs</p></td>
+</tr>
+<tr class="row-odd"><td><p>_add</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_add1</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_add1_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_add2</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_add2_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_add3</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_add3_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_add_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_adds</p></td>
+<td><p>_adds</p></td>
+</tr>
+<tr class="row-even"><td><p>_adds_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_aex</p></td>
+<td><p>Unsupported</p></td>
+</tr>
+<tr class="row-even"><td><p>_and</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_and_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_asl</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_asl_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_aslacc</p></td>
+<td><p>_aslacc</p></td>
+</tr>
+<tr class="row-odd"><td><p>_asls</p></td>
+<td><p>_asls</p></td>
+</tr>
+<tr class="row-even"><td><p>_asls_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_aslsacc</p></td>
+<td><p>_aslsacc</p></td>
+</tr>
+<tr class="row-even"><td><p>_asr</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_asr_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_asrs</p></td>
+<td><p>_asrs</p></td>
+</tr>
+<tr class="row-odd"><td><p>_asrs_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_asrsr</p></td>
+<td><p>_asrsr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_asrsr_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_bclr</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_bclr_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_bmsk</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_bmsk_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_bset</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_bset_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_btst_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_bxor</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_bxor_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_cbflyhf0r</p></td>
+<td><p>_cbflyhf0r</p></td>
+</tr>
+<tr class="row-even"><td><p>_cbflyhf1r</p></td>
+<td><p>_cbflyhf1r</p></td>
+</tr>
+<tr class="row-odd"><td><p>_cmacchfr</p></td>
+<td><p>_cmacchfr</p></td>
+</tr>
+<tr class="row-even"><td><p>_cmacchnfr</p></td>
+<td><p>_cmacchnfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_cmachfr</p></td>
+<td><p>_cmachfr</p></td>
+</tr>
+<tr class="row-even"><td><p>_cmachnfr</p></td>
+<td><p>_cmachnfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_cmpychfr</p></td>
+<td><p>_cmpychfr</p></td>
+</tr>
+<tr class="row-even"><td><p>_cmpychnfr</p></td>
+<td><p>_cmpychnfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_cmpyhfmr</p></td>
+<td><p>_cmpyhfmr</p></td>
+</tr>
+<tr class="row-even"><td><p>_cmpyhfr</p></td>
+<td><p>_cmpyhfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_cmpyhnfr</p></td>
+<td><p>_cmpyhnfr</p></td>
+</tr>
+<tr class="row-even"><td><p>_divf</p></td>
+<td><p>_divf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmach</p></td>
+<td><p>_dmach</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmachbl</p></td>
+<td><p>_dmachbl</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmachbm</p></td>
+<td><p>_dmachbm</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmachf</p></td>
+<td><p>_dmachf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmachfr</p></td>
+<td><p>_dmachfr</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmachu</p></td>
+<td><p>_dmachu</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmacwh</p></td>
+<td><p>_dmacwh</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmacwhf</p></td>
+<td><p>_dmacwhf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmacwhu</p></td>
+<td><p>_dmacwhu</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmpyh</p></td>
+<td><p>_dmpyh</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmpyhbl</p></td>
+<td><p>_dmpyhbl</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmpyhbm</p></td>
+<td><p>_dmpyhbm</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmpyhf</p></td>
+<td><p>_dmpyhf</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmpyhfr</p></td>
+<td><p>_dmpyhfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmpyhu</p></td>
+<td><p>_dmpyhu</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmpyhwf</p></td>
+<td><p>_dmpyhwf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmpywh</p></td>
+<td><p>_dmpywh</p></td>
+</tr>
+<tr class="row-even"><td><p>_dmpywhf</p></td>
+<td><p>_dmpywhf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_dmpywhu</p></td>
+<td><p>_dmpywhu</p></td>
+</tr>
+<tr class="row-even"><td><p>_ex</p></td>
+<td><p>unsupported</p></td>
+</tr>
+<tr class="row-odd"><td><p>_ex_di</p></td>
+<td><p>unsupported</p></td>
+</tr>
+<tr class="row-even"><td><p>_ffs</p></td>
+<td><p>unsupported</p></td>
+</tr>
+<tr class="row-odd"><td><p>_flagacc</p></td>
+<td><p>_flagacc</p></td>
+</tr>
+<tr class="row-even"><td><p>_fls</p></td>
+<td><p>unsupported</p></td>
+</tr>
+<tr class="row-odd"><td><p>_getacc</p></td>
+<td><p>_getacc</p></td>
+</tr>
+<tr class="row-even"><td><p>_kflag</p></td>
+<td><p>_kflag</p></td>
+</tr>
+<tr class="row-odd"><td><p>_lr</p></td>
+<td><p>_lr</p></td>
+</tr>
+<tr class="row-even"><td><p>_lsr</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_lsr_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_mac</p></td>
+<td><p>_mac</p></td>
+</tr>
+<tr class="row-odd"><td><p>_macd</p></td>
+<td><p>_macd</p></td>
+</tr>
+<tr class="row-even"><td><p>_macdf</p></td>
+<td><p>_macdf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_macdu</p></td>
+<td><p>_macdu</p></td>
+</tr>
+<tr class="row-even"><td><p>_macf</p></td>
+<td><p>_macf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_macfr</p></td>
+<td><p>_macfr</p></td>
+</tr>
+<tr class="row-even"><td><p>_macu</p></td>
+<td><p>_macu</p></td>
+</tr>
+<tr class="row-odd"><td><p>_macwhfl</p></td>
+<td><p>_macwhfl</p></td>
+</tr>
+<tr class="row-even"><td><p>_macwhflr</p></td>
+<td><p>_macwhflr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_macwhfm</p></td>
+<td><p>_macwhfm</p></td>
+</tr>
+<tr class="row-even"><td><p>_macwhfmr</p></td>
+<td><p>_macwhfmr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_macwhkl</p></td>
+<td><p>_macwhkl</p></td>
+</tr>
+<tr class="row-even"><td><p>_macwhkul</p></td>
+<td><p>_macwhkul</p></td>
+</tr>
+<tr class="row-odd"><td><p>_macwhl</p></td>
+<td><p>_macwhl</p></td>
+</tr>
+<tr class="row-even"><td><p>_macwhul</p></td>
+<td><p>_macwhul</p></td>
+</tr>
+<tr class="row-odd"><td><p>_max_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_min_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_modif</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_mov_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpy</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_mpyd</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpydf</p></td>
+<td><p>_mpydf</p></td>
+</tr>
+<tr class="row-even"><td><p>_mpydu</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpyf</p></td>
+<td><p>_mpyf</p></td>
+</tr>
+<tr class="row-even"><td><p>_mpyfr</p></td>
+<td><p>_mpyfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpym</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_mpymu</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpyu</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_mpywhfl</p></td>
+<td><p>_mpywhfl</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpywhflr</p></td>
+<td><p>_mpywhflr</p></td>
+</tr>
+<tr class="row-even"><td><p>_mpywhfm</p></td>
+<td><p>_mpywhfm</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpywhfmr</p></td>
+<td><p>_mpywhfmr</p></td>
+</tr>
+<tr class="row-even"><td><p>_mpywhkl</p></td>
+<td><p>_mpywhkl</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpywhkul</p></td>
+<td><p>_mpywhkul</p></td>
+</tr>
+<tr class="row-even"><td><p>_mpywhl</p></td>
+<td><p>_mpywhl</p></td>
+</tr>
+<tr class="row-odd"><td><p>_mpywhul</p></td>
+<td><p>_mpywhul</p></td>
+</tr>
+<tr class="row-even"><td><p>_msubdf</p></td>
+<td><p>_msubdf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_msubf</p></td>
+<td><p>_msubf</p></td>
+</tr>
+<tr class="row-even"><td><p>_msubfr</p></td>
+<td><p>_msubfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_msubwhfl</p></td>
+<td><p>_msubwhfl</p></td>
+</tr>
+<tr class="row-even"><td><p>_msubwhflr</p></td>
+<td><p>_msubwhflr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_msubwhfm</p></td>
+<td><p>_msubwhfm</p></td>
+</tr>
+<tr class="row-even"><td><p>_msubwhfmr</p></td>
+<td><p>_msubwhfmr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_negs</p></td>
+<td><p>_negs</p></td>
+</tr>
+<tr class="row-even"><td><p>_negs_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_negsh</p></td>
+<td><p>_negsh</p></td>
+</tr>
+<tr class="row-even"><td><p>_negsh_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_norm</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_norm_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_normacc</p></td>
+<td><p>_normacc</p></td>
+</tr>
+<tr class="row-even"><td><p>_normh</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_normh_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_normw</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_normw_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_or</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_or_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_qmach</p></td>
+<td><p>_qmach</p></td>
+</tr>
+<tr class="row-odd"><td><p>_qmachf</p></td>
+<td><p>_qmachf</p></td>
+</tr>
+<tr class="row-even"><td><p>_qmachu</p></td>
+<td><p>_qmachu</p></td>
+</tr>
+<tr class="row-odd"><td><p>_qmpyh</p></td>
+<td><p>_qmpyh</p></td>
+</tr>
+<tr class="row-even"><td><p>_qmpyhf</p></td>
+<td><p>_qmpyhf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_qmpyhu</p></td>
+<td><p>_qmpyhu</p></td>
+</tr>
+<tr class="row-even"><td><p>_rndh</p></td>
+<td><p>_rndh</p></td>
+</tr>
+<tr class="row-odd"><td><p>_rndh_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_ror</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_ror_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_rrc</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_rrc_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_satf</p></td>
+<td><p>_satf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_sath</p></td>
+<td><p>_sath</p></td>
+</tr>
+<tr class="row-even"><td><p>_sath_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_sbcs</p></td>
+<td><p>_sbcs</p></td>
+</tr>
+<tr class="row-even"><td><p>_setacc</p></td>
+<td><p>_setacc</p></td>
+</tr>
+<tr class="row-odd"><td><p>_sqrt</p></td>
+<td><p>_sqrt</p></td>
+</tr>
+<tr class="row-even"><td><p>_sqrtf</p></td>
+<td><p>_sqrtf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_sr</p></td>
+<td><p>_sr</p></td>
+</tr>
+<tr class="row-even"><td><p>_sub</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_sub1</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_sub1_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_sub2</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_sub2_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_sub3</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_sub3_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-odd"><td><p>_sub_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_subs</p></td>
+<td><p>_subs</p></td>
+</tr>
+<tr class="row-odd"><td><p>_subs_f</p></td>
+<td><p>Not planned</p></td>
+</tr>
+<tr class="row-even"><td><p>_trap</p></td>
+<td><p>_trap</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vabs2h</p></td>
+<td><p>_vabs2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vabss2h</p></td>
+<td><p>_vabss2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vadd2</p></td>
+<td><p>_vadd2</p></td>
+</tr>
+<tr class="row-even"><td><p>_vadd2h</p></td>
+<td><p>_vadd2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vadd4b</p></td>
+<td><p>_vadd4b</p></td>
+</tr>
+<tr class="row-even"><td><p>_vadd4h</p></td>
+<td><p>_vadd4h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vadds2</p></td>
+<td><p>_vadds2</p></td>
+</tr>
+<tr class="row-even"><td><p>_vadds2h</p></td>
+<td><p>_vadds2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vadds4h</p></td>
+<td><p>_vadds4h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vaddsub</p></td>
+<td><p>_vaddsub</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vaddsub2h</p></td>
+<td><p>_vaddsub2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vaddsub4h</p></td>
+<td><p>_vaddsub4h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vaddsubs</p></td>
+<td><p>_vaddsubs</p></td>
+</tr>
+<tr class="row-even"><td><p>_vaddsubs2h</p></td>
+<td><p>_vaddsubs2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vaddsubs4h</p></td>
+<td><p>_vaddsubs4h</p></td>
+</tr>
+<tr class="row-even"><td><p>_valgn2h</p></td>
+<td><p>_valgn2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vasl2h</p></td>
+<td><p>_vasl2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vasls2h</p></td>
+<td><p>_vasls2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vasr2h</p></td>
+<td><p>_vasr2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vasrs2h</p></td>
+<td><p>_vasrs2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vasrsr2h</p></td>
+<td><p>_vasrsr2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vext2bhl</p></td>
+<td><p>_vext2bhl</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vext2bhlf</p></td>
+<td><p>_vext2bhlf</p></td>
+</tr>
+<tr class="row-even"><td><p>_vext2bhm</p></td>
+<td><p>_vext2bhm</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vext2bhmf</p></td>
+<td><p>_vext2bhmf</p></td>
+</tr>
+<tr class="row-even"><td><p>_vlsr2h</p></td>
+<td><p>_vlsr2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vmac2h</p></td>
+<td><p>_vmac2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vmac2hf</p></td>
+<td><p>_vmac2hf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vmac2hfr</p></td>
+<td><p>_vmac2hfr</p></td>
+</tr>
+<tr class="row-even"><td><p>_vmac2hnfr</p></td>
+<td><p>_vmac2hnfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vmac2hu</p></td>
+<td><p>_vmac2hu</p></td>
+</tr>
+<tr class="row-even"><td><p>_vmax2h</p></td>
+<td><p>_vmax2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vmin2h</p></td>
+<td><p>_vmin2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vmpy2h</p></td>
+<td><p>_vmpy2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vmpy2hf</p></td>
+<td><p>_vmpy2hf</p></td>
+</tr>
+<tr class="row-even"><td><p>_vmpy2hfr</p></td>
+<td><p>_vmpy2hfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vmpy2hu</p></td>
+<td><p>_vmpy2hu</p></td>
+</tr>
+<tr class="row-even"><td><p>_vmpy2hwf</p></td>
+<td><p>_vmpy2hwf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vmsub2hf</p></td>
+<td><p>_vmsub2hf</p></td>
+</tr>
+<tr class="row-even"><td><p>_vmsub2hfr</p></td>
+<td><p>_vmsub2hfr</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vmsub2hnfr</p></td>
+<td><p>_vmsub2hnfr</p></td>
+</tr>
+<tr class="row-even"><td><p>_vneg2h</p></td>
+<td><p>_vneg2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vnegs2h</p></td>
+<td><p>_vnegs2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vnorm2h</p></td>
+<td><p>_vnorm2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vpack2hbl</p></td>
+<td><p>_vpack2hbl</p></td>
+</tr>
+<tr class="row-even"><td><p>_vpack2hblf</p></td>
+<td><p>_vpack2hblf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vpack2hbm</p></td>
+<td><p>_vpack2hbm</p></td>
+</tr>
+<tr class="row-even"><td><p>_vpack2hbmf</p></td>
+<td><p>_vpack2hbmf</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vpack2hl</p></td>
+<td><p>_vpack2hl</p></td>
+</tr>
+<tr class="row-even"><td><p>_vpack2hm</p></td>
+<td><p>_vpack2hm</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vperm</p></td>
+<td><p>_vperm</p></td>
+</tr>
+<tr class="row-even"><td><p>_vrep2hl</p></td>
+<td><p>_vrep2hl</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vrep2hm</p></td>
+<td><p>_vrep2hm</p></td>
+</tr>
+<tr class="row-even"><td><p>_vsext2bhl</p></td>
+<td><p>_vsext2bhl</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vsext2bhm</p></td>
+<td><p>_vsext2bhm</p></td>
+</tr>
+<tr class="row-even"><td><p>_vsub2</p></td>
+<td><p>_vsub2</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vsub2h</p></td>
+<td><p>_vsub2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vsub4b</p></td>
+<td><p>_vsub4b</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vsub4h</p></td>
+<td><p>_vsub4h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vsubadd</p></td>
+<td><p>_vsubadd</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vsubadd2h</p></td>
+<td><p>_vsubadd2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vsubadd4h</p></td>
+<td><p>_vsubadd4h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vsubadds</p></td>
+<td><p>_vsubadds</p></td>
+</tr>
+<tr class="row-even"><td><p>_vsubadds2h</p></td>
+<td><p>_vsubadds2h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vsubadds4h</p></td>
+<td><p>_vsubadds4h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vsubs2</p></td>
+<td><p>_vsubs2</p></td>
+</tr>
+<tr class="row-odd"><td><p>_vsubs2h</p></td>
+<td><p>_vsubs2h</p></td>
+</tr>
+<tr class="row-even"><td><p>_vsubs4h</p></td>
+<td><p>_vsubs4h</p></td>
+</tr>
+<tr class="row-odd"><td><p>_wevt</p></td>
+<td><p>Unsupported</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="optimizations.html" class="btn btn-neutral float-right" title="Understanding compiler options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="apex.html" class="btn btn-neutral float-left" title="Migrating ARChitect APEX generated header to GNU" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Custom instructions: what and how &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="GCC’s support for ARC custom extensions" href="extensions-support.html" />
+    <link rel="prev" title="GCC documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">GCC documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#arc-specific-tech-discussion">ARC specific tech discussion</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Custom instructions: what and how</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="extensions-support.html">GCC’s support for ARC custom extensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="64bit.html">Impact of 64-bit integral operation on GCC toolchain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jli.html">Using JLI Instructions with GNU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="secure-shield.html">SecureShield Programming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sanitizers.html">Sanitizers support for ARC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="small-data.html">Working with small data section</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#from-mwdt-to-gcc">From MWDT to GCC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#improving-gcc-output">Improving GCC output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">GCC documentation</a> &raquo;</li>
+        
+      <li>Custom instructions: what and how</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/gcc/custom-instructions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="custom-instructions-what-and-how">
+<h1>Custom instructions: what and how<a class="headerlink" href="#custom-instructions-what-and-how" title="Permalink to this heading">¶</a></h1>
+<p>ARC architecture allows users to specify extension instructions. These extension
+instructions are not macros; the assembler creates encodings for use of these
+instructions according to the specification by the user.</p>
+<p>To create a custom instruction, ones need to make use of the .extInstruction
+pseudo-op, which also allows the user to choose for a particular instruction
+syntax, one of:</p>
+<ul class="simple">
+<li><p>Three operand instruction;</p></li>
+<li><p>Two operand instruction;</p></li>
+<li><p>One operand instruction;</p></li>
+<li><p>No operand instruction.</p></li>
+</ul>
+<p>But what is the difference between those ones. To answer this question, we need
+to check how an extension instruction is encoded:</p>
+<ul class="simple">
+<li><p>Major Opcode = 0x07</p>
+<ul>
+<li><p>Sub Opcode1 = 0x00-0x2E, 0x30-0x3f : Used by three operand instructions;</p></li>
+<li><p>Sub Opcode1 = 0x2F:</p>
+<ul>
+<li><p>Sub Opcode2 = 0x00-0x3E : Used by two operand instructions;</p></li>
+<li><p>Sub Opcode2 = 0x3F:</p>
+<ul>
+<li><p>Sub Opcode3 = 0x00-0x3F: Used by one operand instructions;</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>The three operand instructions are having op&lt;.cc&gt;&lt;.f&gt; a,b,c syntax format, and
+it is the most general form of an ARC instruction:</p>
+<ul class="simple">
+<li><p>op&lt;.f&gt;      a,b,c</p></li>
+<li><p>op&lt;.f&gt;      a,b,u6</p></li>
+<li><p>op&lt;.f&gt;      b,b,s12</p></li>
+<li><p>op&lt;.cc&gt;&lt;.f&gt; b,b,c</p></li>
+<li><p>op&lt;.cc&gt;&lt;.f&gt; b,b,u6</p></li>
+<li><p>op&lt;.f&gt;      a,limm,c</p></li>
+<li><p>op&lt;.f&gt;      a,limm,u6</p></li>
+<li><p>op&lt;.f&gt;      0,limm,s12</p></li>
+<li><p>op&lt;.cc&gt;&lt;.f&gt; 0,limm,c</p></li>
+<li><p>op&lt;.cc&gt;&lt;.f&gt; 0,limm,u6</p></li>
+<li><p>op&lt;.f&gt;      a,b,limm</p></li>
+<li><p>op&lt;.cc&gt;&lt;.f&gt; b,b,limm</p></li>
+<li><p>op&lt;.f&gt;      a,limm,limm</p></li>
+<li><p>op&lt;.cc&gt;&lt;.f&gt; 0,limm,limm</p></li>
+<li><p>op&lt;.f&gt;      0,b,c</p></li>
+<li><p>op&lt;.f&gt;      0,b,u6</p></li>
+<li><p>op&lt;.f&gt;      0,limm,c</p></li>
+<li><p>op&lt;.f&gt;      0,limm,u6</p></li>
+<li><p>op&lt;.f&gt;      0,b,limm</p></li>
+<li><p>op&lt;.f&gt;      0,limm,limm</p></li>
+</ul>
+<p>The two operand instructions are having the following syntax format:</p>
+<ul class="simple">
+<li><p>op&lt;.f&gt; b,c</p></li>
+<li><p>op&lt;.f&gt; b,u6</p></li>
+<li><p>op&lt;.f&gt; b,limm</p></li>
+<li><p>op&lt;.f&gt; 0,c</p></li>
+<li><p>op&lt;.f&gt; 0,u6</p></li>
+<li><p>op&lt;.f&gt; 0,limm</p></li>
+</ul>
+<p>The one operand instructions are having the following syntax format:</p>
+<ul class="simple">
+<li><p>op&lt;.f&gt; c</p></li>
+<li><p>op&lt;.f&gt; u6</p></li>
+<li><p>op&lt;.f&gt; limm</p></li>
+</ul>
+<p>The no-operand instructions are actually using op&lt;.f&gt; u6 one-operand instruction
+syntax, with u6 set to zero.</p>
+<p>On top of the formal syntax choices, we have also syntax class modifiers:</p>
+<ul class="simple">
+<li><p>OP1_MUST_BE_IMM which applies for SYNTAX_3OP type of extension instructions,
+specifying that the first operand of a three-operand instruction must be an
+immediate (i.e., the result is discarded). This is usually used to set the
+flags using specific instructions and not retain results.</p></li>
+<li><p>OP1_IMM_IMPLIED modifies syntax class SYNTAX_2OP, specifying that there is an
+implied immediate destination operand which does not appear in the syntax. In
+fact this is actually an 3-operand encoded instruction!</p></li>
+</ul>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<section id="example-1">
+<h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-nasm notranslate"><div class="highlight"><pre><span></span><span class="nf">.extInstruction</span><span class="w"> </span><span class="nv">insn1</span><span class="p">,</span><span class="w"> </span><span class="mh">0x07</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2d</span><span class="p">,</span><span class="w"> </span><span class="nv">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="nv">SYNTAX_3OP</span><span class="o">|</span><span class="nv">OP1_MUST_BE_IMM</span>
+</pre></div>
+</div>
+<p>will allow us the following syntax:</p>
+<div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="nf">insn1</span><span class="w">  </span><span class="mi">0</span><span class="p">,</span><span class="no">b</span><span class="p">,</span><span class="no">c</span>
+<span class="nf">insn1</span><span class="w">  </span><span class="mi">0</span><span class="p">,</span><span class="no">b</span><span class="p">,</span><span class="no">u6</span>
+<span class="nf">insn1</span><span class="w">  </span><span class="mi">0</span><span class="p">,</span><span class="no">limm</span><span class="p">,</span><span class="no">c</span>
+<span class="nf">insn1</span><span class="w">  </span><span class="mi">0</span><span class="p">,</span><span class="no">b</span><span class="p">,</span><span class="no">limm</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2">
+<h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-nasm notranslate"><div class="highlight"><pre><span></span><span class="nf">.extInstruction</span><span class="w"> </span><span class="nv">insn2</span><span class="p">,</span><span class="w"> </span><span class="mh">0x07</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2d</span><span class="p">,</span><span class="w"> </span><span class="nv">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="nv">SYNTAX_2OP</span><span class="o">|</span><span class="nv">OP1_IMM_IMPLIED</span>
+</pre></div>
+</div>
+<p>will allow us the following syntax:</p>
+<div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="nf">insn2</span><span class="w">  </span><span class="no">b</span><span class="p">,</span><span class="no">c</span>
+<span class="nf">insn2</span><span class="w">  </span><span class="no">b</span><span class="p">,</span><span class="no">u6</span>
+<span class="nf">insn2</span><span class="w">  </span><span class="no">limm</span><span class="p">,</span><span class="no">c</span>
+<span class="nf">insn2</span><span class="w">  </span><span class="no">b</span><span class="p">,</span><span class="no">limm</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The encoding of insn2 uses the SYNTAX_3OP format (i.e., Major 0x07 and
+SubOpcode1: 0x00-0x2E, 0x30-0x3F)</p>
+</div>
+</section>
+<section id="example-3">
+<h3>Example 3<a class="headerlink" href="#example-3" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="na">.extInstruction</span><span class="w"> </span><span class="no">insn1</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0x21</span><span class="p">,</span><span class="w"> </span><span class="no">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="no">SYNTAX_3OP</span>
+<span class="na">.extInstruction</span><span class="w"> </span><span class="no">insn2</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0x21</span><span class="p">,</span><span class="w"> </span><span class="no">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="no">SYNTAX_2OP</span>
+<span class="na">.extInstruction</span><span class="w"> </span><span class="no">insn3</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0x21</span><span class="p">,</span><span class="w"> </span><span class="no">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="no">SYNTAX_1OP</span>
+<span class="na">.extInstruction</span><span class="w"> </span><span class="no">insn4</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0x21</span><span class="p">,</span><span class="w"> </span><span class="no">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="no">SYNTAX_NOP</span>
+
+<span class="nl">start:</span>
+<span class="w">    </span><span class="nf">insn1</span><span class="w">   </span><span class="no">r0</span><span class="p">,</span><span class="no">r1</span><span class="p">,</span><span class="no">r2</span>
+<span class="w">    </span><span class="nf">insn2</span><span class="w">   </span><span class="no">r0</span><span class="p">,</span><span class="no">r1</span>
+<span class="w">    </span><span class="nf">insn3</span><span class="w">   </span><span class="no">r1</span>
+<span class="w">    </span><span class="nf">insn4</span>
+</pre></div>
+</div>
+<p>will result in the following encodings:</p>
+<div class="highlight-objdump notranslate"><div class="highlight"><pre><span></span>Disassembly of section <span class="nl">.text</span><span class="p">:</span>
+
+<span class="mh">0x0000</span><span class="w"> </span><span class="p">&lt;</span><span class="nf">start</span><span class="p">&gt;:</span>
+<span class="x">   0:   3921 0080               insn1   r0,r1,r2</span>
+<span class="x">   4:   382f 0061               insn2   r0,r1</span>
+<span class="x">   8:   392f 407f               insn3   r1</span>
+<span class="x">   c:   396f 403f               insn4</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="extensions-support.html" class="btn btn-neutral float-right" title="GCC’s support for ARC custom extensions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="GCC documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

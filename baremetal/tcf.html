@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Using TCF &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using GNU Toolchain to Debug Applications on EM Starter Kit" href="em-starter-kit.html" />
+    <link rel="prev" title="Linker scripts and memory.x files" href="linker.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Building baremetal applications</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hostlink.html">Hostlink and libgloss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcc-mcpu.html">Understanding GCC -mcpu option</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker.html">Linker scripts and memory.x files</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Using TCF</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#general-sescription">General sescription</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiler-options">Compiler options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-map">Memory map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c-preprocessor-defines">C preprocessor defines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arc-elf32-tcf-gcc-options">arc-elf32-tcf-gcc options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Building baremetal applications</a> &raquo;</li>
+        
+      <li>Using TCF</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/baremetal/tcf.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="using-tcf">
+<span id="index-0"></span><h1>Using TCF<a class="headerlink" href="#using-tcf" title="Permalink to this heading">¶</a></h1>
+<section id="general-sescription">
+<h2>General sescription<a class="headerlink" href="#general-sescription" title="Permalink to this heading">¶</a></h2>
+<p>Currently GNU toolchain has a partial support for <abbr title="target configuration files">TCF</abbr>, however it is not complete and in particular scenarios
+TCFs cannot be used as-is.</p>
+<p>If you are using Eclipse IDE for ARC, please refer to a
+<a class="reference internal" href="../ide/building-user-guide.html"><span class="doc">Building User Guide</span></a>.  Eclipse IDE for ARC supports only GCC
+compiler and GNU linker script sections of TCF, it doesn’t support preprocessor
+defines sections as of version 2016.03.</p>
+<p>If you are using GNU toolchain without IDE on Linux hosts you can use a special
+script <strong class="program">arc-elf32-tcf-gcc</strong> (for big-endian toolchain this file has
+<strong class="program">arceb-</strong> prefix) that is located in the same <code class="docutils literal notranslate"><span class="pre">bin</span></code> directory as rest
+of the toolchain executable files. This executable accepts all of the same
+options as GCC driver and also an option <code class="docutils literal notranslate"><span class="pre">--tcf</span> <span class="pre">&lt;PATH/TO/TCF&gt;</span></code>.
+<strong class="program">arc-elf32-tcf-gcc</strong> will extract compiler options, linker script and
+preprocessor defines from TCF and will pass them to GCC along with other
+options.</p>
+<ul class="simple">
+<li><p>GCC options from <code class="docutils literal notranslate"><span class="pre">gcc_compiler</span></code> section will be passed as-is, but can be
+overridden by <code class="docutils literal notranslate"><span class="pre">-m&lt;something&gt;</span></code> options passed directly to
+<strong class="program">arc-elf32-tcf-gcc</strong>.</p></li>
+<li><p>GNU linker script will be extracted from <code class="docutils literal notranslate"><span class="pre">gnu_linker_command_file</span></code> will be
+used as a <code class="file docutils literal notranslate"><span class="pre">memory.x</span></code> file for <code class="docutils literal notranslate"><span class="pre">-Wl,marcv2elfx</span></code> linker emulation.
+Option <code class="docutils literal notranslate"><span class="pre">-Wl,-marcv2elfx</span></code> is added by this wrapper - there is no need to
+pass it explicitly.</p></li>
+<li><p>Preprocessor defines from section <code class="docutils literal notranslate"><span class="pre">C_defines</span></code> will be passed with
+<code class="docutils literal notranslate"><span class="pre">-include</span></code> option of GCC.</p></li>
+</ul>
+<p><strong class="program">arc-elf32-tcf-gcc</strong> is a Perl script that requires <code class="docutils literal notranslate"><span class="pre">XML:LibXML</span></code>
+package. It is likely to work on most Linux hosts, however it will not work on
+Windows hosts, unless Perl with required library has been installed and added
+to the <code class="docutils literal notranslate"><span class="pre">PATH</span></code> environment variable. TCF is a text file in XML format, so in
+case of need it is trivial to extract compiler flags and linker script from TCF
+and use them directly with GCC and ld without IDE or wrapper script.</p>
+<p>Value of <code class="docutils literal notranslate"><span class="pre">-mcpu=</span></code> option is selected by TCF generator to have best match with
+the target processor. This option <a class="reference internal" href="gcc-mcpu.html"><span class="doc">Understanding GCC -mcpu option</span></a> not only sets various
+hardware options but also selects a particular build of standard library.
+Values of hardware extensions can be overridden with individual <code class="docutils literal notranslate"><span class="pre">-m*</span></code>
+options, but that will not change standard library to a matching build - it
+still will use standard library build selected by <code class="docutils literal notranslate"><span class="pre">-mcpu=</span></code> value.</p>
+</section>
+<section id="compiler-options">
+<h2>Compiler options<a class="headerlink" href="#compiler-options" title="Permalink to this heading">¶</a></h2>
+<p>GCC options are stored in the <code class="docutils literal notranslate"><span class="pre">gcc_compiler</span></code> section of TCF. These options
+are passed to GCC as-is. These are “machine-specific” options applicable only
+to ARC, and which define configuration of target architecture - which of the
+optional hardware extensions (like bitscan instructions, barrel shifter
+instructions, etc) are present. Application that uses hardware extensions will
+not work on ARC processor without those extensions - there will be an Illegal
+instruction exception (although application may emulate instruction via
+handling of this exception, but that is out of scope of this document).
+Application that doesn’t use hardware extensions present in the target ARC
+processor might be ineffective, if those extensions allow more optimal
+implementation of same algorithm. Usually hardware extensions allow improvement
+of both code size and performance at the expense of increased gate count, with
+all respective consequences.</p>
+<p>When TCF is selected in the IDE respective compiler options are disabled in GUI
+and cannot be changed by user. However if TCF is deselected those options remain
+at selected values, so it is possible to “import” options from TCF and then
+modify it for particular need.</p>
+<p>When using <strong class="program">arc-elf32-tcf-gcc</strong> compiler options passed to this wrapper script
+has a higher precedence then options in TCF, so it is possible to use TCF as a
+“baseline” and then modify if needed.</p>
+</section>
+<section id="memory-map">
+<h2>Memory map<a class="headerlink" href="#memory-map" title="Permalink to this heading">¶</a></h2>
+<p>Please refer to main page about GNU linker for ARC <a class="reference internal" href="linker.html"><span class="doc">Linker scripts and memory.x files</span></a> for more
+details.</p>
+<p>TCF doesn’t contain a linker script for GNU linker in the strict meaning of
+this term. Instead TCF contains a special memory map, which can be used
+together with a linker emulation called <strong>arcv2elfx</strong>. This linker emulation
+reads a special file called <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> to get several defines which denote
+location of particular memory areas, and then emulation allocates ELF sections
+to those areas. So, for example, <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> may specify address and size of
+ICCM and DCCM memories and linker would put code sections into ICCM and data
+sections to DCCM.  TCF contains this <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> file as content of
+<code class="docutils literal notranslate"><span class="pre">gnu_linker_command_file</span></code> section. IDE and <strong class="program">arc-elf32-tcf-gcc</strong> simply create
+this file and specify to linker to use <strong>arcv2elfx</strong> emulation. This is done by
+passing option <code class="docutils literal notranslate"><span class="pre">-marcv2elfx</span></code> to linker, but note that when invoking gcc
+driver it is required to specify this option as <code class="docutils literal notranslate"><span class="pre">-Wl,-marcv2elfx</span></code>, so driver
+would know that this is an option to pass to linker.</p>
+<p>It is very important that memory map in TCF matches the one in the hardware,
+otherwise application will not work. By default linker places all application
+code and data as a continuous sections starting from address 0x0. Designs with
+CCMs usually has ICCM mapped at address 0x0, and DCCM at addresses &gt;=
+0x8000_0000 (or simply an upper half of address space, which can be less then
+32 bits wide). If application has both code and data put into ICCM, it may
+technically work (load/store unit in ARC has a port to ICCM), however this
+underutilizes DCCM and creates a risk of memory overflow where code and data
+will not fit into the ICCM, so overflown content will be lost, likely causing
+an error message in simulator or in debugger. For this reason it is recommended
+to use memory.x file from TCF when linking applications that use CCM memory.
+Typically TCF-generator would automatically assign instruction memory area to
+ICCM and data memory area to DCCM, because parameters of those memories can be
+read from BCRs, although it doesn’t support such features as ICCM1 or NV ICCM.</p>
+<p>When memory is connected via external memory bus TCF-generator cannot know
+where memory will be actually located, so it will put all sections
+continuously, starting from address 0. This is basically same as what happens
+when no memory map has been passed to linker.  Therefore memory map in such TCF
+is effectively useless, instead it is needed to manually enter a proper memory
+map into “gnu_linker_command_file” section.  However when using an nSIM
+simulator such TCF will work nice, as it will make nSIM simulate whole address
+space, so there is no risk that application will be loaded into unexisting
+address.</p>
+<p>When using IDE there is an option to ignore memory map specified in TCF and use
+default memory mapping or custom linker script. This is the default setting -
+to ignore linker script embedded into TCF. However if target design uses
+closely-coupled memories then it is highly advised to use memory map (embedded
+into TCF or manually written).</p>
+</section>
+<section id="c-preprocessor-defines">
+<h2>C preprocessor defines<a class="headerlink" href="#c-preprocessor-defines" title="Permalink to this heading">¶</a></h2>
+<p>TCF section <code class="docutils literal notranslate"><span class="pre">C_defines</span></code> contains preprocessor defines that specify presence of
+various hardware optional extensions and values of Build Configuration
+Registers. <strong class="program">arc-elf32-tcf-gcc</strong> wrapper extracts content of this section into
+temporary file and includes into compiled files via <code class="docutils literal notranslate"><span class="pre">-include</span></code> option of GCC.</p>
+</section>
+<section id="arc-elf32-tcf-gcc-options">
+<h2>arc-elf32-tcf-gcc options<a class="headerlink" href="#arc-elf32-tcf-gcc-options" title="Permalink to this heading">¶</a></h2>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arc-elf32-tcf-gcc-compiler">
+<span class="sig-name descname"><span class="pre">--compiler</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arc-elf32-tcf-gcc-compiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrites the default compiler name.  The compiler tool chain needs to be
+in the PATH. Default value depends on the name of this file - it will call
+compiler that has the same name, only without -tcf part. Therefore:</p>
+<ul class="simple">
+<li><p>arc-elf32-tcf-gcc     -&gt; arc-elf32-gcc</p></li>
+<li><p>arceb-elf32-tcf-gcc   -&gt; arceb-elf32-gcc</p></li>
+<li><p>arc-linux-tcf-gcc     -&gt; arc-linux-gcc</p></li>
+<li><p>arceb-linux-tcf-gcc   -&gt; arceb-linux-gcc</p></li>
+<li><p>arc-a-b-tcf-gcc       -&gt; arc-a-b-gcc</p></li>
+<li><p>arc-tcf-elf32-tcf-gcc -&gt; arc-tcf-elf32-gcc</p></li>
+</ul>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arc-elf32-tcf-gcc-tcf">
+<span class="sig-name descname"><span class="pre">--tcf</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arc-elf32-tcf-gcc-tcf" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name and the location of the TCF file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arc-elf32-tcf-gcc-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arc-elf32-tcf-gcc-verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbose output. Prints the compiler invokation command.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="em-starter-kit.html" class="btn btn-neutral float-right" title="Using GNU Toolchain to Debug Applications on EM Starter Kit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="linker.html" class="btn btn-neutral float-left" title="Linker scripts and memory.x files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

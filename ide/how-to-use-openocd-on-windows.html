@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>How to Use OpenOCD on Windows &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Debugging with OpellaXD" href="debugging-with-opellaxd.html" />
+    <link rel="prev" title="Debugging with OpenOCD" href="debugging-with-openocd.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ARC GNU IDE</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#creating-and-building-an-application">Creating and building an application</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#debugging">Debugging</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="using-debug-perspective.html">Using Debug Perspective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="creating-a-debug-configuration.html">Creating a Debug Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debugging-with-openocd.html">Debugging with OpenOCD</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">How to Use OpenOCD on Windows</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#replacing-a-driver">Replacing a driver</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="debugging-with-opellaxd.html">Debugging with OpellaXD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debugging-with-nsim.html">Debugging with nSIM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debugging-with-custom-gdb-server.html">Debugging with Custom GDB Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debugging-with-running-gdb-server.html">Debugging with Running GDB Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debugging-a-big-endian-application-on-em-sk.html">Debugging a big endian Application on EM Starter Kit</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">ARC GNU IDE</a> &raquo;</li>
+        
+      <li>How to Use OpenOCD on Windows</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/ide/how-to-use-openocd-on-windows.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="how-to-use-openocd-on-windows">
+<span id="id1"></span><h1>How to Use OpenOCD on Windows<a class="headerlink" href="#how-to-use-openocd-on-windows" title="Permalink to this heading">¶</a></h1>
+<section id="replacing-a-driver">
+<h2>Replacing a driver<a class="headerlink" href="#replacing-a-driver" title="Permalink to this heading">¶</a></h2>
+<p>Before you can start using OpenOCD, you have to download WinUSB driver and
+replace with it one of FTDI drivers for your hardware development system.</p>
+<p>To do that, download <a class="reference external" href="http://zadig.akeo.ie/">Zadig</a> and run it. You should be
+able to see <strong>Digilent Adept USB Device</strong> in the list of devices.</p>
+<figure class="align-default" id="id2">
+<img alt="../_images/zadig_device_list.png" src="../_images/zadig_device_list.png" />
+<figcaption>
+<p><span class="caption-text">Device List</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>If your device is not shown by Zadig, tick <strong>List all devices</strong> in <strong>Options</strong>.</p>
+<p>For EM Starter Kit, select <strong>Digilent Adept USB Device (Interface 0)</strong>, choose
+<strong>WinUSB</strong> driver and press <strong>Replace Driver</strong>. Your FTDI driver will be replaced
+with WinUSB.</p>
+<figure class="align-default" id="id3">
+<img alt="../_images/zadig_dialog.png" src="../_images/zadig_dialog.png" />
+<figcaption>
+<p><span class="caption-text">Zadig Dialog</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>For ARC HS Development Kit, IoT Development Kit and AXS10x SDP, the only thing
+that differs is that instead of <strong>Digilent Adept USB Device (Interface 0)</strong> you
+should select <strong>Digilent Adept USB Device (Interface 1)</strong>.</p>
+<p>Note that antivirus might complain about drivers files created by Zadig.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to change driver for your device back for some reason, you can
+uninstall current driver in “Devices and Printers” and then reconnect your board
+to the computer, Windows will install the default driver automatically.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="debugging-with-opellaxd.html" class="btn btn-neutral float-right" title="Debugging with OpellaXD" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="debugging-with-openocd.html" class="btn btn-neutral float-left" title="Debugging with OpenOCD" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

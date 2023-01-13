@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Getting Started with EM Starter Kit &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Getting Started with nSIM" href="getting-started-with-nsim.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ARC GNU IDE</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#getting-started">Getting Started</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Getting Started with EM Starter Kit</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#creating-hello-world-project-for-arc-em-starter-kit">Creating Hello World project for ARC EM Starter Kit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-the-project">Building the project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#debugging-the-project">Debugging the project</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started-with-nsim.html">Getting Started with nSIM</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#creating-and-building-an-application">Creating and building an application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">ARC GNU IDE</a> &raquo;</li>
+        
+      <li>Getting Started with EM Starter Kit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/ide/getting-started-with-em-starter-kit.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="getting-started-with-em-starter-kit">
+<h1>Getting Started with EM Starter Kit<a class="headerlink" href="#getting-started-with-em-starter-kit" title="Permalink to this heading">¶</a></h1>
+<section id="creating-hello-world-project-for-arc-em-starter-kit">
+<h2>Creating Hello World project for ARC EM Starter Kit<a class="headerlink" href="#creating-hello-world-project-for-arc-em-starter-kit" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Select <strong>File &gt;New &gt;C Project</strong></p></li>
+</ol>
+<figure class="align-default" id="id1">
+<img alt="../_images/creating_new_c_project.png" src="../_images/creating_new_c_project.png" />
+<figcaption>
+<p><span class="caption-text">Creating a new C project</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<div class="legend">
+<p>The <strong>C Project</strong> window should have several ARC project types:
+<strong>ARC Cross ELF32 Target Application</strong>, <strong>ARC Cross ELF32 Target Static
+Library</strong>, <strong>AXS10x Projects</strong> and <strong>EM Starter Kit Projects</strong>. Select
+<strong>EM Starter Kit Projects</strong>. This project type is available only if ARC EM
+toolchain compiler can be found either in <code class="docutils literal notranslate"><span class="pre">PATH</span></code> environment variable or
+in <code class="docutils literal notranslate"><span class="pre">../bin/</span></code> directory relative to Eclipse executable.</p>
+</div>
+</figcaption>
+</figure>
+<ol class="arabic simple" start="2">
+<li><p>Enter a project name</p></li>
+</ol>
+<figure class="align-default" id="id2">
+<img alt="../_images/c_project_creation_dialog.png" src="../_images/c_project_creation_dialog.png" />
+<figcaption>
+<p><span class="caption-text">C Project Creation Dialog</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<div class="legend">
+<ol class="arabic simple">
+<li><p>Under <strong>EM Starter Kit Projects</strong> select <strong>Hello World for EM SK
+2.1 Project</strong> (or <strong>Hello World for EM SK 1.1</strong> depending on your EM Starter Kit
+version). This Hello World project is an example project that
+comes with the EM Starter Kit Software and uses the UART on the EM Starter
+Kit to display output. To see output printer to UART, connection to serial
+port should be established. By default Eclipse for ARC will automatically
+connect to available serial port, but that feature can be disabled and in
+that case refer to the EM Starter Kit Getting Started for instructions on
+how to connect to the UART on the EM Starter Kit board using Putty.</p></li>
+<li><p>Fill in project name and click <strong>Finish</strong> or <strong>Next</strong> if you want to
+fill in additional information.</p></li>
+</ol>
+<p>The resulting Hello World project created in Eclipse is:</p>
+</div>
+</figcaption>
+</figure>
+<figure class="align-default" id="id3">
+<img alt="../_images/c_project_for_emsk.png" src="../_images/c_project_for_emsk.png" />
+<figcaption>
+<p><span class="caption-text">Final Hello World Project in Eclipse</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="building-the-project">
+<h2>Building the project<a class="headerlink" href="#building-the-project" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Right click on the <cite>Hello World project</cite> and select <strong>Build Project</strong> from the pop-up menu</p></li>
+</ol>
+<figure class="align-default" id="id4">
+<img alt="../_images/building_a_project.png" src="../_images/building_a_project.png" />
+<figcaption>
+<p><span class="caption-text">Building a Project</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple" start="2">
+<li><p>Review the build output log in the Eclipse console tab to confirm success:</p></li>
+</ol>
+<figure class="align-default" id="id5">
+<img alt="../_images/build_output.png" src="../_images/build_output.png" />
+<figcaption>
+<p><span class="caption-text">Build Output</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="debugging-the-project">
+<h2>Debugging the project<a class="headerlink" href="#debugging-the-project" title="Permalink to this heading">¶</a></h2>
+<p>Once the project is successfully compiled by ARC GCC, you can debug the
+resulting executable on the EM Starter Kit board.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are using Windows platform, please configure drivers for your EM Starter
+Kit before you begin debug process. For the instructions see
+<a class="reference internal" href="how-to-use-openocd-on-windows.html#how-to-use-openocd-on-windows"><span class="std std-ref">How to use OpenOCD on Windows</span></a>.</p>
+</div>
+<p>To debug the project, create a new debug configuration.</p>
+<ol class="arabic simple">
+<li><p>Select <strong>Debug Configurations</strong>  from the  <strong>Run</strong>  menu or by clicking on
+the down arrow next to the bug icon:</p></li>
+</ol>
+<figure class="align-default" id="id6">
+<img alt="../_images/debug_configurations.png" src="../_images/debug_configurations.png" />
+<figcaption>
+<p><span class="caption-text">Debug Configurations</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple" start="2">
+<li><p>Double click on the <strong>ARC C/C++ Application</strong>  or click on the top left icon
+to create a new debug configuration for the project:</p></li>
+</ol>
+<figure class="align-default" id="id7">
+<img alt="../_images/arc_debug_configurations.png" src="../_images/arc_debug_configurations.png" />
+<figcaption>
+<p><span class="caption-text">ARC Embedded Debug Configurations</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple" start="3">
+<li><p>Select a name for the new debug configuration (by default, it equals the
+project name followed by “Debug”).</p></li>
+</ol>
+<figure class="align-default" id="id8">
+<img alt="../_images/debug_configuration.png" src="../_images/debug_configuration.png" />
+<figcaption>
+<p><span class="caption-text">New debug Configuration</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple" start="4">
+<li><p>Click the <strong>Debugger</strong> tab and select <strong>Gdbserver Settings</strong> page.</p></li>
+</ol>
+<figure class="align-default" id="id9">
+<img alt="../_images/debugger_tab_default.jpg" src="../_images/debugger_tab_default.jpg" />
+<figcaption>
+<p><span class="caption-text">Default values in the Debugger tab for JTAG via OpenOCD</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
+<div class="legend">
+<p>Select <strong>EM Starter Kit v2.x</strong> or <strong>EM Starter Kit v1.x</strong> as development
+system depending on your EM Starter Kit version.</p>
+<p>Open <strong>Terminal</strong> tab and select COM Port. For Linux choose
+<strong>/dev/ttyUSB1</strong>. For Windows COM Port should match the port number in
+“Device and Printers” as shown below.</p>
+</div>
+</figcaption>
+</figure>
+<figure class="align-default" id="id10">
+<img alt="../_images/serial_port_window.png" src="../_images/serial_port_window.png" />
+<figcaption>
+<p><span class="caption-text">Digilent USB Serial COM Port</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id11">
+<img alt="../_images/com_port.png" src="../_images/com_port.png" />
+<figcaption>
+<p><span class="caption-text">USB Serial COM Port</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<ol class="arabic" start="5">
+<li><p>Click the <strong>Debug</strong> button in the <strong>Debug configurations</strong> dialog to
+initiate debug session.</p>
+<p>This action automatically launches the Serial terminal and OpenOCD
+applications in the background and   connects to the UART on the EM Starter
+Kit board.</p>
+</li>
+<li><p>Click <strong>Yes</strong> in the confirmation dialog to switch to the Debug perspective</p></li>
+</ol>
+<figure class="align-default" id="id12">
+<img alt="../_images/perspective_switch.png" src="../_images/perspective_switch.png" />
+<figcaption>
+<p><span class="caption-text">Perspective Switch</span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id13">
+<img alt="../_images/debugging_process.png" src="../_images/debugging_process.png" />
+<figcaption>
+<p><span class="caption-text">Debugging Process</span><a class="headerlink" href="#id13" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="getting-started-with-nsim.html" class="btn btn-neutral float-right" title="Getting Started with nSIM" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

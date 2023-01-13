@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>How to run DejaGNU tests for ARC toolchain &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ARC GNU IDE" href="../ide/index.html" />
+    <link rel="prev" title="Other" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Other</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">How to run DejaGNU tests for ARC toolchain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preparing">Preparing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running">Running</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compatibility-tests">Compatibility tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arc-specific-board-options">ARC-specific board options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Other</a> &raquo;</li>
+        
+      <li>How to run DejaGNU tests for ARC toolchain</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/other/dejagnu.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="how-to-run-dejagnu-tests-for-arc-toolchain">
+<span id="index-0"></span><h1>How to run DejaGNU tests for ARC toolchain<a class="headerlink" href="#how-to-run-dejagnu-tests-for-arc-toolchain" title="Permalink to this heading">¶</a></h1>
+<p>This article describes how to run testsuites of GNU projects for ARC. This
+article covers only baremetal toolchain. Tests can be run on different
+platforms - simulators or hardware platforms.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p>Get sources of the project you want to test.</p></li>
+<li><p>Get source of the “toolchain” repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone git@github.com:foss-for-synopsys-dwc-arc-processors/toolchain.git
+</pre></div>
+</div>
+</li>
+<li><p>Download free nSIM from webpage:
+<a class="reference external" href="https://www.synopsys.com/cgi-bin/dwarcnsim/req1.cgi">https://www.synopsys.com/cgi-bin/dwarcnsim/req1.cgi</a>. Note that requests
+are manually approved, hence it make take up to 2 workdays for download to
+be ready.</p></li>
+<li><p>Build toolchain.</p></li>
+</ol>
+</section>
+<section id="preparing">
+<h2>Preparing<a class="headerlink" href="#preparing" title="Permalink to this heading">¶</a></h2>
+<p>Create a directory where artifacts and temporary files will be created:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mkdir tests
+$ cd tests
+</pre></div>
+</div>
+<p>Create a <code class="docutils literal notranslate"><span class="pre">site.exp</span></code> file in this directory.
+<code class="docutils literal notranslate"><span class="pre">toolchain/dejagnu/example_site.exp</span></code> can be used as an example. Note that this
+file is not intended to be used as-is, it must be edited for a particular case:
+<code class="docutils literal notranslate"><span class="pre">srcdir</span></code> and <code class="docutils literal notranslate"><span class="pre">arc_exec_prefix</span></code> variables must be set to location of toolchain
+sources and location of installed toolchain respectively. Variable
+<code class="docutils literal notranslate"><span class="pre">toolchain_sysroot_dir</span></code> in that file shouldn’t be set for baremetal toolchain
+testing.</p>
+<p>Required environment variables are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ARC_MULTILIB_OPTIONS</span></code> - should be set to compiler that to be tested. Note
+that first <code class="docutils literal notranslate"><span class="pre">-m&lt;something&gt;</span></code> should be omitted, but only first. So for
+example this variables might take value: <code class="docutils literal notranslate"><span class="pre">cpu=arcem</span> <span class="pre">-mnorm</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DEJAGNU</span></code> - should be set to path to the <code class="docutils literal notranslate"><span class="pre">site.exp</span></code> file in “toolchain”
+repository.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PATH</span></code> - add toolchain installation location <code class="docutils literal notranslate"><span class="pre">bin</span></code> directory to PATH -
+some of the internal checks in the GNU testsuite often ignore tool variables
+set in site.exp and instead expect that tools are in the PATH.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NSIM_HOME</span></code> - should point to location where nSIM has been untarred.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ARC_GCC_COMPAT_SUITE</span></code> - set to 0 if you are not going to run compatibility
+tests.</p></li>
+</ul>
+<p>Some actions are specific to particular GNU projects:</p>
+<ul>
+<li><p>Newlib requires:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mkdir targ-include
+$ ln -s /home/user/arc_gnu/INSTALL/arc-elf32/include/newlib.h targ-include/
+</pre></div>
+</div>
+</li>
+<li><p>GCC might require (for some tests):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pushd home/user/arc_gnu/gcc/
+$ ./contrib/gcc_update --touch
+$ popd
+</pre></div>
+</div>
+</li>
+<li><p>libstdc++ requires:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export CXXFLAGS=&quot;-O2 -g&quot;
+</pre></div>
+</div>
+</li>
+<li><p>GDB requires:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ testsuite=$/home/user/arc_gnu/gdb/testsuite
+$ mkdir $(ls -1d $testsuite/gdb.* | grep -Po &#39;(?&lt;=\/)[^\/]+$&#39;)
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Also arc-nsim.exp board will require an environment variable <code class="docutils literal notranslate"><span class="pre">ARC_NSIM_PROPS</span></code>
+to be set and to contain path to nSIM properties file that specifies ISA
+options.</p>
+<p>Toolchain repository an example <code class="docutils literal notranslate"><span class="pre">run.sh</span></code> file that does some of those
+actions: <code class="docutils literal notranslate"><span class="pre">toolchain/dejagnu/example_run.sh</span></code>. Note that example file is not
+intended to run as-is - it should be modified for particular purpose.</p>
+<p>Baremetal boards that run tests in the development systems, like
+arc-openocd.exp require a valid <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> file in the current working
+directory.</p>
+</section>
+<section id="running">
+<h2>Running<a class="headerlink" href="#running" title="Permalink to this heading">¶</a></h2>
+<p>Now, that all is set, test suite can be run with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ runtest --tool=&lt;project-to-test&gt; --target_board=&lt;board&gt; \
+  --target=arc-default-elf32
+</pre></div>
+</div>
+<p>Where <code class="docutils literal notranslate"><span class="pre">&lt;project-to-test&gt;</span></code> can be: gcc, g++, binutils, ld, gas, newlib,
+libstdc++ or gdb. <code class="docutils literal notranslate"><span class="pre">board</span></code> for free nSIM can be arc-nsim.exp or
+arc-sim-nsimdrv.exp. The former runs nSIM as a GDBserver, while the latter will
+run nSIM as a standalone simulator, which is faster and more stable, but not
+suitable to run GDB testsuite.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">example_run.sh</span></code> is being used, then assuming that it has been configured
+properly, then running is as simple as invoking it.</p>
+</section>
+<section id="compatibility-tests">
+<h2>Compatibility tests<a class="headerlink" href="#compatibility-tests" title="Permalink to this heading">¶</a></h2>
+<p>GCC contains a set of compatibility tests named <code class="docutils literal notranslate"><span class="pre">compat.exp</span></code>. It allows to test compatibility of ARC GNU gcc compiler and proprietary Synopsys MetaWare ccac compiler for ARC EM and ARC HS targets. If you want to run these tests it is necessary to configure additional variables in <code class="docutils literal notranslate"><span class="pre">site.exp</span></code> file:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">is_gcc_compat_suite</span> <span class="pre">&quot;1&quot;</span></code> - enable support of compatibility tests from
+gcc.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">ALT_CC_UNDER_TEST</span> <span class="pre">&quot;path/to/ccac&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">ALT_CXX_UNDER_TEST</span> <span class="pre">&quot;path/to/ccac&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">COMPAT_OPTIONS</span> <span class="pre">[list</span> <span class="pre">[list</span> <span class="pre">&quot;options</span> <span class="pre">for</span> <span class="pre">gcc&quot;</span> <span class="pre">&quot;options</span> <span class="pre">for</span> <span class="pre">ccac&quot;]]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">COMPAT_SKIPS</span> <span class="pre">[list</span> <span class="pre">{ATTRIBUTE}]</span></code> - disable tests with packed
+structures to avoid unaligned access errors.</p></li>
+</ul>
+<p>Then <code class="docutils literal notranslate"><span class="pre">runtest</span></code> program must be invoked with an additional option <code class="docutils literal notranslate"><span class="pre">compat.exp</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ runtest --tool=&lt;project-to-test&gt; --target_board=&lt;board&gt; \
+  --target=arc-default-elf32 compat.exp
+</pre></div>
+</div>
+<p>Also you can use <code class="docutils literal notranslate"><span class="pre">example_run.sh</span></code> and <code class="docutils literal notranslate"><span class="pre">example_site.exp</span></code> to simplify
+configuration and set these environment variables in <code class="docutils literal notranslate"><span class="pre">example_run.sh</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">runtestflags</span></code> - set to <code class="docutils literal notranslate"><span class="pre">compat.exp</span></code> to run compatibility tests only.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ARC_GCC_COMPAT_SUITE</span></code> - set to 1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GCC_COMPAT_CCAC_PATH</span></code> - path to Synopsys MetaWare ccac executable.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GCC_COMPAT_GCC_OPTIONS</span></code> - options for gcc.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GCC_COMPAT_CCAC_OPTIONS</span></code> - options for ccac.</p></li>
+</ul>
+</section>
+<section id="arc-specific-board-options">
+<h2>ARC-specific board options<a class="headerlink" href="#arc-specific-board-options" title="Permalink to this heading">¶</a></h2>
+<p>Following options are supported by ARC DejaGNU scripts and are usually set in
+board files, for example in <code class="docutils literal notranslate"><span class="pre">dejagnu/baseboard/arc-sim-nsimdrv.exp</span></code>.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">arc,gdbserver_prog</span></code></dt><dd><p>Path to GDB server to use with <code class="docutils literal notranslate"><span class="pre">arc-nsim.exp</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">arc,gdbserver_args</span></code></dt><dd><p>Argument to pass to GDB server used in <code class="docutils literal notranslate"><span class="pre">arc-nsim.exp</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">arc,hostlink</span></code></dt><dd><p>Hostlink type to use. Can be <code class="docutils literal notranslate"><span class="pre">nsim</span></code> or empty/not set.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">arc,is_gcc_compat_suite</span></code></dt><dd><p>Whether this is a GCC <em>compat</em> testsuite or not. Boolean value.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">arc,openocd_prog</span></code></dt><dd><p>Path to OpenOCD application binary.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">arc,openocf_cfg</span></code></dt><dd><p>OpenOCD configuration file. Passed to <code class="docutils literal notranslate"><span class="pre">openocd</span></code> via option <code class="docutils literal notranslate"><span class="pre">-s</span></code> as-is.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">arc,openocd_log</span></code></dt><dd><p>Path to logfile for OpenoCD.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">arc,openocd_log_level</span></code></dt><dd><p>Level of OpenOCD verbosity. Integer from 0 to 3 inclusive.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../ide/index.html" class="btn btn-neutral float-right" title="ARC GNU IDE" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Other" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>GCC documentation &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Custom instructions: what and how" href="custom-instructions.html" />
+    <link rel="prev" title="Creating Eclipse plugins release zip file" href="../ide/creating-eclipse-plugins-release-zip-file.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GCC documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#arc-specific-tech-discussion">ARC specific tech discussion</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom-instructions.html">Custom instructions: what and how</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions-support.html">GCC’s support for ARC custom extensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="64bit.html">Impact of 64-bit integral operation on GCC toolchain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jli.html">Using JLI Instructions with GNU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="secure-shield.html">SecureShield Programming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sanitizers.html">Sanitizers support for ARC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="small-data.html">Working with small data section</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#from-mwdt-to-gcc">From MWDT to GCC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="option-matrix.html">MWDT vs. GCC option matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apex.html">Migrating ARChitect APEX generated header to GNU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intrinsics.html">Intrinsics in ARC GNU vs MWDT</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#improving-gcc-output">Improving GCC output</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="optimizations.html">Understanding compiler options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>GCC documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/gcc/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="gcc-documentation">
+<h1>GCC documentation<a class="headerlink" href="#gcc-documentation" title="Permalink to this heading">¶</a></h1>
+<p>This is a collection of information about ARC GCC compiler. It provides various
+information for how to use efficiently GCC compiler for ARC processors.</p>
+<section id="arc-specific-tech-discussion">
+<h2>ARC specific tech discussion<a class="headerlink" href="#arc-specific-tech-discussion" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="custom-instructions.html">Custom instructions: what and how</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom-instructions.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom-instructions.html#example-1">Example 1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom-instructions.html#example-2">Example 2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom-instructions.html#example-3">Example 3</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extensions-support.html">GCC’s support for ARC custom extensions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extensions-support.html#using-inline-functions">Using inline functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions-support.html#using-a-global-asm-helper-file-containing-the-definition-of-the-custom-instructions">Using a global asm helper file containing the definition of the custom instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions-support.html#using-only-defines-at-the-c-source-level">Using only defines at the C source level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions-support.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="64bit.html">Impact of 64-bit integral operation on GCC toolchain</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="64bit.html#intro">Intro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="64bit.html#bit-move-operations">64-bit move operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="64bit.html#multiplication-instructions">Multiplication Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="64bit.html#multiply-and-accumulate-instructions">Multiply and Accumulate instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="64bit.html#caveats">Caveats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="64bit.html#case-study">Case study</a></li>
+<li class="toctree-l3"><a class="reference internal" href="64bit.html#implementation-matrix-used-by-gcc">Implementation matrix used by GCC</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jli.html">Using JLI Instructions with GNU</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jli.html#optimizing-code-using-jli-calls-on-functions">Optimizing Code using JLI Calls on Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jli.html#discussion-about-mwdt-gnu-compatibility">Discussion about MWDT/GNU Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="secure-shield.html">SecureShield Programming</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="secure-shield.html#secureshield-api">SecureShield API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secure-shield.html#identifying-the-secure-callable-apis">Identifying the Secure-Callable APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secure-shield.html#programming-cautions">Programming Cautions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secure-shield.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sanitizers.html">Sanitizers support for ARC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sanitizers.html#address-sanitizer-examples">Address Sanitizer Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sanitizers.html#heap-use-after-free">Heap-use-after-free</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sanitizers.html#heap-buffer-overflow">Heap-buffer-overflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sanitizers.html#stack-buffer-overflow">Stack-buffer-overflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sanitizers.html#global-buffer-overflow">Global-buffer-overflow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sanitizers.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="small-data.html">Working with small data section</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="small-data.html#small-data-available-access-range">Small data available access range</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="small-data.html#sdata-and-address-scaling-mode-discussion">Sdata and address scaling mode discussion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="small-data.html#controlling-what-goes-into-sdata-segment">Controlling what goes into SDATA segment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="small-data.html#automatic-for-global-data">Automatic for global data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="small-data.html#using-named-sections">Using named sections</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="from-mwdt-to-gcc">
+<h2>From MWDT to GCC<a class="headerlink" href="#from-mwdt-to-gcc" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="option-matrix.html">MWDT vs. GCC option matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apex.html">Migrating ARChitect APEX generated header to GNU</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="apex.html#the-auxiliary-registers">The Auxiliary registers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apex.html#the-extension-core-registers">The extension core registers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apex.html#user-extension-instructions">User extension instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="apex.html#gnu-header">GNU header</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intrinsics.html">Intrinsics in ARC GNU vs MWDT</a></li>
+</ul>
+</div>
+</section>
+<section id="improving-gcc-output">
+<h2>Improving GCC output<a class="headerlink" href="#improving-gcc-output" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="optimizations.html">Understanding compiler options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="optimizations.html#architecture-independent-optimizations">Architecture-Independent Optimizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimizations.html#processor-specific-optimizations">Processor-Specific Optimizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimizations.html#gcc-optimizations-for-code-size">GCC optimizations for Code Size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimizations.html#gcc-optimization-for-speed">GCC optimization for speed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimizations.html#using-optimize-attribute">Using _optimize_ attribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimizations.html#default-gcc-driver-options-and-parameters-arc-specific">Default GCC driver options and parameters; ARC specific</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="optimizations.html#optimizations">Optimizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="optimizations.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="optimizations.html#arc-hardware-variation">ARC hardware variation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="custom-instructions.html" class="btn btn-neutral float-right" title="Custom instructions: what and how" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../ide/creating-eclipse-plugins-release-zip-file.html" class="btn btn-neutral float-left" title="Creating Eclipse plugins release zip file" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

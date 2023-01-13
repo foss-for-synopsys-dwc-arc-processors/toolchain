@@ -1,0 +1,510 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>How to Build GNU Toolchain for ARC Manually &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Frequently asked questions" href="../faq.html" />
+    <link rel="prev" title="Creating toolchain release" href="release.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Information for Toolchain maintainers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="release.html">Creating toolchain release</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">How to Build GNU Toolchain for ARC Manually</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#baremetal-elf32-toolchain">Baremetal (elf32) toolchain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linux-toolchain">Linux toolchain</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uclibc-toolchain">uClibc toolchain</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#glibc-toolchain">Glibc toolchain</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Information for Toolchain maintainers</a> &raquo;</li>
+        
+      <li>How to Build GNU Toolchain for ARC Manually</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/maintainer/manual-build.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="how-to-build-gnu-toolchain-for-arc-manually">
+<h1>How to Build GNU Toolchain for ARC Manually<a class="headerlink" href="#how-to-build-gnu-toolchain-for-arc-manually" title="Permalink to this heading">¶</a></h1>
+<p>This document is a quick set of commands to build GNU toolchain for ARC
+manually, without <strong class="program">build-all.sh</strong> script from this repository. Those
+instructions do everything mostly the same, sans scripting sugar. In general it
+is recommended to build GNU Toolchain for ARC using the <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">build-all.sh</span></code>
+script.  This document describes what is done by this scripts and can be useful
+for situations where those scripts do not work for one or another reason.</p>
+<p>It is assumed that current directory is top level directory, which contains all
+of the requires git repositories checked out.</p>
+<section id="baremetal-elf32-toolchain">
+<h2>Baremetal (elf32) toolchain<a class="headerlink" href="#baremetal-elf32-toolchain" title="Permalink to this heading">¶</a></h2>
+<p>Build GNU binutils:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/binutils
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/binutils
+$<span class="w"> </span>../../binutils/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-elf32<span class="p">|</span>arceb-elf32<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>arcem<span class="p">|</span>archs<span class="p">|</span>arc700<span class="p">|</span>arc600<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-multilib<span class="p">|</span>--enable-multilib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-fast-install<span class="o">=</span>N/A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="p">|</span>big<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c,c++<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-headers<span class="o">=</span>../../newlib/newlib/libc/include<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span>
+$<span class="w"> </span>make<span class="w"> </span><span class="o">{</span>all,pdf<span class="o">}</span>-<span class="o">{</span>binutils,gas,ld<span class="o">}</span>
+$<span class="w"> </span>make<span class="w"> </span>install-<span class="o">{</span>,pdf-<span class="o">}{</span>binutils,gas,ld<span class="o">}</span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build GCC, but without libstdc++. Libstdc++ requires libc which is not
+available at that stage:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/gcc
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/gcc
+$<span class="w"> </span>../../gcc/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-elf32<span class="p">|</span>arceb-elf32<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>arcem<span class="p">|</span>archs<span class="p">|</span>arc700<span class="p">|</span>arc600<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-multilib<span class="p">|</span>--enable-multilib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-fast-install<span class="o">=</span>N/A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="p">|</span>big<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c,c++<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-headers<span class="o">=</span>../../newlib/newlib/libc/include<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span>
+$<span class="w"> </span>make<span class="w"> </span>all-<span class="o">{</span>gcc,target-libgcc<span class="o">}</span><span class="w"> </span>pdf-gcc
+$<span class="w"> </span>make<span class="w"> </span>install-<span class="o">{</span>gcc,-target-libgcc,pdf-gcc<span class="o">}</span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build newlib, build tools should be added to the PATH:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$INSTALLDIR</span>:<span class="nv">$PATH</span>
+$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/newlib
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/newlib
+$<span class="w"> </span>../../newlib/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-elf32<span class="p">|</span>arceb-elf32<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>arcem<span class="p">|</span>archs<span class="p">|</span>arc700<span class="p">|</span>arc600<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-multilib<span class="p">|</span>--enable-multilib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-fast-install<span class="o">=</span>N/A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="p">|</span>big<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c,c++<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-headers<span class="o">=</span>../../newlib/newlib/libc/include<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span>
+$<span class="w"> </span>make<span class="w"> </span>all-target-newlib
+$<span class="w"> </span>make<span class="w"> </span>install-target-newlib
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Now it is possible to build listdc++. Note extra options passed to configure.
+Without –disable-gcc and –disable-libgcc make would try to build those two
+once again, and without –with-newlib configuration will fail with “unsupported
+target/host combination”. Another option is to build libstdc++ using build tree
+of GCC and calling <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">all-target-libstdc++-v3</span></code>, in that case there is no
+need to call “configure” separately, but –with-newlib should be passed when
+configuring GCC. Note that in case of a separate build directory things might
+get awry if there is already a previous version of toolchain at the
+installation target location and in that case it is required to use build tree
+of GCC. Command to build listdc++:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/libstdc++-v3
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/libstdc++-v3
+$<span class="w"> </span>../../gcc/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-elf32<span class="p">|</span>arceb-elf32<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>arcem<span class="p">|</span>archs<span class="p">|</span>arc700<span class="p">|</span>arc600<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-multilib<span class="p">|</span>--enable-multilib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-fast-install<span class="o">=</span>N/A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="p">|</span>big<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c,c++<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-headers<span class="o">=</span>../../newlib/newlib/libc/include<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-gcc<span class="w"> </span>--disable-libgcc<span class="w"> </span>--with-newlib
+$<span class="w"> </span>make<span class="w"> </span>all-target-libstdc++-v3
+$<span class="w"> </span>make<span class="w"> </span>install-target-libstdc++-v3
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Finally build GDB. GDB is the only component here that can be built in any
+order, as it doesn’t depend on other components:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/gdb
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/gdb
+$<span class="w"> </span>../../gdb/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-elf32<span class="p">|</span>arceb-elf32<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>arcem<span class="p">|</span>archs<span class="p">|</span>arc700<span class="p">|</span>arc600<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-multilib<span class="p">|</span>--enable-multilib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-fast-install<span class="o">=</span>N/A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="p">|</span>big<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c,c++<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-headers<span class="o">=</span>../../newlib/newlib/libc/include<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span>
+$<span class="w"> </span>make<span class="w"> </span><span class="o">{</span>all,pdf<span class="o">}</span>-gdb
+$<span class="w"> </span>make<span class="w"> </span>install-<span class="o">{</span>,pdf-<span class="o">}</span>gdb
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+</section>
+<section id="linux-toolchain">
+<h2>Linux toolchain<a class="headerlink" href="#linux-toolchain" title="Permalink to this heading">¶</a></h2>
+<section id="uclibc-toolchain">
+<h3>uClibc toolchain<a class="headerlink" href="#uclibc-toolchain" title="Permalink to this heading">¶</a></h3>
+<p>Define location of sysroot directory:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">SYSROOTDIR</span><span class="o">=</span><span class="nv">$INSTALLDIR</span>/arc-snps-linux-uclibc/sysroot
+</pre></div>
+</div>
+<p>Install Linux headers:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>linux
+$<span class="w"> </span>make<span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span>arc<span class="w"> </span>defconfig
+$<span class="w"> </span>make<span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span>arc<span class="w"> </span><span class="nv">INSTALL_HDR_PATH</span><span class="o">=</span><span class="nv">$SYSROOTDIR</span>/usr<span class="w"> </span>headers_install
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build binutils:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/binutils
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/binutils
+$<span class="w"> </span>../../binutils/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-snps-linux-uclibc<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>archs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-fast-install<span class="o">=</span>N/A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c,c++<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-shared<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--without-newlib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-libgomp<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-sysroot<span class="o">=</span><span class="nv">$SYSROOTDIR</span>
+$<span class="w"> </span>make<span class="w"> </span>all-<span class="o">{</span>binutils,gas,ld<span class="o">}</span>
+$<span class="w"> </span>make<span class="w"> </span>install-<span class="o">{</span>binutils,ld,gas<span class="o">}</span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build Stage 1 GCC (without libgcc):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/gcc-stage1
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/gcc-stage1
+$<span class="w"> </span>../../gcc/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-snps-linux-uclibc<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>archs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-fast-install<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-multilib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--without-headers<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-shared<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-libssp<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-libmudflap<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--without-newlib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-c99<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-libgomp<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-sysroot<span class="o">=</span><span class="nv">$SYSROOTDIR</span>
+$<span class="w"> </span>make<span class="w"> </span>all-gcc
+$<span class="w"> </span>make<span class="w"> </span>install-gcc
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Install uClibc headers:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>uClibc
+$<span class="w"> </span>make<span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span>arc<span class="w"> </span>arcv2_defconfig
+$<span class="w"> </span>sed<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;s#%KERNEL_HEADERS%#</span><span class="nv">$SYSROOTDIR</span><span class="s2">/usr/include#&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;s#%RUNTIME_PREFIX%#/#&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;s#%DEVEL_PREFIX%#/usr/#&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;s#CROSS_COMPILER_PREFIX=\&quot;.*\&quot;#CROSS_COMPILER_PREFIX=\&quot;arc-snps-linux-uclibc-\&quot;#&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-i<span class="w"> </span>.config
+$<span class="w"> </span>make<span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span>arc<span class="w"> </span><span class="nv">PREFIX</span><span class="o">=</span><span class="nv">$SYSROOTDIR</span><span class="w"> </span>install_headers
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build libgcc using build tree of stage 1 GCC:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/gcc-stage1
+$<span class="w"> </span>make<span class="w"> </span>all-target-libgcc
+$<span class="w"> </span>make<span class="w"> </span>install-target-libgcc
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build uClibc:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>uClibc
+$<span class="w"> </span>make<span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span>arc<span class="w"> </span><span class="nv">PREFIX</span><span class="o">=</span><span class="nv">$SYSROOTDIR</span>
+$<span class="w"> </span>make<span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span>arc<span class="w"> </span><span class="nv">PREFIX</span><span class="o">=</span><span class="nv">$SYSROOTDIR</span><span class="w"> </span>install
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build Stage 2 GCC:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/gcc-stage2
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/gcc-stage2
+$<span class="w"> </span>../../gcc/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-snps-linux-uclibc<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>archs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-fast-install<span class="o">=</span>N/A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c,c++,fortran<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-shared<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--without-newlib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-libgomp<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-sysroot<span class="o">=</span><span class="nv">$SYSROOTDIR</span>
+$<span class="w"> </span>make<span class="w"> </span>all-<span class="o">{</span>gcc,target-libgcc,target-libstdc++-v3<span class="o">}</span>
+$<span class="w"> </span>make<span class="w"> </span>install-<span class="o">{</span>gcc,target-libgcc,target-libstdc++-v3<span class="o">}</span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build GDB:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/gdb
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/gdb
+$<span class="w"> </span>../../gcc/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-snps-linux-uclibc<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-cpu<span class="o">=</span>archs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-fast-install<span class="o">=</span>N/A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-endian<span class="o">=</span>little<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-languages<span class="o">=</span>c,c++<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span><span class="si">${</span><span class="nv">INSTALLDIR</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-shared<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--without-newlib<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-libgomp<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-sysroot<span class="o">=</span><span class="nv">$SYSROOTDIR</span>
+$<span class="w"> </span>make<span class="w"> </span>all-gdb
+$<span class="w"> </span>make<span class="w"> </span>install-gdb
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+</section>
+<section id="glibc-toolchain">
+<h3>Glibc toolchain<a class="headerlink" href="#glibc-toolchain" title="Permalink to this heading">¶</a></h3>
+<p>Glibc toolchain is built like the uClibc toolchain, but there are few differences.
+First, it is needed to change <code class="docutils literal notranslate"><span class="pre">--target=arc-snps-linux-uclibc</span></code> to <code class="docutils literal notranslate"><span class="pre">--target=arc-snps-linux-gnu</span></code>.
+Second, uClibc-specific stages should be replaced with following glibc-specific stages.</p>
+<p>Install glibc headers:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/glibc
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/glibc
+$<span class="w"> </span>../../glibc/configure<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="o">=</span>arc-snps-linux-gnu<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--build<span class="o">=</span>x86_64-pc-linux-gnu<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--host<span class="o">=</span>arc-snps-linux-gnu<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--with-headers<span class="o">=</span><span class="nv">$SYSROOTDIR</span>/usr/include<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="o">=</span>/usr<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--disable-werror<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--enable-obsolete-rpc
+$<span class="w"> </span>make<span class="w"> </span>install-bootstrap-headers<span class="o">=</span>yes<span class="w"> </span>install-headers<span class="w"> </span><span class="nv">DESTDIR</span><span class="o">=</span><span class="nv">$SYSROOTDIR</span>
+$<span class="w"> </span>touch<span class="w"> </span><span class="nv">$SYSROOTDIR</span>/usr/include/gnu/stubs.h
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+<p>Build glibc:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/glibc
+$<span class="w"> </span>make
+$<span class="w"> </span>make<span class="w"> </span>install<span class="w"> </span><span class="nv">DESTDIR</span><span class="o">=</span><span class="nv">$SYSROOTDIR</span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../faq.html" class="btn btn-neutral float-right" title="Frequently asked questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="release.html" class="btn btn-neutral float-left" title="Creating toolchain release" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

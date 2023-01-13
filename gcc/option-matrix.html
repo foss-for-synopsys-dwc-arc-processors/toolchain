@@ -1,0 +1,1016 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>MWDT vs. GCC option matrix &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Migrating ARChitect APEX generated header to GNU" href="apex.html" />
+    <link rel="prev" title="Working with small data section" href="small-data.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">GCC documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#arc-specific-tech-discussion">ARC specific tech discussion</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#from-mwdt-to-gcc">From MWDT to GCC</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">MWDT vs. GCC option matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apex.html">Migrating ARChitect APEX generated header to GNU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intrinsics.html">Intrinsics in ARC GNU vs MWDT</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#improving-gcc-output">Improving GCC output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">GCC documentation</a> &raquo;</li>
+        
+      <li>MWDT vs. GCC option matrix</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/gcc/option-matrix.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="mwdt-vs-gcc-option-matrix">
+<h1>MWDT vs. GCC option matrix<a class="headerlink" href="#mwdt-vs-gcc-option-matrix" title="Permalink to this heading">¶</a></h1>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>ARChitect</p></th>
+<th class="head"><p>CCAC</p></th>
+<th class="head"><p>GCC</p></th>
+<th class="head"><p>MDB</p></th>
+<th class="head"><p>Supported core</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="4"><p>Processor Family</p></td>
+<td><p>ARC600</p></td>
+<td><p>-a6</p></td>
+<td><p>-mcpu=arc600</p></td>
+<td><p>-a6</p></td>
+<td><p>ARC600</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>ARC700</p></td>
+<td><p>-a7</p></td>
+<td><p>-mcpu=arc700</p></td>
+<td><p>-a7</p></td>
+<td><p>ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ARCv2EM</p></td>
+<td><p>-av2em</p></td>
+<td><p>-mcpu=arcem</p></td>
+<td><p>-av2em</p></td>
+<td><p>ARC EM</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>ARCv2HS</p></td>
+<td><p>-av2hs</p></td>
+<td><p>-mcpu=archs</p></td>
+<td><p>-av2hs</p></td>
+<td><p>ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td rowspan="6"><p>ARC600 Core Versions</p></td>
+<td><p>Version 1</p></td>
+<td><p>-core1</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core1</p></td>
+<td><p>ARC600</p></td>
+<td><p>Initial version</p></td>
+</tr>
+<tr class="row-odd"><td><p>Version 2</p></td>
+<td><p>-core2</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core2</p></td>
+<td><p>ARC600</p></td>
+<td><p>Zeroed BCR Region 0xc0</p></td>
+</tr>
+<tr class="row-even"><td><p>Version 3</p></td>
+<td><p>-core3</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core3</p></td>
+<td><p>ARC600</p></td>
+<td><p>LD/ST Queue changes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Version 4</p></td>
+<td><p>-core4</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core4</p></td>
+<td><p>ARC600</p></td>
+<td><p>SYNC instruction</p></td>
+</tr>
+<tr class="row-even"><td><p>Version 5</p></td>
+<td><p>-core5</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core5</p></td>
+<td><p>ARC600</p></td>
+<td><p>ARC600_BUILD BCR</p></td>
+</tr>
+<tr class="row-odd"><td><p>Version 6</p></td>
+<td><p>-core6</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core6</p></td>
+<td><p>ARC600</p></td>
+<td><p>Misaligned LD/ST traps.</p></td>
+</tr>
+<tr class="row-even"><td rowspan="4"><p>ARC700 Core Versions</p></td>
+<td><p>Version 1</p></td>
+<td><p>-core1</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core1</p></td>
+<td><p>ARC700</p></td>
+<td><p>Initial version</p></td>
+</tr>
+<tr class="row-odd"><td><p>Version 2</p></td>
+<td><p>-core2</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core2</p></td>
+<td><p>ARC700</p></td>
+<td><p>Zeroed BCR Region 0xc0</p></td>
+</tr>
+<tr class="row-even"><td><p>Version 3</p></td>
+<td><p>-core3</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core3</p></td>
+<td><p>ARC700</p></td>
+<td><p>MXP Debug Architecture</p></td>
+</tr>
+<tr class="row-odd"><td><p>Version 4</p></td>
+<td><p>-core4</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core4</p></td>
+<td><p>ARC700</p></td>
+<td><p>SWAPE, LLOCK,SCOND instr</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>ARC EM Core Versions</p></td>
+<td><p>Version 0</p></td>
+<td><p>-core0</p></td>
+<td><p>Not supported</p></td>
+<td><p>-core0</p></td>
+<td><p>ARC EM</p></td>
+<td><p>EM 1.0 (Initial version)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Version 1</p></td>
+<td><p>-core1</p></td>
+<td><p>N.A.</p></td>
+<td><p>-core1</p></td>
+<td><p>ARC EM</p></td>
+<td><p>EM 1.1 (Default version)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>ARC HS Core Versions</p></td>
+<td><p>Version 0</p></td>
+<td><p>-core0</p></td>
+<td><p>Not supported</p></td>
+<td><p>-core0</p></td>
+<td><p>ARC HS</p></td>
+<td><p>HS 1.0 (Initial version)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Version 1</p></td>
+<td><p>-core1</p></td>
+<td><p>N.A.</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td rowspan="3"><p>Shift ISA Extension
+(shift_option)</p></td>
+<td><p>Option 1</p></td>
+<td><p>-Xsa</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xsa (-Xshift_assist)</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Option 2</p></td>
+<td><p>-Xbs</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xbs (-Xbarrel_shifter)</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Option 3</p></td>
+<td><p>-Xsa</p></td>
+<td><p>-mbarrel-shifter</p></td>
+<td><p>-Xsa -Xbs</p></td>
+<td><p>All</p></td>
+<td><p>Default ON</p></td>
+</tr>
+<tr class="row-odd"><td><p>Code Density
+Extension</p></td>
+<td><p>code_density_option</p></td>
+<td><p>-Xcd</p></td>
+<td><p>-mcode-density</p></td>
+<td><p>-Xcd (-Xcode_density )</p></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td><p>Default for HS, EM</p></td>
+</tr>
+<tr class="row-even"><td><p>Bitscan ISA
+Extension</p></td>
+<td><p>bitscan_option</p></td>
+<td><p>-Xnorm</p></td>
+<td><p>-mnorm</p></td>
+<td><p>-Xnorm</p></td>
+<td><p>All</p></td>
+<td><p>Default for HS</p></td>
+</tr>
+<tr class="row-odd"><td><p>SWAP ISA Extension</p></td>
+<td><p>swap_option</p></td>
+<td><p>-Xswap</p></td>
+<td><p>-mswap</p></td>
+<td><p>-Xswap</p></td>
+<td><p>All</p></td>
+<td><p>Default for HS</p></td>
+</tr>
+<tr class="row-even"><td><p>DIV_REM ISA option</p></td>
+<td><p>div_rem_option</p></td>
+<td><p>-Xdiv_rem</p></td>
+<td><p>-mdiv-rem</p></td>
+<td><p>-Xdiv_rem</p></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td><p>radix2 is default for EM and HS</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="8"><p>Multiply ISA Option
+(mpy_option)</p></td>
+<td><p>wlh1</p></td>
+<td><p>-Xmpy16</p></td>
+<td><p>-mmpy-option=16</p></td>
+<td><p>-Xmpy16</p></td>
+<td><p>ARC600, ARC EM</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>wlh2</p></td>
+<td><p>-Xmpy</p></td>
+<td><p>-mmpy-option=2</p></td>
+<td><p>-Xmpy</p></td>
+<td><p>except ARC HS</p></td>
+<td><p>-Xmpy16 is implied</p></td>
+</tr>
+<tr class="row-odd"><td><p>wlh1, wlh2,
+wlh3, wlh</p></td>
+<td><p>-Xmpy_cycles=
+1,2,3,4,5</p></td>
+<td><p>-mmpy-option={3-6}</p></td>
+<td><p>-Xmpy_cycles=1,2,3,4,5</p></td>
+<td><p>ARC700, ARC EM</p></td>
+<td><p>-Xmpy is implied if spec</p></td>
+</tr>
+<tr class="row-even"><td><p>wlh7</p></td>
+<td><p>-Xmac</p></td>
+<td><p>-mmpy-option=7</p></td>
+<td></td>
+<td><p>ARC HS</p></td>
+<td><p>-Xmac implies -Xmpy and</p></td>
+</tr>
+<tr class="row-odd"><td><p>wlh8</p></td>
+<td><p>-Xmacd</p></td>
+<td><p>-mmpy-option=8</p></td>
+<td></td>
+<td><p>ARC HS</p></td>
+<td><p>-Xmacd implies -Xmac</p></td>
+</tr>
+<tr class="row-even"><td><p>wlh9</p></td>
+<td><p>-Xqmpyh</p></td>
+<td><p>-mmpy-option=9</p></td>
+<td></td>
+<td><p>ARC HS</p></td>
+<td><p>-Xqmpyh implies -Xmacd</p></td>
+</tr>
+<tr class="row-odd"><td><p>A600 MPY</p></td>
+<td><p>-Xmult32</p></td>
+<td></td>
+<td><p>-Xmult32</p></td>
+<td><p>ARC600</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>A600 MPY cycles</p></td>
+<td><p>-Xmult32_cycles=N</p></td>
+<td><p>-mulcost={1,2,3,4,5}</p></td>
+<td><p>-Xmult32_cycles=N</p></td>
+<td><p>ARC600</p></td>
+<td><p>-Xmult32 is implied</p></td>
+</tr>
+<tr class="row-odd"><td><p>64-bit Load and
+Store</p></td>
+<td><p>ll64</p></td>
+<td><p>-Xll64</p></td>
+<td><p>-mll64</p></td>
+<td><p>-Xll64</p></td>
+<td><p>ARC HS</p></td>
+<td><p>LDD/STD</p></td>
+</tr>
+<tr class="row-even"><td><p>Unaligned Memory
+access</p></td>
+<td></td>
+<td><p>-XUnaligned</p></td>
+<td><p>N.A.</p></td>
+<td><p>-XUnaligned</p></td>
+<td><p>ARC HS</p></td>
+<td><p>Unaligned memory accesses</p></td>
+</tr>
+<tr class="row-odd"><td><p>Atomic Option</p></td>
+<td><p>atomic_option</p></td>
+<td><p>-Xatomic</p></td>
+<td><p>-matomic</p></td>
+<td><p>-Xatomic</p></td>
+<td></td>
+<td><p>Default</p></td>
+</tr>
+<tr class="row-even"><td><p>Extended Arithmetic
+Instructions</p></td>
+<td></td>
+<td><p>-Xea</p></td>
+<td><p>-mEA</p></td>
+<td><p>-Xea</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td rowspan="5"><p>Xlib MetaWare Opt</p></td>
+<td></td>
+<td><p>-Xlib</p></td>
+<td><p>N.A</p></td>
+<td><p>-Xlib</p></td>
+<td><p>ARC600</p></td>
+<td><p>Expansion: -Xmult32 -Xno</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>-Xlib</p></td>
+<td><p>N.A</p></td>
+<td><p>-Xlib</p></td>
+<td><p>ARC601</p></td>
+<td><p>Expansion: -Xbs -Xmult32</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>-Xlib</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xlib</p></td>
+<td><p>ARC700</p></td>
+<td><p>Expansion: -Xmpy (-Xnorm</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>-Xlib</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xlib</p></td>
+<td><p>ARC EM</p></td>
+<td><p>Expansion: -Xbs -Xmpy -X</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>-Xlib</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xlib</p></td>
+<td><p>ARC HS</p></td>
+<td><p>Expansion: -Xmpy -Xll64</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>Endianness</p></td>
+<td><p>Big</p></td>
+<td><p>-HB</p></td>
+<td><p>-mbig-endian</p></td>
+<td><p>N/A</p></td>
+<td></td>
+<td><p>MDB reads endianess from ELF</p></td>
+</tr>
+<tr class="row-odd"><td><p>Little</p></td>
+<td><p>-HL</p></td>
+<td><p>-mlittle-endian</p></td>
+<td><p>N/A</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>PC Width</p></td>
+<td><p>pc_size</p></td>
+<td><p>-Hpc_width=
+16,20,24,28,</p></td>
+<td><p>N.A.</p></td>
+<td><p>-pc_width=16,20,24,28,32</p></td>
+<td><p>except ARC HS</p></td>
+<td><p>For HS, fixed pc_width=32</p></td>
+</tr>
+<tr class="row-odd"><td><p>Loop Counter Width</p></td>
+<td><p>lpc_size</p></td>
+<td><p>-Hlpc_width=
+0,8,12,16,2</p></td>
+<td><p>N.A.</p></td>
+<td><p>-lpc_width=8,12,16,20,24</p></td>
+<td><p>except ARC HS</p></td>
+<td><p>For HS, fixed lpc_width=32</p></td>
+</tr>
+<tr class="row-even"><td><p>Address size</p></td>
+<td><p>addr_size</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-addr_size=16,20,24,32</p></td>
+<td><p>ARC EM</p></td>
+<td><p>For HS, fixed addr_size=32</p></td>
+</tr>
+<tr class="row-odd"><td><p>Number of Interrupts</p></td>
+<td><p>number_of_interrupts</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-interrupts=1..240</p></td>
+<td><p>All</p></td>
+<td><p>For 600,700 only 8,16,24</p></td>
+</tr>
+<tr class="row-even"><td><p>Interrupt Vector
+Base</p></td>
+<td><p>invbase_preset</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-interrupt_base=addr</p></td>
+<td><p>All</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Fast Interrupts</p></td>
+<td><p>irq_option</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-firq</p></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>External Interrupts</p></td>
+<td><p>external_interrupts</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-ext_interrupts=1..240</p></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Number of priority
+level</p></td>
+<td><p>number_of_levels</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-interrupt_priorities=1..16</p></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>Number of Registers
+(ngr_num_regs)</p></td>
+<td><p>16</p></td>
+<td></td>
+<td><p>N.A.</p></td>
+<td><p>N/A</p></td>
+<td><p>all</p></td>
+<td><p>MDB reads -rf16 info fro</p></td>
+</tr>
+<tr class="row-odd"><td><p>32</p></td>
+<td><p>Default</p></td>
+<td><p>Default</p></td>
+<td><p>N/A</p></td>
+<td><p>all</p></td>
+<td><p>CCAC assumes 32 registers</p></td>
+</tr>
+<tr class="row-even"><td><p>Number of Register
+Bank</p></td>
+<td><p>ngf_num_banks</p></td>
+<td></td>
+<td><p>N.A.</p></td>
+<td><p>-rgf_num_banks=1,2,3,4</p></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td><p>EM - 2 register banks, H</p></td>
+</tr>
+<tr class="row-odd"><td><p>Number of banked
+registers</p></td>
+<td><p>ngf_banked_regs</p></td>
+<td><p>-Hrgf_banked_regs=N</p></td>
+<td><p>N.A.</p></td>
+<td><p>-rgf_banked_regs=4,8,16,32</p></td>
+<td><p>ARC EM</p></td>
+<td><p>For HS it is 32 (or 16 w</p></td>
+</tr>
+<tr class="row-even"><td><p>Actionpoints</p></td>
+<td><p>num_actionpoints</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Timer 0</p></td>
+<td></td>
+<td><p>-Xtimer0</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xtimer0</p></td>
+<td><p>All</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Timer 1</p></td>
+<td></td>
+<td><p>-Xtimer1</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xtimer1</p></td>
+<td><p>All</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>DCCM Size</p></td>
+<td><p>dccm_size</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-dccm_size=size</p></td>
+<td><p>All</p></td>
+<td><p>User linker map file to</p></td>
+</tr>
+<tr class="row-even"><td><p>DCCM Base Address</p></td>
+<td><p>dccm_base</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-dccm_base=addr</p></td>
+<td><p>All</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>ICCM Size</p></td>
+<td><p>iccm0_size</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-iccm_size=size</p></td>
+<td><p>All</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>iccm1_size</p></td>
+<td></td>
+<td></td>
+<td><p>-iccm1_size=size</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>ICCM Base Address</p></td>
+<td><p>iccm0_base</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-iccm_base=addr, -iccm0_X</p></td>
+<td><p>All</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>iccm1_base</p></td>
+<td></td>
+<td></td>
+<td><p>-iccm1_base=addr</p></td>
+<td><p>All</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Data Cache</p></td>
+<td><p>dc_size,
+dc_bsize,</p>
+<p>c_ways,</p>
+</td>
+<td><p>N/A</p></td>
+<td><p>-param l1-cache-size
+-param
+l1-cache-line-size
+N.A.</p></td>
+<td><p>-dcache=csz,lsz,w,attrib
+csz is 512 to 32k
+lsz is 8,16,32,64,128,256
+w is 1,2,4
+attrib is a or o</p></td>
+<td><p>All</p></td>
+<td><p>csz=cache size,
+lsz=line size,
+w=ways,
+attrib is optional,random</p></td>
+</tr>
+<tr class="row-even"><td><p>Instruction Cache</p></td>
+<td><p>ic_size
+ic_bsize
+ic_ways</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-icache=csz,lsz,w,attrib
+csz is 512 to 32k
+lsz is 8,16,32,64,128,256
+w is 1,2,4
+attrib is a or o</p></td>
+<td><p>All</p></td>
+<td><p>Same format as -dcache
+csz=cache size,
+lsz=line size,
+w=ways,
+attrib is optional,random</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>Instruction Fetch
+Queue</p></td>
+<td><p>ifqueue_size</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ifqueue_burst_size</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>DSP Dual 16x16 MAC</p></td>
+<td></td>
+<td><p>-Xxmac_d16</p></td>
+<td></td>
+<td><p>-Xxmac_d16</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td><p>Adds instructions MULDW,</p></td>
+</tr>
+<tr class="row-even"><td><p>DSP 24x24 MAC</p></td>
+<td></td>
+<td><p>-Xxmac_24</p></td>
+<td></td>
+<td><p>-Xxmac_24</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td><p>Adds instructions MULT,</p></td>
+</tr>
+<tr class="row-odd"><td><p>DSP 32x16 MPY</p></td>
+<td></td>
+<td><p>-Xmul32x16</p></td>
+<td><p>-mmul32x16</p></td>
+<td><p>-Xmul32x16</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td><p>Adds Instructions MULULW</p></td>
+</tr>
+<tr class="row-even"><td><p>DSP Dual Floating
+Point</p></td>
+<td><p>32x16 MUL/MAC</p></td>
+<td><p>-Xdmulpf</p></td>
+<td></td>
+<td><p>-Xdmulpf</p></td>
+<td><p>ARC 600</p></td>
+<td><p>Adds instructions DMULPF</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="5"><p>DSP XY memory</p></td>
+<td></td>
+<td><p>-Xxy</p></td>
+<td><p>-mxy</p></td>
+<td><p>-Xxy</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>XY size</p></td>
+<td><p>-Xxysize=size</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xxysize=size</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>XY banks</p></td>
+<td><p>-Xxybanks=banks</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xxybanks=banks</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>XY base X</p></td>
+<td><p>-Xxylsbasex=addr</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xxylsbasex=addr</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>XY base Y</p></td>
+<td><p>-Xxylsbasey=addr</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xxylsbasey=addr</p></td>
+<td><p>ARC600, ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>FPX (floating pt.)</p></td>
+<td><p>Single</p></td>
+<td><p>-Xspfp</p></td>
+<td><p>-mspfp</p></td>
+<td><p>-Xspfp</p></td>
+<td><p>except ARC HS</p></td>
+<td><p>Also -Xspfp_compact, -Xs</p></td>
+</tr>
+<tr class="row-odd"><td><p>Double</p></td>
+<td><p>-Xdpfp</p></td>
+<td><p>-mdpfp</p></td>
+<td><p>-Xdpfp</p></td>
+<td><p>except ARC HS</p></td>
+<td><p>Also -Xdpfp_compact, -Xd</p></td>
+</tr>
+<tr class="row-even"><td><p>eFPX (new fp unit)</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>ARC HS</p></td>
+<td><p>No support in compiler/d</p></td>
+</tr>
+<tr class="row-odd"><td><p>SIMD Unit</p></td>
+<td></td>
+<td><p>-Xsimd</p></td>
+<td><p>-msimd</p></td>
+<td><p>-Xsimd</p></td>
+<td><p>ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Time Stamp Counter</p></td>
+<td></td>
+<td><p>-Xrtsc</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xrtsc</p></td>
+<td><p>ARC700</p></td>
+<td><p>RTSC instruction</p></td>
+</tr>
+<tr class="row-odd"><td><p>Stack Boundary Check</p></td>
+<td></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-Xstack_check</p></td>
+<td><p>ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>Memory Management
+Unit</p></td>
+<td><p>Version 2</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-mmu</p></td>
+<td><p>ARC700</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Version3</p></td>
+<td><p>N/A</p></td>
+<td><p>N.A.</p></td>
+<td><p>-mmuv3
+-prop=mmu_pagesize=NNN
+-prop=jtlb_ways=WWW
+-prop=mmu_osm=N</p></td>
+<td><p>ARC700
+ARC700
+ARC700
+ARC700</p></td>
+<td><p>Provides more configurab
+Set the page size in byt
+change the number of way
+Set the OSM bit, N=1 or</p></td>
+</tr>
+<tr class="row-even"><td rowspan="9"><p>FPU (IEEE fp)</p></td>
+<td><p>Sngl</p></td>
+<td></td>
+<td><p>-mfpu=fpus</p></td>
+<td></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Sngl with DIV/SQRT</p></td>
+<td></td>
+<td><p>-mfpu=fpus_dis</p></td>
+<td></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Sngl with fused ops</p></td>
+<td></td>
+<td><p>-mfpu=fpus_fma</p></td>
+<td></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Sngl all extensions</p></td>
+<td></td>
+<td><p>-mfpu=fpus_all</p></td>
+<td></td>
+<td><p>ARC EM, ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Dbl</p></td>
+<td></td>
+<td><p>-mfpu=fpud</p></td>
+<td></td>
+<td><p>ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Dbl with DIV/SQRT</p></td>
+<td></td>
+<td><p>-mfpu=fpud_dis</p></td>
+<td></td>
+<td><p>ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Dbl with fused ops</p></td>
+<td></td>
+<td><p>-mfpu=fpud_fma</p></td>
+<td></td>
+<td><p>ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Dbl all extensions</p></td>
+<td></td>
+<td><p>-mfpu=fpud_all</p></td>
+<td></td>
+<td><p>ARC HS</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Dbl assist insns</p></td>
+<td></td>
+<td><p>-mfpu=fpuda</p></td>
+<td></td>
+<td><p>ARC EM</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="apex.html" class="btn btn-neutral float-right" title="Migrating ARChitect APEX generated header to GNU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="small-data.html" class="btn btn-neutral float-left" title="Working with small data section" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

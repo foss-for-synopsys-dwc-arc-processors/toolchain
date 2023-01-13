@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Hostlink and libgloss &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Understanding GCC -mcpu option" href="gcc-mcpu.html" />
+    <link rel="prev" title="Building baremetal applications" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Building baremetal applications</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Hostlink and libgloss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcc-mcpu.html">Understanding GCC -mcpu option</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker.html">Linker scripts and memory.x files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tcf.html">Using TCF</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Building baremetal applications</a> &raquo;</li>
+        
+      <li>Hostlink and libgloss</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/baremetal/hostlink.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="hostlink-and-libgloss">
+<span id="index-0"></span><h1>Hostlink and libgloss<a class="headerlink" href="#hostlink-and-libgloss" title="Permalink to this heading">¶</a></h1>
+<p>Newlib project is split into two parts: newlib and libgloss. Newlib implements
+system-agnostic function, like string formatting used in <code class="docutils literal notranslate"><span class="pre">vprintf()</span></code> or in math
+library, while libgloss implements system-specific functions, like <code class="docutils literal notranslate"><span class="pre">_read()</span></code> or
+<code class="docutils literal notranslate"><span class="pre">_open()</span></code> which strongly depend on specific of the execution platform. For
+example in the baremetal system function <code class="docutils literal notranslate"><span class="pre">_write()</span></code> would work only for stdout
+and stderr and would write all of the output directly to UART, while in case of
+a user-space application on top of complete OS, <code class="docutils literal notranslate"><span class="pre">_write()</span></code> would make a system
+call, and would let OS handle output operation. For this reason, newlib
+provides an architecture-level library - once compiled it can be used for all
+compatible ARC-processors, but libgloss would also contain parts specific to
+the particular “board” be it an ASIC, or FPGA, or a simulator. Usually it is
+not enough to use just newlib to build a complete application, because newlib
+doesn’t provide even a dummy implementation of <code class="docutils literal notranslate"><span class="pre">_exit()</span></code> function, hence even
+in the case of simplest applications that do not use system IO, there is still
+a need to provide implementation of <code class="docutils literal notranslate"><span class="pre">_exit()</span></code> either through linking with some
+libgloss implementation or by implementing it right in the application.</p>
+<p>libgloss implementation is often specific to a particular chip and runtime
+configuration and it is not possible to cover them all in the toolchain
+distribution. However, Synopsys provides several libgloss implementations
+to cover as much usecases as possible. The libgloss implementation can be
+selected with the <code class="docutils literal notranslate"><span class="pre">--specs</span></code> gcc option. Consider three most useful libgloss
+implementations.</p>
+<p>1. <code class="docutils literal notranslate"><span class="pre">nsim.specs</span></code> implements nSIM GNU IO Hostlink. It works via software
+exceptions, just like the syscalls in real OS - when target application needs
+something to be done by the hostlink, it causes a software exception with
+parameters that specify what action is required. nSIM intercepts those
+exceptions and handles them. The advantage of this approach is that same
+application binary can be used with other execution environments, which also
+handle software exceptions - unlike the case where a system function
+implementation is really baked inside the application binary. To use nSIM GNU
+IO hostlink in an application, add option <code class="docutils literal notranslate"><span class="pre">--specs=nsim.specs</span></code> to gcc options
+when linking - library <code class="docutils literal notranslate"><span class="pre">libnsim.a</span></code> will be linked in and will provide
+implementations to those system level functions. For example, consider simple
+program <code class="docutils literal notranslate"><span class="pre">hello.c</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello World!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Let’s build it for ARC HS with nSIM GNU IO Hostlink support and run in nSIM:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ arc-elf32-gcc -mcpu=hs --specs=nsim.specs ./hello.c -o hello
+$ nsimdrv -prop=nsim_isa_family=av2hs -prop=nsim_emt=1 ./hello
+Hello World!
+</pre></div>
+</div>
+<p>Please note <code class="docutils literal notranslate"><span class="pre">-prop=nsim_emt=1</span></code> (emulate traps) option which enables nSIM GNU IO
+Hostlink in nSIM. More details can be found in nSIM documentation.</p>
+<p>2. <code class="docutils literal notranslate"><span class="pre">hl.specs</span></code> implements Metaware Hostlink. It works via memory mailbox named
+<code class="docutils literal notranslate"><span class="pre">__HOSTLINK__</span></code>. The running application fills this mailbox and then debugger
+or simulator executes requested system call. The advantage of this approach is
+that the binary can be executed in the real hardware under Metaware Debugger.
+If <code class="docutils literal notranslate"><span class="pre">__HOSTLINK__</span></code> symbol is not available (binary is stripped, debugger
+connects to the running target) correct address can be passed to Metaware
+Debugger <code class="docutils literal notranslate"><span class="pre">mdb</span></code> through <code class="docutils literal notranslate"><span class="pre">-prop=__HOSTLINK__=address</span></code> option. To use Metaware
+Hostlink, add option <code class="docutils literal notranslate"><span class="pre">--specs=hl.specs</span></code> to the linker. Let’s build and run
+our <code class="docutils literal notranslate"><span class="pre">hello.c</span></code> with Metaware Hostlink:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ arc-elf32-gcc -mcpu=hs --specs=hl.specs ./hello.c -o hello
+$ nsimdrv -prop=nsim_isa_family=av2hs -prop=nsim_hlink_gnu_io_ext=1 ./hello
+Hello World!
+</pre></div>
+</div>
+<p>Please note <code class="docutils literal notranslate"><span class="pre">-prop=nsim_hlink_gnu_io_ext=1</span></code> option which enables some
+additional system calls support in nSIM. Also make sure that <code class="docutils literal notranslate"><span class="pre">-prop=nsim_emt</span></code>
+option is disabled in nSIM, because only one Hostlink type can be used at the
+same time.</p>
+<p>3. <code class="docutils literal notranslate"><span class="pre">nosys.specs</span></code>, which is really an architecture-agnostic implementation, that
+simply provides empty stubs for a few of the most used system functions - this is
+enough to link an application, however it may not function as expected.</p>
+<p>To use a generic libnosys library, add option <code class="docutils literal notranslate"><span class="pre">--specs=nosys.specs</span></code> to gcc
+options when linking. Note that one of the important distinction between
+hostlink libraries and <code class="docutils literal notranslate"><span class="pre">libnosys</span></code> is that <code class="docutils literal notranslate"><span class="pre">_exit()</span></code> implementation in
+<code class="docutils literal notranslate"><span class="pre">libnosys</span></code> is an infinite loop, while in hostlink implementations it will halt
+the CPU core. As a result, at the end of an execution, application with
+<code class="docutils literal notranslate"><span class="pre">libnosys</span></code> will spin, while application with hostlink will halt. This spec file
+is the default option.</p>
+<p>If you are a chip and/or OS developer it is likely that you would want to
+provide a libgloss implementation appropriate for your case, because libnsim.a
+is not intended to be in the real-world production baremetal applications.</p>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="gcc-mcpu.html" class="btn btn-neutral float-right" title="Understanding GCC -mcpu option" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Building baremetal applications" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

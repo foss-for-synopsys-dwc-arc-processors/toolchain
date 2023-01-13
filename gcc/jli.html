@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Using JLI Instructions with GNU &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SecureShield Programming" href="secure-shield.html" />
+    <link rel="prev" title="Impact of 64-bit integral operation on GCC toolchain" href="64bit.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">GCC documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#arc-specific-tech-discussion">ARC specific tech discussion</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="custom-instructions.html">Custom instructions: what and how</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions-support.html">GCC’s support for ARC custom extensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="64bit.html">Impact of 64-bit integral operation on GCC toolchain</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Using JLI Instructions with GNU</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#optimizing-code-using-jli-calls-on-functions">Optimizing Code using JLI Calls on Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#discussion-about-mwdt-gnu-compatibility">Discussion about MWDT/GNU Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="secure-shield.html">SecureShield Programming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sanitizers.html">Sanitizers support for ARC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="small-data.html">Working with small data section</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#from-mwdt-to-gcc">From MWDT to GCC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#improving-gcc-output">Improving GCC output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">GCC documentation</a> &raquo;</li>
+        
+      <li>Using JLI Instructions with GNU</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/gcc/jli.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="using-jli-instructions-with-gnu">
+<h1>Using JLI Instructions with GNU<a class="headerlink" href="#using-jli-instructions-with-gnu" title="Permalink to this heading">¶</a></h1>
+<p>The ARCv2 ISA provides the JLI instruction, which is two-byte instructions that
+can be used to reduce code size for an application. To make use of it, we
+provide two new function attributes <code class="docutils literal notranslate"><span class="pre">jli_always</span></code> and <code class="docutils literal notranslate"><span class="pre">jli_fixed</span></code> which will
+force the compiler to call the indicated function using a jli_s instruction. The
+compiler also generates the entries in the JLI table for the case when we use
+<code class="docutils literal notranslate"><span class="pre">jli_always</span></code> attribute. In the case of <code class="docutils literal notranslate"><span class="pre">jli_fixed</span></code> the compiler assumes a
+fixed position of the function into JLI table. Thus, the user needs to provide
+an assembly file with the JLI table for the final link. This is useful when we
+want to have a table in ROM and a second table in the RAM memory.</p>
+<p>The jli instruction usage can be also forced without the need to annotate the
+source code via <code class="docutils literal notranslate"><span class="pre">-mjli-always</span></code> command.</p>
+<section id="optimizing-code-using-jli-calls-on-functions">
+<h2>Optimizing Code using JLI Calls on Functions<a class="headerlink" href="#optimizing-code-using-jli-calls-on-functions" title="Permalink to this heading">¶</a></h2>
+<p>The usual way of using jli calls is to use the attribute _jli_always_ with a
+function. For example:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">func</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">__attribute__</span><span class="p">((</span><span class="n">jli_always</span><span class="p">));</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">func</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="w"> </span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">printf</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;func returned = %d </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">func</span><span class="w"> </span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>which leads to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="p">:</span>
+        <span class="n">push_s</span> <span class="n">blink</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">a</span> <span class="n">fp</span><span class="p">,[</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="p">;</span><span class="mi">28</span>
+        <span class="n">mov_s</span> <span class="n">fp</span><span class="p">,</span><span class="n">sp</span>     <span class="p">;</span><span class="mi">4</span>
+        <span class="n">mov_s</span> <span class="n">r0</span><span class="p">,</span><span class="mi">100</span>    <span class="p">;</span><span class="mi">3</span>
+        <span class="n">jli_s</span> <span class="nd">@__jli</span><span class="o">.</span><span class="n">func</span>
+        <span class="n">mov_s</span> <span class="n">r2</span><span class="p">,</span><span class="n">r0</span>     <span class="p">;</span><span class="mi">4</span>
+        <span class="n">mov_s</span> <span class="n">r1</span><span class="p">,</span><span class="n">r2</span>     <span class="p">;</span><span class="mi">4</span>
+        <span class="n">mov_s</span> <span class="n">r0</span><span class="p">,</span><span class="o">@.</span><span class="n">LC0</span>  <span class="p">;</span><span class="mi">14</span>
+        <span class="n">bl</span> <span class="nd">@printf</span><span class="p">;</span><span class="mi">1</span>
+        <span class="n">mov_s</span> <span class="n">r2</span><span class="p">,</span><span class="mi">0</span>      <span class="p">;</span><span class="mi">3</span>
+        <span class="n">mov_s</span> <span class="n">r0</span><span class="p">,</span><span class="n">r2</span>     <span class="p">;</span><span class="mi">4</span>
+        <span class="n">ld</span><span class="o">.</span><span class="n">ab</span> <span class="n">fp</span><span class="p">,[</span><span class="n">sp</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="p">;</span><span class="mi">25</span>
+        <span class="n">pop_s</span> <span class="n">blink</span>
+        <span class="n">j_s</span> <span class="p">[</span><span class="n">blink</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>As we can see the call to func is done via the <code class="docutils literal notranslate"><span class="pre">jli_s</span></code> instruction, while the
+other calls are done using regular <code class="docutils literal notranslate"><span class="pre">bl</span></code> instruction. If we want all calls to
+non-local functions to be done using jli instructions we can use
+<code class="docutils literal notranslate"><span class="pre">-mjli-always</span></code> compiler option. However, we need to be careful in using this
+option as the JLI table can hold only 1024 entries. The compiler cannot
+efficiently check the number of entries as it only has a limited view over the
+whole application. In this case the GNU tool takes care of generating the JLI
+table, patching the <code class="docutils literal notranslate"><span class="pre">jli_s</span></code> instruction with the correct entry number
+corresponding to the called function, and the initialization of the jli_base
+auxiliary register.</p>
+<p>A special way to use the jli instruction is for ROM patching. Because with the
+jli instruction function calls are made indirectly through the JLI table, the
+JLI table entries can be changed to invoke alternative functions without
+affecting the executable code. Thus, in this case the location of each function
+called via jli instruction must be fixed and known at compile time. To achieve
+this, we have introduced a new <code class="docutils literal notranslate"><span class="pre">jli_fixed</span></code> function attribute which accept a
+numerical parameter to specify the function call entry in the JLI table. This
+attribute is GNU specific.</p>
+<p>Let us consider the following example:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">func</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">__attribute__</span><span class="p">((</span><span class="n">jli_fixed</span><span class="p">(</span><span class="mi">2</span><span class="p">)));</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">func</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="w"> </span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">printf</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;func returned = %d </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">func</span><span class="w"> </span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>which leads to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="p">:</span>
+        <span class="n">push_s</span> <span class="n">blink</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">a</span> <span class="n">fp</span><span class="p">,[</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="p">;</span><span class="mi">28</span>
+        <span class="n">mov_s</span> <span class="n">fp</span><span class="p">,</span><span class="n">sp</span>     <span class="p">;</span><span class="mi">4</span>
+        <span class="n">mov_s</span> <span class="n">r0</span><span class="p">,</span><span class="mi">100</span>    <span class="p">;</span><span class="mi">3</span>
+        <span class="n">jli_s</span> <span class="mi">2</span> <span class="p">;</span> <span class="nd">@func</span>
+        <span class="n">mov_s</span> <span class="n">r2</span><span class="p">,</span><span class="n">r0</span>     <span class="p">;</span><span class="mi">4</span>
+        <span class="n">mov_s</span> <span class="n">r1</span><span class="p">,</span><span class="n">r2</span>     <span class="p">;</span><span class="mi">4</span>
+        <span class="n">mov_s</span> <span class="n">r0</span><span class="p">,</span><span class="o">@.</span><span class="n">LC0</span>  <span class="p">;</span><span class="mi">14</span>
+        <span class="n">bl</span> <span class="nd">@printf</span><span class="p">;</span><span class="mi">1</span>
+        <span class="n">mov_s</span> <span class="n">r2</span><span class="p">,</span><span class="mi">0</span>      <span class="p">;</span><span class="mi">3</span>
+        <span class="n">mov_s</span> <span class="n">r0</span><span class="p">,</span><span class="n">r2</span>     <span class="p">;</span><span class="mi">4</span>
+        <span class="n">ld</span><span class="o">.</span><span class="n">ab</span> <span class="n">fp</span><span class="p">,[</span><span class="n">sp</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="p">;</span><span class="mi">25</span>
+        <span class="n">pop_s</span> <span class="n">blink</span>
+        <span class="n">j_s</span> <span class="p">[</span><span class="n">blink</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>As we can see now, the operand of jli instruction is already resolved and points
+to entry 2 in the JLI table. In this case, the compiler doesn’t generate the JLI
+table, as it needs to be provided by the user. A JLI table can be something like
+this:</p>
+<div class="highlight-objdump notranslate"><div class="highlight"><pre><span></span><span class="x">        .section .jlitab</span>
+<span class="x">        .align  4</span>
+<span class="x">JLI_table:</span>
+<span class="x">__jli.entry0:   b       entry0  ; 0</span>
+<span class="x">__jli.entry1:   b       entry1  ; 1</span>
+<span class="x">__jli.func:     b       func    ; 2</span>
+</pre></div>
+</div>
+<p>The initialization of the jli_base is again done by the crt0. However, in the
+case of RAM/ROM patching, one may want to overwrite the initial value with a new
+value based on the location of a patched JLI table. N.B. the RAM/ROM patching
+approach may require special startup and/or linker scripts which are not
+provided.</p>
+</section>
+<section id="discussion-about-mwdt-gnu-compatibility">
+<h2>Discussion about MWDT/GNU Compatibility<a class="headerlink" href="#discussion-about-mwdt-gnu-compatibility" title="Permalink to this heading">¶</a></h2>
+<p>In general the GNU jli implementation is compatible with MWDT implementation,
+except for the code that invokes the MetaWare runtime initialization code that
+sets the JLI_BASE register to address the JLI table. GNU additionally introduces
+the <code class="docutils literal notranslate"><span class="pre">jli_fixed</span></code> attribute to closely mimic the MWDT <code class="docutils literal notranslate"><span class="pre">jli_call_fixed</span></code> pragma.</p>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="secure-shield.html" class="btn btn-neutral float-right" title="SecureShield Programming" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="64bit.html" class="btn btn-neutral float-left" title="Impact of 64-bit integral operation on GCC toolchain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

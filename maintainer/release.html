@@ -1,0 +1,750 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Creating toolchain release &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="How to Build GNU Toolchain for ARC Manually" href="manual-build.html" />
+    <link rel="prev" title="Information for Toolchain maintainers" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Information for Toolchain maintainers</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Creating toolchain release</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-prerequisites">Building prerequisites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#eclipse-plugin-for-arc">Eclipse plugin for ARC</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#environment-variables">Environment variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#make-targets">Make targets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#invocation">Invocation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manual-build.html">How to Build GNU Toolchain for ARC Manually</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Information for Toolchain maintainers</a> &raquo;</li>
+        
+      <li>Creating toolchain release</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/maintainer/release.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="creating-toolchain-release">
+<h1>Creating toolchain release<a class="headerlink" href="#creating-toolchain-release" title="Permalink to this heading">¶</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">release.mk</span></code> is a makefile to create prebuilt packages of GNU Toolchain for
+ARC. It relies on other scripts in toolchain repository to build components.</p>
+<p>To build a release GNU Toolchain for ARC processors, several prerequisites
+should be installed and/or built before running a <code class="docutils literal notranslate"><span class="pre">release.mk</span></code> which does most
+of the work. List of prerequisites to build toolchain is list in toolchain
+<code class="docutils literal notranslate"><span class="pre">README.md</span></code> file. Note that there are extra dependencies to build toolchain
+for Windows hosts, in addition to those that are required to build toolchain for
+Linux hosts. To create Windows installer several MinGW and
+MSYS components are required (path set by
+<span class="target" id="index-0"></span><a class="reference internal" href="#envvar-THIRD_PARTY_SOFTWARE_LOCATION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">THIRD_PARTY_SOFTWARE_LOCATION</span></code></a>). For a list of MinGW and MSYS packages,
+please refer to <cite>windows-installer/README.md</cite> section “Prerequisites”.</p>
+<p>There are several variables that can be set to disable particular components,
+like Windows installer or OpenOCD, however those are not specifically tested, so
+may not really work. By default <code class="docutils literal notranslate"><span class="pre">release.mk</span></code> will build all of the possible
+components.  It is also possible to invoke particular Make targets directly to
+get only a limited set of distributables, however it is not possible to make
+further targets like <a class="reference internal" href="#cmdoption-arg-deploy"><code class="xref std std-option docutils literal notranslate"><span class="pre">deploy</span></code></a> or <a class="reference internal" href="#cmdoption-arg-upload"><code class="xref std std-option docutils literal notranslate"><span class="pre">upload</span></code></a> to use only this
+limited set of files (there is always an option to modify <code class="docutils literal notranslate"><span class="pre">release.mk</span></code> to get
+desired results).</p>
+</section>
+<section id="building-prerequisites">
+<h2>Building prerequisites<a class="headerlink" href="#building-prerequisites" title="Permalink to this heading">¶</a></h2>
+<section id="eclipse-plugin-for-arc">
+<h3>Eclipse plugin for ARC<a class="headerlink" href="#eclipse-plugin-for-arc" title="Permalink to this heading">¶</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This section doesn’t cover a <code class="docutils literal notranslate"><span class="pre">build/Makefile</span></code> file in
+<code class="docutils literal notranslate"><span class="pre">arc_gnu_eclipse</span></code> repository which automates build process with ant.</p>
+</div>
+<p>Build Eclipse plugin for ARC following those guidelines:
+<a class="reference external" href="https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki/Creating-Eclipse-plugins-release-zip-file">https://github.com/foss-for-synopsys-dwc-arc-processors/arc_gnu_eclipse/wiki/Creating-Eclipse-plugins-release-zip-file</a>
+Create and push respective git tag:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">pushd</span><span class="w"> </span>arc_gnu_eclipse
+$<span class="w"> </span>git<span class="w"> </span>tag<span class="w"> </span>arc-2016.03
+$<span class="w"> </span>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>arc-2016.03
+$<span class="w"> </span><span class="nb">popd</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="environment-variables">
+<h2>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this heading">¶</a></h2>
+<p>Those are make variables which can be set either as a parameters to make, like
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">PARAM=VALUE</span></code> or they can be specified in the <code class="docutils literal notranslate"><span class="pre">release.config</span></code> file
+that will be sourced by <code class="docutils literal notranslate"><span class="pre">release.mk</span></code>.</p>
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-CONFIG_STATIC_TOOLCHAIN">
+<span class="sig-name descname"><span class="pre">CONFIG_STATIC_TOOLCHAIN</span></span><a class="headerlink" href="#envvar-CONFIG_STATIC_TOOLCHAIN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build toolchain linked dynamically or statically. Note this
+affects the toolchain executable files, not the target libraries.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-DEPLOY_BUILD_DESTINATION">
+<span class="sig-name descname"><span class="pre">DEPLOY_BUILD_DESTINATION</span></span><a class="headerlink" href="#envvar-DEPLOY_BUILD_DESTINATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Where to copy unpacked engineering build. Location is in format
+<code class="docutils literal notranslate"><span class="pre">[hostname:]/path</span></code>. A directory named <code class="docutils literal notranslate"><span class="pre">${RELEASE_TAG##-arc}</span></code> will be
+created in the target path and will contain unpacked directories. Directories
+names are different from those that are in the tarballs - namely useless
+cruft is avoided and verion is not mentioned as well, so that it is easier to
+use those directories via symbolic links. For example, for tarball
+arc_gnu_2016.09-eng006_prebuilt_elf32_le_linux_install.tar.gz build directory
+will be elf32_le_linux.</p>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-DEPLOY_DESTINATION">
+<span class="sig-name descname"><span class="pre">DEPLOY_DESTINATION</span></span><a class="headerlink" href="#envvar-DEPLOY_DESTINATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Where to copy release distributables. Location is in format
+<code class="docutils literal notranslate"><span class="pre">[hostname:]/path</span></code>. A directory named <code class="docutils literal notranslate"><span class="pre">${RELEASE_TAG##-arc}</span></code> will be
+created in the target path and will contain all deploy artifacts. So for
+<code class="docutils literal notranslate"><span class="pre">RELEASE_TAG</span> <span class="pre">=</span> <span class="pre">arc-2016.03-alpha1</span></code> directory will be <code class="docutils literal notranslate"><span class="pre">2016.03-alpha1</span></code>, while
+for <code class="docutils literal notranslate"><span class="pre">RELEASE_TAG</span> <span class="pre">=</span> <span class="pre">arc-2016.03</span></code> it will be <code class="docutils literal notranslate"><span class="pre">2016.03</span></code>.</p>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_BIG_ENDIAN">
+<span class="sig-name descname"><span class="pre">ENABLE_BIG_ENDIAN</span></span><a class="headerlink" href="#envvar-ENABLE_BIG_ENDIAN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and upload big endian toolchain builds. Big endian toolchain
+is required for IDE targets.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_DOCS_PACKAGE">
+<span class="sig-name descname"><span class="pre">ENABLE_DOCS_PACKAGE</span></span><a class="headerlink" href="#envvar-ENABLE_DOCS_PACKAGE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build separate packages with just documentation PDF files.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_IDE">
+<span class="sig-name descname"><span class="pre">ENABLE_IDE</span></span><a class="headerlink" href="#envvar-ENABLE_IDE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and upload IDE distributable package.  Note that build
+script for Windows installer always assumes presence of IDE, therefore it is
+not possible to build it when this option is <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_IDE_MACOS">
+<span class="sig-name descname"><span class="pre">ENABLE_IDE_MACOS</span></span><a class="headerlink" href="#envvar-ENABLE_IDE_MACOS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and upload IDE distributable package on macOS.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_IDE_PLUGINS_BUILD">
+<span class="sig-name descname"><span class="pre">ENABLE_IDE_PLUGINS_BUILD</span></span><a class="headerlink" href="#envvar-ENABLE_IDE_PLUGINS_BUILD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build IDE plugins as part of ARC GNU Toolchain or download prebuilt ZIP.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_LINUX_IMAGES">
+<span class="sig-name descname"><span class="pre">ENABLE_LINUX_IMAGES</span></span><a class="headerlink" href="#envvar-ENABLE_LINUX_IMAGES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and deploy Linux images built with this toolchain. This
+targets uses Buildroot to build rootfs and uImage for AXS103.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_LINUX_TOOLS">
+<span class="sig-name descname"><span class="pre">ENABLE_LINUX_TOOLS</span></span><a class="headerlink" href="#envvar-ENABLE_LINUX_TOOLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and deploy GNU Toolchain for Linux targets.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_GLIBC_TOOLS">
+<span class="sig-name descname"><span class="pre">ENABLE_GLIBC_TOOLS</span></span><a class="headerlink" href="#envvar-ENABLE_GLIBC_TOOLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and deploy GNU Toolchain for Linux/glibc targets.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_NATIVE_TOOLS">
+<span class="sig-name descname"><span class="pre">ENABLE_NATIVE_TOOLS</span></span><a class="headerlink" href="#envvar-ENABLE_NATIVE_TOOLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and upload native toolchain. Currently toolchain is built
+only for ARC HS Linux.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_OPENOCD">
+<span class="sig-name descname"><span class="pre">ENABLE_OPENOCD</span></span><a class="headerlink" href="#envvar-ENABLE_OPENOCD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and upload OpenOCD distributable package for Linux. IDE
+targets will not work if OpenOCD is disabled. Therefore if this is <code class="docutils literal notranslate"><span class="pre">n</span></code>,
+then :envvar:<code class="docutils literal notranslate"><span class="pre">ENABLE_IDE</span></code> and <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">ENABLE_WINDOWS_INSTALLER`</span></code> also must
+be <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+<dl class="simple">
+<dt>Possible values:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_OPENOCD_WIN">
+<span class="sig-name descname"><span class="pre">ENABLE_OPENOCD_WIN</span></span><a class="headerlink" href="#envvar-ENABLE_OPENOCD_WIN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and upload OpenOCD for Windows. This target currently
+depends on <span class="target" id="index-2"></span><a class="reference internal" href="#envvar-ENABLE_OPENOCD"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">ENABLE_OPENOCD</span></code></a>, which causes source code to be cloned
+for OpenOCD. OpenOCD for Windows build will download and build libusb library
+and is a prerequisite for IDE for Windows build.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_PDF_DOCS">
+<span class="sig-name descname"><span class="pre">ENABLE_PDF_DOCS</span></span><a class="headerlink" href="#envvar-ENABLE_PDF_DOCS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build Toolchain PDF documentation. This affects only the
+“toolchain” repository - PDF documents from gcc, binutils, etc are always
+created, regardless of this option.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_SOURCE_TARBALL">
+<span class="sig-name descname"><span class="pre">ENABLE_SOURCE_TARBALL</span></span><a class="headerlink" href="#envvar-ENABLE_SOURCE_TARBALL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to create a source tarball. Usually that should be true, so that
+release would include source tarball, however if release makefile is run
+multiple times on various machines to create packages for various target
+systems, then it makes sense to have this true only on one system.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-ENABLE_WINDOWS_INSTALLER">
+<span class="sig-name descname"><span class="pre">ENABLE_WINDOWS_INSTALLER</span></span><a class="headerlink" href="#envvar-ENABLE_WINDOWS_INSTALLER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to build and upload Windows installer for toolchain and IDE. While
+building of installer can be also skipped simply by not invoking respective
+make targets, installer files still will be in the list of files that should
+be deployed and uploaded to GitHub, therefore this variable should be set to
+<code class="docutils literal notranslate"><span class="pre">n</span></code> for installer to be completely skipped. This variable also disables
+build of the toolchain for Windows as well.</p>
+<dl class="simple">
+<dt>Possible values</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</dd>
+<dt>Default value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-GIT_REFERENCE_ROOT">
+<span class="sig-name descname"><span class="pre">GIT_REFERENCE_ROOT</span></span><a class="headerlink" href="#envvar-GIT_REFERENCE_ROOT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Root location of existing source tree with all toolchain components Git
+repositories. Those repositorie swill be used as a reference when cloning
+source tree - this reduces time to clone and disk space consumed. Note that
+all of the components must exist in reference root, otherwise clone will
+fail.</p>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-IDE_PLUGIN_LOCATION">
+<span class="sig-name descname"><span class="pre">IDE_PLUGIN_LOCATION</span></span><a class="headerlink" href="#envvar-IDE_PLUGIN_LOCATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Location of ARC plugin for Eclipse. This must be a directory and plugin file
+must have a name <code class="docutils literal notranslate"><span class="pre">arc_gnu_${RELEASE_TAG##arc-}_ide_plugin.zip</span></code>. File will
+be copied with rsync therefore location may be prefixed with hostname
+separated by semicolon, as in <code class="docutils literal notranslate"><span class="pre">host:/path</span></code>. This variable is used and must
+be set only if :envvar:<code class="docutils literal notranslate"><span class="pre">ENABLE_IDE_PLUGINS_BUILD</span></code> is set to <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-LIBUSB_VERSION">
+<span class="sig-name descname"><span class="pre">LIBUSB_VERSION</span></span><a class="headerlink" href="#envvar-LIBUSB_VERSION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Version of Libusb used for OpenOCD build for Windows.</p>
+<dl class="simple">
+<dt>Default value</dt><dd><p>1.0.20</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-RELEASE_NAME">
+<span class="sig-name descname"><span class="pre">RELEASE_NAME</span></span><a class="headerlink" href="#envvar-RELEASE_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the release, for example “GNU Toolchain for ARC Processors, 2016.03”.</p>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-RELEASE_TAG">
+<span class="sig-name descname"><span class="pre">RELEASE_TAG</span></span><a class="headerlink" href="#envvar-RELEASE_TAG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Git tag for this release. Tag is used literally and can be for example,
+arc-2016.03-alpha1.</p>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-THIRD_PARTY_SOFTWARE_LOCATION">
+<span class="sig-name descname"><span class="pre">THIRD_PARTY_SOFTWARE_LOCATION</span></span><a class="headerlink" href="#envvar-THIRD_PARTY_SOFTWARE_LOCATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Location of 3rd party software, namely Java Runtime Environment (JRE) and
+Eclipse tarballs.</p>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-WINDOWS_TRIPLET">
+<span class="sig-name descname"><span class="pre">WINDOWS_TRIPLET</span></span><a class="headerlink" href="#envvar-WINDOWS_TRIPLET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triplet of MinGW toolchain to do a cross-build of toolchain for Windows.</p>
+<dl class="simple">
+<dt>Default value</dt><dd><p>i686-w64-mingw32</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std envvar">
+<dt class="sig sig-object std" id="envvar-WINDOWS_WORKSPACE">
+<span class="sig-name descname"><span class="pre">WINDOWS_WORKSPACE</span></span><a class="headerlink" href="#envvar-WINDOWS_WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to a directory that is present on build host and is also somehow
+available on a Windows host where Windows installer will be built. Basic
+scenario is when this location is on the Linux hosts, shared via Samba/CIFS
+and mounted on Windows host. Note that on Windows path to this directory,
+should be as short as possible , because Eclipse contains very long file
+names, while old NSIS uses ancient Windows APIs, which are pretty limited in
+the maximum file length. As a result build might fail due to too long path,
+if <span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">WINDOWS_LOCATION</span></code> is too long on Windows host.</p>
+</dd></dl>
+
+</section>
+<section id="make-targets">
+<h2>Make targets<a class="headerlink" href="#make-targets" title="Permalink to this heading">¶</a></h2>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build all distributable components that can be built on RHEL hosts. The
+only components that are not built by this target are:</p>
+<ul class="simple">
+<li><p>OpenOCD for Windows - (has to be built on Ubuntu</p></li>
+<li><p>ARC plugins for Eclipse - built by external job</p></li>
+<li><p>Windows installer - created on Windows hosts. This tasks would depend on
+toolchain created by <a class="reference internal" href="#cmdoption-arg-build"><code class="xref std std-option docutils literal notranslate"><span class="pre">build</span></code></a> target.</p></li>
+</ul>
+<p>This target is affected by <span class="target" id="index-4"></span><a class="reference internal" href="#envvar-RELEASE_TAG"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">RELEASE_TAG</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-copy-windows-installer">
+<span class="sig-name descname"><span class="pre">copy-windows-installer</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-copy-windows-installer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy Windows installer, created by <code class="docutils literal notranslate"><span class="pre">windows-installer/build-installer.sh</span></code>
+from <span class="target" id="index-5"></span><a class="reference internal" href="#envvar-WINDOWS_WORKSPACE"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">WINDOWS_WORKSPACE</span></code></a> to <code class="docutils literal notranslate"><span class="pre">release_output</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-create-tag">
+<span class="sig-name descname"><span class="pre">create-tag</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-create-tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create Git tags for released components. Required environment variables:
+<span class="target" id="index-6"></span><a class="reference internal" href="#envvar-RELEASE_TAG"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">RELEASE_TAG</span></code></a>, <span class="target" id="index-7"></span><a class="reference internal" href="#envvar-RELEASE_NAME"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">RELEASE_NAME</span></code></a>. OpenOCD must have a branch
+named <code class="docutils literal notranslate"><span class="pre">arc-0.9-dev-${RELEASE_BRANCH}</span></code>, where <code class="docutils literal notranslate"><span class="pre">RELEASE_BRANCH</span></code> is a bare
+release, evaluated from the tag, so for <span class="target" id="index-8"></span><a class="reference internal" href="#envvar-RELEASE_TAG"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">RELEASE_TAG</span></code></a> of
+<code class="docutils literal notranslate"><span class="pre">arc-2016.09-eng003</span></code>, <code class="docutils literal notranslate"><span class="pre">RELEASE_BRANCH</span></code> would be <code class="docutils literal notranslate"><span class="pre">2016.09</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-deploy">
+<span class="sig-name descname"><span class="pre">deploy</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-deploy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy build artifacts to remote locations. It deploys same files as those
+that are released, and a few extra ones (like Windows toolchain tarballs).
+This target just copies deploy artifacts to location specified by
+<span class="target" id="index-9"></span><a class="reference internal" href="#envvar-DEPLOY_DESTINATION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">DEPLOY_DESTINATION</span></code></a>. This target depends on
+<span class="target" id="index-10"></span><a class="reference internal" href="#envvar-DEPLOY_DESTINATION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">DEPLOY_DESTINATION</span></code></a> and on <span class="target" id="index-11"></span><a class="reference internal" href="#envvar-WINDOWS_WORKSPACE"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">WINDOWS_WORKSPACE</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-distclean">
+<span class="sig-name descname"><span class="pre">distclean</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-distclean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all cloned sources as well as build artifacts.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-prerequisites">
+<span class="sig-name descname"><span class="pre">prerequisites</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-prerequisites" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone sources of toolchain components from GitHub. Copy external components
+from specified locations. Is affected by following environment variables:
+<span class="target" id="index-12"></span><a class="reference internal" href="#envvar-RELEASE_TAG"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">RELEASE_TAG</span></code></a>, <span class="target" id="index-13"></span><a class="reference internal" href="#envvar-GIT_REFERENCE_ROOT"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GIT_REFERENCE_ROOT</span></code></a> (optional),
+<span class="target" id="index-14"></span><a class="reference internal" href="#envvar-THIRD_PARTY_SOFTWARE_LOCATION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">THIRD_PARTY_SOFTWARE_LOCATION</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-push-tag">
+<span class="sig-name descname"><span class="pre">push-tag</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-push-tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push Git tags to GitHub.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-upload">
+<span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload release distributables to GitHub Releases. A new GitHub “Release” is
+created and bound to the Git tag specified in <span class="target" id="index-15"></span><a class="reference internal" href="#envvar-RELEASE_TAG"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">RELEASE_TAG</span></code></a>. This
+target also depends on <span class="target" id="index-16"></span><a class="reference internal" href="#envvar-RELEASE_NAME"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">RELEASE_NAME</span></code></a> to specify name of release on
+GitHub.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-arg-windows-workspace">
+<span class="sig-name descname"><span class="pre">windows-workspace</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-arg-windows-workspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a workspace to run <code class="docutils literal notranslate"><span class="pre">windows-installer/build-installer.sh</span></code> script.
+Location of workspace is specified with <span class="target" id="index-17"></span><a class="reference internal" href="#envvar-WINDOWS_WORKSPACE"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">WINDOWS_WORKSPACE</span></code></a>.
+<code class="docutils literal notranslate"><span class="pre">build-installer.sh</span></code> script will create an installer in the workspace
+directory. To copy installer from workspace to <code class="docutils literal notranslate"><span class="pre">release_output</span></code> use
+<a class="reference internal" href="#cmdoption-arg-copy-windows-installer"><code class="xref std std-option docutils literal notranslate"><span class="pre">copy-windows-installer</span></code></a>.</p>
+</dd></dl>
+
+</section>
+<section id="invocation">
+<h2>Invocation<a class="headerlink" href="#invocation" title="Permalink to this heading">¶</a></h2>
+<p>Release process consists of several sequential steps that should be done in the
+specified order. Some custom modifications can be done in between those steps.</p>
+<p>First, create directory-workspace:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>arc-2016.03
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>arc-2016.03
+</pre></div>
+</div>
+<p>Clone the <code class="docutils literal notranslate"><span class="pre">toolchain</span></code> repository:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>arc-dev<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain.git
+</pre></div>
+</div>
+<p>That command uses an HTTPS protocol to do Git clone - other protocols may be
+used as well. This documentation assumes the default case where <code class="docutils literal notranslate"><span class="pre">arc-dev</span></code>
+branch is the base for the release.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently <code class="docutils literal notranslate"><span class="pre">tag-release.sh</span></code> script used in the release process has a check
+that ensures that current branch is a development branch by checking that
+branch name ends in <code class="docutils literal notranslate"><span class="pre">-dev</span></code>.</p>
+</div>
+<p>First setup required make variables in the <code class="docutils literal notranslate"><span class="pre">release.config</span></code> file that will be
+sourced by <code class="docutils literal notranslate"><span class="pre">release.mk</span></code> (<code class="docutils literal notranslate"><span class="pre">...</span></code> must be replaced with an actual paths):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>release.config
+<span class="nv">RELEASE_TAG</span><span class="o">=</span>arc-2016.03
+<span class="nv">THIRD_PARTY_SOFTWARE_LOCATION</span><span class="o">=</span>...
+<span class="nv">GIT_REFERENCE_ROOT</span><span class="o">=</span>...
+<span class="nv">WINDOWS_WORKSPACE</span><span class="o">=</span>...
+</pre></div>
+</div>
+<p>Fetch prerequisites (git repositories and external packages):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>prerequisites
+</pre></div>
+</div>
+<p>Create git tags:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>create-tag
+</pre></div>
+</div>
+<p>Build toolchain:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>build
+</pre></div>
+</div>
+<p>Prepare workspace for Windows installer build script. Note that target
+location, as specified by <span class="target" id="index-18"></span><a class="reference internal" href="#envvar-WINDOWS_WORKSPACE"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">WINDOWS_WORKSPACE</span></code></a> should be shared with
+Windows host on which installer will be built.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>windows-workspace
+</pre></div>
+</div>
+<p>On Windows host, build installer using <code class="docutils literal notranslate"><span class="pre">windows-installer/build-installer.sh</span></code>
+script. Note that this script requires a basic cygwin environment.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nv">RELEASE_BRANCH</span><span class="o">=</span><span class="m">2016</span>.03<span class="w"> </span>toolchain/windows-installer/build-installer.sh
+</pre></div>
+</div>
+<p>Copy Windows installer from <span class="target" id="index-19"></span><a class="reference internal" href="#envvar-WINDOWS_WORKSPACE"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">WINDOWS_WORKSPACE</span></code></a> into
+<code class="docutils literal notranslate"><span class="pre">release_output</span></code>:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>copy-windows-installer
+</pre></div>
+</div>
+<p>Deploy toolchain to required locations. This target may be called multiple
+times with different <span class="target" id="index-20"></span><a class="reference internal" href="#envvar-DEPLOY_DESTINATION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">DEPLOY_DESTINATION</span></code></a> values:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>deploy<span class="w"> </span><span class="nv">DEPLOY_DESTINATION</span><span class="o">=</span>&lt;site1:/pathA&gt;
+$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>deploy<span class="w"> </span><span class="nv">DEPLOY_DESTINATION</span><span class="o">=</span>&lt;site2:/pathB&gt;
+</pre></div>
+</div>
+<p>Similarly, unpacked builds can be deployed to multiple locations:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>deploy-build<span class="w"> </span><span class="nv">DEPLOY_BUILD_DESTINATION</span><span class="o">=</span>&lt;site1:/pathC&gt;
+$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>deploy-build<span class="w"> </span><span class="nv">DEPLOY_BUILD_DESTINATION</span><span class="o">=</span>&lt;site2:/pathD&gt;
+</pre></div>
+</div>
+<p>Push tags to remote repositories:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>push-tag
+</pre></div>
+</div>
+<p>Finally, upload assets to GitHub Releases:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>release.mk<span class="w"> </span>upload
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="manual-build.html" class="btn btn-neutral float-right" title="How to Build GNU Toolchain for ARC Manually" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Information for Toolchain maintainers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

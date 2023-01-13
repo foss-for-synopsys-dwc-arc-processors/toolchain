@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Impact of 64-bit integral operation on GCC toolchain &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using JLI Instructions with GNU" href="jli.html" />
+    <link rel="prev" title="GCC’s support for ARC custom extensions" href="extensions-support.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">GCC documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#arc-specific-tech-discussion">ARC specific tech discussion</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="custom-instructions.html">Custom instructions: what and how</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions-support.html">GCC’s support for ARC custom extensions</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Impact of 64-bit integral operation on GCC toolchain</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#intro">Intro</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bit-move-operations">64-bit move operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multiplication-instructions">Multiplication Instructions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jli.html">Using JLI Instructions with GNU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="secure-shield.html">SecureShield Programming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sanitizers.html">Sanitizers support for ARC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="small-data.html">Working with small data section</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#from-mwdt-to-gcc">From MWDT to GCC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#improving-gcc-output">Improving GCC output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">GCC documentation</a> &raquo;</li>
+        
+      <li>Impact of 64-bit integral operation on GCC toolchain</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/gcc/64bit.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="impact-of-64-bit-integral-operation-on-gcc-toolchain">
+<h1>Impact of 64-bit integral operation on GCC toolchain<a class="headerlink" href="#impact-of-64-bit-integral-operation-on-gcc-toolchain" title="Permalink to this heading">¶</a></h1>
+<section id="intro">
+<h2>Intro<a class="headerlink" href="#intro" title="Permalink to this heading">¶</a></h2>
+<p>Some of the new 64 bit integral operations made available for ARCv2HS can be
+used to map the C-type long long. These are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operations</p></th>
+<th class="head"><p>Hardware option</p></th>
+<th class="head"><p>Possible compiler usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>LDD/STD</p></td>
+<td><p>LL64_OPTION</p></td>
+<td><p>Load/store 64 bit data type</p></td>
+</tr>
+<tr class="row-odd"><td><p>Chained MPYM/MPYMU</p></td>
+<td><p>MPY_OPTION_{5,6}</p></td>
+<td><p>Implementation of 32x32-&gt;64 bit ops</p></td>
+</tr>
+<tr class="row-even"><td><p>MAC/MACU</p></td>
+<td><p>MPY_OPTION_7</p></td>
+<td><p>Multiply and accumulate operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>MACD/MACDU</p></td>
+<td><p>MPY_OPTION_8+</p></td>
+<td><p>Multiply and accumulate operations</p></td>
+</tr>
+<tr class="row-even"><td><p>MPYD/MPYDU</p></td>
+<td><p>MPY_OPTION_8+</p></td>
+<td><p>Implementation of 32x32-&gt;64 bit ops</p></td>
+</tr>
+<tr class="row-odd"><td><p>VADD2</p></td>
+<td><p>MPY_OPTION_9</p></td>
+<td><p>Register to register move of a 64 bit data type</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bit-move-operations">
+<h2>64-bit move operations<a class="headerlink" href="#bit-move-operations" title="Permalink to this heading">¶</a></h2>
+<p>First step in efficiently supporting the long long data type is implementing an
+efficient way to move the 64 bit data type in and out register file as well as
+within register file.  The LL64_OPTION provides us with the means for fast
+transfer of 64 bit data into a processor register pair. The LDD/STD can be used
+as well to implement a fast way to save/restore the registers in
+prologue/epilogue of a function.</p>
+<p>The MPY_OPTION_9 also gives us means to move a register to another register or
+a 32-bit immediate into a 64 bit register. The 32-bit immediate is signed
+extended to match the 64 bit container. Hence, for a register to register move,
+we can use the following instruction:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">VADD2</span>        <span class="n">r0r1</span><span class="p">,</span><span class="n">r2r3</span><span class="p">,</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>The above instruction takes 32 bits in the program memory  as it uses the VADD2
+A,B,u6 encoding.  Although VADD2 supports predication, we cannot use it for
+register to register move due to ISA limitations (e.g., the source of the
+operands needs to be the input argument vadd2 .cc b,b,u6) If we want to move
+and sign extend a 32-bit immediate into a 64-bit register pair, we can use the
+following instruction:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">VADD2</span>        <span class="n">r0r1</span><span class="p">,</span> <span class="mh">0xAFEF</span><span class="p">,</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>The above instruction takes 64 bits in the program memory as we use VADD2
+A,limm,u6 encoding.</p>
+</section>
+<section id="multiplication-instructions">
+<h2>Multiplication Instructions<a class="headerlink" href="#multiplication-instructions" title="Permalink to this heading">¶</a></h2>
+<p>The implementation of multiplication instructions depends on the multiplier
+option used. A special care should be taken for chained operation when
+MPY_OPTION is either 5 or 6. In these configurations, the multiplier is
+blocking sequential, hence, the chained option improves the multiplication
+result.  This, however, may be relevant for EM series as the HS will employ a
+fully pipelined multiplier.</p>
+<p>In general, for 32x32bit -&gt; 64 bit type of multiplier, we use the {mpy,mpym }
+instructions pair. However, when using MPY_OPTION larger than 7, we can make
+use of the MPYD/MPYDU instructions. These instructions are faster and are
+having a smaller impact on memory size than previous used solution. Please
+remark that the MPYD/MPYDU clobbers also the 64-bit accumulator register
+(ACCH,ACCL).</p>
+<section id="multiply-and-accumulate-instructions">
+<h3>Multiply and Accumulate instructions<a class="headerlink" href="#multiply-and-accumulate-instructions" title="Permalink to this heading">¶</a></h3>
+<p>The ISAv2, provides a number of MAC operations.  These are MAC/MACU for
+MPY_OPTION equals to 7, and additionally MACD/MACDU when using MPY_OPTION eight
+or more. The latter ones are interesting as they place the 64 bit result in a
+register pair. All the MAC operations are using the 64-bit accumulator register
+(ACCH,ACCL) to accumulate with, as well to place the result mac into.</p>
+<p>Using a MAC operation needs to set up the accumulator register, as well as
+collecting the result from the accumulator and place it into a general purpose
+register. Hence,</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Used instructions</p></th>
+<th class="head"><p>Single MAC (instructions)</p></th>
+<th class="head"><p>Multiple MACs, unroll case</p></th>
+<th class="head"><p>Throughput</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>MAC / MACU</p></td>
+<td><p>4 (2 loads into ACCH,ACCL; 1 MAC; 1 move from ACCH to register)</p></td>
+<td><p>4 + 1 for each unrolled MAC (2 to initialize ACCH,ACCL; 2 to move the accumulator)</p></td>
+<td><p>3+ (output/anti-dependency on ACC), 1 (otherwise)</p></td>
+</tr>
+<tr class="row-odd"><td><p>MACD / MACDU</p></td>
+<td><p>3 (2 loads to ACCH,ACCL; 1 MAC)</p></td>
+<td><p>2 + 1 for each unrolled MAC</p></td>
+<td><p>3+ (output/anti-dependency on ACC), 1 (otherwise)</p></td>
+</tr>
+<tr class="row-even"><td><p>ADD / MPYD</p></td>
+<td><p>3 ( 2 additions; 1 MPYD)</p></td>
+<td><p>3 ops for each MAC</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-odd"><td><p>ADD / MPY</p></td>
+<td><p>4 (2 additions; 2 multiplications)</p></td>
+<td><p>4 ops for each MAC</p></td>
+<td><p>4</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="caveats">
+<h3>Caveats<a class="headerlink" href="#caveats" title="Permalink to this heading">¶</a></h3>
+<p>Having the implicit 64-bit accumulator as destination for MPYD/MPYDU operations
+complicate the generated code when we have an anti-dependency with a MAC
+operation on the accumulator register.</p>
+<p>The accumulator register is used as input as well as output for the MAC
+operation, hence, using them in a pipelined fashion may be difficult (if, for
+example, between mac operations exist an output/anti-dependency). In this case,
+it is faster to use an implementation with ADD/MPYD operations.</p>
+</section>
+<section id="case-study">
+<h3>Case study<a class="headerlink" href="#case-study" title="Permalink to this heading">¶</a></h3>
+<p>Let us consider the following C-program:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="nf">foo</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">a</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="p">)</span><span class="n">c</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="p">)</span><span class="n">b</span><span class="p">;</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Implementation</p></th>
+<th class="head"><p>Resulted Code (estimated)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ADD/MPY</p></td>
+<td><div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="nf">mpym</span><span class="w">   </span><span class="no">r5</span><span class="p">,</span><span class="no">r3</span><span class="p">,</span><span class="no">r2</span>
+<span class="nf">mpy</span><span class="w">    </span><span class="no">r4</span><span class="p">,</span><span class="no">r3</span><span class="p">,</span><span class="no">r2</span>
+<span class="nf">add.f</span><span class="w">  </span><span class="no">r0</span><span class="p">,</span><span class="no">r0</span><span class="p">,</span><span class="no">r4</span>
+<span class="nf">adc</span><span class="w">    </span><span class="no">r1</span><span class="p">,</span><span class="no">r1</span><span class="p">,</span><span class="no">r5</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>ADD/MPYD</p></td>
+<td><div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="nf">mpyd</span><span class="w">   </span><span class="no">r2</span><span class="p">,</span><span class="no">r3</span><span class="p">,</span><span class="no">r2</span>
+<span class="nf">add.f</span><span class="w">  </span><span class="no">r0</span><span class="p">,</span><span class="no">r2</span><span class="p">,</span><span class="no">r0</span>
+<span class="nf">adc</span><span class="w">    </span><span class="no">r1</span><span class="p">,</span><span class="no">r3</span><span class="p">,</span><span class="no">r1</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>MAC</p></td>
+<td><div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="nf">mov</span><span class="w">    </span><span class="no">ACCL</span><span class="p">,</span><span class="no">r0</span>
+<span class="nf">mov</span><span class="w">    </span><span class="no">ACCH</span><span class="p">,</span><span class="no">r1</span>
+<span class="nf">mac</span><span class="w">    </span><span class="no">r0</span><span class="p">,</span><span class="no">r2</span><span class="p">,</span><span class="no">r3</span>
+<span class="nf">mov</span><span class="w">    </span><span class="no">r1</span><span class="p">,</span><span class="no">ACCH</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>MACD (option 8)</p></td>
+<td><div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="nf">mov</span><span class="w">    </span><span class="no">ACCL</span><span class="p">,</span><span class="no">r0</span>
+<span class="nf">mov</span><span class="w">    </span><span class="no">ACCH</span><span class="p">,</span><span class="no">r1</span>
+<span class="nf">macd</span><span class="w">   </span><span class="no">r0</span><span class="p">,</span><span class="no">r2</span><span class="p">,</span><span class="no">r3</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>MACD (option 9)</p></td>
+<td><div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="nf">vadd2</span><span class="w">  </span><span class="no">ACC</span><span class="p">,</span><span class="no">r0</span><span class="p">,</span><span class="mi">0</span>
+<span class="nf">macd</span><span class="w">   </span><span class="no">r0</span><span class="p">,</span><span class="no">r2</span><span class="p">,</span><span class="no">r3</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="implementation-matrix-used-by-gcc">
+<h3>Implementation matrix used by GCC<a class="headerlink" href="#implementation-matrix-used-by-gcc" title="Permalink to this heading">¶</a></h3>
+<p>Due to the accumulator caveats, I propose the following implementation matrix
+for MAC ops:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>MPY_OPTION</p></th>
+<th class="head"><p>2</p></th>
+<th class="head"><p>3</p></th>
+<th class="head"><p>4</p></th>
+<th class="head"><p>5</p></th>
+<th class="head"><p>6</p></th>
+<th class="head"><p>7</p></th>
+<th class="head"><p>8</p></th>
+<th class="head"><p>9</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ADD/MPY</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+</tr>
+<tr class="row-odd"><td><p>ADD/MPYD</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>N</p></td>
+</tr>
+<tr class="row-even"><td><p>MAC</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+</tr>
+<tr class="row-odd"><td><p>MACD</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="jli.html" class="btn btn-neutral float-right" title="Using JLI Instructions with GNU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="extensions-support.html" class="btn btn-neutral float-left" title="GCC’s support for ARC custom extensions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

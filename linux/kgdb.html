@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Using KGDB to debug Linux &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Other" href="../other/index.html" />
+    <link rel="prev" title="How to build Linux with GNU tools and run on simulator" href="kernel-build.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Linux applications</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="debugging.html">Debugging Linux Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel-build.html">How to build Linux with GNU tools and run on simulator</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Using KGDB to debug Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-the-kernel-for-kgdb">Configuring the Kernel for KGDB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kernel-command-line">Kernel command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connect-from-gdb">Connect from GDB</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stop-the-kernel">Stop the Kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#connect-gdb">Connect GDB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Linux applications</a> &raquo;</li>
+        
+      <li>Using KGDB to debug Linux</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/linux/kgdb.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="using-kgdb-to-debug-linux">
+<span id="index-0"></span><h1>Using KGDB to debug Linux<a class="headerlink" href="#using-kgdb-to-debug-linux" title="Permalink to this heading">¶</a></h1>
+<p>While user-space programs can be debugged with regular GDB (in combination with
+gdbserver), this is not the case for debugging the kernel. gdbserver is a
+user-space program itself and cannot control the kernel. KGDB, Kernel GDB,
+solves this by acting as a gdbserver that is inside the kernel.</p>
+<section id="configuring-the-kernel-for-kgdb">
+<h2>Configuring the Kernel for KGDB<a class="headerlink" href="#configuring-the-kernel-for-kgdb" title="Permalink to this heading">¶</a></h2>
+<p>Your kernel configuration needs to have the following options set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CONFIG_KGDB</span>
+<span class="n">CONFIG_KGDB_SERIAL_CONSOLE</span>
+</pre></div>
+</div>
+</section>
+<section id="kernel-command-line">
+<h2>Kernel command line<a class="headerlink" href="#kernel-command-line" title="Permalink to this heading">¶</a></h2>
+<p>Use the kgdboc option on the kernel boot args to tell KGDB which serial port to
+use. Kernel bootargs can be modified in the DTS file or can be passed via
+bootloader if it is used.</p>
+<p>Examples:</p>
+<ul class="simple">
+<li><p>One serial port, KGDB is shared with console: <code class="docutils literal notranslate"><span class="pre">console=ttyS0,115200n8</span>
+<span class="pre">kgdboc=ttyS0,115200</span></code></p></li>
+<li><p>Two serial ports, one for console, another for KGDB: <code class="docutils literal notranslate"><span class="pre">console=ttyS0,115200n8</span>
+<span class="pre">kgdboc=ttyS1,115200</span></code></p></li>
+</ul>
+<p>These examples assume you want to attach gdb to the kernel at a later stage.
+Alternatively, you can add the kgdbwait option to the command line. With
+kgdbwait, the kernel waits for a debugger to attach at boot time. In the case
+of two serial ports, the kernel command line looks like the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">console</span><span class="o">=</span><span class="n">ttyS0</span><span class="p">,</span><span class="mi">115200</span><span class="n">n8</span> <span class="n">kgdboc</span><span class="o">=</span><span class="n">ttyS1</span><span class="p">,</span><span class="mi">115200</span> <span class="n">kgdbwait</span>
+</pre></div>
+</div>
+</section>
+<section id="connect-from-gdb">
+<h2>Connect from GDB<a class="headerlink" href="#connect-from-gdb" title="Permalink to this heading">¶</a></h2>
+<p>After the kernel is set up, you can start the debugging session. To connect to
+your target using a serial connection, you need to have a development PC with
+UART that runs GDB and a terminal program.</p>
+<section id="stop-the-kernel">
+<h3>Stop the Kernel<a class="headerlink" href="#stop-the-kernel" title="Permalink to this heading">¶</a></h3>
+<p>First, stop the kernel on the target using a SysRq trigger. To do so, send a
+<code class="docutils literal notranslate"><span class="pre">remote</span> <span class="pre">break</span></code> command using your terminal program, followed by the character
+<code class="docutils literal notranslate"><span class="pre">g</span></code>:
+* using minicom: <code class="docutils literal notranslate"><span class="pre">Ctrl-a,</span> <span class="pre">f,</span> <span class="pre">g</span></code>
+* using Tera Term: <code class="docutils literal notranslate"><span class="pre">Alt-b,</span> <span class="pre">g</span></code></p>
+<p>You must also stop the kernel if you have two UARTs, even though one of the two
+UARTs is dedicated to KGDB.</p>
+</section>
+<section id="connect-gdb">
+<h3>Connect GDB<a class="headerlink" href="#connect-gdb" title="Permalink to this heading">¶</a></h3>
+<p>After stopping the kernel, connect GDB:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ arc-elf32-gdb vmlinux
+(gdb) set remotebaud 115200
+(gdb) target remote /dev/ttyUSB0
+</pre></div>
+</div>
+<p>You are then connected to the target and can use GDB like any other program.
+For instance, you can set a breakpoint now using <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">&lt;identifier&gt;</span></code> and then
+continue kernel execution again using <code class="docutils literal notranslate"><span class="pre">c</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../other/index.html" class="btn btn-neutral float-right" title="Other" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="kernel-build.html" class="btn btn-neutral float-left" title="How to build Linux with GNU tools and run on simulator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

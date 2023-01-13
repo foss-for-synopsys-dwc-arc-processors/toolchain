@@ -1,0 +1,352 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Frequently asked questions &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/style_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GNU man pages" href="man-pages.html" />
+    <link rel="prev" title="How to Build GNU Toolchain for ARC Manually" href="maintainer/manual-build.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022.09
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linux/index.html">Linux applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frequently asked questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#compiling">Compiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arc-development-systems">ARC Development Systems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="man-pages.html">GNU man pages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GNU Toolchain for ARC User Manual</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Frequently asked questions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/faq.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="frequently-asked-questions">
+<h1>Frequently asked questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this heading">¶</a></h1>
+<section id="compiling">
+<h2>Compiling<a class="headerlink" href="#compiling" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p><strong>Q: How to change heap and stack size in baremetal applications?</strong></p>
+<p>A: To change size of heap in baremetal applications the following option
+should be specified to the linker: <code class="docutils literal notranslate"><span class="pre">--defsym=__DEFAULT_HEAP_SIZE=${SIZE}</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">${SIZE}</span></code> is desired heap size, in bytes. It also possible to use
+size suffixes, like <code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">m</span></code> to specify size in kilobytes and
+megabytes respectively. For stack size respective option is
+<code class="docutils literal notranslate"><span class="pre">--defsym=__DEFAULT_STACK_SIZE=${STACK_SIZE}</span></code>. Note that those are linker
+commands - they are valid only when passed to “ld” application, if gcc driver
+is used for linking, then those options should be prefixed with <code class="docutils literal notranslate"><span class="pre">-Wl</span></code>. For
+example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ arc-elf32-gcc -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
+  -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m --specs=nosys.specs \
+  hello.o -o hello.bin
+</pre></div>
+</div>
+<p>Those options are valid only when default linker script is used. If custom
+linker script is used, then effective way to change stack/heap size depends
+on properties of that linker script - it might be the same, or it might be
+different.</p>
+</li>
+<li><p><strong>Q: Linker fails with error: ``undefined reference to `_exit’``. Among other
+possible functions are also _sbrk, _write, _close, _lseek, _read, _fstat,
+_isatty.</strong></p>
+<p>A: Function <code class="docutils literal notranslate"><span class="pre">_exit</span></code> is not provided by the libc itself, but must be
+provided by the libgloss, which is basically a BSP (board support package).
+Currently two libgloss implementations are provided for ARC: generic libnosys
+and libnsim which implements nSIM IO hostlink. In general libnosys is more
+suitable for hardware targets that doesn’t have hostlink support, however
+libnsim has a distinct advantage that on exit from application and in case of
+many errors it will halt the core, while libnosys will cause it to infinitely
+loop on one place. To use libnsim, pass option <code class="docutils literal notranslate"><span class="pre">--specs=nsim.specs</span></code> to gcc
+at link stage. If you are a chip or board developer, then it is likely that
+you would want to implement libgloss specific to your hardware.</p>
+</li>
+<li><p><strong>Q: I’ve opened hs38.tcf and gcc options include ``-mcpu=hs34``. Why hs34
+instead of hs38?</strong></p>
+<p>A: Possible values of <code class="docutils literal notranslate"><span class="pre">-mcpu=</span></code> options are orthogonal to names of IPlib
+templates and respective TCF. GCC option <code class="docutils literal notranslate"><span class="pre">-mcpu=</span></code> supports both <code class="docutils literal notranslate"><span class="pre">hs34</span></code>
+and <code class="docutils literal notranslate"><span class="pre">hs38</span></code> values, but they are different - <code class="docutils literal notranslate"><span class="pre">hs38</span></code> enables more features,
+like <code class="docutils literal notranslate"><span class="pre">-mll64</span></code> which are not present in <code class="docutils literal notranslate"><span class="pre">hs34</span></code>. ARC HS IPlib template hs38
+doesn’t contain double-word load/store, therefore <code class="docutils literal notranslate"><span class="pre">-mcpu=hs38</span></code> is not
+compatible with this template. <code class="docutils literal notranslate"><span class="pre">-mcpu=hs34</span></code>, however, is compatible and
+that is why TCF generator uses this value. See <a class="reference internal" href="baremetal/gcc-mcpu.html"><span class="doc">Understanding GCC -mcpu option</span></a> for
+a full list of possible <code class="docutils literal notranslate"><span class="pre">-mcpu</span></code> values and what IPlibrary templates they
+correspond to.</p>
+</li>
+</ul>
+</section>
+<section id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p><strong>Q: There are ``can’t resolve symbol`` error messages when using gdbserver
+on Linux for ARC target</strong></p>
+<p>A: This error message might appear when gdbserver is a statically linked
+application. Even though it is linked statically, gdbserver still opens
+<code class="docutils literal notranslate"><span class="pre">libthread_db.so</span></code> library using <code class="docutils literal notranslate"><span class="pre">dlopen()</span></code> function. There is a circular
+dependency here, as <code class="docutils literal notranslate"><span class="pre">libthread_db.so</span></code> expects several dynamic symbols to be
+already defined in the loading application (gdbserver in this case). However
+statically linked gdbserver doesn’t export those dynamic symbols, therefore
+<code class="docutils literal notranslate"><span class="pre">dlopen()</span></code> invocation causes those error messages. In practice there
+haven’t been noticed any downside of this, even when debugging applications
+with threads, however that was tried only with simple test cases. To fix this
+issue, either rebuild gdbserver as a dynamically linked application, or pass
+option <code class="docutils literal notranslate"><span class="pre">--with-libthread-db=-lthread_db</span></code> to <code class="docutils literal notranslate"><span class="pre">configure</span></code> script of script.
+In this case gdbserver will link with <code class="docutils literal notranslate"><span class="pre">libthread_db</span></code> statically, instead of
+opening it with <code class="docutils literal notranslate"><span class="pre">dlopen()</span></code> and dependency on symbols will be resolved at
+link time.</p>
+</li>
+<li><p><strong>Q: GDB prints an error message that ``XML support has been disabled at
+compile time``.</strong></p>
+<p>A: GDB uses Expat library to parse XML files. Support of XML files is
+optional for GDB, therefore it can be built without Expat available, however
+for ARC it usually required to have support of XML to read target description
+files. Mentioned error message might happen if GDB has been built without
+available development files for the Expat. On Linux systems those should be
+available as package in package manager. If Expat development files are not
+available for some reason, then pass option <code class="docutils literal notranslate"><span class="pre">--no-system-expat</span></code> to
+<code class="docutils literal notranslate"><span class="pre">build-all.sh</span></code> - with this option script will download and build Expat on
+it’s own. That is especially useful when cross compiling for Windows hosts
+using Mingw, if development files of Expat are not available in the used
+Mingw installation.</p>
+</li>
+</ul>
+</section>
+<section id="arc-development-systems">
+<h2>ARC Development Systems<a class="headerlink" href="#arc-development-systems" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p><strong>Q: How to reset ARC SDP board programmatically (without pressing “Reset”
+button)?</strong></p>
+<p>A: It is possible to reset ARC SDP board without touching the physical button
+on the board. This can be done using the special OpenOCD openocd:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ openocd -f test/arc/reset_sdp.tcl
+</pre></div>
+</div>
+<p>Note that OpenOCD will crash with a segmentation fault after executing this
+script - this is expected and happens only after board has been reset, but
+that means that other OpenOCD scripts cannot be used in chain with
+<code class="docutils literal notranslate"><span class="pre">reset_sdp.tcl</span></code>, first OpenOCD should be invoked to reset the board, second
+it should be invoked to run as an actual debugger.</p>
+</li>
+<li><p><strong>Q: Can I program FPGA’s in ARC EM Starter Kit or in ARC SDP?</strong></p>
+<p>OpenOCD has some support for programming of FPGA’s over JTAG, however it is
+not officially supported for ARC development systems.</p>
+</li>
+<li><p><strong>Q: When debugging ARC EM core in AXS101 with Ashling Opella-XD and
+GDBserver I get an error messages and GDB shows that all memory and registers
+are zeroes</strong></p>
+<p>A: Decrease a JTAG frequency to no more than 5MHz using an Ashling GDBserver
+option <code class="docutils literal notranslate"><span class="pre">--jtag-frequency</span></code>. This particular problem can be noted if
+GDBserver prints:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span><span class="p">:</span> <span class="n">Core</span> <span class="ow">is</span> <span class="n">running</span> <span class="p">(</span><span class="n">unexpected</span><span class="p">),</span> <span class="n">attempting</span> <span class="n">to</span> <span class="n">halt</span><span class="o">...</span>
+<span class="n">Error</span><span class="p">:</span> <span class="n">Core</span> <span class="ow">is</span> <span class="n">running</span> <span class="p">(</span><span class="n">unexpected</span><span class="p">),</span> <span class="n">attempting</span> <span class="n">to</span> <span class="n">halt</span><span class="o">...</span>
+<span class="n">Error</span><span class="p">:</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">halt</span> <span class="n">core</span>
+</pre></div>
+</div>
+<p>While GDB shows that whole memory is just zeroes and all register values are
+also zeroes.</p>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="man-pages.html" class="btn btn-neutral float-right" title="GNU man pages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="maintainer/manual-build.html" class="btn btn-neutral float-left" title="How to Build GNU Toolchain for ARC Manually" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2016-2022, Synopsys.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
