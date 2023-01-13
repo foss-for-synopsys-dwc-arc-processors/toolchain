@@ -205,6 +205,8 @@ And now, when all the preparations are done, it's required only to start build p
 
 ## Building toolchain for Windows
 
+### Preparation for building ARC cross-toolchain for Windows host
+
 To build a toolchain for Windows hosts it is recommended to do a "Canadian
 cross-compilation" on Linux, that is a toolchain for ARC targets that runs on
 Windows hosts is built on Linux host. Build scripts expected to be run in
@@ -239,7 +241,27 @@ There're muliple ways to get MinGW installed:
     ./ct-ng build
     ```
 
-Once the MinGW is available on the build host just make sure its binaries are avaialble via a standard system path, or otherwise add path to them in local `PATH` environment variable.
+Please note, due to recent changes in Crosstool-NG it's required to
+do a tiny change in its configuration to escape a problem of
+missing `libwinpthread-1.dll`, see https://github.com/crosstool-ng/crosstool-ng/issues/1869
+for more details. And required change consists of removal of `CT_THREADS_POSIX` option,
+i.e. in Crosstools-NG's `menuconfig` deselect it.
+
+### Building ARC cross-toolchain for Windows host
+
+Once the MinGW is available on the build host just make sure its binaries
+are avaialble via a standard system path, or otherwise add path to them in
+local `PATH` environment variable and use `snps-arc-elf32-win` sample for
+Crosstool-NG configuration.
+
+Alternatively it's possible to start from one of the other existing samples
+(for example `snps-arc64-unknown-elf`) and build it in a canadian cross manner with
+the following simple changes.
+
+Run `./ct-ng menuconfig` and select `CT_CANADIAN=y` as well as set
+`CT_HOST="i686-w64-mingw32"`.
+
+Then build the toolchain as usual with `./ct-ng build`.
 
 ## Usage examples
 
