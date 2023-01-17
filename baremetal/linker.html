@@ -1,78 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Linker scripts and memory.x files &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Using TCF" href="tcf.html" />
     <link rel="prev" title="Understanding GCC -mcpu option" href="gcc-mcpu.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022.09
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Building baremetal applications</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="hostlink.html">Hostlink and libgloss</a></li>
@@ -120,77 +71,35 @@
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">GNU Toolchain for ARC User Manual</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">Building baremetal applications</a> &raquo;</li>
-        
-      <li>Linker scripts and memory.x files</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Building baremetal applications</a></li>
+      <li class="breadcrumb-item active">Linker scripts and memory.x files</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/baremetal/linker.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="linker-scripts-and-memory-x-files">
-<span id="index-0"></span><h1>Linker scripts and memory.x files<a class="headerlink" href="#linker-scripts-and-memory-x-files" title="Permalink to this heading">¶</a></h1>
+<span id="index-0"></span><h1>Linker scripts and memory.x files<a class="headerlink" href="#linker-scripts-and-memory-x-files" title="Permalink to this heading"></a></h1>
 <section id="introduction-to-linker-and-linker-scripts">
-<h2>Introduction to linker and linker scripts<a class="headerlink" href="#introduction-to-linker-and-linker-scripts" title="Permalink to this heading">¶</a></h2>
+<h2>Introduction to linker and linker scripts<a class="headerlink" href="#introduction-to-linker-and-linker-scripts" title="Permalink to this heading"></a></h2>
 <p>The way how code and data sections will be organized in the memory by linker
 strongly depends on the linker script or linker emulation chosen. Linker script
 (also known as linker command file) is a special file which specifies where to
@@ -199,7 +108,7 @@ used referenced by an application. Linker emulation is basically way to select
 one of the predetermined linker scripts of the GNU linker.</p>
 </section>
 <section id="linux-user-space-applications">
-<h2>Linux user-space applications<a class="headerlink" href="#linux-user-space-applications" title="Permalink to this heading">¶</a></h2>
+<h2>Linux user-space applications<a class="headerlink" href="#linux-user-space-applications" title="Permalink to this heading"></a></h2>
 <p>Linux user-space applications are loaded by the dynamically linker in their own
 virtual memory address space, where they do not collide with other applications
 and it is a duty of dynamic linker to make sure that application doesn’t collide
@@ -207,7 +116,7 @@ with libraries it uses (if any). In most cases there is no need to use custom
 linker scripts.</p>
 </section>
 <section id="baremetal-applications">
-<h2>Baremetal applications<a class="headerlink" href="#baremetal-applications" title="Permalink to this heading">¶</a></h2>
+<h2>Baremetal applications<a class="headerlink" href="#baremetal-applications" title="Permalink to this heading"></a></h2>
 <p>Baremetal applications are loaded into target memory by debugger or by
 application bootloader or are already in the ROM mapped to specific location. If
 memory map used by linker is invalid that would mean that application will be
@@ -217,7 +126,7 @@ invalid write to non-existing memory, delayed failure when application will try
 to execute code from non-existing memory, or an unpredictable behaviour if
 application has overwritten something else.</p>
 <section id="default-linker-emulation">
-<h3>Default linker emulation<a class="headerlink" href="#default-linker-emulation" title="Permalink to this heading">¶</a></h3>
+<h3>Default linker emulation<a class="headerlink" href="#default-linker-emulation" title="Permalink to this heading"></a></h3>
 <p>Default linker emulation for ARC baremetal toolchain would put all loadable ELF
 sections as a consecutive region, starting with address 0x0. This is usually
 enough for an application prototyping, however real systems often has a more
@@ -238,7 +147,7 @@ em6_dmips, em6_gp, em6_mini, em7d_nrg, em7d_voice_audio, em11d_nrg,
 em11d_voice_audio, hs36_base, hs36, hs38_base, hs38, hs38_full, hs38_slc_full.</p>
 </section>
 <section id="arcv2elfx-linker-emulation">
-<h3>arcv2elfx linker emulation<a class="headerlink" href="#arcv2elfx-linker-emulation" title="Permalink to this heading">¶</a></h3>
+<h3>arcv2elfx linker emulation<a class="headerlink" href="#arcv2elfx-linker-emulation" title="Permalink to this heading"></a></h3>
 <p>For cases where default linker emulation is not enough there is an <code class="docutils literal notranslate"><span class="pre">arcv2elfx</span></code>
 linker emulation, which provides an ability to specify custom memory map to
 linker without the need to write a complete linker scripts. To use it pass
@@ -284,7 +193,7 @@ to <code class="docutils literal notranslate"><span class="pre">__end_heap</span
 may collide and overwrite each over. This linker emulation doesn’t provide any
 protection against this scenario.</p>
 <section id="linker-file-for-hsdk-and-hsdk-4xd">
-<h4>Linker file for HSDK and HSDK-4xD<a class="headerlink" href="#linker-file-for-hsdk-and-hsdk-4xd" title="Permalink to this heading">¶</a></h4>
+<h4>Linker file for HSDK and HSDK-4xD<a class="headerlink" href="#linker-file-for-hsdk-and-hsdk-4xd" title="Permalink to this heading"></a></h4>
 <p>Linker files for HSDK and HSDK-4xD are differs depending on amout of cores.
 Due to limited space on a cristal ICCM and DCCM are present only for odd numbered
 cores.</p>
@@ -334,7 +243,7 @@ cores.</p>
 </section>
 </section>
 <section id="custom-linker-scripts">
-<h3>Custom linker scripts<a class="headerlink" href="#custom-linker-scripts" title="Permalink to this heading">¶</a></h3>
+<h3>Custom linker scripts<a class="headerlink" href="#custom-linker-scripts" title="Permalink to this heading"></a></h3>
 <p>In many cases neither default linker emulation, nor <code class="docutils literal notranslate"><span class="pre">arcv2elfx</span></code> are enough to
 describe memory map of a system, therefore it would be needed to write a custom
 linker script. Please consult GNU linker User manual for details. Default linker
@@ -346,50 +255,33 @@ installation directory.</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="tcf.html" class="btn btn-neutral float-right" title="Using TCF" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="gcc-mcpu.html" class="btn btn-neutral float-left" title="Understanding GCC -mcpu option" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tcf.html" class="btn btn-neutral float-right" title="Using TCF" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2016-2022, Synopsys.
-
-    </p>
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

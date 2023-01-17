@@ -1,78 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Debugging with nSIM &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Debugging with Custom GDB Server" href="debugging-with-custom-gdb-server.html" />
     <link rel="prev" title="Debugging with OpellaXD" href="debugging-with-opellaxd.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022.09
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
@@ -125,75 +76,33 @@
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">GNU Toolchain for ARC User Manual</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">ARC GNU IDE</a> &raquo;</li>
-        
-      <li>Debugging with nSIM</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ARC GNU IDE</a></li>
+      <li class="breadcrumb-item active">Debugging with nSIM</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/ide/debugging-with-nsim.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="debugging-with-nsim">
-<h1>Debugging with nSIM<a class="headerlink" href="#debugging-with-nsim" title="Permalink to this heading">¶</a></h1>
+<h1>Debugging with nSIM<a class="headerlink" href="#debugging-with-nsim" title="Permalink to this heading"></a></h1>
 <p>It is expected that you have already built your application and created a
 debug configuration for it. About how to do it you can read on the following
 pages:</p>
@@ -202,11 +111,11 @@ pages:</p>
 <li><p><a class="reference internal" href="creating-a-debug-configuration.html#creating-a-debug-configuration"><span class="std std-ref">Creating a Debug Configuration</span></a></p></li>
 </ul>
 <section id="specifying-nsim-properties">
-<h2>Specifying nSIM properties<a class="headerlink" href="#specifying-nsim-properties" title="Permalink to this heading">¶</a></h2>
+<h2>Specifying nSIM properties<a class="headerlink" href="#specifying-nsim-properties" title="Permalink to this heading"></a></h2>
 <figure class="align-default" id="id1">
 <img alt="../_images/nsim_tab.png" src="../_images/nsim_tab.png" />
 <figcaption>
-<p><span class="caption-text">Choosing nSIM on debug tab</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Choosing nSIM on debug tab</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>In this tab, user needs to indicate correct properties file/TCF file for
@@ -244,24 +153,24 @@ absolute path provide a path relative to the specified working directory.</p></l
 </dl>
 </section>
 <section id="debugging-an-application">
-<h2>Debugging an application<a class="headerlink" href="#debugging-an-application" title="Permalink to this heading">¶</a></h2>
+<h2>Debugging an application<a class="headerlink" href="#debugging-an-application" title="Permalink to this heading"></a></h2>
 <p>To debug application using nSIM, press <strong>Debug</strong> button of IDE.</p>
 <figure class="align-default" id="id2">
 <img alt="../_images/nsim_debug.png" src="../_images/nsim_debug.png" />
 <figcaption>
-<p><span class="caption-text">Debugging with nSIM gdbserver</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Debugging with nSIM gdbserver</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="id3">
 <img alt="../_images/nsim_debug_window.png" src="../_images/nsim_debug_window.png" />
 <figcaption>
-<p><span class="caption-text">Debug Window</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Debug Window</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="id4">
 <img alt="../_images/nsim_output.png" src="../_images/nsim_output.png" />
 <figcaption>
-<p><span class="caption-text">nSIM gdbserver output in console</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">nSIM gdbserver output in console</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 </section>
@@ -269,50 +178,33 @@ absolute path provide a path relative to the specified working directory.</p></l
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="debugging-with-custom-gdb-server.html" class="btn btn-neutral float-right" title="Debugging with Custom GDB Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="debugging-with-opellaxd.html" class="btn btn-neutral float-left" title="Debugging with OpellaXD" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="debugging-with-custom-gdb-server.html" class="btn btn-neutral float-right" title="Debugging with Custom GDB Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2016-2022, Synopsys.
-
-    </p>
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

@@ -1,78 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>How to Build GNU Toolchain for ARC Manually &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Frequently asked questions" href="../faq.html" />
     <link rel="prev" title="Creating toolchain release" href="release.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022.09
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
@@ -116,75 +67,33 @@
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">GNU Toolchain for ARC User Manual</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">Information for Toolchain maintainers</a> &raquo;</li>
-        
-      <li>How to Build GNU Toolchain for ARC Manually</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Information for Toolchain maintainers</a></li>
+      <li class="breadcrumb-item active">How to Build GNU Toolchain for ARC Manually</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/maintainer/manual-build.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="how-to-build-gnu-toolchain-for-arc-manually">
-<h1>How to Build GNU Toolchain for ARC Manually<a class="headerlink" href="#how-to-build-gnu-toolchain-for-arc-manually" title="Permalink to this heading">¶</a></h1>
+<h1>How to Build GNU Toolchain for ARC Manually<a class="headerlink" href="#how-to-build-gnu-toolchain-for-arc-manually" title="Permalink to this heading"></a></h1>
 <p>This document is a quick set of commands to build GNU toolchain for ARC
 manually, without <strong class="program">build-all.sh</strong> script from this repository. Those
 instructions do everything mostly the same, sans scripting sugar. In general it
@@ -194,7 +103,7 @@ for situations where those scripts do not work for one or another reason.</p>
 <p>It is assumed that current directory is top level directory, which contains all
 of the requires git repositories checked out.</p>
 <section id="baremetal-elf32-toolchain">
-<h2>Baremetal (elf32) toolchain<a class="headerlink" href="#baremetal-elf32-toolchain" title="Permalink to this heading">¶</a></h2>
+<h2>Baremetal (elf32) toolchain<a class="headerlink" href="#baremetal-elf32-toolchain" title="Permalink to this heading"></a></h2>
 <p>Build GNU binutils:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>build/binutils
 $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/binutils
@@ -300,9 +209,9 @@ $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
 </div>
 </section>
 <section id="linux-toolchain">
-<h2>Linux toolchain<a class="headerlink" href="#linux-toolchain" title="Permalink to this heading">¶</a></h2>
+<h2>Linux toolchain<a class="headerlink" href="#linux-toolchain" title="Permalink to this heading"></a></h2>
 <section id="uclibc-toolchain">
-<h3>uClibc toolchain<a class="headerlink" href="#uclibc-toolchain" title="Permalink to this heading">¶</a></h3>
+<h3>uClibc toolchain<a class="headerlink" href="#uclibc-toolchain" title="Permalink to this heading"></a></h3>
 <p>Define location of sysroot directory:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">SYSROOTDIR</span><span class="o">=</span><span class="nv">$INSTALLDIR</span>/arc-snps-linux-uclibc/sysroot
 </pre></div>
@@ -428,7 +337,7 @@ $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
 </div>
 </section>
 <section id="glibc-toolchain">
-<h3>Glibc toolchain<a class="headerlink" href="#glibc-toolchain" title="Permalink to this heading">¶</a></h3>
+<h3>Glibc toolchain<a class="headerlink" href="#glibc-toolchain" title="Permalink to this heading"></a></h3>
 <p>Glibc toolchain is built like the uClibc toolchain, but there are few differences.
 First, it is needed to change <code class="docutils literal notranslate"><span class="pre">--target=arc-snps-linux-uclibc</span></code> to <code class="docutils literal notranslate"><span class="pre">--target=arc-snps-linux-gnu</span></code>.
 Second, uClibc-specific stages should be replaced with following glibc-specific stages.</p>
@@ -461,50 +370,33 @@ $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>-
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../faq.html" class="btn btn-neutral float-right" title="Frequently asked questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="release.html" class="btn btn-neutral float-left" title="Creating toolchain release" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../faq.html" class="btn btn-neutral float-right" title="Frequently asked questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2016-2022, Synopsys.
-
-    </p>
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

@@ -18,26 +18,30 @@ Prerequisites
 
 * Host OS:
 
-  * RHEL 6 or later
-  * Ubuntu 14.04 LTS or later
+  * RHEL 7 or later
 
-* GNU tool chain for ARC:
+  * Ubuntu 18.04 LTS or later
 
-  * 2014.12 or later for Linux for ARC HS
-  * 4.8 or later for Linux for ARC 700
+* GNU toolchain 2021.09 for ARC or later
 
 * make version at least 3.81
+
 * rsync version at least 3.0
+
 * git
 
-Prerequisite packages can be installed on Ubuntu 14.04 with the following command::
+Prerequisite packages can be installed on Ubuntu 18.04 with the following command as ``root``:
 
-    # apt-get install texinfo byacc flex build-essential git
+.. code-block:: shell
 
-On RHEL 6/7 those can be installed with following command::
+    apt-get install texinfo byacc flex build-essential git
 
-    # yum groupinstall "Development Tools"
-    # yum install texinfo-tex byacc flex git
+On RHEL 7 those can be installed with following command as ``root``:
+
+.. code-block:: shell
+
+    yum groupinstall "Development Tools"
+    yum install texinfo-tex byacc flex git
 
 
 Overview
@@ -60,17 +64,20 @@ Configuring
 
 Check `Buildroot downloads page <http://buildroot.org/download.html>`_ for
 latest release. This guide further assumes latest snapshot. Get Buildroot
-sources::
+sources:
 
-    $ mkdir arc-2021.09-linux-guide
-    $ cd arc-2021.09-linux-guide
-    $ wget https://buildroot.org/downloads/buildroot-2021.08.tar.bz2
-    $ tar xf buildroot-2021.08.tar.bz2
+.. code-block:: shell
+
+    wget https://buildroot.org/downloads/buildroot-2022.08.tar.gz
+    tar -xf buildroot-2022.08.tar.gz
+    mv buildroot-2022.08 buildroot
+    mkdir buildroot/build
+    cd buildroot/build
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
 this guide, a custom "defconfig" file will be created and then will be used to
 configure Buildroot. Custom "defconfig" file can be located anywhere and have
-any name. For example it can be ``arc-2021.09-linux-guide/hs_defconfig``.
+any name. For example it can be ``buildroot/build/hs_defconfig``.
 Contents of this file should be following::
 
     BR2_arcle=y
@@ -78,12 +85,12 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.09-rc1/arc_gnu_2021.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_1=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
-    BR2_GCC_VERSION_11_X=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
+    BR2_GCC_VERSION_12_X=y
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_DEFCONFIG="haps_hs"
     BR2_LINUX_KERNEL_VMLINUX=y
@@ -93,12 +100,13 @@ Important notes about modifying Buildroot defconfig:
 
 * ``BR2_TOOLCHAIN_EXTERNAL_URL`` should point to a valid URL of GNU Toolchain
   for ARC distributable.
-* ``BR2_TOOLCHAIN_EXTERNAL_HEADERS_X_XX`` should be aligned to Linux headers
+* ``BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_X_XX`` should be aligned to Linux headers
   version used for the toolchain build.
 
   =================== =======================
   Toolchain version   Linux headers version
   =================== =======================
+  2022.09             5.16
   2021.09             5.1
   2021.03             5.1
   2020.09             5.7
@@ -130,19 +138,14 @@ Important notes about modifying Buildroot defconfig:
 Building
 --------
 
-To build Linux kernel image using that defconfig::
+To build Linux kernel image using that defconfig:
 
-    $ mkdir output_hs
-    $ cd buildroot-2021.08
-    $ make O=`readlink -e ../output_hs` defconfig DEFCONFIG=`readlink -e ../hs_defconfig`
-    $ cd ../output_hs
-    $ make
+.. code-block:: shell
 
-It's necessary to pass an absolute path to Buildroot, because there is the issue
-with a relative path.
+    make -C .. O=`readlink -e .` defconfig DEFCONFIG=`readlink -e ./hs_defconfig`
+    make
 
-After that there will be Linux kernel image file
-``arc-2021.09-linux-guide/output/images/vmlinux``.
+After that there will be Linux kernel image file ``buildroot/build/images/vmlinux``.
 
 
 Running on nSIM
@@ -150,15 +153,40 @@ Running on nSIM
 
 Linux configuration in the provided Buildroot defconfig is for the standalone
 nSIM. This kernel image can be run directly on nSIM, without any other
-additional software. Assuming current directory is
-``arc-2021.09-linux-guide``::
+additional software. Assuming current directory is ``buildroot/build``.
 
-    $ $NSIM_HOME/bin/nsimdrv -prop=nsim_isa_family=av2hs -prop=nsim_isa_core=3 -prop=chipid=0xffff -prop=nsim_isa_atomic_option=1 -prop=nsim_isa_ll64_option=1 -prop=nsim_mmu=4 -prop=mmu_pagesize=8192 -prop=mmu_super_pagesize=2097152 -prop=mmu_stlb_entries=16 -prop=mmu_ntlb_ways=4 -prop=mmu_ntlb_sets=128 -prop=icache=32768,64,4,0 -prop=dcache=16384,64,2,0 -prop=nsim_isa_shift_option=2 -prop=nsim_isa_swap_option=1 -prop=nsim_isa_bitscan_option=1 -prop=nsim_isa_sat=1 -prop=nsim_isa_div_rem_option=1 -prop=nsim_isa_mpy_option=9 -prop=nsim_isa_enable_timer_0=1 -prop=nsim_isa_enable_timer_1=1 -prop=nsim_isa_number_of_interrupts=32 -prop=nsim_isa_number_of_external_interrupts=32 -prop=isa_counters=1 -prop=nsim_isa_pct_counters=8 -prop=nsim_isa_pct_size=48 -prop=nsim_isa_pct_interrupt=1 -prop=nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24 -prop=nsim_isa_aps_feature=1 -prop=nsim_isa_num_actionpoints=4 -prop=nsim_isa_rtc_option=1 output_hs/images/vmlinux
+Before running the image with nSIM create a file with properties ``hs4x.props``::
+
+    nsim_fast=0
+    nsim_isa_family=av2hs
+    nsim_isa_core=1
+    nsim_isa_atomic_option=1
+    nsim_isa_ll64_option=1
+    nsim_isa_mpy_option=9
+    nsim_isa_div_rem_option=2
+    nsim_isa_sat=1
+    nsim_isa_code_density_option=2
+    nsim_isa_enable_timer_0=1
+    nsim_isa_enable_timer_1=1
+    nsim_isa_rtc_option=1
+    icache=65536,64,4,0
+    dcache=65536,64,2,0
+    mmu_version=4
+    mmu_pagesize=8192
+    nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24
+    nsim_isa_number_of_interrupts=32
+    nsim_isa_number_of_external_interrupts=32
+
+Then run the image:
+
+.. code-block:: shell
+
+    nsimdrv -propsfile hs4x.props images/vmlinux
 
 Username is ``root`` without a password. To halt target system issue ``halt``
 command.
 
-Add ``-prop=nsim_fast=1`` to props file if you have nSIM Pro license.
+Use ``nsim_fast=1`` in props file if you have nSIM Pro license.
 
 For more information visit this page: `How to run ARC Linux kernel and debug <https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki/How-to-run-ARC-Linux-kernel-and-debug-%28with-MetaWare-Debugger%29>`_
 
@@ -188,50 +216,77 @@ differences::
     BR2_archs38=y
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
-    BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.09-rc1/arc_gnu_2021.09-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_1=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
+    BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
+    BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
-    BR2_GCC_VERSION_11_X=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
+    BR2_TOOLCHAIN_EXTERNAL_INET_RPC=n
+    BR2_GCC_VERSION_12_X=y
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_DEFCONFIG="haps_hs"
     BR2_LINUX_KERNEL_VMLINUX=y
     BR2_TARGET_ROOTFS_INITRAMFS=y
 
-But please note due to use of glibc 2.33 it's required to disable use of built-in Sun RPC, which as of today is force-enabled for external glibc-based toolchains.
-This has to be done with removal of 1 line in Buildroot sources, see diff of the change below::
+But please note due to use of glibc it's required to disable use of built-in Sun RPC, which as of today is force-enabled for external glibc-based toolchains.
+That's why ``BR2_TOOLCHAIN_EXTERNAL_INET_RPC=n`` is used too.
 
-    diff --git a/toolchain/toolchain-external/toolchain-external-custom/Config.in.options b/toolchain/toolchain-external/toolchain-external-custom/Config.in.options
-    index 992fd2c150..45dfacaff1 100644
-    --- a/toolchain/toolchain-external/toolchain-external-custom/Config.in.options
-    +++ b/toolchain/toolchain-external/toolchain-external-custom/Config.in.options
-    @@ -452,7 +452,6 @@ config BR2_TOOLCHAIN_EXTERNAL_HAS_SSP_STRONG
-    
-     config BR2_TOOLCHAIN_EXTERNAL_INET_RPC
-            bool "Toolchain has RPC support?"
-    -       default y if BR2_TOOLCHAIN_EXTERNAL_GLIBC
-            depends on !BR2_TOOLCHAIN_EXTERNAL_MUSL
-            select BR2_TOOLCHAIN_HAS_NATIVE_RPC
-            help
 
 Linux for ARC 770 processors
 ----------------------------
 
 Process of building kernel for ARC 770 is similar to what is for ARC HS. It is
-required only to change several option in Buildroot defconfig:
+required only to change several option in Buildroot defconfig: ``BR2_archs38``
+(replace by ``BR2_arc770d``), ``BR2_TOOLCHAIN_EXTERNAL_URL`` and ``BR2_LINUX_KERNEL_DEFCONFIG``.
+The resulting configuration file::
 
-  * ``BR2_archs38=y`` with ``BR2_arc770d=y``
-  * ``BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.09-rc1/arc_gnu_2021.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"``
-    with
-    ``BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.09-rc1/arc_gnu_2021.09-rc1_prebuilt_uclibc_le_arc700_linux_install.tar.gz"``
-  * ``BR2_LINUX_KERNEL_DEFCONFIG="haps_hs"`` with
-    ``BR2_LINUX_KERNEL_DEFCONFIG="nsim_700"``
+    BR2_arcle=y
+    BR2_arc770d=y
+    BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
+    BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_uclibc_le_arc700_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
+    BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
+    BR2_TOOLCHAIN_EXTERNAL_CXX=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
+    BR2_GCC_VERSION_12_X=y
+    BR2_LINUX_KERNEL=y
+    BR2_LINUX_KERNEL_DEFCONFIG="nsim_700"
+    BR2_LINUX_KERNEL_VMLINUX=y
+    BR2_TARGET_ROOTFS_INITRAMFS=y
 
-Then repeat steps from :ref`linux-building-label` section of this document to build
-Linux kernel image. To run this image in nSIM use next command::
+Then repeat steps from :ref:`linux-building-label` section of this document to build
+Linux kernel image.
 
-$ $NSIM_HOME/bin/nsimdrv -prop=nsim_isa_family=a700 -prop=nsim_isa_atomic_option=1 -prop=nsim_mmu=3 -prop=icache=32768,64,2,0 -prop=dcache=32768,64,4,0 -prop=nsim_isa_dpfp=none -prop=nsim_isa_shift_option=2 -prop=nsim_isa_swap_option=1 -prop=nsim_isa_bitscan_option=1 -prop=nsim_isa_sat=1 -prop=nsim_isa_mpy32=1 -prop=nsim_isa_enable_timer_0=1 -prop=nsim_isa_enable_timer_1=1 -prop=nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24 -prop=isa_counters=1 -prop=nsim_isa_pct_counters=8 -prop=nsim_isa_pct_size=48 output_hs/images/vmlinux
+Before running the image with nSIM create a file with properties ``arc700.props``::
+
+    nsim_fast=0
+    nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24
+    icache=32768,64,2,0
+    dcache=32768,64,4,0
+    nsim_mmu=3
+    nsim_isa_family=a700
+    nsim_isa_atomic_option=1
+    nsim_isa_dpfp=none
+    nsim_isa_shift_option=2
+    nsim_isa_swap_option=1
+    nsim_isa_bitscan_option=1
+    nsim_isa_sat=1
+    nsim_isa_mpy32=1
+    nsim_isa_enable_timer_0=1
+    nsim_isa_enable_timer_1=1
+    isa_counters=1
+    nsim_isa_pct_counters=8
+    nsim_isa_pct_size=48
+
+Then run the image:
+
+.. code-block:: shell
+
+    nsimdrv -propsfile arc700.props images/vmlinux
 
 
 Linux for ARC HS VDK
@@ -253,44 +308,45 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.09-rc1/arc_gnu_2021.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_1=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
-    BR2_GCC_VERSION_11_X=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
+    BR2_GCC_VERSION_12_X=y
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_DEFCONFIG="vdk_hs38_smp"
     BR2_LINUX_KERNEL_VMLINUX=y
     BR2_TARGET_ROOTFS_EXT2=y
 
 Save this defconfig to some file (for example ``vdk_defconfig``). Then use same
-process as in :ref:`linux-building-label` section.::
+process as in :ref:`linux-building-label` section:
 
-    $ mkdir output_vdk
-    $ cd buildroot
-    $ make O=`readlink -e ../output_vdk` defconfig DEFCONFIG=<path-to-VDK-defconfig-file>
-    $ cd ../output_vdk
-    $ make
+.. code-block:: shell
+
+    make -C .. O=`readlink -e .` defconfig DEFCONFIG=`readlink -e ./vdk_defconfig`
+    make
 
 ARC HS VDK already includes Linux kernel image and root file system image. To
-replace them with your newly generated files::
+replace them with your newly generated files:
 
-    $ cd <VDK-directory>/skins/ARC-Linux
-    $ mv rootfs.ARCv2.ext2{,.orig}
-    $ ln -s <path-to-Buildroot-output/images/rootfs.ext2 rootfs.ARCv2.ext2
-    $ mv ARCv2/vmlinux_smp{,.orig}
-    $ ln -s <path-to-Buildroot-output/images/vmlinux ARCv2/vmlinux_smp
+.. code-block:: shell
+
+    cd <VDK-directory>/skins/ARC-Linux
+    mv rootfs.ARCv2.ext2{,.orig}
+    ln -s <path-to-Buildroot-output/images/rootfs.ext2 rootfs.ARCv2.ext2
+    mv ARCv2/vmlinux_smp{,.orig}
+    ln -s <path-to-Buildroot-output/images/vmlinux ARCv2/vmlinux_smp
 
 Before running VDK if you wish to have a working networking connection on Linux
 for ARC system it is required to configure VDK VHub application. By default
 this application will pass all Ethernet packets to the VDK Ethernet model,
 however on busy networks that can be too much to handle in a model, therefore
 it is highly recommended to configure destination address filtering. Modify
-``VirtualAndRealWorldIO/VHub/vhub.conf``: : set ``DestMACFilterEnable`` to
+``VirtualAndRealWorldIO/VHub/vhub.conf``: set ``DestMACFilterEnable`` to
 ``true``, and append some random valid MAC address to the list of
 ``DestMACFilter``, or use one of the MAC address examples in the list. This
-guide will use D8:D3:85:CF:D5:CE - this address is already in the list. Note
+guide will use ``D8:D3:85:CF:D5:CE`` - this address is already in the list. Note
 that is has been observed that it is not possible to assign some addresses to
 Ethernet device model in VDK, instead of success there is an error "Cannot
 assign requested address".
@@ -300,14 +356,18 @@ connect to the Ethernet model from the host on which it runs on and vice versa.
 Therefore to use networking in target it is required to either have another
 host and communicate with it.
 
-Run VHub application as root::
+Run VHub application as ``root``:
 
-    # VirtualAndRealWorldIO/VHub/vhub -f VirtualAndRealWorldIO/VHub/vhub.conf
+.. code-block:: shell
 
-In another console launch VDK::
+    VirtualAndRealWorldIO/VHub/vhub -f VirtualAndRealWorldIO/VHub/vhub.conf
 
-    $ . setup.sh
-    $ ./skins/ARC-Linux/start_interactive.tcl
+In another console launch VDK:
+
+.. code-block:: shell
+
+    . setup.sh
+    ./skins/ARC-Linux/start_interactive.tcl
 
 After VDK will load, start simulation. After Linux kernel will boot, login into
 system via UART console: login ``root``, no password. By default networking is
@@ -339,12 +399,12 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2021.09-rc1/arc_gnu_2021.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_1=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
-    BR2_GCC_VERSION_11_X=y
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
+    BR2_GCC_VERSION_12_X=y
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_DEFCONFIG="axs103_smp"
     BR2_TARGET_ROOTFS_INITRAMFS=y
@@ -358,52 +418,88 @@ for more details on using u-boot with AXS103.
 Linux for ARC64
 --------------------
 
-Get Buildroot sources::
+Get Buildroot sources:
 
-    $ mkdir arc64-2021.09-linux-guide
-    $ cd arc64-2021.09-linux-guide
-    $ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
+.. code-block:: shell
+
+    git clone -b arc-2022.09-rc1 https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
+    mkdir buildroot/build
+    cd buildroot/build
 
 To build Linux and rootfs Buildroot should be configured. For the purpose of
 this guide, a custom "defconfig" file will be created and then will be used to
 configure Buildroot. Custom "defconfig" file can be located anywhere and have
-any name. For example it can be ``arc64-2021.09-linux-guide/arc64_defconfig``.
+any name. For example it can be ``buildroot/build/arc64_defconfig``.
 Contents of this file should be following::
 
     BR2_arcle=y
     BR2_arc64=y
-    BR2_TOOLCHAIN_BUILDROOT_GLIBC=y
-    BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_6=y
-    BR2_PACKAGE_LINUX_TOOLS_PERF=y
-    BR2_PACKAGE_ELFUTILS=y
+    # BR2_STRIP_strip is not set
+    BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_16=y
+    BR2_ROOTFS_POST_IMAGE_SCRIPT="board/synopsys/arc64/post-image.sh"
+    BR2_ROOTFS_POST_SCRIPT_ARGS="$(LINUX_DIR)"
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_CUSTOM_GIT=y
     BR2_LINUX_KERNEL_CUSTOM_REPO_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git"
     BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION="arc64"
     BR2_LINUX_KERNEL_DEFCONFIG="haps_arc64"
-    BR2_LINUX_KERNEL_VMLINUX=y
+    BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y
+    BR2_LINUX_KERNEL_IMAGE_TARGET_NAME="loader"
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc64-2021.09-rc1/arc_gnu_2021.09-rc1_prebuilt_arc64_glibc_linux_install.tar.gz"
-    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_6=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_arc64_glibc_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
-    BR2_GCC_VERSION_11_X=y
-    BR2_TARGET_ROOTFS_INITRAMFS=y  
+    BR2_TOOLCHAIN_EXTERNAL_INET_RPC=n
+    BR2_TOOLCHAIN_EXTERNAL_GCC_12
+    BR2_PACKAGE_LINUX_TOOLS_PERF=y
+    BR2_PACKAGE_ELFUTILS=y
+    BR2_TARGET_ROOTFS_INITRAMFS=y
 
-To build Linux kernel image using that defconfig::
+To build Linux kernel image using that defconfig:
 
-    $ mkdir output_arc64
-    $ cd buildroot
-    $ make O=`readlink -e ../output_arc64` defconfig DEFCONFIG=`readlink -e ../arc64_defconfig`
-    $ cd ../output_arc64
-    $ make
+.. code-block:: shell
 
-After that there will be Linux kernel image file:
-``arc64-2021.09-linux-guide/output_arc64/images``.
+    make -C .. O=`readlink -e .` defconfig DEFCONFIG=`readlink -e ./arc64_defconfig`
+    make
 
-It can be run with nSim:: 
+After that Linux kernel images will be in ``buildroot/build/images``: ``vmlinux`` and ``loader``.
+The ``loader`` image must be used for running with nSIM.
 
-    $ nsimdrv -prop=nsim_fast=0 -prop=nsim_isa_dual_issue_option=1 -prop=nsim_isa_has_hw_pf=1 -prop=nsim_isa_m128_option=1 -prop=nsim_isa_has_hw_pf=1 -prop=nsim_isa_vec64=1 -prop=nsim_isa_family=arc64 -prop=nsim_isa_enable_timer_0=1 -prop=nsim_isa_enable_timer_1=1 -prop=nsim_isa_addr_size=64 -prop=nsim_isa_pc_size=64 -prop=icache=16384,64,4,o -prop=dcache=16384,64,4,o -prop=mmu_version=16 -prop=mmu_pagesize=4096 -prop=mmu_address_space=48 -prop=nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24 -prop=nsim_isa_mpy_option=9 -prop=nsim_isa_mpy64=1 -prop=nsim_isa_div64_option=1 -prop=nsim_isa_div_rem_option=2 -prop=nsim_isa_atomic_option=1 -prop=nsim_isa_fpud_option=1 -prop=nsim_isa_fpus_option=1 ./vmlinux
+Before running the image with nSIM create a file with properties ``hs6x.props``::
+
+    nsim_fast=0
+    nsim_isa_dual_issue_option=1
+    nsim_isa_has_hw_pf=1
+    nsim_isa_m128_option=1
+    nsim_isa_has_hw_pf=1
+    nsim_isa_vec64=1
+    nsim_isa_family=arc64
+    nsim_isa_enable_timer_0=1
+    nsim_isa_enable_timer_1=1
+    nsim_isa_rtc_option=1
+    nsim_isa_addr_size=64
+    nsim_isa_pc_size=64
+    icache=16384,64,4,o
+    dcache=16384,64,4,o
+    mmu_version=16
+    mmu_pagesize=4096
+    mmu_address_space=48
+    nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24
+    nsim_isa_mpy_option=9
+    nsim_isa_mpy64=1
+    nsim_isa_div64_option=1
+    nsim_isa_div_rem_option=2
+    nsim_isa_atomic_option=1
+    nsim_isa_fpud_option=1
+    nsim_isa_fpus_option=1
+
+Then run the image:
+
+.. code-block:: shell
+
+    nsimdrv -propsfile hs6x.props images/loader

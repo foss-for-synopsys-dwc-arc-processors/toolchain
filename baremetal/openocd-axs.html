@@ -1,78 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Using OpenOCD with AXS SDP &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Using Ashling Opella-XD GDB server with AXS SDP" href="ashling-axs.html" />
     <link rel="prev" title="Using GNU Toolchain to Debug Applications on EM Starter Kit" href="em-starter-kit.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022.09
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Building baremetal applications</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html#debugging-baremetal-applications">Debugging baremetal applications</a><ul class="current">
@@ -122,75 +73,33 @@
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">GNU Toolchain for ARC User Manual</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">Building baremetal applications</a> &raquo;</li>
-        
-      <li>Using OpenOCD with AXS SDP</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Building baremetal applications</a></li>
+      <li class="breadcrumb-item active">Using OpenOCD with AXS SDP</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/baremetal/openocd-axs.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="using-openocd-with-axs-sdp">
-<span id="index-0"></span><h1>Using OpenOCD with AXS SDP<a class="headerlink" href="#using-openocd-with-axs-sdp" title="Permalink to this heading">¶</a></h1>
+<span id="index-0"></span><h1>Using OpenOCD with AXS SDP<a class="headerlink" href="#using-openocd-with-axs-sdp" title="Permalink to this heading"></a></h1>
 <p>Synopsys DesignWare ARC Software Development Platforms (SDP) is a family of
 standalone platforms that enable software development, debugging and profiling.
 More information can be found at <a class="reference external" href="https://www.synopsys.com/dw/ipdir.php?ds=arc-software-development-platform">Synopsys web-site</a>.</p>
@@ -209,7 +118,7 @@ for instructions to download, build and install it.</p>
 <li><p>Release 1.3: contains firmware for ARC HS47D CPU and ARC dualcore HS48 CPU</p></li>
 </ul>
 <section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading">¶</a></h2>
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
 <p>Binary toolchain releases can be downloaded from the <a class="reference external" href="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases">GNU Toolchain Releases
 page</a>.
 For Linux hosts there is a choice between complete tarballs that include
@@ -223,7 +132,7 @@ drivers, see <a class="reference internal" href="../ide/how-to-use-openocd-on-wi
 </div>
 </section>
 <section id="building-an-application">
-<span id="label-building-an-application-axs"></span><h2>Building an application<a class="headerlink" href="#building-an-application" title="Permalink to this heading">¶</a></h2>
+<span id="label-building-an-application-axs"></span><h2>Building an application<a class="headerlink" href="#building-an-application" title="Permalink to this heading"></a></h2>
 <p>To learn how to build and debug application with Eclipse IDE, please use
 <a class="reference internal" href="../ide/index.html"><span class="doc">ARC GNU IDE</span></a> manual.</p>
 <p>A memory map appropriate to the selected board should be used to link
@@ -240,7 +149,12 @@ $<span class="w"> </span>arc-elf32-gcc<span class="w"> </span>-Wl,-marcv2elfx<sp
 </pre></div>
 </div>
 <table class="docutils align-default" id="id1">
-<caption><span class="caption-text">List of compiler flags corresponding to particular CPUs</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<caption><span class="caption-text">List of compiler flags corresponding to particular CPUs</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 11%" />
+<col style="width: 81%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>AXS</p></th>
 <th class="head"><p>CPU</p></th>
@@ -282,7 +196,7 @@ $<span class="w"> </span>arc-elf32-gcc<span class="w"> </span>-Wl,-marcv2elfx<sp
 </table>
 </section>
 <section id="board-configuration">
-<span id="openocd-axs-board-configuration"></span><h2>Board configuration<a class="headerlink" href="#board-configuration" title="Permalink to this heading">¶</a></h2>
+<span id="openocd-axs-board-configuration"></span><h2>Board configuration<a class="headerlink" href="#board-configuration" title="Permalink to this heading"></a></h2>
 <p>First it is required to set jumpers and switches on the mainboard:</p>
 <ul class="simple">
 <li><p>PROG_M0 (JP1508), PROG_M1 (JP1401) and BS_EN (JP1507) jumpers should be
@@ -344,7 +258,7 @@ numbers should appear:</p>
 </ul>
 </section>
 <section id="running-openocd">
-<h2>Running OpenOCD<a class="headerlink" href="#running-openocd" title="Permalink to this heading">¶</a></h2>
+<h2>Running OpenOCD<a class="headerlink" href="#running-openocd" title="Permalink to this heading"></a></h2>
 <p>Run OpenOCD for the AXS101 platform:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>openocd<span class="w"> </span>-f<span class="w"> </span>board/snps_axs101.cfg
 </pre></div>
@@ -402,7 +316,7 @@ Therefore for AXS101 port assignment is following:</p>
 </ul>
 </section>
 <section id="running-gdb">
-<h2>Running GDB<a class="headerlink" href="#running-gdb" title="Permalink to this heading">¶</a></h2>
+<h2>Running GDB<a class="headerlink" href="#running-gdb" title="Permalink to this heading"></a></h2>
 <p>Run GDB:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>arc-elf32-gdb<span class="w"> </span>./application.to.debug
 </pre></div>
@@ -424,9 +338,9 @@ additional GDBs and connect to the required TCP ports. Cores are controlled
 independently from each other.</p>
 </section>
 <section id="advanced-topics">
-<h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Permalink to this heading">¶</a></h2>
+<h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Permalink to this heading"></a></h2>
 <section id="using-standalone-digilent-hs-debug-cable">
-<h3>Using standalone Digilent HS debug cable<a class="headerlink" href="#using-standalone-digilent-hs-debug-cable" title="Permalink to this heading">¶</a></h3>
+<h3>Using standalone Digilent HS debug cable<a class="headerlink" href="#using-standalone-digilent-hs-debug-cable" title="Permalink to this heading"></a></h3>
 <p>It is possible to use standalone Digilent HS1 or HS2 debug cable instead of the
 FT2232 chip embedded into the AXS10x mainboard. Follow AXS10x mainboard manual
 to learn how to connect Digilent cable to mainboard. In the nutshell:</p>
@@ -443,7 +357,7 @@ what is being used.</p>
 <p>Then restart OpenOCD.</p>
 </section>
 <section id="using-openocd-with-only-one-core-in-the-jtag-chain">
-<h3>Using OpenOCD with only one core in the JTAG chain<a class="headerlink" href="#using-openocd-with-only-one-core-in-the-jtag-chain" title="Permalink to this heading">¶</a></h3>
+<h3>Using OpenOCD with only one core in the JTAG chain<a class="headerlink" href="#using-openocd-with-only-one-core-in-the-jtag-chain" title="Permalink to this heading"></a></h3>
 <p>In AXS101 and AXS102 it is possible to reduce JTAG chain on the CPU card to
 a single core.</p>
 <p>Change positions of TSEL0/TSEL1 (on AXC001) or JP1200/JP1201 (on AXC002) to
@@ -477,7 +391,7 @@ port number. In case of AS221 TCP port 3333 is assigned to core 2, while port
 </section>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading">¶</a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
 <ul>
 <li><p><strong>OpenOCD prints “JTAG scan chain interrogation failed: all ones”, then there
 is a lot of messages “Warn : target is still running!”.</strong></p>
@@ -516,50 +430,33 @@ AXS101.</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="ashling-axs.html" class="btn btn-neutral float-right" title="Using Ashling Opella-XD GDB server with AXS SDP" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="em-starter-kit.html" class="btn btn-neutral float-left" title="Using GNU Toolchain to Debug Applications on EM Starter Kit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ashling-axs.html" class="btn btn-neutral float-right" title="Using Ashling Opella-XD GDB server with AXS SDP" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2016-2022, Synopsys.
-
-    </p>
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

@@ -1,78 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>GCC’s support for ARC custom extensions &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Impact of 64-bit integral operation on GCC toolchain" href="64bit.html" />
     <link rel="prev" title="Custom instructions: what and how" href="custom-instructions.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022.09
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
@@ -124,82 +75,40 @@
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">GNU Toolchain for ARC User Manual</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">GCC documentation</a> &raquo;</li>
-        
-      <li>GCC’s support for ARC custom extensions</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">GCC documentation</a></li>
+      <li class="breadcrumb-item active">GCC’s support for ARC custom extensions</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/gcc/extensions-support.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="gcc-s-support-for-arc-custom-extensions">
-<h1>GCC’s support for ARC custom extensions<a class="headerlink" href="#gcc-s-support-for-arc-custom-extensions" title="Permalink to this heading">¶</a></h1>
+<h1>GCC’s support for ARC custom extensions<a class="headerlink" href="#gcc-s-support-for-arc-custom-extensions" title="Permalink to this heading"></a></h1>
 <p>The ARC extension instructions are supported by GNU toolchain by the GNU
 assembler. These extension instructions are not macros; the assembler creates
 encodings for use of these instructions according to the specification by the
 user. To use them at the C-level, we need to make use of inline assembly
 facility provided by GNU compiler.</p>
 <section id="using-inline-functions">
-<h2>Using inline functions<a class="headerlink" href="#using-inline-functions" title="Permalink to this heading">¶</a></h2>
+<h2>Using inline functions<a class="headerlink" href="#using-inline-functions" title="Permalink to this heading"></a></h2>
 <p>In a header file, define a macro to build a two operand custom instruction:</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define intrinsic_2OP(NAME, MOP, SOP)                 \</span>
 <span class="cp">    &quot;.extInstruction &quot; NAME &quot;,&quot; #MOP &quot;,&quot;              \</span>
@@ -269,7 +178,7 @@ facility provided by GNU compiler.</p>
 </div>
 </section>
 <section id="using-a-global-asm-helper-file-containing-the-definition-of-the-custom-instructions">
-<h2>Using a global asm helper file containing the definition of the custom instructions<a class="headerlink" href="#using-a-global-asm-helper-file-containing-the-definition-of-the-custom-instructions" title="Permalink to this heading">¶</a></h2>
+<h2>Using a global asm helper file containing the definition of the custom instructions<a class="headerlink" href="#using-a-global-asm-helper-file-containing-the-definition-of-the-custom-instructions" title="Permalink to this heading"></a></h2>
 <p>Define the new assembly instruction in the global assembly helper file (e.g.,
 mycustom.s):</p>
 <div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="na">.extInstruction</span><span class="w"> </span><span class="no">chk_pkt</span><span class="p">,</span><span class="w"> </span><span class="mi">0x07</span><span class="p">,</span><span class="w"> </span><span class="mi">0x01</span><span class="p">,</span><span class="w"> </span><span class="no">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="no">SYNTAX_2OP</span>
@@ -290,7 +199,7 @@ mycustom.s):</p>
 <p>Compile,assemble and link it like this (order is important):</p>
 </section>
 <section id="using-only-defines-at-the-c-source-level">
-<h2>Using only defines at the C source level<a class="headerlink" href="#using-only-defines-at-the-c-source-level" title="Permalink to this heading">¶</a></h2>
+<h2>Using only defines at the C source level<a class="headerlink" href="#using-only-defines-at-the-c-source-level" title="Permalink to this heading"></a></h2>
 <p>In a header file, define a macro to build a two operand custom instruction:</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define intrinsic_2OP(NAME, MOP, SOP)                     \</span>
 <span class="cp">    &quot;.extInstruction &quot; NAME &quot;,&quot; #MOP &quot;,&quot;                  \</span>
@@ -344,7 +253,7 @@ mov/lr/sr/aex instructions for example).  We can also define extension core
 registers using “.extCoreRegister” assembly directive.</p>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases">GNU assembler manual from our release: Arc Machine Directives</a></p></li>
 <li><p><a class="reference external" href="http://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html">GCC -Inline assembly -Howto</a></p></li>
@@ -354,50 +263,33 @@ registers using “.extCoreRegister” assembly directive.</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="64bit.html" class="btn btn-neutral float-right" title="Impact of 64-bit integral operation on GCC toolchain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="custom-instructions.html" class="btn btn-neutral float-left" title="Custom instructions: what and how" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="64bit.html" class="btn btn-neutral float-right" title="Impact of 64-bit integral operation on GCC toolchain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2016-2022, Synopsys.
-
-    </p>
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

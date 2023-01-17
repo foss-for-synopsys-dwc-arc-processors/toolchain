@@ -1,78 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Custom instructions: what and how &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="GCC’s support for ARC custom extensions" href="extensions-support.html" />
     <link rel="prev" title="GCC documentation" href="index.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022.09
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
@@ -121,75 +72,33 @@
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">GNU Toolchain for ARC User Manual</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">GCC documentation</a> &raquo;</li>
-        
-      <li>Custom instructions: what and how</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">GCC documentation</a></li>
+      <li class="breadcrumb-item active">Custom instructions: what and how</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/gcc/custom-instructions.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="custom-instructions-what-and-how">
-<h1>Custom instructions: what and how<a class="headerlink" href="#custom-instructions-what-and-how" title="Permalink to this heading">¶</a></h1>
+<h1>Custom instructions: what and how<a class="headerlink" href="#custom-instructions-what-and-how" title="Permalink to this heading"></a></h1>
 <p>ARC architecture allows users to specify extension instructions. These extension
 instructions are not macros; the assembler creates encodings for use of these
 instructions according to the specification by the user.</p>
@@ -273,9 +182,9 @@ implied immediate destination operand which does not appear in the syntax. In
 fact this is actually an 3-operand encoded instruction!</p></li>
 </ul>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <section id="example-1">
-<h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this heading">¶</a></h3>
+<h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this heading"></a></h3>
 <div class="highlight-nasm notranslate"><div class="highlight"><pre><span></span><span class="nf">.extInstruction</span><span class="w"> </span><span class="nv">insn1</span><span class="p">,</span><span class="w"> </span><span class="mh">0x07</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2d</span><span class="p">,</span><span class="w"> </span><span class="nv">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="nv">SYNTAX_3OP</span><span class="o">|</span><span class="nv">OP1_MUST_BE_IMM</span>
 </pre></div>
 </div>
@@ -288,7 +197,7 @@ fact this is actually an 3-operand encoded instruction!</p></li>
 </div>
 </section>
 <section id="example-2">
-<h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this heading">¶</a></h3>
+<h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this heading"></a></h3>
 <div class="highlight-nasm notranslate"><div class="highlight"><pre><span></span><span class="nf">.extInstruction</span><span class="w"> </span><span class="nv">insn2</span><span class="p">,</span><span class="w"> </span><span class="mh">0x07</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2d</span><span class="p">,</span><span class="w"> </span><span class="nv">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="nv">SYNTAX_2OP</span><span class="o">|</span><span class="nv">OP1_IMM_IMPLIED</span>
 </pre></div>
 </div>
@@ -306,7 +215,7 @@ SubOpcode1: 0x00-0x2E, 0x30-0x3F)</p>
 </div>
 </section>
 <section id="example-3">
-<h3>Example 3<a class="headerlink" href="#example-3" title="Permalink to this heading">¶</a></h3>
+<h3>Example 3<a class="headerlink" href="#example-3" title="Permalink to this heading"></a></h3>
 <div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="na">.extInstruction</span><span class="w"> </span><span class="no">insn1</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0x21</span><span class="p">,</span><span class="w"> </span><span class="no">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="no">SYNTAX_3OP</span>
 <span class="na">.extInstruction</span><span class="w"> </span><span class="no">insn2</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0x21</span><span class="p">,</span><span class="w"> </span><span class="no">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="no">SYNTAX_2OP</span>
 <span class="na">.extInstruction</span><span class="w"> </span><span class="no">insn3</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0x21</span><span class="p">,</span><span class="w"> </span><span class="no">SUFFIX_NONE</span><span class="p">,</span><span class="w"> </span><span class="no">SYNTAX_1OP</span>
@@ -335,50 +244,33 @@ SubOpcode1: 0x00-0x2E, 0x30-0x3F)</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="extensions-support.html" class="btn btn-neutral float-right" title="GCC’s support for ARC custom extensions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="GCC documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="extensions-support.html" class="btn btn-neutral float-right" title="GCC’s support for ARC custom extensions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2016-2022, Synopsys.
-
-    </p>
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

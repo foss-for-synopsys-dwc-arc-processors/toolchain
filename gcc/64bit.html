@@ -1,78 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Impact of 64-bit integral operation on GCC toolchain &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Using JLI Instructions with GNU" href="jli.html" />
     <link rel="prev" title="GCC’s support for ARC custom extensions" href="extensions-support.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022.09
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
@@ -123,80 +74,43 @@
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">GNU Toolchain for ARC User Manual</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">GCC documentation</a> &raquo;</li>
-        
-      <li>Impact of 64-bit integral operation on GCC toolchain</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">GCC documentation</a></li>
+      <li class="breadcrumb-item active">Impact of 64-bit integral operation on GCC toolchain</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/gcc/64bit.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="impact-of-64-bit-integral-operation-on-gcc-toolchain">
-<h1>Impact of 64-bit integral operation on GCC toolchain<a class="headerlink" href="#impact-of-64-bit-integral-operation-on-gcc-toolchain" title="Permalink to this heading">¶</a></h1>
+<h1>Impact of 64-bit integral operation on GCC toolchain<a class="headerlink" href="#impact-of-64-bit-integral-operation-on-gcc-toolchain" title="Permalink to this heading"></a></h1>
 <section id="intro">
-<h2>Intro<a class="headerlink" href="#intro" title="Permalink to this heading">¶</a></h2>
+<h2>Intro<a class="headerlink" href="#intro" title="Permalink to this heading"></a></h2>
 <p>Some of the new 64 bit integral operations made available for ARCv2HS can be
 used to map the C-type long long. These are:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 20%" />
+<col style="width: 57%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Operations</p></th>
 <th class="head"><p>Hardware option</p></th>
@@ -232,7 +146,7 @@ used to map the C-type long long. These are:</p>
 </table>
 </section>
 <section id="bit-move-operations">
-<h2>64-bit move operations<a class="headerlink" href="#bit-move-operations" title="Permalink to this heading">¶</a></h2>
+<h2>64-bit move operations<a class="headerlink" href="#bit-move-operations" title="Permalink to this heading"></a></h2>
 <p>First step in efficiently supporting the long long data type is implementing an
 efficient way to move the 64 bit data type in and out register file as well as
 within register file.  The LL64_OPTION provides us with the means for fast
@@ -259,7 +173,7 @@ following instruction:</p>
 A,limm,u6 encoding.</p>
 </section>
 <section id="multiplication-instructions">
-<h2>Multiplication Instructions<a class="headerlink" href="#multiplication-instructions" title="Permalink to this heading">¶</a></h2>
+<h2>Multiplication Instructions<a class="headerlink" href="#multiplication-instructions" title="Permalink to this heading"></a></h2>
 <p>The implementation of multiplication instructions depends on the multiplier
 option used. A special care should be taken for chained operation when
 MPY_OPTION is either 5 or 6. In these configurations, the multiplier is
@@ -273,7 +187,7 @@ having a smaller impact on memory size than previous used solution. Please
 remark that the MPYD/MPYDU clobbers also the 64-bit accumulator register
 (ACCH,ACCL).</p>
 <section id="multiply-and-accumulate-instructions">
-<h3>Multiply and Accumulate instructions<a class="headerlink" href="#multiply-and-accumulate-instructions" title="Permalink to this heading">¶</a></h3>
+<h3>Multiply and Accumulate instructions<a class="headerlink" href="#multiply-and-accumulate-instructions" title="Permalink to this heading"></a></h3>
 <p>The ISAv2, provides a number of MAC operations.  These are MAC/MACU for
 MPY_OPTION equals to 7, and additionally MACD/MACDU when using MPY_OPTION eight
 or more. The latter ones are interesting as they place the 64 bit result in a
@@ -283,6 +197,12 @@ register pair. All the MAC operations are using the 64-bit accumulator register
 collecting the result from the accumulator and place it into a general purpose
 register. Hence,</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Used instructions</p></th>
 <th class="head"><p>Single MAC (instructions)</p></th>
@@ -315,7 +235,7 @@ register. Hence,</p>
 </table>
 </section>
 <section id="caveats">
-<h3>Caveats<a class="headerlink" href="#caveats" title="Permalink to this heading">¶</a></h3>
+<h3>Caveats<a class="headerlink" href="#caveats" title="Permalink to this heading"></a></h3>
 <p>Having the implicit 64-bit accumulator as destination for MPYD/MPYDU operations
 complicate the generated code when we have an anti-dependency with a MAC
 operation on the accumulator register.</p>
@@ -325,7 +245,7 @@ example, between mac operations exist an output/anti-dependency). In this case,
 it is faster to use an implementation with ADD/MPYD operations.</p>
 </section>
 <section id="case-study">
-<h3>Case study<a class="headerlink" href="#case-study" title="Permalink to this heading">¶</a></h3>
+<h3>Case study<a class="headerlink" href="#case-study" title="Permalink to this heading"></a></h3>
 <p>Let us consider the following C-program:</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="nf">foo</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="p">)</span>
 <span class="p">{</span>
@@ -335,6 +255,10 @@ it is faster to use an implementation with ADD/MPYD operations.</p>
 </pre></div>
 </div>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 63%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Implementation</p></th>
 <th class="head"><p>Resulted Code (estimated)</p></th>
@@ -386,10 +310,21 @@ it is faster to use an implementation with ADD/MPYD operations.</p>
 </table>
 </section>
 <section id="implementation-matrix-used-by-gcc">
-<h3>Implementation matrix used by GCC<a class="headerlink" href="#implementation-matrix-used-by-gcc" title="Permalink to this heading">¶</a></h3>
+<h3>Implementation matrix used by GCC<a class="headerlink" href="#implementation-matrix-used-by-gcc" title="Permalink to this heading"></a></h3>
 <p>Due to the accumulator caveats, I propose the following implementation matrix
 for MAC ops:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>MPY_OPTION</p></th>
 <th class="head"><p>2</p></th>
@@ -451,50 +386,33 @@ for MAC ops:</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="jli.html" class="btn btn-neutral float-right" title="Using JLI Instructions with GNU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="extensions-support.html" class="btn btn-neutral float-left" title="GCC’s support for ARC custom extensions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jli.html" class="btn btn-neutral float-right" title="Using JLI Instructions with GNU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2016-2022, Synopsys.
-
-    </p>
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

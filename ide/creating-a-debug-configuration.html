@@ -1,78 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Creating a Debug Configuration &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Debugging with OpenOCD" href="debugging-with-openocd.html" />
     <link rel="prev" title="Using Debug Perspective" href="using-debug-perspective.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022.09
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
@@ -126,77 +77,35 @@
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">GNU Toolchain for ARC User Manual</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">ARC GNU IDE</a> &raquo;</li>
-        
-      <li>Creating a Debug Configuration</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ARC GNU IDE</a></li>
+      <li class="breadcrumb-item active">Creating a Debug Configuration</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/ide/creating-a-debug-configuration.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="creating-a-debug-configuration">
-<span id="id1"></span><h1>Creating a Debug Configuration<a class="headerlink" href="#creating-a-debug-configuration" title="Permalink to this heading">¶</a></h1>
+<span id="id1"></span><h1>Creating a Debug Configuration<a class="headerlink" href="#creating-a-debug-configuration" title="Permalink to this heading"></a></h1>
 <section id="creating-a-new-debug-configuration">
-<h2>Creating a new debug configuration<a class="headerlink" href="#creating-a-new-debug-configuration" title="Permalink to this heading">¶</a></h2>
+<h2>Creating a new debug configuration<a class="headerlink" href="#creating-a-new-debug-configuration" title="Permalink to this heading"></a></h2>
 <p>Once the C Project is successfully compiled by ARC GCC, you can debug the
 resulting executable on a board or using nSIM.</p>
 <p>To debug the project, create a new debug configuration.</p>
@@ -205,7 +114,7 @@ the down arrow next to the bug icon:</p>
 <figure class="align-default" id="id3">
 <img alt="../_images/debug_configurations.png" src="../_images/debug_configurations.png" />
 <figcaption>
-<p><span class="caption-text">Debug Configurations</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Debug Configurations</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>2. Double click on the <strong>ARC C/C++ Application</strong>  or click on the top left icon
@@ -213,7 +122,7 @@ to create a new debug configuration for the project:</p>
 <figure class="align-default" id="id4">
 <img alt="../_images/arc_debug_configurations.png" src="../_images/arc_debug_configurations.png" />
 <figcaption>
-<p><span class="caption-text">ARC Embedded Debug Configurations</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">ARC Embedded Debug Configurations</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>3. Select a name for the new debug configuration (by default, it equals the
@@ -221,7 +130,7 @@ project name followed by “Debug”).</p>
 <figure class="align-default" id="id5">
 <img alt="../_images/debug_configuration.png" src="../_images/debug_configuration.png" />
 <figcaption>
-<p><span class="caption-text">New debug Configuration</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">New debug Configuration</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <ol class="arabic simple" start="4">
@@ -230,7 +139,7 @@ project name followed by “Debug”).</p>
 <figure class="align-default" id="id6">
 <img alt="../_images/debugger_tab_default.jpg" src="../_images/debugger_tab_default.jpg" />
 <figcaption>
-<p><span class="caption-text">Default values in the Debugger tab for JTAG via OpenOCD</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Default values in the Debugger tab for JTAG via OpenOCD</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>Here you can select a GDB server you want to use. About different GDB servers
@@ -254,13 +163,13 @@ the necessary fields become visible.</p>
 </div>
 </section>
 <section id="setting-a-com-port">
-<span id="id2"></span><h2>Setting a COM port<a class="headerlink" href="#setting-a-com-port" title="Permalink to this heading">¶</a></h2>
+<span id="id2"></span><h2>Setting a COM port<a class="headerlink" href="#setting-a-com-port" title="Permalink to this heading"></a></h2>
 <p>If you are debugging an application on a board you need to specify a COM port
 to connect to. Open the <strong>Terminal</strong> tab.</p>
 <figure class="align-default" id="id7">
 <img alt="../_images/com_port.png" src="../_images/com_port.png" />
 <figcaption>
-<p><span class="caption-text">Terminal Tab</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Terminal Tab</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>The <strong>COM Ports</strong> picklist shows the value for Digilent
@@ -270,12 +179,12 @@ Printers as shown in below.</p>
 <figure class="align-default" id="id8">
 <img alt="../_images/serial_port_window.png" src="../_images/serial_port_window.png" />
 <figcaption>
-<p><span class="caption-text">Digilent USB Serial COM Port</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Digilent USB Serial COM Port</span><a class="headerlink" href="#id8" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 </section>
 <section id="starting-a-debug-session">
-<h2>Starting a debug session<a class="headerlink" href="#starting-a-debug-session" title="Permalink to this heading">¶</a></h2>
+<h2>Starting a debug session<a class="headerlink" href="#starting-a-debug-session" title="Permalink to this heading"></a></h2>
 <ol class="arabic">
 <li><p>Click the <strong>Debug</strong> button in the <strong>Debug configurations</strong> dialog or <strong>Debug</strong>
 button of IDE to initiate debug session.</p>
@@ -290,50 +199,33 @@ and connects to your board.</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="debugging-with-openocd.html" class="btn btn-neutral float-right" title="Debugging with OpenOCD" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="using-debug-perspective.html" class="btn btn-neutral float-left" title="Using Debug Perspective" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="debugging-with-openocd.html" class="btn btn-neutral float-right" title="Debugging with OpenOCD" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2016-2022, Synopsys.
-
-    </p>
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
