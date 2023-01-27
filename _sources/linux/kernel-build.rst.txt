@@ -421,7 +421,7 @@ Get Buildroot sources:
 
 .. code-block:: shell
 
-    git clone -b arc-2022.09-rc2 https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
+    git clone -b arc-2022.09 https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
     mkdir buildroot/build
     cd buildroot/build
 
@@ -500,7 +500,7 @@ Get Buildroot sources:
 
 .. code-block:: shell
 
-    git clone -b arc-2022.09-rc2 https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
+    git clone -b arc-2022.09 https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
     mkdir buildroot/build
     cd buildroot/build
 
