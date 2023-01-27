@@ -85,7 +85,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc2/arc_gnu_2022.09-rc2_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -218,7 +218,7 @@ differences::
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc2/arc_gnu_2022.09-rc2_prebuilt_glibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -247,7 +247,7 @@ The resulting configuration file::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_uclibc_le_arc700_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc2/arc_gnu_2022.09-rc2_prebuilt_uclibc_le_arc700_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -308,7 +308,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc2/arc_gnu_2022.09-rc2_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -399,7 +399,7 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc2/arc_gnu_2022.09-rc2_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -414,15 +414,93 @@ This defconfig will create a uImage file instead of vmlinux. Please refer to
 <https://github.com/foss-for-synopsys-dwc-arc-processors/linux/wiki/Getting-Started-with-Linux-on-ARC-AXS103-Software-Development-Platform-(SDP)>`_
 for more details on using u-boot with AXS103.
 
-
-Linux for ARC64
+Linux for ARC HS58
 --------------------
 
 Get Buildroot sources:
 
 .. code-block:: shell
 
-    git clone -b arc-2022.09-rc1 https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
+    git clone -b arc-2022.09-rc2 https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
+    mkdir buildroot/build
+    cd buildroot/build
+
+To build Linux and rootfs Buildroot should be configured. For the purpose of
+this guide, a custom "defconfig" file will be created and then will be used to
+configure Buildroot. Custom "defconfig" file can be located anywhere and have
+any name. For example it can be ``buildroot/build/arc32_defconfig``.
+Contents of this file should be following::
+
+    BR2_arcle=y
+    BR2_arc32=y
+    # BR2_STRIP_strip is not set
+    BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_16=y
+    BR2_LINUX_KERNEL=y
+    BR2_LINUX_KERNEL_CUSTOM_GIT=y
+    BR2_LINUX_KERNEL_CUSTOM_REPO_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git"
+    BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION="arc64"
+    BR2_LINUX_KERNEL_DEFCONFIG="haps_hs5x"
+    BR2_LINUX_KERNEL_VMLINUX=y
+    BR2_TOOLCHAIN_EXTERNAL=y
+    BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
+    BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc2/arc_gnu_2022.09-rc2_prebuilt_arc32_uclibc_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
+    BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
+    BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
+    BR2_TOOLCHAIN_EXTERNAL_CXX=y
+    BR2_TOOLCHAIN_EXTERNAL_INET_RPC=n
+    BR2_TOOLCHAIN_EXTERNAL_GCC_12
+    BR2_PACKAGE_LINUX_TOOLS_PERF=y
+    BR2_TARGET_ROOTFS_INITRAMFS=y
+
+To build Linux kernel image using that defconfig:
+
+.. code-block:: shell
+
+    make -C .. O=`readlink -e .` defconfig DEFCONFIG=`readlink -e ./arc32_defconfig`
+    make
+
+After that Linux kernel the image ``vmlinux`` will be in ``buildroot/build/images``.
+
+Before running the image with nSIM create a file with properties ``hs5x.props``::
+
+    nsim_fast=0
+    nsim_isa_family=av3hs
+    nsim_isa_dc_hw_prefetch=1
+    nsim_isa_dual_issue_option=1
+    nsim_isa_atomic_option=1
+    nsim_isa_m128_option=0
+    nsim_isa_ll64_option=1
+    nsim_isa_mpy_option=9
+    nsim_isa_div_rem_option=2
+    nsim_isa_enable_timer_0=1
+    nsim_isa_enable_timer_1=1
+    nsim_isa_rtc_option=1
+    icache=16384,64,4
+    dcache=16384,64,2
+    mmu_version=16
+    mmu_pagesize=4096
+    mmu_address_space=32
+    nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24
+    nsim_isa_number_of_interrupts=32
+    nsim_isa_number_of_external_interrupts=32
+
+Then run the image:
+
+.. code-block:: shell
+
+    nsimdrv -propsfile hs5x.props images/vmlinux
+
+
+Linux for ARC HS68
+--------------------
+
+Get Buildroot sources:
+
+.. code-block:: shell
+
+    git clone -b arc-2022.09-rc2 https://github.com/foss-for-synopsys-dwc-arc-processors/buildroot
     mkdir buildroot/build
     cd buildroot/build
 
@@ -449,7 +527,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc1/arc_gnu_2022.09-rc1_prebuilt_arc64_glibc_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2022.09-rc2/arc_gnu_2022.09-rc2_prebuilt_arc64_glibc_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
