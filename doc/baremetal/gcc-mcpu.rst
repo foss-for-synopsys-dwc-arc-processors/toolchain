@@ -1,7 +1,32 @@
 .. index:: mcpu, compiler
 
-Understanding GCC -mcpu option
-==============================
+ARC Toolchain Variants
+======================
+
+The GCC toolchain has support for three ARC CPU families, namely
+
+* ARCompact (i.e., ARCv1) CPU family made of ARC6xx, and ARC7xx processors;
+* ARCv2 CPU family made of ARCEM, and ARCHS procesors;
+* ARCv3 CPU family made of ARC32:HS5x, and ARC64:HS6x processors.
+
+Most of the above processors are 32bit RISC processors. Notable
+exception is ARC64:HS6x processors which is a 64bit RISC machine.
+
+The next table depicts which GCC driver should be used depending on
+ARC CPU family.
+
+.. table:: ARC's GCC driver/triplet name
+
+   ======= =============== =========================================
+   Family  Driver/Triplet  Observations
+   ======= =============== =========================================
+   ARCv1   arc-elf32-gcc   Specific CPU selected by ``-mcpu`` option
+   ARCv2   arc-elf32-gcc   Likewise
+   ARCv3   arc64-elf-gcc   Works for both 32b or 64b variants
+   ======= =============== =========================================
+
+ARCv1 and ARCv2 Toolchain
+-------------------------
 
 The GCC option ``-mcpu=`` for ARC does not only designate the ARC CPU family
 (ARC EM, HS, 600 or 700), but also enables the corresponding set of optional
@@ -26,7 +51,7 @@ configuration.
 
 
 ARC EM
-------
+^^^^^^
 
 The following table summarize what options are set by each of the possible
 ``-mcpu`` values for ARC EM.
@@ -96,7 +121,7 @@ updated as support for more options get added to the GNU toolchain.
 
 
 ARC HS
-------
+^^^^^^
 
 The following table summarize what options are set by each of the possible ``-mcpu``
 values for ARC HS.
@@ -140,7 +165,7 @@ added to the GNU toolchain.
 
 
 ARC 600 and ARC 700
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 The following table summarize what options are set by each of the possible ``-mcpu``
 values for ARC 600 and ARC 700.
@@ -160,5 +185,63 @@ values for ARC 600 and ARC 700.
      arc601_mul64        Y                                  -mmul64
     arc601_mul32x16      Y                                 -mmul32x16
    ================= ======== ======== ================== ============
+
+
+ARCv3 Toolchain
+---------------
+
+The next ``-mcpu`` options are recognized by the ARC64 GCC compiler.
+
+.. table:: -mcpu variants for ARCv3
+
+   ======== ======== ======== ========
+    -mcpu    -msimd   -m128    -mll64
+   ======== ======== ======== ========
+   hs5x       Y       N.A.      N
+   hs58       Y       N.A.      Y
+   hs6x       Y       N         N.A.
+   hs68       Y       Y         N.A.
+   ======== ======== ======== ========
+
+In baremetal, we provide a number of pre-build multilib libraries. These are:
+
+.. table:: Multilib configurations
+
+   =========== ============================================================
+   Option       Observations
+   =========== ============================================================
+   -mfpu=fpus  Single precision floating point, wide configuration on.
+   -mfpu=fpud  Single/Double precision FP, wide configuration on.
+   -m128       Using 128b load/store instructions. Alias for ``-mcpu=hs68``
+   -mcpu=hs5x  For HS5x CPU processors class.
+   -mcpu=hs58  For HS58 CPU processors class.
+   =========== ============================================================
+
+Controlling the memory model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. table:: Memory models
+
+   ========= ================================
+   -mcmodel   Memory size for Data/Code
+   ========= ================================
+   small      1MB region.
+   medium     4GB region. Used by ``-fpic``
+   large      Full memory. Used by ``-fPIC``
+   ========= ================================
+
+Other tweaking options
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. table:: Tweak options
+
+   ======== ===================================================
+   Options  Good for ...
+   ======== ===================================================
+   -mfpmov  Reduces the pressure on GPRs by using FPRs for
+            inline memory operations.
+   -mbrcc   Generate BRcc instructions early on. Good for size.
+   -mbbit   Likewise but for BBITx instructions.
+   ======== ===================================================
 
 .. vim: sts=3 sw=3 ts=3 tw=100:
