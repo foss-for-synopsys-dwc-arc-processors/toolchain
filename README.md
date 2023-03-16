@@ -243,7 +243,7 @@ There're muliple ways to get MinGW installed:
 
 Please note, due to recent changes in Crosstool-NG it's required to
 do a tiny change in its configuration to escape a problem of
-missing `libwinpthread-1.dll`, see https://github.com/crosstool-ng/crosstool-ng/issues/1869
+missing `libwinpthread-1.dll`, see Crosstool-NG [issue #1869](https://github.com/crosstool-ng/crosstool-ng/issues/1869)
 for more details. And required change consists of removal of `CT_THREADS_POSIX` option,
 i.e. in Crosstools-NG's `menuconfig` deselect it.
 
