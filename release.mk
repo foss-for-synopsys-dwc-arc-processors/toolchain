@@ -331,7 +331,7 @@ JRE_LINUX_TGZ := OpenJDK11-jre_x64_linux_openj9_$(JAVA_VERSION).tar.gz
 JRE_WIN_ZIP := OpenJDK11-jre_x64_windows_openj9_$(JAVA_VERSION).zip
 
 # IDE: output related variables
-IDE_VERSION := master
+IDE_VERSION := abrodkin-cdt-archive
 IDE_LINUX_INSTALL := arc_gnu_$(RELEASE)_ide_$(HOST)_install
 IDE_MACOS_INSTALL := arc_gnu_$(RELEASE)_ide_macos_install
 IDE_WIN_EXE := arc_gnu_$(RELEASE)_ide_win_install.exe
