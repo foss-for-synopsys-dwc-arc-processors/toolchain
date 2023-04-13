@@ -13,6 +13,7 @@
 
    baremetal/index
    linux/index
+   ebpf/index
    other/index
    ide/index
    gcc/index
