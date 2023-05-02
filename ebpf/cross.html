@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cross-compiling eBPF Programs &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Building Linux Image for Working with eBPF in QEMU" href="env.html" />
+    <link rel="prev" title="eBPF" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          </a>
+              <div class="version">
+                2022.09
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">eBPF</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Cross-compiling eBPF Programs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-ebpf-programs-natively-e-g-x86-host-and-target">Building eBPF Programs Natively (e.g. x86 host and target)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-ebpf-programs-and-their-dependencies-for-arc">Building eBPF Programs and Their Dependencies for ARC</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#building-zlib">Building zlib</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-libelf">Building libelf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-libbpf">Building libbpf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generate-vmlinux-h-from-your-vmlinux-image">Generate <code class="docutils literal notranslate"><span class="pre">vmlinux.h</span></code> from your <code class="docutils literal notranslate"><span class="pre">vmlinux</span></code> image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#overview-of-tools-sysroot">Overview of <code class="docutils literal notranslate"><span class="pre">/tools/sysroot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-ebpf-program">Building eBPF Program</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#using-ebpf-testbench-for-arc">Using eBPF Testbench for ARC</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="env.html">Building Linux Image for Working with eBPF in QEMU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clang.html">Building Clang with eBPF Target for ARC HS Hosts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">eBPF</a></li>
+      <li class="breadcrumb-item active">Cross-compiling eBPF Programs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/ebpf/cross.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cross-compiling-ebpf-programs">
+<h1>Cross-compiling eBPF Programs<a class="headerlink" href="#cross-compiling-ebpf-programs" title="Permalink to this heading"></a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#building-ebpf-programs-natively-e-g-x86-host-and-target" id="id1">Building eBPF Programs Natively (e.g. x86 host and target)</a></p></li>
+<li><p><a class="reference internal" href="#building-ebpf-programs-and-their-dependencies-for-arc" id="id2">Building eBPF Programs and Their Dependencies for ARC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#building-zlib" id="id3">Building zlib</a></p></li>
+<li><p><a class="reference internal" href="#building-libelf" id="id4">Building libelf</a></p></li>
+<li><p><a class="reference internal" href="#building-libbpf" id="id5">Building libbpf</a></p></li>
+<li><p><a class="reference internal" href="#generate-vmlinux-h-from-your-vmlinux-image" id="id6">Generate <code class="docutils literal notranslate"><span class="pre">vmlinux.h</span></code> from your <code class="docutils literal notranslate"><span class="pre">vmlinux</span></code> image</a></p></li>
+<li><p><a class="reference internal" href="#overview-of-tools-sysroot" id="id7">Overview of <code class="docutils literal notranslate"><span class="pre">/tools/sysroot</span></code></a></p></li>
+<li><p><a class="reference internal" href="#building-ebpf-program" id="id8">Building eBPF Program</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#using-ebpf-testbench-for-arc" id="id9">Using eBPF Testbench for ARC</a></p></li>
+</ul>
+</div>
+<p>There are several ways of building eBPF applications for Linux. The main and
+most straightforward way consists of these steps:</p>
+<ol class="arabic simple">
+<li><p>Build the eBPF part using Clang (it’s a regular Object in ELF format).</p></li>
+<li><p>Generate a special C file named “skeleton” which contains an entire blob
+for the eBPF part and the functions for loading it using <code class="docutils literal notranslate"><span class="pre">libbpf</span></code>.</p></li>
+<li><p>Write a C program which uses these functions for opening the eBPF
+application, loading it into the kernel and attaching it to events.</p></li>
+<li><p>Build your C program using GCC toolchain and run on your target.</p></li>
+</ol>
+<section id="building-ebpf-programs-natively-e-g-x86-host-and-target">
+<h2><a class="toc-backref" href="#id1">Building eBPF Programs Natively (e.g. x86 host and target)</a><a class="headerlink" href="#building-ebpf-programs-natively-e-g-x86-host-and-target" title="Permalink to this heading"></a></h2>
+<p>Consider the <code class="docutils literal notranslate"><span class="pre">minimal</span></code> program from <code class="docutils literal notranslate"><span class="pre">libbpf-bootstrap</span></code>
+<a class="reference external" href="https://github.com/libbpf/libbpf-bootstrap">repository</a>. It consists of
+<a class="reference external" href="https://github.com/libbpf/libbpf-bootstrap/tree/master/examples/c">2 files</a>:
+<code class="docutils literal notranslate"><span class="pre">minimal.c</span></code> and <code class="docutils literal notranslate"><span class="pre">minimal.bpf.c</span></code>. Ensure that <code class="docutils literal notranslate"><span class="pre">libbpf</span></code> and the
+corresponding development files are installed (e.g., for Fedora you need to
+install <code class="docutils literal notranslate"><span class="pre">libbpf</span></code> and <code class="docutils literal notranslate"><span class="pre">libbpf-devel</span></code> packages). Also, a recent version of
+<code class="docutils literal notranslate"><span class="pre">bpftool</span></code> utility must be installed. Then you can build the program using
+these commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Replace -D__TARGET_ARCH_x86 to an appropriate one for your platform</span>
+clang<span class="w"> </span>-g<span class="w">                  </span><span class="se">\</span>
+<span class="w">      </span>-O2<span class="w">                 </span><span class="se">\</span>
+<span class="w">      </span>-Wall<span class="w">               </span><span class="se">\</span>
+<span class="w">      </span>-target<span class="w"> </span>bpf<span class="w">         </span><span class="se">\</span>
+<span class="w">      </span>-D__TARGET_ARCH_x86<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>-c<span class="w"> </span>minimal.bpf.c<span class="w">    </span><span class="se">\</span>
+<span class="w">      </span>-o<span class="w"> </span>minimal.bpf.o
+
+bpftool<span class="w"> </span>gen<span class="w"> </span>skeleton<span class="w"> </span>minimal.bpf.o<span class="w"> </span>&gt;<span class="w"> </span>minimal.skel.h
+
+gcc<span class="w"> </span>minimal.c<span class="w"> </span>-lbpf<span class="w">       </span><span class="se">\</span>
+<span class="w">              </span>-lelf<span class="w">       </span><span class="se">\</span>
+<span class="w">              </span>-lz<span class="w">         </span><span class="se">\</span>
+<span class="w">              </span>-o<span class="w"> </span>minimal
+</pre></div>
+</div>
+<p>Then you can run this program with <code class="docutils literal notranslate"><span class="pre">root</span></code> privileges:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># The 2 commands below are a one-time setup. Run them with root privileges.</span>
+mount<span class="w"> </span>-t<span class="w"> </span>debugfs<span class="w"> </span>debugfs<span class="w"> </span>/sys/kernel/debug
+sysctl<span class="w"> </span>net.core.bpf_jit_enable<span class="o">=</span><span class="m">1</span><span class="w">           </span><span class="c1"># Keep 0, if you don&#39;t want JIT.</span>
+
+$<span class="w"> </span>sudo<span class="w"> </span>./minimal
+<span class="o">[</span>sudo<span class="o">]</span><span class="w"> </span>password<span class="w"> </span><span class="k">for</span><span class="w"> </span>user:
+libbpf:<span class="w"> </span>loading<span class="w"> </span>object<span class="w"> </span><span class="s1">&#39;minimal_bpf&#39;</span><span class="w"> </span>from<span class="w"> </span>buffer
+libbpf:<span class="w"> </span>elf:<span class="w"> </span>section<span class="o">(</span><span class="m">3</span><span class="o">)</span><span class="w"> </span>tp/syscalls/sys_enter_write,<span class="w"> </span>size<span class="w"> </span><span class="m">104</span>,<span class="w"> </span>link<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">6</span>,<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="m">1</span>
+libbpf:<span class="w"> </span>sec<span class="w"> </span><span class="s1">&#39;tp/syscalls/sys_enter_write&#39;</span>:<span class="w"> </span>found<span class="w"> </span>program<span class="w"> </span><span class="s1">&#39;handle_tp&#39;</span><span class="w"> </span>at<span class="w"> </span>insn<span class="w"> </span>offset<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>bytes<span class="o">)</span>,<span class="w"> </span>code<span class="w"> </span>size<span class="w"> </span><span class="m">13</span><span class="w"> </span>insns<span class="w"> </span><span class="o">(</span><span class="m">104</span><span class="w"> </span>bytes<span class="o">)</span>
+libbpf:<span class="w"> </span>elf:<span class="w"> </span>section<span class="o">(</span><span class="m">4</span><span class="o">)</span><span class="w"> </span>.reltp/syscalls/sys_enter_write,<span class="w"> </span>size<span class="w"> </span><span class="m">32</span>,<span class="w"> </span>link<span class="w"> </span><span class="m">22</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">40</span>,<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="m">9</span>
+libbpf:<span class="w"> </span>elf:<span class="w"> </span>section<span class="o">(</span><span class="m">5</span><span class="o">)</span><span class="w"> </span>license,<span class="w"> </span>size<span class="w"> </span><span class="m">13</span>,<span class="w"> </span>link<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">3</span>,<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="m">1</span>
+libbpf:<span class="w"> </span>license<span class="w"> </span>of<span class="w"> </span>minimal_bpf<span class="w"> </span>is<span class="w"> </span>Dual<span class="w"> </span>BSD/GPL
+libbpf:<span class="w"> </span>elf:<span class="w"> </span>section<span class="o">(</span><span class="m">6</span><span class="o">)</span><span class="w"> </span>.bss,<span class="w"> </span>size<span class="w"> </span><span class="m">4</span>,<span class="w"> </span>link<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">3</span>,<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="m">8</span>
+libbpf:<span class="w"> </span>elf:<span class="w"> </span>section<span class="o">(</span><span class="m">7</span><span class="o">)</span><span class="w"> </span>.rodata,<span class="w"> </span>size<span class="w"> </span><span class="m">28</span>,<span class="w"> </span>link<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">2</span>,<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="m">1</span>
+libbpf:<span class="w"> </span>elf:<span class="w"> </span>section<span class="o">(</span><span class="m">13</span><span class="o">)</span><span class="w"> </span>.BTF,<span class="w"> </span>size<span class="w"> </span><span class="m">609</span>,<span class="w"> </span>link<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">0</span>,<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="m">1</span>
+libbpf:<span class="w"> </span>elf:<span class="w"> </span>section<span class="o">(</span><span class="m">15</span><span class="o">)</span><span class="w"> </span>.BTF.ext,<span class="w"> </span>size<span class="w"> </span><span class="m">160</span>,<span class="w"> </span>link<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">0</span>,<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="m">1</span>
+libbpf:<span class="w"> </span>elf:<span class="w"> </span>section<span class="o">(</span><span class="m">22</span><span class="o">)</span><span class="w"> </span>.symtab,<span class="w"> </span>size<span class="w"> </span><span class="m">336</span>,<span class="w"> </span>link<span class="w"> </span><span class="m">1</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">0</span>,<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="m">2</span>
+libbpf:<span class="w"> </span>looking<span class="w"> </span><span class="k">for</span><span class="w"> </span>externs<span class="w"> </span>among<span class="w"> </span><span class="m">14</span><span class="w"> </span>symbols...
+libbpf:<span class="w"> </span>collected<span class="w"> </span><span class="m">0</span><span class="w"> </span>externs<span class="w"> </span>total
+libbpf:<span class="w"> </span>map<span class="w"> </span><span class="s1">&#39;minimal_.bss&#39;</span><span class="w"> </span><span class="o">(</span>global<span class="w"> </span>data<span class="o">)</span>:<span class="w"> </span>at<span class="w"> </span>sec_idx<span class="w"> </span><span class="m">6</span>,<span class="w"> </span>offset<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">400</span>.
+libbpf:<span class="w"> </span>map<span class="w"> </span><span class="m">0</span><span class="w"> </span>is<span class="w"> </span><span class="s2">&quot;minimal_.bss&quot;</span>
+libbpf:<span class="w"> </span>map<span class="w"> </span><span class="s1">&#39;minimal_.rodata&#39;</span><span class="w"> </span><span class="o">(</span>global<span class="w"> </span>data<span class="o">)</span>:<span class="w"> </span>at<span class="w"> </span>sec_idx<span class="w"> </span><span class="m">7</span>,<span class="w"> </span>offset<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>flags<span class="w"> </span><span class="m">480</span>.
+libbpf:<span class="w"> </span>map<span class="w"> </span><span class="m">1</span><span class="w"> </span>is<span class="w"> </span><span class="s2">&quot;minimal_.rodata&quot;</span>
+libbpf:<span class="w"> </span>sec<span class="w"> </span><span class="s1">&#39;.reltp/syscalls/sys_enter_write&#39;</span>:<span class="w"> </span>collecting<span class="w"> </span>relocation<span class="w"> </span><span class="k">for</span><span class="w"> </span>section<span class="o">(</span><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s1">&#39;tp/syscalls/sys_enter_write&#39;</span>
+libbpf:<span class="w"> </span>sec<span class="w"> </span><span class="s1">&#39;.reltp/syscalls/sys_enter_write&#39;</span>:<span class="w"> </span>relo<span class="w"> </span><span class="c1">#0: insn #2 against &#39;my_pid&#39;</span>
+libbpf:<span class="w"> </span>prog<span class="w"> </span><span class="s1">&#39;handle_tp&#39;</span>:<span class="w"> </span>found<span class="w"> </span>data<span class="w"> </span>map<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">(</span>minimal_.bss,<span class="w"> </span>sec<span class="w"> </span><span class="m">6</span>,<span class="w"> </span>off<span class="w"> </span><span class="m">0</span><span class="o">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>insn<span class="w"> </span><span class="m">2</span>
+libbpf:<span class="w"> </span>sec<span class="w"> </span><span class="s1">&#39;.reltp/syscalls/sys_enter_write&#39;</span>:<span class="w"> </span>relo<span class="w"> </span><span class="c1">#1: insn #6 against &#39;.rodata&#39;</span>
+libbpf:<span class="w"> </span>prog<span class="w"> </span><span class="s1">&#39;handle_tp&#39;</span>:<span class="w"> </span>found<span class="w"> </span>data<span class="w"> </span>map<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">(</span>minimal_.rodata,<span class="w"> </span>sec<span class="w"> </span><span class="m">7</span>,<span class="w"> </span>off<span class="w"> </span><span class="m">0</span><span class="o">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>insn<span class="w"> </span><span class="m">6</span>
+libbpf:<span class="w"> </span>map<span class="w"> </span><span class="s1">&#39;minimal_.bss&#39;</span>:<span class="w"> </span>created<span class="w"> </span>successfully,<span class="w"> </span><span class="nv">fd</span><span class="o">=</span><span class="m">4</span>
+libbpf:<span class="w"> </span>map<span class="w"> </span><span class="s1">&#39;minimal_.rodata&#39;</span>:<span class="w"> </span>created<span class="w"> </span>successfully,<span class="w"> </span><span class="nv">fd</span><span class="o">=</span><span class="m">5</span>
+Successfully<span class="w"> </span>started!<span class="w"> </span>Please<span class="w"> </span>run<span class="w"> </span><span class="sb">`</span>sudo<span class="w"> </span>cat<span class="w"> </span>/sys/kernel/debug/tracing/trace_pipe<span class="sb">`</span><span class="w"> </span>to<span class="w"> </span>see<span class="w"> </span>output<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>BPF<span class="w"> </span>programs.
+</pre></div>
+</div>
+<p>Some examples from <code class="docutils literal notranslate"><span class="pre">libbpf-bootstrap</span></code> use <code class="docutils literal notranslate"><span class="pre">vmlinux.h</span></code> - It’s a header file
+with the definitions of all the data structures for that particular kernel. The
+easiest way to obtain it on the host system is by using <code class="docutils literal notranslate"><span class="pre">bpftool</span></code>, if the
+kernel was built with <code class="docutils literal notranslate"><span class="pre">CONFIG_DEBUG_INFO_BTF=y</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bpftool<span class="w"> </span>--debug<span class="w"> </span>btf<span class="w"> </span>dump<span class="w"> </span>file<span class="w"> </span>/sys/kernel/btf/vmlinux<span class="w"> </span>format<span class="w"> </span>c<span class="w"> </span>&gt;<span class="w"> </span>vmlinux.h
+</pre></div>
+</div>
+<p>Else, you can generate <code class="docutils literal notranslate"><span class="pre">vmlinux.h</span></code> from any <code class="docutils literal notranslate"><span class="pre">vmlinux</span></code> image with BTF
+information:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bpftool<span class="w"> </span>--debug<span class="w"> </span>btf<span class="w"> </span>dump<span class="w"> </span>file<span class="w"> </span>path/to/your/vmlinux<span class="w"> </span>format<span class="w"> </span>c<span class="w"> </span>&gt;<span class="w"> </span>vmlinux.h
+</pre></div>
+</div>
+</section>
+<section id="building-ebpf-programs-and-their-dependencies-for-arc">
+<h2><a class="toc-backref" href="#id2">Building eBPF Programs and Their Dependencies for ARC</a><a class="headerlink" href="#building-ebpf-programs-and-their-dependencies-for-arc" title="Permalink to this heading"></a></h2>
+<p>Suppose that the root directory of the toolchain for ARC HS 4x is
+<code class="docutils literal notranslate"><span class="pre">/tools/arc-linux-gnu</span></code>.  <code class="docutils literal notranslate"><span class="pre">/tools/arc-linux-gnu/bin</span></code> must be in <code class="docutils literal notranslate"><span class="pre">PATH</span></code>
+variable. <code class="docutils literal notranslate"><span class="pre">bpftool</span></code> must be available too.</p>
+<p>Create a directory for ARC’s libraries and includes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>/tools/sysroot
+</pre></div>
+</div>
+<p>Export common variables:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">&quot;-Og -g3 -fPIC&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CXXFLAGS</span><span class="o">=</span><span class="s2">&quot;-Og -g3 -fPIC&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CPPFLAGS</span><span class="o">=</span><span class="s2">&quot;-I/tools/sysroot/include&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">LDFLAGS</span><span class="o">=</span><span class="s2">&quot;-L/tools/sysroot/lib&quot;</span>
+</pre></div>
+</div>
+<p>We are going to use the latest releases of libraries at the moment of writing
+of this manual instead of development branches.</p>
+<section id="building-zlib">
+<h3><a class="toc-backref" href="#id3">Building zlib</a><a class="headerlink" href="#building-zlib" title="Permalink to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>v1.2.13<span class="w"> </span>https://github.com/madler/zlib
+<span class="nb">cd</span><span class="w"> </span>zlib
+
+./configure<span class="w"> </span><span class="nv">CHOST</span><span class="o">=</span><span class="s2">&quot;arc-linux-gnu&quot;</span><span class="w"> </span>--static<span class="w"> </span>--prefix<span class="o">=</span><span class="s2">&quot;/tools/sysroot&quot;</span>
+
+make<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+<section id="building-libelf">
+<h3><a class="toc-backref" href="#id4">Building libelf</a><a class="headerlink" href="#building-libelf" title="Permalink to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>elfutils-0.189<span class="w"> </span>https://sourceware.org/git/elfutils.git
+<span class="nb">cd</span><span class="w"> </span>elfutils
+autoreconf<span class="w"> </span>-i<span class="w"> </span>-f
+
+./configure<span class="w"> </span>--host<span class="o">=</span>arc-linux-gnu<span class="w">          </span><span class="se">\</span>
+<span class="w">            </span>--target<span class="o">=</span>arc-linux-gnu<span class="w">        </span><span class="se">\</span>
+<span class="w">            </span>--disable-dependency-tracking<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>--disable-nls<span class="w">                 </span><span class="se">\</span>
+<span class="w">            </span>--program-prefix<span class="o">=</span><span class="s2">&quot;eu-&quot;</span><span class="w">        </span><span class="se">\</span>
+<span class="w">            </span>--disable-libdebuginfod<span class="w">       </span><span class="se">\</span>
+<span class="w">            </span>--disable-debuginfod<span class="w">          </span><span class="se">\</span>
+<span class="w">            </span>--without-bzlib<span class="w">               </span><span class="se">\</span>
+<span class="w">            </span>--without-lzma<span class="w">                </span><span class="se">\</span>
+<span class="w">            </span>--without-zstd<span class="w">                </span><span class="se">\</span>
+<span class="w">            </span>--prefix<span class="o">=</span><span class="s2">&quot;/tools/sysroot&quot;</span><span class="w">     </span><span class="se">\</span>
+<span class="w">            </span>--enable-maintainer-mode
+
+make<span class="w"> </span>-C<span class="w"> </span>libelf<span class="w"> </span>install-includeHEADERS<span class="w"> </span>install-libLIBRARIES
+</pre></div>
+</div>
+</section>
+<section id="building-libbpf">
+<h3><a class="toc-backref" href="#id5">Building libbpf</a><a class="headerlink" href="#building-libbpf" title="Permalink to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>v1.1.0<span class="w"> </span>https://github.com/libbpf/libbpf
+<span class="nb">cd</span><span class="w"> </span>libbpf/src
+
+make<span class="w"> </span><span class="nv">BUILD_STATIC_ONLY</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="w">          </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">PREFIX</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="w">                     </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">DESTDIR</span><span class="o">=</span><span class="s2">&quot;/tools/sysroot&quot;</span><span class="w">       </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">CROSS_COMPILE</span><span class="o">=</span><span class="s2">&quot;arc-linux-gnu-&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>install<span class="w"> </span>install_uapi_headers
+</pre></div>
+</div>
+</section>
+<section id="generate-vmlinux-h-from-your-vmlinux-image">
+<h3><a class="toc-backref" href="#id6">Generate <code class="docutils literal notranslate"><span class="pre">vmlinux.h</span></code> from your <code class="docutils literal notranslate"><span class="pre">vmlinux</span></code> image</a><a class="headerlink" href="#generate-vmlinux-h-from-your-vmlinux-image" title="Permalink to this heading"></a></h3>
+<p>Make sure that you have a recent version of bpftool (≥7).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bpftool<span class="w"> </span>--debug<span class="w"> </span>btf<span class="w"> </span>dump<span class="w"> </span>file<span class="w"> </span>path/to/your/vmlinux<span class="w"> </span>format<span class="w"> </span>c<span class="w"> </span>&gt;<span class="w"> </span>/tools/sysroot/include/vmlinux.h
+</pre></div>
+</div>
+</section>
+<section id="overview-of-tools-sysroot">
+<h3><a class="toc-backref" href="#id7">Overview of <code class="docutils literal notranslate"><span class="pre">/tools/sysroot</span></code></a><a class="headerlink" href="#overview-of-tools-sysroot" title="Permalink to this heading"></a></h3>
+<p>After building and installing all libraries <code class="docutils literal notranslate"><span class="pre">/tools/sysroot</span></code> should look like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ tree -L 3 /tools/sysroot
+/tools/sysroot
+|-- include
+|   |-- bpf
+|   |   |-- bpf_core_read.h
+|   |   |-- bpf_endian.h
+|   |   |-- bpf.h
+|   |   |-- bpf_helper_defs.h
+|   |   |-- bpf_helpers.h
+|   |   |-- bpf_tracing.h
+|   |   |-- btf.h
+|   |   |-- libbpf_common.h
+|   |   |-- libbpf.h
+|   |   |-- libbpf_legacy.h
+|   |   |-- libbpf_version.h
+|   |   |-- skel_internal.h
+|   |   `-- usdt.bpf.h
+|   |-- gelf.h
+|   |-- libelf.h
+|   |-- linux
+|   |   |-- bpf.h
+|   |   |-- bpf_common.h
+|   |   `-- btf.h
+|   |-- nlist.h
+|   |-- zconf.h
+|   `-- zlib.h
+|-- lib
+|   |-- libbpf.a
+|   |-- libelf.a
+|   |-- libz.a
+|   `-- pkgconfig
+|       |-- libbpf.pc
+|       `-- zlib.pc
+`-- share
+    `-- man
+        `-- man3
+
+9 directories, 26 files
+</pre></div>
+</div>
+</section>
+<section id="building-ebpf-program">
+<h3><a class="toc-backref" href="#id8">Building eBPF Program</a><a class="headerlink" href="#building-ebpf-program" title="Permalink to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># The paths where the native ARC tools and the cross ARC toolchain are installed</span>
+<span class="nb">readonly</span><span class="w"> </span><span class="nv">NATIVE_SYSROOT</span><span class="o">=</span>/tools/sysroot
+<span class="nb">readonly</span><span class="w"> </span><span class="nv">TOOLCHAIN_SYSROOT</span><span class="o">=</span>/tools/arc-linux-gnu/sysroot
+
+<span class="c1"># Clang uses host&#39;s Linux headers if we don&#39;t pass toolchain&#39;s includes.</span>
+<span class="c1"># Also, the -XClang arguments below are optional.</span>
+clang<span class="w"> </span>-g<span class="w">                                 </span><span class="se">\</span>
+<span class="w">      </span>-O2<span class="w">                                </span><span class="se">\</span>
+<span class="w">      </span>-Wall<span class="w">                              </span><span class="se">\</span>
+<span class="w">      </span>-target<span class="w"> </span>bpf<span class="w">                        </span><span class="se">\</span>
+<span class="w">      </span>-D__TARGET_ARCH_arc<span class="w">                </span><span class="se">\</span>
+<span class="w">      </span>-I<span class="si">${</span><span class="nv">NATIVE_SYSROOT</span><span class="si">}</span>/usr/include<span class="w">    </span><span class="se">\</span>
+<span class="w">      </span>-I<span class="si">${</span><span class="nv">TOOLCHAIN_SYSROOT</span><span class="si">}</span>/usr/include<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>-Xclang<span class="w"> </span>-target-feature<span class="w">            </span><span class="se">\</span>
+<span class="w">      </span>-Xclang<span class="w"> </span>+alu32<span class="w">                     </span><span class="se">\</span>
+<span class="w">      </span>-c<span class="w"> </span>minimal.bpf.c<span class="w">                   </span><span class="se">\</span>
+<span class="w">      </span>-o<span class="w"> </span>minimal.bpf.o
+
+<span class="c1"># bpftool must be a recent version (≥7)</span>
+bpftool<span class="w"> </span>gen<span class="w"> </span>skeleton<span class="w"> </span>minimal.bpf.o<span class="w"> </span>&gt;<span class="w"> </span>minimal.skel.h
+
+<span class="c1"># shared library build (-latomic is listed for future reference)</span>
+arc-linux-gcc<span class="w"> </span>minimal.c<span class="w">                       </span><span class="se">\</span>
+<span class="w">              </span>-I<span class="si">${</span><span class="nv">NATIVE_SYSROOT</span><span class="si">}</span>/usr/include<span class="w"> </span><span class="se">\</span>
+<span class="w">              </span>-L<span class="si">${</span><span class="nv">NATIVE_SYSROOT</span><span class="si">}</span>/usr/lib<span class="w">     </span><span class="se">\</span>
+<span class="w">              </span>-lbpf<span class="w">                           </span><span class="se">\</span>
+<span class="w">              </span>-lelf<span class="w">                           </span><span class="se">\</span>
+<span class="w">              </span>-lz<span class="w">                             </span><span class="se">\</span>
+<span class="w">              </span>-latomic<span class="w">                        </span><span class="se">\</span>
+<span class="w">              </span>-o<span class="w"> </span>minimal
+
+<span class="c1"># static build (-latomic is listed for future reference)</span>
+arc-linux-gcc<span class="w"> </span>minimal.c<span class="w">                          </span><span class="se">\</span>
+<span class="w">              </span>-I<span class="si">${</span><span class="nv">SYSROOT</span><span class="si">}</span>/usr/include<span class="w">           </span><span class="se">\</span>
+<span class="w">              </span><span class="si">${</span><span class="nv">NATIVE_SYSROOT</span><span class="si">}</span>/usr/lib/libbpf.a<span class="w"> </span><span class="se">\</span>
+<span class="w">              </span><span class="si">${</span><span class="nv">NATIVE_SYSROOT</span><span class="si">}</span>/usr/lib/libelf.a<span class="w"> </span><span class="se">\</span>
+<span class="w">              </span><span class="si">${</span><span class="nv">NATIVE_SYSROOT</span><span class="si">}</span>/usr/lib/libz.a<span class="w">   </span><span class="se">\</span>
+<span class="w">              </span>-latomic<span class="w">                           </span><span class="se">\</span>
+<span class="w">              </span>-o<span class="w"> </span>minimal
+</pre></div>
+</div>
+</section>
+</section>
+<section id="using-ebpf-testbench-for-arc">
+<h2><a class="toc-backref" href="#id9">Using eBPF Testbench for ARC</a><a class="headerlink" href="#using-ebpf-testbench-for-arc" title="Permalink to this heading"></a></h2>
+<p>You can use a testbench which automates all the above steps for building
+eBPF programs for ARC:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/foss-for-synopsys-dwc-arc-processors/arc-bpf-testbench">https://github.com/foss-for-synopsys-dwc-arc-processors/arc-bpf-testbench</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="eBPF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="env.html" class="btn btn-neutral float-right" title="Building Linux Image for Working with eBPF in QEMU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

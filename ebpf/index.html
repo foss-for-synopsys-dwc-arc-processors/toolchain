@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Information for Toolchain maintainers &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  <title>eBPF &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
@@ -21,8 +21,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Creating toolchain release" href="release.html" />
-    <link rel="prev" title="Understanding compiler options" href="../gcc/optimizations.html" /> 
+    <link rel="next" title="Cross-compiling eBPF Programs" href="cross.html" />
+    <link rel="prev" title="Using KGDB to debug Linux" href="../linux/kgdb.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,15 +47,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ebpf/index.html">eBPF</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">eBPF</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cross.html">Cross-compiling eBPF Programs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html">Building Linux Image for Working with eBPF in QEMU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clang.html">Building Clang with eBPF Target for ARC HS Hosts</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Information for Toolchain maintainers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="release.html">Creating toolchain release</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manual-build.html">How to Build GNU Toolchain for ARC Manually</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
 </ul>
@@ -74,9 +75,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">Information for Toolchain maintainers</li>
+      <li class="breadcrumb-item active">eBPF</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/maintainer/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/ebpf/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -84,28 +85,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="information-for-toolchain-maintainers">
-<h1>Information for Toolchain maintainers<a class="headerlink" href="#information-for-toolchain-maintainers" title="Permalink to this heading"></a></h1>
+  <section id="ebpf">
+<h1>eBPF<a class="headerlink" href="#ebpf" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="release.html">Creating toolchain release</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="release.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release.html#building-prerequisites">Building prerequisites</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="release.html#eclipse-plugin-for-arc">Eclipse plugin for ARC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross.html">Cross-compiling eBPF Programs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cross.html#building-ebpf-programs-natively-e-g-x86-host-and-target">Building eBPF Programs Natively (e.g. x86 host and target)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cross.html#building-ebpf-programs-and-their-dependencies-for-arc">Building eBPF Programs and Their Dependencies for ARC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cross.html#using-ebpf-testbench-for-arc">Using eBPF Testbench for ARC</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="release.html#environment-variables">Environment variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release.html#make-targets">Make targets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release.html#invocation">Invocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="env.html">Building Linux Image for Working with eBPF in QEMU</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="env.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html#preparing-linux-host">Preparing Linux Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html#preparing-tools-and-libraries">Preparing Tools and Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html#preparing-building-environment">Preparing Building Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html#building-images">Building Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html#workarounds-for-well-known-pitfalls">Workarounds for Well Known Pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html#running-linux-image-using-qemu">Running Linux Image Using QEMU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html#building-and-running-ebpf-programs">Building and Running eBPF Programs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html#using-nfs-for-building-ebpf-programs-right-on-the-target">Using NFS for Building eBPF Programs Right on the Target</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="manual-build.html">How to Build GNU Toolchain for ARC Manually</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="manual-build.html#baremetal-elf32-toolchain">Baremetal (elf32) toolchain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manual-build.html#linux-toolchain">Linux toolchain</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="manual-build.html#uclibc-toolchain">uClibc toolchain</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual-build.html#glibc-toolchain">Glibc toolchain</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="clang.html">Building Clang with eBPF Target for ARC HS Hosts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="clang.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clang.html#notes-for-centos-7">Notes for CentOS 7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clang.html#notes-for-ubuntu-18-04">Notes for Ubuntu 18.04</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clang.html#building-clang-toolchain-for-host">Building Clang Toolchain for Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clang.html#building-native-clang-toolchain-for-arc">Building Native Clang Toolchain for ARC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clang.html#resources">Resources</a></li>
 </ul>
 </li>
 </ul>
@@ -116,8 +124,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../gcc/optimizations.html" class="btn btn-neutral float-left" title="Understanding compiler options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="release.html" class="btn btn-neutral float-right" title="Creating toolchain release" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../linux/kgdb.html" class="btn btn-neutral float-left" title="Using KGDB to debug Linux" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cross.html" class="btn btn-neutral float-right" title="Cross-compiling eBPF Programs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

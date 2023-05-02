@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building Clang with eBPF Target for ARC HS Hosts &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Other" href="../other/index.html" />
+    <link rel="prev" title="Building Linux Image for Working with eBPF in QEMU" href="env.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
+          </a>
+              <div class="version">
+                2022.09
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html">Building baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baremetal/index.html#debugging-baremetal-applications">Debugging baremetal applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">eBPF</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cross.html">Cross-compiling eBPF Programs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env.html">Building Linux Image for Working with eBPF in QEMU</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Building Clang with eBPF Target for ARC HS Hosts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preface">Preface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#notes-for-centos-7">Notes for CentOS 7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#notes-for-ubuntu-18-04">Notes for Ubuntu 18.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-clang-toolchain-for-host">Building Clang Toolchain for Host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-native-clang-toolchain-for-arc">Building Native Clang Toolchain for ARC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ide/index.html">ARC GNU IDE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcc/index.html">GCC documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintainer/index.html">Information for Toolchain maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man-pages.html">GNU man pages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GNU Toolchain for ARC User Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">eBPF</a></li>
+      <li class="breadcrumb-item active">Building Clang with eBPF Target for ARC HS Hosts</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/ebpf/clang.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="building-clang-with-ebpf-target-for-arc-hs-hosts">
+<span id="ebpf-clang"></span><h1>Building Clang with eBPF Target for ARC HS Hosts<a class="headerlink" href="#building-clang-with-ebpf-target-for-arc-hs-hosts" title="Permalink to this heading"></a></h1>
+<section id="preface">
+<h2>Preface<a class="headerlink" href="#preface" title="Permalink to this heading"></a></h2>
+<p>If you want to build eBPF programs right on the target, then
+you need to properly build Clang for ARC. There is no need for
+all possible targets, so we are going to build Clang with
+support of eBPF target only.</p>
+</section>
+<section id="notes-for-centos-7">
+<h2>Notes for CentOS 7<a class="headerlink" href="#notes-for-centos-7" title="Permalink to this heading"></a></h2>
+<p>It’s necessary to install the latest available development tools for CentOS 7
+to make it possible to build <code class="docutils literal notranslate"><span class="pre">clang</span></code>. Use <code class="docutils literal notranslate"><span class="pre">centos-release-scl</span></code> repository
+to install the latest tools and enable them:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>centos-release-scl
+sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>devtoolset-9
+scl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>devtoolset-9<span class="w"> </span>bash
+</pre></div>
+</div>
+<p>Also <code class="docutils literal notranslate"><span class="pre">llvm</span></code> build system requires new CMake. Install <code class="docutils literal notranslate"><span class="pre">cmake3</span></code> packages
+and use it instead of <code class="docutils literal notranslate"><span class="pre">cmake</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>cmake3
+</pre></div>
+</div>
+</section>
+<section id="notes-for-ubuntu-18-04">
+<h2>Notes for Ubuntu 18.04<a class="headerlink" href="#notes-for-ubuntu-18-04" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">llvm</span></code> build system requires new CMake. To install it on Ubuntu 18.04
+you can use <code class="docutils literal notranslate"><span class="pre">cmake</span></code> package provided by CMake’s team:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://apt.kitware.com">https://apt.kitware.com</a></p></li>
+</ul>
+</section>
+<section id="building-clang-toolchain-for-host">
+<h2>Building Clang Toolchain for Host<a class="headerlink" href="#building-clang-toolchain-for-host" title="Permalink to this heading"></a></h2>
+<p>Prepare sources:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/llvm/llvm-project.git
+mkdir<span class="w"> </span>llvm-project/build
+<span class="nb">cd</span><span class="w"> </span>llvm-project/build
+</pre></div>
+</div>
+<p>Prepare build system using CMake:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>/tools/clang-bpf<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_ENABLE_PROJECTS<span class="o">=</span>clang<span class="w">            </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_TARGETS_TO_BUILD<span class="o">=</span>BPF<span class="w">             </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_INCLUDE_BENCHMARKS<span class="o">=</span>OFF<span class="w">           </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_ENABLE_PIC<span class="o">=</span>ON<span class="w">                    </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_ENABLE_WARNINGS<span class="o">=</span>OFF<span class="w">              </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_ENABLE_ZLIB<span class="o">=</span>OFF<span class="w">                  </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_INCLUDE_EXAMPLES<span class="o">=</span>OFF<span class="w">             </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_INCLUDE_TESTS<span class="o">=</span>OFF<span class="w">                </span><span class="se">\</span>
+<span class="w">      </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w">              </span><span class="se">\</span>
+<span class="w">      </span>-G<span class="w"> </span><span class="s2">&quot;Unix Makefiles&quot;</span><span class="w">                     </span><span class="se">\</span>
+<span class="w">      </span>../llvm
+</pre></div>
+</div>
+<p>Build and install to <code class="docutils literal notranslate"><span class="pre">/tools/clang-bpf</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>-j<span class="w"> </span><span class="k">$(</span>nproc<span class="k">)</span>
+make<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+<section id="building-native-clang-toolchain-for-arc">
+<h2>Building Native Clang Toolchain for ARC<a class="headerlink" href="#building-native-clang-toolchain-for-arc" title="Permalink to this heading"></a></h2>
+<p>Prepare sources:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/llvm/llvm-project.git
+mkdir<span class="w"> </span>llvm-project/build
+<span class="nb">cd</span><span class="w"> </span>llvm-project/build
+</pre></div>
+</div>
+<p>Clang’s build system (CMake) uses a toolchain file for configuring cross-compiler.
+Suppose that the toolchain for ARC HS 4x is placed in <code class="docutils literal notranslate"><span class="pre">/tools/arc-linux-gnu</span></code>
+(the directory which contains <code class="docutils literal notranslate"><span class="pre">bin</span></code>). Save this configuration to <code class="docutils literal notranslate"><span class="pre">~/arc.cmake</span></code>:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_SYSTEM_NAME</span><span class="w"> </span><span class="s">Linux</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_HOST_SYSTEM_PROCESSOR</span><span class="w"> </span><span class="s">arc</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_HOST_SYSTEM_PROCESSOR</span><span class="w"> </span><span class="s">Linux</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_HOST_SYSTEM_PROCESSOR</span><span class="w"> </span><span class="s">gnu</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_SYSTEM_VERSION</span><span class="w"> </span><span class="s">1</span><span class="p">)</span>
+
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_C_COMPILER</span><span class="w"> </span><span class="s">/tools/arc-linux-gnu/bin/arc-linux-gnu-gcc</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_CXX_COMPILER</span><span class="w"> </span><span class="s">/tools/arc-linux-gnu/bin/arc-linux-gnu-g++</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_FIND_ROOT_PATH</span><span class="w"> </span><span class="s">/tools/arc-linux-gnu/sysroot</span><span class="p">)</span>
+
+<span class="c"># Search for programs in the build host directories</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_FIND_ROOT_PATH_MODE_PROGRAM</span><span class="w"> </span><span class="s">NEVER</span><span class="p">)</span>
+
+<span class="c"># ... for libraries and headers in the target directories</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_FIND_ROOT_PATH_MODE_LIBRARY</span><span class="w"> </span><span class="s">ONLY</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_FIND_ROOT_PATH_MODE_INCLUDE</span><span class="w"> </span><span class="s">ONLY</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">HAVE_POSIX_REGEX</span><span class="w"> </span><span class="s">0</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">HAVE_STEADY_CLOCK</span><span class="w"> </span><span class="s">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Prepare build system using CMake:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DCMAKE_TOOLCHAIN_FILE<span class="o">=</span>~/arc.cmake<span class="w">          </span><span class="se">\</span>
+<span class="w">      </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>/tools/clang-bpf-arc<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_ENABLE_PROJECTS<span class="o">=</span>clang<span class="w">                </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_TARGETS_TO_BUILD<span class="o">=</span>BPF<span class="w">                 </span><span class="se">\</span>
+<span class="w">      </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>MinSizeRel<span class="w">               </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_INCLUDE_BENCHMARKS<span class="o">=</span>OFF<span class="w">               </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_ENABLE_PIC<span class="o">=</span>ON<span class="w">                        </span><span class="se">\</span>
+<span class="w">      </span>-DBUILD_SHARED_LIBS<span class="o">=</span>ON<span class="w">                      </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_ENABLE_WARNINGS<span class="o">=</span>OFF<span class="w">                  </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_ENABLE_ZLIB<span class="o">=</span>OFF<span class="w">                      </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_INCLUDE_EXAMPLES<span class="o">=</span>OFF<span class="w">                 </span><span class="se">\</span>
+<span class="w">      </span>-DLLVM_INCLUDE_TESTS<span class="o">=</span>OFF<span class="w">                    </span><span class="se">\</span>
+<span class="w">      </span>-DCMAKE_EXE_LINKER_FLAGS<span class="o">=</span><span class="s2">&quot;-latomic&quot;</span><span class="w">         </span><span class="se">\</span>
+<span class="w">      </span>-DCMAKE_MODULE_LINKER_FLAGS<span class="o">=</span><span class="s2">&quot;-latomic&quot;</span><span class="w">      </span><span class="se">\</span>
+<span class="w">      </span>-DCMAKE_SHARED_LINKER_FLAGS<span class="o">=</span><span class="s2">&quot;-latomic&quot;</span><span class="w">      </span><span class="se">\</span>
+<span class="w">      </span>-G<span class="w"> </span><span class="s2">&quot;Unix Makefiles&quot;</span><span class="w">                         </span><span class="se">\</span>
+<span class="w">      </span>../llvm
+</pre></div>
+</div>
+<p>Explanation for some options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_BUILD_TYPE=MinSizeRel</span></code> - Turn on optimizations for size.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DLLVM_INCLUDE_BENCHMARKS=OFF</span></code> - Turn off benchmarks to avoid fails while building.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DBUILD_SHARED_LIBS=ON</span></code> - Don’t build Clang as one large blob (more than 100 MB) because
+linker cannot resolve relocations for such large binaries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_***_LINKER_FLAGS=&quot;-latomic&quot;</span></code> - Somehow <code class="docutils literal notranslate"><span class="pre">-latomic</span></code> is not passed to the linker while
+building. Thus we need to pass it manually.</p></li>
+</ul>
+<p>Build and install to <code class="docutils literal notranslate"><span class="pre">/tools/clang-bpf-arc</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>-j<span class="w"> </span><span class="k">$(</span>nproc<span class="k">)</span>
+make<span class="w"> </span>install
+</pre></div>
+</div>
+<p>Then you can copy this directory to your target (e.g., to the overlay for Buildroot).</p>
+</section>
+<section id="resources">
+<h2>Resources<a class="headerlink" href="#resources" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://clang.llvm.org/get_started.html">https://clang.llvm.org/get_started.html</a></p></li>
+<li><p><a class="reference external" href="https://llvm.org/docs/CMake.html#frequently-used-cmake-variables">https://llvm.org/docs/CMake.html#frequently-used-cmake-variables</a></p></li>
+<li><p><a class="reference external" href="https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/CrossCompiling">https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/CrossCompiling</a></p></li>
+<li><p><a class="reference external" href="https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html">https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="env.html" class="btn btn-neutral float-left" title="Building Linux Image for Working with eBPF in QEMU" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../other/index.html" class="btn btn-neutral float-right" title="Other" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016-2022, Synopsys.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
