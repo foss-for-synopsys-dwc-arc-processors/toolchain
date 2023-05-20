@@ -435,12 +435,15 @@ Contents of this file should be following::
     BR2_arc32=y
     # BR2_STRIP_strip is not set
     BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_16=y
+    BR2_ROOTFS_POST_IMAGE_SCRIPT="board/synopsys/arc64/post-image.sh"
+    BR2_ROOTFS_POST_SCRIPT_ARGS="$(LINUX_DIR)"
     BR2_LINUX_KERNEL=y
     BR2_LINUX_KERNEL_CUSTOM_GIT=y
     BR2_LINUX_KERNEL_CUSTOM_REPO_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git"
     BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION="arc64"
     BR2_LINUX_KERNEL_DEFCONFIG="haps_hs5x"
-    BR2_LINUX_KERNEL_VMLINUX=y
+    BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y
+    BR2_LINUX_KERNEL_IMAGE_TARGET_NAME="loader"
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
@@ -450,7 +453,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_TOOLCHAIN_EXTERNAL_INET_RPC=n
-    BR2_TOOLCHAIN_EXTERNAL_GCC_12
+    BR2_TOOLCHAIN_EXTERNAL_GCC_12=y
     BR2_PACKAGE_LINUX_TOOLS_PERF=y
     BR2_TARGET_ROOTFS_INITRAMFS=y
 
@@ -461,7 +464,8 @@ To build Linux kernel image using that defconfig:
     make -C .. O=`readlink -e .` defconfig DEFCONFIG=`readlink -e ./arc32_defconfig`
     make
 
-After that Linux kernel the image ``vmlinux`` will be in ``buildroot/build/images``.
+After that Linux kernel images will be in ``buildroot/build/images``: ``vmlinux`` and ``loader``.
+The ``loader`` image must be used for running with nSIM.
 
 Before running the image with nSIM create a file with properties ``hs5x.props``::
 
@@ -469,7 +473,7 @@ Before running the image with nSIM create a file with properties ``hs5x.props``:
     nsim_isa_family=av3hs
     nsim_isa_dc_hw_prefetch=1
     nsim_isa_dual_issue_option=1
-    nsim_isa_atomic_option=1
+    nsim_isa_atomic_option=2
     nsim_isa_m128_option=0
     nsim_isa_ll64_option=1
     nsim_isa_mpy_option=9
@@ -485,12 +489,19 @@ Before running the image with nSIM create a file with properties ``hs5x.props``:
     nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24
     nsim_isa_number_of_interrupts=32
     nsim_isa_number_of_external_interrupts=32
+    nsim_isa_has_fp=1
+    nsim_isa_fp_dds_option=1
+    nsim_isa_fp_div_option=1
+    nsim_isa_fp_dp_option=1
+    nsim_isa_fp_hp_option=1
+    nsim_isa_fp_vec_option=1
+    nsim_isa_fp_wide_option=1
 
 Then run the image:
 
 .. code-block:: shell
 
-    nsimdrv -propsfile hs5x.props images/vmlinux
+    nsimdrv -propsfile hs5x.props images/loader
 
 
 Linux for ARC HS68
@@ -533,7 +544,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
     BR2_TOOLCHAIN_EXTERNAL_INET_RPC=n
-    BR2_TOOLCHAIN_EXTERNAL_GCC_12
+    BR2_TOOLCHAIN_EXTERNAL_GCC_12=y
     BR2_PACKAGE_LINUX_TOOLS_PERF=y
     BR2_PACKAGE_ELFUTILS=y
     BR2_TARGET_ROOTFS_INITRAMFS=y
@@ -572,9 +583,14 @@ Before running the image with nSIM create a file with properties ``hs6x.props``:
     nsim_isa_mpy64=1
     nsim_isa_div64_option=1
     nsim_isa_div_rem_option=2
-    nsim_isa_atomic_option=1
-    nsim_isa_fpud_option=1
-    nsim_isa_fpus_option=1
+    nsim_isa_atomic_option=2
+    nsim_isa_has_fp=1
+    nsim_isa_fp_dds_option=1
+    nsim_isa_fp_div_option=1
+    nsim_isa_fp_dp_option=1
+    nsim_isa_fp_hp_option=1
+    nsim_isa_fp_vec_option=1
+    nsim_isa_fp_wide_option=1
 
 Then run the image:
 

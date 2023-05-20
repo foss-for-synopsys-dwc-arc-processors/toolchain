@@ -515,12 +515,15 @@ Contents of this file should be following:</p>
 BR2_arc32=y
 # BR2_STRIP_strip is not set
 BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_16=y
+BR2_ROOTFS_POST_IMAGE_SCRIPT=&quot;board/synopsys/arc64/post-image.sh&quot;
+BR2_ROOTFS_POST_SCRIPT_ARGS=&quot;$(LINUX_DIR)&quot;
 BR2_LINUX_KERNEL=y
 BR2_LINUX_KERNEL_CUSTOM_GIT=y
 BR2_LINUX_KERNEL_CUSTOM_REPO_URL=&quot;https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git&quot;
 BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION=&quot;arc64&quot;
 BR2_LINUX_KERNEL_DEFCONFIG=&quot;haps_hs5x&quot;
-BR2_LINUX_KERNEL_VMLINUX=y
+BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y
+BR2_LINUX_KERNEL_IMAGE_TARGET_NAME=&quot;loader&quot;
 BR2_TOOLCHAIN_EXTERNAL=y
 BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
 BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
@@ -530,7 +533,7 @@ BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
 BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
 BR2_TOOLCHAIN_EXTERNAL_CXX=y
 BR2_TOOLCHAIN_EXTERNAL_INET_RPC=n
-BR2_TOOLCHAIN_EXTERNAL_GCC_12
+BR2_TOOLCHAIN_EXTERNAL_GCC_12=y
 BR2_PACKAGE_LINUX_TOOLS_PERF=y
 BR2_TARGET_ROOTFS_INITRAMFS=y
 </pre></div>
@@ -540,13 +543,14 @@ BR2_TARGET_ROOTFS_INITRAMFS=y
 make
 </pre></div>
 </div>
-<p>After that Linux kernel the image <code class="docutils literal notranslate"><span class="pre">vmlinux</span></code> will be in <code class="docutils literal notranslate"><span class="pre">buildroot/build/images</span></code>.</p>
+<p>After that Linux kernel images will be in <code class="docutils literal notranslate"><span class="pre">buildroot/build/images</span></code>: <code class="docutils literal notranslate"><span class="pre">vmlinux</span></code> and <code class="docutils literal notranslate"><span class="pre">loader</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">loader</span></code> image must be used for running with nSIM.</p>
 <p>Before running the image with nSIM create a file with properties <code class="docutils literal notranslate"><span class="pre">hs5x.props</span></code>:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>nsim_fast=0
 nsim_isa_family=av3hs
 nsim_isa_dc_hw_prefetch=1
 nsim_isa_dual_issue_option=1
-nsim_isa_atomic_option=1
+nsim_isa_atomic_option=2
 nsim_isa_m128_option=0
 nsim_isa_ll64_option=1
 nsim_isa_mpy_option=9
@@ -562,10 +566,17 @@ mmu_address_space=32
 nsim_mem-dev=uart0,kind=dwuart,base=0xf0000000,irq=24
 nsim_isa_number_of_interrupts=32
 nsim_isa_number_of_external_interrupts=32
+nsim_isa_has_fp=1
+nsim_isa_fp_dds_option=1
+nsim_isa_fp_div_option=1
+nsim_isa_fp_dp_option=1
+nsim_isa_fp_hp_option=1
+nsim_isa_fp_vec_option=1
+nsim_isa_fp_wide_option=1
 </pre></div>
 </div>
 <p>Then run the image:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nsimdrv<span class="w"> </span>-propsfile<span class="w"> </span>hs5x.props<span class="w"> </span>images/vmlinux
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nsimdrv<span class="w"> </span>-propsfile<span class="w"> </span>hs5x.props<span class="w"> </span>images/loader
 </pre></div>
 </div>
 </section>
@@ -605,7 +616,7 @@ BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
 BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
 BR2_TOOLCHAIN_EXTERNAL_CXX=y
 BR2_TOOLCHAIN_EXTERNAL_INET_RPC=n
-BR2_TOOLCHAIN_EXTERNAL_GCC_12
+BR2_TOOLCHAIN_EXTERNAL_GCC_12=y
 BR2_PACKAGE_LINUX_TOOLS_PERF=y
 BR2_PACKAGE_ELFUTILS=y
 BR2_TARGET_ROOTFS_INITRAMFS=y
@@ -641,9 +652,14 @@ nsim_isa_mpy_option=9
 nsim_isa_mpy64=1
 nsim_isa_div64_option=1
 nsim_isa_div_rem_option=2
-nsim_isa_atomic_option=1
-nsim_isa_fpud_option=1
-nsim_isa_fpus_option=1
+nsim_isa_atomic_option=2
+nsim_isa_has_fp=1
+nsim_isa_fp_dds_option=1
+nsim_isa_fp_div_option=1
+nsim_isa_fp_dp_option=1
+nsim_isa_fp_hp_option=1
+nsim_isa_fp_vec_option=1
+nsim_isa_fp_wide_option=1
 </pre></div>
 </div>
 <p>Then run the image:</p>
