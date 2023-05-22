@@ -82,6 +82,20 @@ sudo yum install -y autoconf bison bzip2 file flex gcc-c++ git gperf \
                     which xz
 ```
 
+The latest Crosstool-NG may require building tools newer than tools which are shipped
+with CentOS 7 by default (for example, there are GCC 4.8.5 and Make 3.82). At least
+it's not enough anymore for building ARC toolchain for Windows hosts. In this
+case consider using `centos-release-scl` repository to install the latest tools:
+
+```shell
+# Install fresh tools
+sudo yum install centos-release-scl
+sudo yum install devtoolset-9
+
+# Enable them in a new Bash session
+scl enable devtoolset-9 bash
+```
+
 ### Fedora & CentOS/RHEL 8.x
 
 #### Enabling "PowerTools" repository for CentOS/RHEL 8.x
