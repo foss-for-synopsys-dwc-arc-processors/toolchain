@@ -23,14 +23,14 @@ import ghapi
 ARC_DOWNLOAD_TABLE = r"""
 |                       | Linux x86_64 | Windows x86_64 | Linux ARC HS | macOS x86_64 |
 | --------------------- | ------------ | -------------- | ------------ | ------------ |
-| Baremetal             | {0} \ {1}    |                |              | {2} \ {3}    |
-| Linux/uClibc ARC700   | {4} \ {5}    |                |              |              |
-| Linux/uClibc ARC HS   | {6} \ {7}    |                |              |              |
-| Linux/glibc ARC HS    | {8} \ {9}    |                | {10}         |              |
-| IDE                   | {11}         | {12}           |              | {13}         |
-| Baremetal ARCv3       | {14}         |                |              |              |
-| Linux/glibc ARC HS68  | {15}         |                |              |              |
-| Linux/uClibc ARC HS58 | {16}         |                |              |              |
+| Baremetal             | {0} \ {1}    |                |              |              |
+| Linux/uClibc ARC700   | {2} \ {3}    |                |              |              |
+| Linux/uClibc ARC HS   | {4} \ {5}    |                |              |              |
+| Linux/glibc ARC HS    | {6} \ {7}    |                | {8}          |              |
+| IDE                   | {9}          | {10}           |              |              |
+| Baremetal ARCv3       | {11}         |                |              |              |
+| Linux/glibc ARC HS68  | {12}         |                | {13}         |              |
+| Linux/uClibc ARC HS58 | {14}         |                | {15}         |              |
 """
 
 
@@ -69,8 +69,6 @@ def create_arc_table(release_id, owner, project, tag):
     return ARC_DOWNLOAD_TABLE.format(
         fformat.format(t=le, release=release_id, type="elf32", cpu="le", host="linux"),
         fformat.format(t=be, release=release_id, type="elf32", cpu="be", host="linux"),
-        fformat.format(t=le, release=release_id, type="elf32", cpu="le", host="macos"),
-        fformat.format(t=be, release=release_id, type="elf32", cpu="be", host="macos"),
         fformat.format(t=le, release=release_id, type="uclibc", cpu="le_arc700",
                        host="linux"),
         fformat.format(t=be, release=release_id, type="uclibc", cpu="be_arc700",
@@ -87,13 +85,16 @@ def create_arc_table(release_id, owner, project, tag):
                        host="native"),
         ide_fformat.format(t="Download", release=release_id, host="linux", ext="tar.gz"),
         ide_fformat.format(t="Download", release=release_id, host="win", ext="exe"),
-        ide_fformat.format(t="Download", release=release_id, host="macos", ext="tar.gz"),
         fformat.format(t=le, release=release_id, type="arc64", cpu="elf",
                        host="linux"),
         fformat.format(t=le, release=release_id, type="arc64", cpu="glibc",
                        host="linux"),
+        fformat.format(t=le, release=release_id, type="arc64", cpu="glibc",
+                       host="native"),
         fformat.format(t=le, release=release_id, type="arc32", cpu="uclibc",
                        host="linux"),
+        fformat.format(t=le, release=release_id, type="arc32", cpu="uclibc",
+                       host="native"),
     )
 
 
