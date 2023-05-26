@@ -64,6 +64,27 @@ GNU toolchain for ARC has the same standard prerequisites as an upstream GNU
 toolchain as documented in the GNU toolchain user guide or on the [GCC
 website](http://gcc.gnu.org/install/prerequisites.html)
 
+### Autoconf
+
+Starting from version 2023.03, Crosstool-NG which is used for building toolchains, requires Autoconf 2.71
+instead of 2.67. It may not be available on old Linux distributions. In this case you can build it manually
+(use your own prefix):
+
+```shell
+wget https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+tar -xf autoconf-2.71.tar.gz
+cd autoconf-2.71
+./configure --prefix=/tools/autoconf2.71
+make
+make install
+```
+
+Then configure your environment:
+
+```shell
+export PATH="/tools/autoconf2.71/bin:$PATH"
+```
+
 ### Ubuntu 18.04 and newer
 
 ```shell
