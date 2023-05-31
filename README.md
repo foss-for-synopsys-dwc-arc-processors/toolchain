@@ -308,6 +308,10 @@ For example:
 * With `snps-arc-multilib-elf32` sample built toolchain will be installed in `~/x-tools/arc-snps-elf`
 * With `snps-arc64-unknown-elf` sample built toolchain will be installed in `~/x-tools/arc64-snps-elf`
 
+Prefixes which start with `arc-` correspond to little endian toolchains. Prefixes which start with
+`arceb-` correspond to big endian toolchains. E.g., GDB for big endian ARCv2 baremetal toolchain is
+`arceb-elf32-gdb`. However, big endian tools are not available for ARCv3 yet.
+
 ### Using nSIM simulator to run bare metal ARC applications
 
 nSIM simulator supports GNU IO hostlink used by the libc library of bare metal
