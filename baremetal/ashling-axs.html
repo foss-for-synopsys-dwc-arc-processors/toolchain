@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Using Ashling Opella-XD GDB server with AXS SDP &mdash; GNU Toolchain for ARC User Manual 2022.09 documentation</title>
+  <title>Using Ashling Opella-XD GDB server with AXS SDP &mdash; GNU Toolchain for ARC User Manual 2023.03 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/style_overrides.css" type="text/css" />
@@ -33,7 +33,7 @@
             <a href="../index.html" class="icon icon-home"> GNU Toolchain for ARC User Manual
           </a>
               <div class="version">
-                2022.09
+                2023.03
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -252,6 +252,14 @@ function of application may be not hit on first run in HS34 core in AXS102.</p><
 <li><p>In version 1.0.6-D it has been observed that gdbserver doesn’t invalidate I$
 of the second ARC 600 core of AXS101 - if this core hits a software
 breakpoint it gets stuck at it forever.</p></li>
+<li><p>On Windows Ashling might not work at the beginning. After installing Ashling
+software try to run <code class="docutils literal notranslate"><span class="pre">opxdarc.exe</span></code> application. If it fails to start with error
+like “mfc110.dll missing” try to install “Visual C++ Redistributable for Visual
+Studio”. When <code class="docutils literal notranslate"><span class="pre">opxdarc.exe</span></code> application was launched press <code class="docutils literal notranslate"><span class="pre">Connect</span></code> button.
+If in the list <code class="docutils literal notranslate"><span class="pre">Serial</span> <span class="pre">Number</span></code> the message <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">Opella-XD</span> <span class="pre">Found</span></code> appears
+go to device manager and check if Ashling driver is installed correctly.
+If not try to update Ashling driver setting search location with the path
+to installed Ashling software.</p></li>
 </ul>
 <section id="known-issues-of-previous-versions-of-ashling-software">
 <h3>Known Issues of previous versions of Ashling software<a class="headerlink" href="#known-issues-of-previous-versions-of-ashling-software" title="Permalink to this heading"></a></h3>
@@ -289,7 +297,7 @@ attempt to set breakpoint at 0x2b2 will fail.:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2016-2022, Synopsys.</p>
+    <p>&#169; Copyright 2016-2023, Synopsys.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

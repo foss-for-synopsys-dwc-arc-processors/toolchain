@@ -188,6 +188,14 @@ Known issues
   of the second ARC 600 core of AXS101 - if this core hits a software
   breakpoint it gets stuck at it forever.
 
+* On Windows Ashling might not work at the beginning. After installing Ashling
+  software try to run ``opxdarc.exe`` application. If it fails to start with error
+  like "mfc110.dll missing" try to install "Visual C++ Redistributable for Visual
+  Studio". When ``opxdarc.exe`` application was launched press ``Connect`` button.
+  If in the list ``Serial Number`` the message ``No Opella-XD Found`` appears
+  go to device manager and check if Ashling driver is installed correctly.
+  If not try to update Ashling driver setting search location with the path
+  to installed Ashling software.
 
 Known Issues of previous versions of Ashling software
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
