@@ -238,6 +238,15 @@ And now, when all the preparations are done, it's required only to start build p
 ./ct-ng build
 ```
 
+> :warning: There is set of samples which correspond to
+> native toolchains. Such toolchains are used inside of ARC targets.
+> If you want to build a native toolchain then a corresponding
+> cross-toolchain must be presented in `PATH`. E.g., if you want to
+> build `snps-arc64-snps-native-gnu` sample for a native toolchain
+> then you need to build `snps-arc64-snps-linux-gnu` sample for
+> a cross-compiler first and add `bin` directory of this cross-compiler
+> to `PATH`.
+
 ## Building toolchain for Windows
 
 ### Preparation for building ARC cross-toolchain for Windows host
