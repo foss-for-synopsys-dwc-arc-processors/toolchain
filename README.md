@@ -321,6 +321,9 @@ Prefixes which start with `arc-` correspond to little endian toolchains. Prefixe
 `arceb-` correspond to big endian toolchains. E.g., GDB for big endian ARCv2 baremetal toolchain is
 `arceb-elf32-gdb`. However, big endian tools are not available for ARCv3 yet.
 
+You can find more information about variants of toolchains, `-mcpu` values
+and matching TCF files in [ARC Toolchain Variants](https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/gcc-mcpu.html) page.
+
 ### Using nSIM simulator to run bare metal ARC applications
 
 nSIM simulator supports GNU IO hostlink used by the libc library of bare metal
