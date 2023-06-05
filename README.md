@@ -309,6 +309,12 @@ Then build the toolchain as usual with `./ct-ng build`.
 
 ## Usage examples
 
+> :warning: It's necessary to install Digilent Adept drivers
+> for debugging using OpenOCD on Linux (there is another routine for Windows,
+> [follow the documentation](https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/ide/how-to-use-openocd-on-windows.html#how-to-use-openocd-on-windows)).
+> You have to download and install 2 packages: one for runtime and another for utilitiles from
+> [Digilent's web page](https://digilent.com/shop/software/digilent-adept/download).
+
 In all of the following examples, it is expected that GNU toolchain for ARC has
 been added to the user's `PATH` environment variable. Please note that built toolchain by default gets installed in the current users's `~/x-tools/TOOLCHAIN_TUPLE` folder, where `TOOLCHAIN_TUPLE` is by default dynamically generated based on the toolchain type (bare-metal, glibc or uclibc), CPU's bitness (32- or 64-bit), provided vendor name etc.
 
