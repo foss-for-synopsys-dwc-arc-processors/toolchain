@@ -18,7 +18,7 @@ Creating a C project
 
    Creating a new C project
 
-In **C Project** window select **Hello World C Project** under **ARC Cross ELF32 Target Application** project type.
+In **C Project** window select **Hello World C Project** under **ARC Baremetal Application** project type.
 On the right side of the window there is a list of available toolchains, select **GNU Toolchain for ARC EM**.
 If you do not see this toolchain in the list or this project type in the list of project types, make sure that ARC EM
 toolchain compiler is in the ``PATH`` environment variable or at ``../bin/`` directory relative to Eclipse executable.
