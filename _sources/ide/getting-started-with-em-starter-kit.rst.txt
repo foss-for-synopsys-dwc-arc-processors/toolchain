@@ -11,7 +11,7 @@ Creating Hello World project for ARC EM Starter Kit
    Creating a new C project
 
    The **C Project** window should have several ARC project types:
-   **ARC Cross ELF32 Target Application**, **ARC Cross ELF32 Target Static
+   **ARC Baremetal Application**, **ARC Cross ELF32 Target Static
    Library**, **AXS10x Projects** and **EM Starter Kit Projects**. Select
    **EM Starter Kit Projects**. This project type is available only if ARC EM
    toolchain compiler can be found either in ``PATH`` environment variable or
