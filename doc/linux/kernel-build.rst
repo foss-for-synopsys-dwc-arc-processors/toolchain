@@ -85,7 +85,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-rc1/arc_gnu_2023.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-release/arc_gnu_2023.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -219,7 +219,7 @@ differences::
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-rc1/arc_gnu_2023.03-rc1_prebuilt_glibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-release/arc_gnu_2023.03_prebuilt_glibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -248,7 +248,7 @@ The resulting configuration file::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-rc1/arc_gnu_2023.03-rc1_prebuilt_uclibc_le_arc700_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-release/arc_gnu_2023.03_prebuilt_uclibc_le_arc700_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -309,7 +309,7 @@ With those changes Buildroot defconfig for ARC HS VDK is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-rc1/arc_gnu_2023.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-release/arc_gnu_2023.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -400,7 +400,7 @@ defconfig is::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-rc1/arc_gnu_2023.03-rc1_prebuilt_uclibc_le_archs_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-release/arc_gnu_2023.03_prebuilt_uclibc_le_archs_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
     BR2_TOOLCHAIN_EXTERNAL_CXX=y
@@ -448,7 +448,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-rc1/arc_gnu_2023.03-rc1_prebuilt_arc32_uclibc_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-release/arc_gnu_2023.03_prebuilt_arc32_uclibc_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
@@ -539,7 +539,7 @@ Contents of this file should be following::
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
     BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
     BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y
-    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-rc1/arc_gnu_2023.03-rc1_prebuilt_arc64_glibc_linux_install.tar.gz"
+    BR2_TOOLCHAIN_EXTERNAL_URL="https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/download/arc-2023.03-release/arc_gnu_2023.03_prebuilt_arc64_glibc_linux_install.tar.gz"
     BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16=y
     BR2_TOOLCHAIN_EXTERNAL_LOCALE=y
     BR2_TOOLCHAIN_EXTERNAL_HAS_SSP=y
