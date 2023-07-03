@@ -1,41 +1,68 @@
-# Copyright (C) 2010-2017 Synopsys Inc.
-
-# Contributor Brendan Kehoe <brendan@zen.org>
-# Contributor Jeremy Bennett <jeremy.bennett@embecosm.com>
-# Contributor Anton Kolesov <Anton.Kolesov@synopsys.com>
-
-# This file is an ARC specific site.exp
-
+# Copyright (C) 2015-2017 Synopsys Inc.
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 3 of the License, or (at your option)
 # any later version.
-
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
 # more details.
-
+#
 # You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.          
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# REPLACEME
+# set srcdir "/home/user/arc_gnu/gcc/gcc/testsuite"
+# set arc_exec_prefix "/home/user/arc_gnu/INSTALL/bin/arc-elf32"
+set tmpdir	    "."
+set srcdir "/SCRATCH/brunoam/src/arc-gnu-toolchain/gcc/gcc/testsuite"
+
+#set arc_exec_prefix "arc-elf32"
+#set target_alias    arc-elf32
+#set target_triplet  arc-unknown-elf32
+
+set arc_exec_prefix "arc32-elf"
+set target_alias    arc32-elf
+set target_triplet  arc32-unknown-elf
+
+set tool gcc
 
 
-# Make sure we look in the right place for the board description files. Add
-# our local boards directories
+
+set CFLAGS	    ""
+set CXXFLAGS	    ""
+
+set target_list arc-sim
+set board arc-sim
+
+set arc_board_dir "$env(COMPSRC)/toolchain"
+
 if ![info exists boards_dir] {
-    set boards_dir {}
+    lappend boards_dir "$arc_board_dir/dejagnu"
+    lappend boards_dir "$arc_board_dir/dejagnu/baseboards"
+} else {
+    set boards_dir "$arc_board_dir/dejagnu"
+    lappend boards_dir "$arc_board_dir/dejagnu/baseboards"
 }
 
-lappend boards_dir "[file dirname $env(DEJAGNU)]/dejagnu"
-lappend boards_dir "[file dirname $env(DEJAGNU)]/dejagnu/baseboards"
+set is_gcc_compat_suite "1"
+# Configure DejaGnu for testing compatibility between GNU and MetaWare compilers.
+#set TEST_ALWAYS_FLAGS  "--specs=hl.specs -mno-sdata"
 
-# Some GCC tests requires HOST{CC,CFLAGS}, however those variables are not
-# defined by test_installed. Thus set them here.
-if ![ info exists HOSTCC ] {
-    set HOSTCC gcc
-}
-if ![ info exists HOSTCFLAGS ] {
-    set HOSTCFLAGS "-g -O2"
-}
+set ALT_CC_UNDER_TEST	"$env(GCC_COMPAT_CCAC_PATH)"
+#set ALT_CC_UNDER_TEST	arc-elf32-gcc
+#set ALT_CC_UNDER_TEST	arc32-elf-gcc
+#set ALT_CC_UNDER_TEST	arc64-elf-gcc
+set ALT_CXX_UNDER_TEST	"$ALT_CC_UNDER_TEST"
+
+set compat_same_alt "0"
+set compat_use_alt  "0"
+set COMPAT_OPTIONS		[list [list "$env(GCC_COMPAT_GCC_OPTIONS)" "$env(GCC_COMPAT_CCAC_OPTIONS)"]]
+#set COMPAT_OPTIONS		[list [list "$env(GCC_COMPAT_GCC_OPTIONS)" "$env(GCC_COMPAT_GCC_OPTIONS)"]]
+
+# Disable tests with packed structures to avoid unaligned access errors.
+set COMPAT_SKIPS		[list {ATTRIBUTE}]
 
 # vim: noexpandtab sts=4 ts=8:
