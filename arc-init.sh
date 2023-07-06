@@ -599,7 +599,6 @@ build_ncurses() {
 # Helper to build gmp, used by native gdb.  Starting from
 # GDB 11.1, it requires libgmp to be built natively [1].
 # Arguments:
-#   $1 - target triplet
 #
 # [1] gdb: Make GMP a required dependency for buidling GDB
 # https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=1b4ac058f7d
@@ -627,6 +626,137 @@ build_gmp() {
 	--enable-static
     make_target building
     make_target_ordered installing install DESTDIR=$SYSROOTDIR
+}
+
+# Helper to build mpfr, used by native gdb.  Since 21-Dec-2022,
+# GDB requires libgmp to be built natively [1].
+#
+# To build mpfr, native libgmp must have already bin built.  See
+# build_gmp() for that matter.
+#
+# [1] Use toplevel configure for GMP and MPFR for gdb
+# https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=991180627851
+#
+# Note:
+# libmpfr must be built against the native libgmp (--with-libgmp...).
+# If this libgmp is built for a sysroot (--prefix=/usr), then its libtool
+# script (libgmp.la) contains entries that can be confused with the build
+# system's paths:
+#
+# $ cat /sysroot/usr/lib/libgmp.a
+#   ...
+#   libdir=/usr/lib
+#
+# libtool has a trick to handle these situations, when the effective
+# compiler's prefix is not the same as the default one in build system.
+# to trigger this trick, one has to pass "--with-sysroot=yes" to the
+# configure command [2].  This will result in a successful build AND
+# a leading '=' character in some of the libraries names in installed
+# libmpfs.la script.  This leading character must be ignored on a native
+# system.  However on a build system, it must be exapnded to the full
+# sysroot path.  libtool >= 2.4.x is capable of doing this.
+#
+# [2]
+# https://bugs.gentoo.org/show_bug.cgi?id=521184#c8
+build_mpfr() {
+    local triplet=$1
+    mpfr_version=4.2.0
+    mpfr_url_base=https://www.mpfr.org/mpfr-current
+    mpfr_tar=mpfr-${mpfr_version}.tar.xz
+    mpfr_url=$mpfr_url_base/$mpfr_tar
+
+    mkdir -p $toolchain_build_dir/_download_tmp
+    cd $toolchain_build_dir/_download_tmp
+    if [ ! -s $mpfr_tar ]; then
+	$WGET -O $mpfr_tar $mpfr_url
+    fi
+
+    build_dir_init mpfr
+    tar xf $toolchain_build_dir/_download_tmp/$mpfr_tar --strip-components=1
+
+    configure_for_arc . $triplet \
+	--prefix=/usr \
+	--sysconfdir=/etc \
+	--localstatedir=/var \
+	--program-prefix= \
+	--enable-static \
+	--with-sysroot=yes \
+	--with-gmp=$SYSROOTDIR/usr
+
+    make_target building
+    make_target_ordered installing install DESTDIR=$SYSROOTDIR
+}
+
+# This function manipulates two entries. First, it turns
+#
+#   dependency_libs=' -L=/usr/lib =/usr/lib/libgmp.la'
+#
+# into
+#
+#   #dependency_libs=' -L=/usr/lib =/usr/lib'
+#   dependency_libs=' -L/sysroot/usr/lib /sysroot/usr/lib/libgmp.la'
+#
+# And then
+#
+#   libdir='/usr/lib'
+#
+# into
+#
+#   #libdir='/usr/lib'
+#   libdir='/sysroot/usr/lib'
+#
+# Rationale
+# ---------
+# libmpfr, which is needed for building gdb, installs with a libtool
+# script (*.la) with the following entry:
+#
+# $ cat /sysroot/usr/lib/libmpfr.la
+#   ...
+#   dependency_libs=' -L=/usr/lib =/usr/lib/libgmp.la'
+#
+# The leading '=' character indicates to libtool that this is a
+# sysroot path and must be replaced with whatever the compiler returns
+# as the sysroot: arc-snps-linux-gnu-gcc --print-sysroot
+#
+# libtool v2.2.7 that ships with GDB is not recent enough (v2.4+) to
+# expand these.  Therefore, this function will expand those pesky equal
+# signs.  Same sort of story goes for 'libdir'.  libtool 2.4+ provides
+# a "func_resolve_sysroot()" that turns "/usr/lib" into full path on a
+# build machine.
+la_expand_libs() {
+	local la_file="$1"
+
+	# Duplicate the "dependency_libs=" line while
+	# keeping the original instance commented out
+	$SED -i "s/^\(dependency_libs=.*\)/#\1\n\1/" $la_file
+
+	# The '=' in '-L=.* should be replaced by SYSROOTDIR
+	# The '=' in ' =/usr/lib/.*' should be replaced by SYSROOTDIR
+	$SED -i \
+	    -e "/^dependency_libs=/ s,-L=,-L$SYSROOTDIR,g" \
+	    -e "/^dependency_libs=/ s, =, $SYSROOTDIR,g" \
+	    $la_file
+
+        # Duplicate the "libdir=" line ...
+	$SED -i "s/^\(libdir=.*\)/#\1\n\1/" $la_file
+
+        # Add SYSROOTDIR to the beginning of the path in "libdir"
+	$SED -i "/^libdir=/ s,=',='$SYSROOTDIR," $la_file
+}
+
+# Remove the manipulated paths and uncomment the original ones.
+la_restore_libs() {
+	local la_file="$1"
+
+	$SED -i \
+	    -e "/^dependency_libs=/d" \
+	    -e "s/^#\(dependency_libs=.*\)/\1/" \
+	    $la_file
+
+	$SED -i \
+	    -e "/^libdir=/d" \
+	    -e "s/^#\(libdir=.*\)/\1/" \
+	    $la_file
 }
 
 # $1 - a configuration file or a directory with .config

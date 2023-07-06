@@ -437,8 +437,11 @@ echo "  finished creating symlinks"
 if [ $DO_NATIVE_GDB = yes ]; then
 
     build_ncurses $triplet
-
     build_gmp $triplet
+    build_mpfr $triplet
+
+    la_expand_libs "$SYSROOTDIR/usr/lib/libgmp.la"
+    la_expand_libs "$SYSROOTDIR/usr/lib/libmpfr.la"
 
     build_dir_init native_gdb
 
@@ -451,10 +454,11 @@ if [ $DO_NATIVE_GDB = yes ]; then
     # C builds.
     config_path=$(calcConfigPath "${ARC_GNU}")/gdb
     configure_for_arc "$config_path" $triplet \
-	--with-libgmp-type=static \
-	--with-libgmp-prefix=$SYSROOTDIR/usr \
+	--with-libgmp=$SYSROOTDIR/usr \
+	--with-libmpfr=$SYSROOTDIR/usr \
 	--disable-build-with-cxx \
 	--disable-gas --disable-ld --disable-binutils
+
     make_target building
 
     # See comment for stripprog_opt for an explanation why this is needed.
@@ -462,6 +466,9 @@ if [ $DO_NATIVE_GDB = yes ]; then
     make_target_ordered installing install-strip-gdb \
     install-strip-gdbserver DESTDIR=$SYSROOTDIR \
 	STRIPPROG=${triplet}-strip
+
+    la_restore_libs "$SYSROOTDIR/usr/lib/libgmp.la"
+    la_restore_libs "$SYSROOTDIR/usr/lib/libmpfr.la"
 else
     # If native GDB has been disabled, then simple gdbserver still will be
     # built. It doesn't need ncurses.
