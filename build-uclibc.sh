@@ -615,6 +615,9 @@ if [ $DO_NATIVE_GDB = yes ]; then
 
     build_gmp $triplet
 
+    build_mpfr $triplet
+    mpfr_expand_deplibs
+
     build_dir_init native_gdb
 
     # Due to STAR 9001066513 GDB crashes when throwing an exception.  Due to a
@@ -628,8 +631,11 @@ if [ $DO_NATIVE_GDB = yes ]; then
     configure_for_arc "$config_path" $triplet \
 	--with-libgmp-type=static \
 	--with-libgmp-prefix=$SYSROOTDIR/usr \
+	--with-libmpfr-type=static \
+	--with-libmpfr-prefix=$SYSROOTDIR/usr \
 	--disable-build-with-cxx \
 	--disable-gas --disable-ld --disable-binutils
+
     make_target building
 
     # See comment for stripprog_opt for an explanation why this is needed.
@@ -637,6 +643,8 @@ if [ $DO_NATIVE_GDB = yes ]; then
     make_target_ordered installing install-strip-gdb \
     install-strip-gdbserver DESTDIR=$SYSROOTDIR \
 	STRIPPROG=${triplet}-strip
+
+    mpfr_restore_deplibs
 else
     # If native GDB has been disabled, then simple gdbserver still will be
     # built. It doesn't need ncurses.
