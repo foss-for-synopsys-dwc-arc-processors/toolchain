@@ -660,7 +660,7 @@ build_gmp() {
 # https://bugs.gentoo.org/show_bug.cgi?id=521184#c8
 build_mpfr() {
     local triplet=$1
-    mpfr_version=4.2.0
+    mpfr_version=4.2.1
     mpfr_url_base=https://www.mpfr.org/mpfr-current
     mpfr_tar=mpfr-${mpfr_version}.tar.xz
     mpfr_url=$mpfr_url_base/$mpfr_tar
