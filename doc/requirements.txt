@@ -12,7 +12,7 @@ packaging==23.0
 Pillow==9.4.0
 Pygments==2.14.0
 pytz==2022.7.1
-PyYAML==6.0
+PyYAML==6.0.1
 reportlab==3.6.12
 requests==2.28.2
 rst2pdf==0.99
