@@ -52,11 +52,16 @@ proc arc_get_cflags {} {
     if { ![info exists env(ARC_HOSTLINK_LIBRARY)] } {
 	if [board_info $board exists arc,hostlink] {
 	    if { [board_info $board arc,hostlink] == "nsim" } {
-		lappend cflags --specs=nsim.specs
+		    lappend cflags --specs=nsim.specs
 	    } elseif { [board_info $board arc,hostlink] == "metaware" } {
-		lappend cflags --specs=hl.specs
+    		lappend cflags --specs=hl.specs
+	    } elseif { [board_info $board arc,hostlink] == "semihost" } {
+            lappend cflags --specs=semihost.specs \
+            --specs=arcv.specs -mabi=ilp32 \
+            -march=rv32im_zba_zbb_zbs_zca_zcb_zcmp_zicsr \
+            -T arcv.ld
 	    } else {
-		lappend cflags --specs=nosys.specs
+		    lappend cflags --specs=nosys.specs
 	    }
 	} else {
 	    lappend cflags --specs=nosys.specs
