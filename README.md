@@ -315,7 +315,9 @@ Prefixes which start with `arc-` correspond to little endian toolchains. Prefixe
 ### Using nSIM simulator to run bare metal ARC applications
 
 nSIM simulator supports GNU IO hostlink used by the libc library of bare metal
-GNU toolchain for ARC. nSIM option `nsim_emt=1` enables GNU IO hostlink.
+GNU toolchain for ARC. nSIM option `nsim_emt=1` enables GNU IO hostlink. nSIM
+simulator also supports semihosting, which is essential for ARC-V targets, more
+details can be found in nSIM documentation.
 
 To start nSIM in gdbserver mode for ARC EM6:
 
