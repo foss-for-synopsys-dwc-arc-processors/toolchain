@@ -40,12 +40,12 @@ set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
 # Set common defaults
-if ![info exists nsim_flags] {
+if {![info exists nsim_flags]} {
     set nsim_flags {}
 }
 lappend nsim_flags \
-	-on nsim_isa_enable_timer_0 \
-	-on nsim_isa_enable_timer_1
+    -on nsim_isa_enable_timer_0 \
+    -on nsim_isa_enable_timer_1
 
 # Disable memory and instruction exceptions - execution will halt on error,
 # instead of generating exception that may not be properly handled.
@@ -63,20 +63,20 @@ set_board_info sim_time_limit 300
 # certain floating point tests in libstdc++ that take quite a lot of time to
 # execute with soft-FP - around 15 minutes on Xeon@3.5GHz host.  Enabling Turbo
 # reduces this time to mere 1 minute.
-if { $tool == "libstdc++" } {
-#    Disable nsim TURBO feature as it is buggy.
-#    spawn $nsim_bin -on nsim_fast
-#    expect {
-#	"Download failed: no file name specified" {
-#	    verbose "nSIM Turbo is available"
-#	    lappend nsim_flags -on nsim_fast
-#	}
-#	default {
-#	    # nSIM would spit out an error message if Turbo is not supported.
-#	    verbose "nSIM Turbo is not available, increasing timeout"
-	    set_board_info sim_time_limit 1200
-#	}
-#    }
+if {$tool == "libstdc++"} {
+    # Disable nsim TURBO feature as it is buggy.
+    #spawn $nsim_bin -on nsim_fast
+    #expect {
+    #    "Download failed: no file name specified" {
+    #        verbose "nSIM Turbo is available"
+    #        lappend nsim_flags -on nsim_fast
+    #    }
+    #    default {
+    #        # nSIM would spit out an error message if Turbo is not supported.
+    #        verbose "nSIM Turbo is not available, increasing timeout"
+    set_board_info sim_time_limit 1200
+    #    }
+    #    }
 }
 
 # Check if nsim_download_elf_sections option is required - whether nSIM version
@@ -103,10 +103,10 @@ if {![check_target_arcv]} {
 }
 
 # Hostlink library support
-if { [info exists env(ARC_HOSTLINK_LIBRARY)] } {
+if {[info exists env(ARC_HOSTLINK_LIBRARY)]} {
     set xldflags "$xldflags -Wl,--whole-archive $env(ARC_HOSTLINK_LIBRARY) \
         -Wl,--no-whole-archive"
-} elseif { [info exists env(ARC_NSIM_HOSTLINK)] } {
+} elseif {[info exists env(ARC_NSIM_HOSTLINK)]} {
     set_board_info arc,hostlink $env(ARC_NSIM_HOSTLINK)
 
     if {[board_info $board arc,hostlink] != "metaware" && \
@@ -120,100 +120,100 @@ if { [info exists env(ARC_HOSTLINK_LIBRARY)] } {
     set_board_info arc,hostlink "nsim"
 }
 
-if { [board_info $board arc,hostlink] == "metaware" } {
+if {[board_info $board arc,hostlink] == "metaware"} {
     lappend nsim_flags -prop=nsim_hlink_gnu_io_ext=1
-} elseif { [board_info $board arc,hostlink] == "nsim" } {
+} elseif {[board_info $board arc,hostlink] == "nsim"} {
     lappend nsim_flags -prop=nsim_emt=1
 }
 
 # Big-endian?
-if [ string match arceb-* $target_triplet ] {
+if {[ string match arceb-* $target_triplet ]} {
     lappend nsim_flags -on nsim_isa_big_endian
 }
 
 # Select processor family. Also set nsim_isa_sat, which is mandatory for GCC.
-if { [check_target_arc64_64] } {
+if {[check_target_arc64_64]} {
     lappend nsim_flags \
-	-p nsim_isa_family=arc64     \
-	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_mpy_option=9     \
-	-p nsim_isa_mpy64=1	     \
-	-p nsim_isa_div64_option=1   \
-	-p nsim_isa_has_fp=1	     \
-	-p nsim_isa_fp_vec_option=1  \
-	-p nsim_isa_fp_hp_option=1   \
-	-p nsim_isa_fp_dp_option=1   \
-	-p nsim_isa_fp_div_option=1  \
-	-p nsim_isa_fp_num_regs=32   \
-	-p nsim_isa_unaligned_option=1
-} elseif { [check_target_arc64_32] } {
-    lappend nsim_flags		     \
-	-p nsim_isa_family=av3hs     \
-	-p nsim_isa_pc_size=32	     \
-	-p nsim_isa_addr_size=32     \
-	-p nsim_isa_swap_option=1    \
-	-p nsim_isa_bitscan_option=1 \
-	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_mpy_option=9     \
-	-p nsim_isa_unaligned_option=1
-} elseif { [check_target_arc700] } {
+        -p nsim_isa_family=arc64 \
+        -p nsim_isa_div_rem_option=2 \
+        -p nsim_isa_mpy_option=9 \
+        -p nsim_isa_mpy64=1 \
+        -p nsim_isa_div64_option=1 \
+        -p nsim_isa_has_fp=1 \
+        -p nsim_isa_fp_vec_option=1 \
+        -p nsim_isa_fp_hp_option=1 \
+        -p nsim_isa_fp_dp_option=1 \
+        -p nsim_isa_fp_div_option=1 \
+        -p nsim_isa_fp_num_regs=32 \
+        -p nsim_isa_unaligned_option=1
+} elseif {[check_target_arc64_32]} {
+    lappend nsim_flags \
+        -p nsim_isa_family=av3hs \
+        -p nsim_isa_pc_size=32 \
+        -p nsim_isa_addr_size=32 \
+        -p nsim_isa_swap_option=1 \
+        -p nsim_isa_bitscan_option=1 \
+        -p nsim_isa_div_rem_option=2 \
+        -p nsim_isa_mpy_option=9 \
+        -p nsim_isa_unaligned_option=1
+} elseif {[check_target_arc700]} {
     # GCC requires multiplier for ARC 700.
     lappend nsim_flags \
-	-p nsim_isa_family=a700 \
-	-on nsim_isa_sat \
-	-on nsim_isa_mpy32
-} elseif { [check_target_quarkse_em] } {
+        -p nsim_isa_family=a700 \
+        -on nsim_isa_sat \
+        -on nsim_isa_mpy32
+} elseif {[check_target_quarkse_em]} {
     compile_quarkse_em_nsim_apex
     lappend nsim_flags \
-	-p nsim_isa_family=av2em \
-	-p nsim_isa_core=3 \
-	-p nsim_isa_mpy_option=3 \
-	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_code_density_option=2 \
-	-prop=nsim_ext=$tmpdir/quarkse_em_fscmp.so \
-	-prop=nsim_ext=$tmpdir/quarkse_em_fsdiv.so \
-	-prop=nsim_ext=$tmpdir/quarkse_em_fsflt2i.so \
-	-prop=nsim_ext=$tmpdir/quarkse_em_fsi2flt.so \
-	-prop=nsim_ext=$tmpdir/quarkse_em_fssqrt.so \
-	-p nsim_isa_lpc_size=16 \
-	-p nsim_isa_spfp=compact \
-	-p nsim_isa_dpfp=compact
-} elseif { [check_target_quarkse2_em] } {
+        -p nsim_isa_family=av2em \
+        -p nsim_isa_core=3 \
+        -p nsim_isa_mpy_option=3 \
+        -p nsim_isa_div_rem_option=2 \
+        -p nsim_isa_code_density_option=2 \
+        -prop=nsim_ext=$tmpdir/quarkse_em_fscmp.so \
+        -prop=nsim_ext=$tmpdir/quarkse_em_fsdiv.so \
+        -prop=nsim_ext=$tmpdir/quarkse_em_fsflt2i.so \
+        -prop=nsim_ext=$tmpdir/quarkse_em_fsi2flt.so \
+        -prop=nsim_ext=$tmpdir/quarkse_em_fssqrt.so \
+        -p nsim_isa_lpc_size=16 \
+        -p nsim_isa_spfp=compact \
+        -p nsim_isa_dpfp=compact
+} elseif {[check_target_quarkse2_em]} {
     compile_quarkse_em_nsim_apex
     lappend nsim_flags \
-	-p nsim_isa_family=av2em \
-	-p nsim_isa_core=3 \
-	-p nsim_isa_mpy_option=2 \
-	-p nsim_isa_div_rem_option=2 \
-	-p nsim_isa_code_density_option=2 \
-	-prop=nsim_ext=$tmpdir/quarkse_em_fsdiv.so \
-	-prop=nsim_ext=$tmpdir/quarkse_em_fssqrt.so
-} elseif { [check_target_arc600] } {
+        -p nsim_isa_family=av2em \
+        -p nsim_isa_core=3 \
+        -p nsim_isa_mpy_option=2 \
+        -p nsim_isa_div_rem_option=2 \
+        -p nsim_isa_code_density_option=2 \
+        -prop=nsim_ext=$tmpdir/quarkse_em_fsdiv.so \
+        -prop=nsim_ext=$tmpdir/quarkse_em_fssqrt.so
+} elseif {[check_target_arc600]} {
     lappend nsim_flags \
-	-p nsim_isa_family=a600 \
-	-p nsim_isa_core=6 \
-	-on nsim_isa_sat
-} elseif { [check_target_arc601] } {
+        -p nsim_isa_family=a600 \
+        -p nsim_isa_core=6 \
+        -on nsim_isa_sat
+} elseif {[check_target_arc601]} {
     lappend nsim_flags \
-	-p nsim_isa_family=a601 \
-	-p nsim_isa_core=6 \
-	-on nsim_isa_sat
-} elseif { [check_target_archs] } {
+        -p nsim_isa_family=a601 \
+        -p nsim_isa_core=6 \
+        -on nsim_isa_sat
+} elseif {[check_target_archs]} {
     lappend nsim_flags \
-	-p nsim_isa_family=av2hs \
-	-p nsim_isa_core=3 \
-	-on nsim_isa_sat
+        -p nsim_isa_family=av2hs \
+        -p nsim_isa_core=3 \
+        -on nsim_isa_sat
     # Assume the SQRT is defined when we use DSP extensions
-    if { [check_target_arc "__ARC_DSP__"] == 1 } {
-	lappend nsim_flags \
-	    -p nsim_isa_dsp_divsqrt_option=2 \
-	    -p nsim_isa_dsp_wide_option=1
+    if {[check_target_arc "__ARC_DSP__"] == 1} {
+        lappend nsim_flags \
+            -p nsim_isa_dsp_divsqrt_option=2 \
+            -p nsim_isa_dsp_wide_option=1
     }
-} elseif { [check_target_arcem] } {
+} elseif {[check_target_arcem]} {
     lappend nsim_flags \
-	-p nsim_isa_family=av2em \
-	-p nsim_isa_core=3 \
-	-on nsim_isa_sat
+        -p nsim_isa_family=av2em \
+        -p nsim_isa_core=3 \
+        -on nsim_isa_sat
 } elseif {[check_target_arcv]} {
     set ext "-all.i.zicsr.zifencei.zihintpause.b.zca.zcb.zcmp.zcmt.a.m.zbb"
     lappend nsim_flags \
@@ -279,13 +279,13 @@ set nsim_gcc_mapping {
 }
 
 foreach {gcc_define set_if_defined nsim_prop} $nsim_gcc_mapping {
-    if { [check_target_arc $gcc_define] == $set_if_defined } {
-	lappend nsim_flags -p $nsim_prop
+    if {[check_target_arc $gcc_define] == $set_if_defined} {
+        lappend nsim_flags -p $nsim_prop
     }
 }
 
 # Allow user to specify additional options, like JIT, etc.
-if { [info exists env(ARC_NSIM_OPTS) ] } {
+if {[info exists env(ARC_NSIM_OPTS) ]} {
     lappend nsim_flags $env(ARC_NSIM_OPTS)
 }
 
@@ -302,25 +302,26 @@ set_board_info needs_status_wrapper 1
 
 # Turn on support of compat.exp tests from GCC testsuite if environment
 # variable ARC_GCC_COMPAT_SUITE == 1.
-if { [info exists env(ARC_GCC_COMPAT_SUITE)] } {
+if {[info exists env(ARC_GCC_COMPAT_SUITE)]} {
     set_board_info arc,is_gcc_compat_suite $env(ARC_GCC_COMPAT_SUITE)
 } else {
-    if { ![board_info $board exists arc,is_gcc_compat_suite] } {
-	set_board_info arc,is_gcc_compat_suite 0
+    if {![board_info $board exists arc,is_gcc_compat_suite]} {
+        set_board_info arc,is_gcc_compat_suite 0
     }
 }
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
-set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
-set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+set_board_info compiler "[find_gcc]"
+set_board_info cflags \
+    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
+set_board_info ldflags "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 
 # No linker script needed.
 set_board_info ldscript ""
 
 # Metaware hostlink can return values.
-if { [board_info $board arc,hostlink] == "metaware" } {
+if {[board_info $board arc,hostlink] == "metaware"} {
     set_board_info gdb,noresults 0
 } else {
     set_board_info gdb,noresults 1
@@ -330,7 +331,7 @@ set_board_info noargs 1
 set_board_info gdb,nosignals 1
 set_board_info gdb,noinferiorio 1
 
-if [string is true -strict [board_info $board arc,is_gcc_compat_suite]] {
+if {[string is true -strict [board_info $board arc,is_gcc_compat_suite]]} {
     fix_gcc_compat_multilib_flags
 }
 

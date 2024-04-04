@@ -18,15 +18,15 @@
 proc arc_get_multilib_options {} {
     global env
 
-    if { [info exists env(ARC_MULTILIB_OPTIONS)] } {
-	if { [regexp "^-m" $env(ARC_MULTILIB_OPTIONS)] || \
-	    [string length [string trim $env(ARC_MULTILIB_OPTIONS)]] == 0 } {
-	    return $env(ARC_MULTILIB_OPTIONS)
-	} else {
-	    return "-m$env(ARC_MULTILIB_OPTIONS)"
-	}
+    if {[info exists env(ARC_MULTILIB_OPTIONS)]} {
+        if {[regexp "^-m" $env(ARC_MULTILIB_OPTIONS)] || \
+	    [string length [string trim $env(ARC_MULTILIB_OPTIONS)]] == 0} {
+            return $env(ARC_MULTILIB_OPTIONS)
+        } else {
+            return "-m$env(ARC_MULTILIB_OPTIONS)"
+        }
     } else {
-	return ""
+        return ""
     }
 }
 
@@ -40,9 +40,9 @@ proc arc_get_cflags {} {
     # that will cause compilation errors in Metaware due to unknown options.
     # Instead all options should be specified via COMPAT_OPTIONS varibles in
     # site.exp.
-    if { [board_info $board exists arc,is_gcc_compat_suite] &&
-	[string is true -strict [board_info $board arc,is_gcc_compat_suite]] } {
-	return ""
+    if {[board_info $board exists arc,is_gcc_compat_suite] &&
+	[string is true -strict [board_info $board arc,is_gcc_compat_suite]]} {
+        return ""
     }
 
     set cflags {}
@@ -74,8 +74,8 @@ proc arc_get_cflags {} {
     # some watchpoint tests fail, because they get an extra watchpoint value
     # change even though it is not a variable that has changed, by a FP
     # register in epilogue.
-    if { $tool == "gdb" } {
-	lappend cflags -fomit-frame-pointer
+    if {$tool == "gdb"} {
+        lappend cflags -fomit-frame-pointer
     }
 
     return [join $cflags]
@@ -89,17 +89,17 @@ proc arc_gdbserver_close {} {
 
     verbose "arc: arc_gdbserver_close"
 
-    if ![board_info $board exists gdbserver_id] {
-	return
+    if {![board_info $board exists gdbserver_id]} {
+        return
     }
 
     set gdbserver_id [board_info $board gdbserver_id]
-    if [catch {close -i $gdbserver_id}] {
-	verbose "openocd_close: failed to close $gdbserver_id: $errorInfo"
+    if {[catch {close -i $gdbserver_id}]} {
+        verbose "openocd_close: failed to close $gdbserver_id: $errorInfo"
     }
 
-    if [catch {wait -i $gdbserver_id}] {
-	verbose "openocd_close: failed to wait for $gdbserver_id: $errorInfo"
+    if {[catch {wait -i $gdbserver_id}]} {
+        verbose "openocd_close: failed to wait for $gdbserver_id: $errorInfo"
     }
 
     unset_board_info gdbserver_id
@@ -120,6 +120,7 @@ proc arc_gdbserver_start { } {
     # a single arguments instead of an argument list. I haven't found a way to
     # explode $args into a list in a way that would work with spawn. Using
     # [split $args] didn't helped.
+    # tclint-disable-next-line command-args
     eval "spawn $bin $args"
 
     set_board_info gdbserver_id $spawn_id
@@ -138,11 +139,11 @@ proc arc_openocd_start { } {
     set_board_info arc,gdbserver_prog [board_info $board arc,openocd_prog]
 
     set args "-f [board_info $board arc,openocd_cfg]"
-    if [board_info $board exists arc,openocd_log] {
-	append args " -l [board_info $board arc,openocd_log]"
+    if {[board_info $board exists arc,openocd_log]} {
+        append args " -l [board_info $board arc,openocd_log]"
     }
-    if [board_info $board exists arc,openocd_log_level] {
-	append args " -d[board_info $board arc,openocd_log_level]"
+    if {[board_info $board exists arc,openocd_log_level]} {
+        append args " -d[board_info $board arc,openocd_log_level]"
     }
 
     set_board_info arc,gdbserver_args $args

@@ -31,8 +31,8 @@ search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 
 # GDB tests require special treatment, they ignore "gdb-comm" configuration
 # unless "monitor" GDB test suite configuration is loaded.
-if { $tool == "gdb" } {
-	load_lib "../config/monitor.exp"
+if {$tool == "gdb"} {
+    load_lib "../config/monitor.exp"
 }
 
 # Don't use any hostlink (--specs=nosys.specs).
@@ -48,9 +48,10 @@ append xldflags " -Wl,-marcv2elfx -L$::env(PWD)"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
-set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
-set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+set_board_info compiler "[find_gcc]"
+set_board_info cflags \
+    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
+set_board_info ldflags "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 
 # No linker script needed.
 set_board_info ldscript ""
@@ -69,22 +70,22 @@ set_board_info gdb,noresults 1
 set_board_info gdb,noinferiorio 1
 set_board_info needs_status_wrapper ""
 
-if { $tool == "gdb" } {
-	# We use gdbserver to run applications
-	set_board_info use_gdb_stub 1
-	# GDB jumps to start_symbols after loading. Default value is `start'.
-	set_board_info gdb,start_symbol "__start"
-	set_board_info gdb,do_reload_on_run 1
-	# Hardware watchpoint are not precies on ARC - they may fire few
-	# instructions after ST instruction and this may skew testing when
-	# there is several ST to same address consequently, as first stores may
-	# get missed. Unfortunately it seems that GDB testsuite configuration
-	# doesn't distinguish between hardware watchpoints and breakpoint, the
-	# latter ones should work fine on ARC.
-	set_board_info gdb,no_hardware_watchpoints 1
-	# This duplicates the ones without 'gdb,'
-	set_board_info gdb,noargs 1
-	set_board_info gdb,nofileio 1
+if {$tool == "gdb"} {
+    # We use gdbserver to run applications
+    set_board_info use_gdb_stub 1
+    # GDB jumps to start_symbols after loading. Default value is `start'.
+    set_board_info gdb,start_symbol "__start"
+    set_board_info gdb,do_reload_on_run 1
+    # Hardware watchpoint are not precies on ARC - they may fire few
+    # instructions after ST instruction and this may skew testing when
+    # there is several ST to same address consequently, as first stores may
+    # get missed. Unfortunately it seems that GDB testsuite configuration
+    # doesn't distinguish between hardware watchpoints and breakpoint, the
+    # latter ones should work fine on ARC.
+    set_board_info gdb,no_hardware_watchpoints 1
+    # This duplicates the ones without 'gdb,'
+    set_board_info gdb,noargs 1
+    set_board_info gdb,nofileio 1
 }
 
 # vim: noexpandtab sts=4 ts=8:

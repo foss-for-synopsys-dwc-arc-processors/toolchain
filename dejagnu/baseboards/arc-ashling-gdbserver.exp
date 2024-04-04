@@ -22,16 +22,16 @@ search_and_load_file "library file" "arc-elf32-generic.exp" $boards_dir
 set opella_dir "[file dirname $env(DEJAGNU)]/extras/opella-xd"
 
 # Select XML tdesc based on processor family.
-if { [check_target_arc700] } {
+if {[check_target_arc700]} {
     set tdesc_file "opella-arc700-tdesc.xml"
     set reg_file "arc700-cpu.xml"
-} elseif { [check_target_arc600] || [check_target_arc601] } {
+} elseif {[check_target_arc600] || [check_target_arc601]} {
     set tdesc_file "opella-arc600-tdesc.xml"
     set reg_file "arc600-cpu.xml"
-} elseif { [check_target_archs] } {
+} elseif {[check_target_archs]} {
     set tdesc_file "opella-archs-tdesc.xml"
     set reg_file "arc-hs-cpu.xml"
-} elseif { [check_target_arcem] || [check_target_quarkse_em] } {
+} elseif {[check_target_arcem] || [check_target_quarkse_em]} {
     set tdesc_file "opella-arcem-tdesc.xml"
     set reg_file "arc-em-cpu.xml"
 } else {

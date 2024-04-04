@@ -34,7 +34,7 @@ set_board_info target_install ${target_triplet}
 # Load the generic configuration for this board. This will define a basic set
 # of routines needed by the tool to communicate with the board. Depends on the
 # tool.
-if { $tool == "gdb" } {
+if {$tool == "gdb"} {
     load_generic_config "gdbserver"
 } else {
     load_generic_config "unix"
@@ -54,8 +54,8 @@ set_board_info compiler [find_gcc]
 
 # Set up connection using telnet and FTP. Hostname, prompts, usernames and
 # passwords are in the board specific files.
-set_board_info connect        telnet
-set_board_info file_transfer  ftp
+set_board_info connect telnet
+set_board_info file_transfer ftp
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
@@ -64,7 +64,7 @@ set_board_info file_transfer  ftp
 set_board_info ldscript ""
 
 # Can't pass arguments to programs on this target..
-set_board_info noargs  1
+set_board_info noargs 1
 
 # Used by a few gcc.c-torture testcases to delimit how large the stack can
 # be.
@@ -75,13 +75,13 @@ set_board_info gcc,stack_size 65536
 # We can't do input in GDB (yet! HA!). It *will* do output, hurrah.
 set_board_info gdb,noinferiorio 1
 # Or pass arguments.
-set_board_info gdb,noargs  1
+set_board_info gdb,noargs 1
 # And there's no support for signals.
-set_board_info gdb,nosignals  1
+set_board_info gdb,nosignals 1
 # GDB can't return results
 set_board_info gdb,noresults 1
 
-if { $tool == "gdb" } {
+if {$tool == "gdb"} {
     # GDB specific setup to enable gdbserver on the target.
 
     # Use telnet as protocol to spawn gdbserver
@@ -93,23 +93,25 @@ if { $tool == "gdb" } {
     # No hardware watchpoints
     set_board_info gdb,no_hardware_watchpoints 1
     # The command to use
-    if { [info exists gdb_server_prog] } {
-	set_board_info gdb_server_prog $gdb_server_prog
+    if {[info exists gdb_server_prog]} {
+        set_board_info gdb_server_prog $gdb_server_prog
     } else {
-	set_board_info gdb_server_prog /bin/gdbserver
+        set_board_info gdb_server_prog /bin/gdbserver
     }
     # Use a GDB stub
     set_board_info use_gdb_stub 1
 
     # Set up sysroot. This is an option relating to the host running GDB, not
     # the board, hence the contortion.
-    if { [info exists env(ARC_GDB_COMMFILE)] } {
-	set board_info([get_local_hostname],gdb_opts) "-x $env(ARC_GDB_COMMFILE)"
-    } elseif { [info exists ::toolchain_sysroot_dir] } {
-	set board_info([get_local_hostname],gdb_opts) "-ex 'set sysroot $::toolchain_sysroot_dir'"
+    if {[info exists env(ARC_GDB_COMMFILE)]} {
+        set board_info([get_local_hostname],gdb_opts) \
+            "-x $env(ARC_GDB_COMMFILE)"
+    } elseif {[info exists ::toolchain_sysroot_dir]} {
+        set board_info([get_local_hostname],gdb_opts) \
+            "-ex 'set sysroot $::toolchain_sysroot_dir'"
     } else {
-	puts "Neither ARC_GDB_COMMFILE, not toolchain_sysroot_dir environment
-variables are specified. Some tests are likely to fail."
+        puts "Neither ARC_GDB_COMMFILE, not toolchain_sysroot_dir environment \
+            variables are specified. Some tests are likely to fail."
     }
 }
 
