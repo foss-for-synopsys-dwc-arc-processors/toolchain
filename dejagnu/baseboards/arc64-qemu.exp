@@ -38,13 +38,13 @@ set xldflags "--specs=nsim.specs -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
 
 #set QEMU flags
-if ![info exists qemu_flags] {
+if {![info exists qemu_flags]} {
     set qemu_flags {}
 }
 
 lappend qemu_flags \
-    -M arc-sim -cpu hs6x -m 2G -nographic -no-reboot -monitor none -semihosting\
-    -kernel
+    -M arc-sim -cpu hs6x -m 2G -nographic -no-reboot -monitor none \
+    -semihosting -kernel
 
 set qemu_wrapper "$::env(QEMU_HOME)/bin/qemu-system-arc64"
 
@@ -53,9 +53,9 @@ set_board_info sim "$qemu_wrapper [join $qemu_flags]"
 set_board_info sim_time_limit 15
 set_board_info is_simulator 1
 
-set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
-set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+set_board_info compiler "[find_gcc]"
+set_board_info cflags "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info ldflags "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 # No linker script needed.
 set_board_info ldscript ""
 

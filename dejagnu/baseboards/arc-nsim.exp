@@ -49,8 +49,8 @@ search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 
 # GDB tests require special treatment, they ignore "gdb-comm" configuration
 # unless "monitor" GDB test suite configuration is loaded.
-if { $tool == "gdb" } {
-	load_lib "../config/monitor.exp"
+if {$tool == "gdb"} {
+    load_lib "../config/monitor.exp"
 }
 
 # Use nSIM GNU IO hostlink
@@ -59,13 +59,15 @@ set_board_info arc,hostlink "nsim"
 # Any multilib options are set in an environment variable.
 process_multilib_options [arc_get_multilib_options]
 
-set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
+set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
+    -Wl,--defsym=__DEFAULT_STACK_SIZE=1024m"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
-set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
-set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+set_board_info compiler "[find_gcc]"
+set_board_info cflags \
+    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
+set_board_info ldflags "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 
 # No linker script needed.
 set_board_info ldscript ""
@@ -84,7 +86,7 @@ lappend nsim_flags -reconnect
 # certain floating point tests in libstdc++ that take quite a lot of time to
 # execute with soft-FP - around 15 minutes on Xeon@3.5GHz host.  Enabling Turbo
 # reduces this time to mere 1 minute.
-if { $tool == "libstdc++" } {
+if {$tool == "libstdc++"} {
     spawn [board_info $::board nsim_exe] -on nsim_fast
     expect {
 	"Download failed: no file name specified" {
@@ -153,16 +155,16 @@ set_board_info gdb,noresults 1
 set_board_info gdb,noinferiorio 1
 set_board_info needs_status_wrapper ""
 
-if { $tool == "gdb" } {
-	# We use gdbserver to run applications
-	set_board_info use_gdb_stub 1
-	# GDB jumps to start_symbols after loading. Default value is `start'.
-	set_board_info gdb,start_symbol "__start"
-	set_board_info gdb,do_reload_on_run 1
-	set_board_info gdb,no_hardware_watchpoints 1
-	# This duplicates the one without 'gdb,'
-	set_board_info gdb,noargs 1
-	set_board_info gdb,nofileio 1
+if {$tool == "gdb"} {
+    # We use gdbserver to run applications
+    set_board_info use_gdb_stub 1
+    # GDB jumps to start_symbols after loading. Default value is `start'.
+    set_board_info gdb,start_symbol "__start"
+    set_board_info gdb,do_reload_on_run 1
+    set_board_info gdb,no_hardware_watchpoints 1
+    # This duplicates the one without 'gdb,'
+    set_board_info gdb,noargs 1
+    set_board_info gdb,nofileio 1
 }
 
 # Tests may recognize this board as a simulator and reduce amount
@@ -171,15 +173,15 @@ set_board_info is_simulator 1
 
 # Turn on support of compat.exp tests from GCC testsuite if environment
 # variable ARC_GCC_COMPAT_SUITE == 1.
-if { [info exists env(ARC_GCC_COMPAT_SUITE)] } {
+if {[info exists env(ARC_GCC_COMPAT_SUITE)]} {
     set is_gcc_compat_suite $env(ARC_GCC_COMPAT_SUITE)
 } else {
-    if { ![info exists is_gcc_compat_suite] } {
-	set is_gcc_compat_suite 0
+    if {![info exists is_gcc_compat_suite]} {
+        set is_gcc_compat_suite 0
     }
 }
 
-if { $is_gcc_compat_suite } {
+if {$is_gcc_compat_suite} {
     fix_gcc_compat_multilib_flags
 }
 

@@ -27,17 +27,17 @@ proc nsim_close {} {
     verbose "nsim_close" 3
 
     # Close nSim if it is running
-    if [board_info $board exists nsim_id] {
-	set nsim_id [board_info $board nsim_id]
-	if [catch {close -i $nsim_id}] {
-	    verbose "nsim_close: failed to close $nsim_id: $errorInfo"
-	}
+    if {[board_info $board exists nsim_id]} {
+        set nsim_id {[board_info $board nsim_id]}
+        if {[catch {close -i $nsim_id}]} {
+            verbose "nsim_close: failed to close $nsim_id: $errorInfo"
+        }
 
-	if [catch {wait -i $nsim_id}] {
-	    verbose "nsim_close: failed to wait for $nsim_id: $errorInfo"
-	}
+        if {[catch {wait -i $nsim_id}]} {
+            verbose "nsim_close: failed to wait for $nsim_id: $errorInfo"
+        }
 
-	unset_board_info nsim_id
+        unset_board_info nsim_id
     }
 }
 
@@ -62,10 +62,14 @@ proc nsim_open { portnum } {
     # null from Expect, so we have to use a shell to help as here.
 
     # Use either TCF or props file. TCF has higher priority.
-    if [info exists env(ARC_NSIM_TCF)] {
-	spawn sh -c "[board_info $board nsim_exe] -port $portnum -tcf $env(ARC_NSIM_TCF) [join [board_info $board nsim_flags]] >/dev/null 2>/dev/null"
+    if {[info exists env(ARC_NSIM_TCF)]} {
+        spawn sh -c "[board_info $board nsim_exe] -port $portnum \
+            -tcf $env(ARC_NSIM_TCF) \
+            [join [board_info $board nsim_flags]] >/dev/null 2>/dev/null"
     } else {
-	spawn sh -c "[board_info $board nsim_exe] -port $portnum -propsfile '$env(ARC_NSIM_PROPS)' [join [board_info $board nsim_flags]] >/dev/null 2>/dev/null"
+        spawn sh -c "[board_info $board nsim_exe] -port $portnum \
+            -propsfile '$env(ARC_NSIM_PROPS)' \
+            [join [board_info $board nsim_flags]] >/dev/null 2>/dev/null"
     }
     unset_board_info nsim_id
     set_board_info nsim_id $spawn_id
@@ -91,8 +95,8 @@ proc arc-nsim_reboot { connhost args } {
     verbose "arc-nsim_reboot $connhost $args" 3
 
     # Do we have board?
-    if {! [info exists board]} {
-	set board $connhost
+    if {![info exists board]} {
+        set board $connhost
     }
 
     # GDB testsuite has an unfortunate trait - it reboots target after

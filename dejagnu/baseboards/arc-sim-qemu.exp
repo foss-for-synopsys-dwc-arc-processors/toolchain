@@ -38,34 +38,30 @@ set xldflags "--specs=nsim.specs -Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
     -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
 
 #set QEMU flags
-if ![info exists qemu_flags] {
+if {![info exists qemu_flags]} {
     set qemu_flags {}
 }
 
 # Select processor family.
-if { [check_target_archs] } {
-    lappend qemu_flags \
-	-cpu archs
+if {[check_target_archs]} {
+    lappend qemu_flags -cpu archs
     set qemu_arch "arc"
-} elseif { [check_target_arcem] } {
-    lappend qemu_flags \
-	-cpu arcem
+} elseif {[check_target_arcem]} {
+    lappend qemu_flags -cpu arcem
     set qemu_arch "arc"
-} elseif { [check_target_arc64_64] } {
-    lappend qemu_flags \
-	-cpu hs6x
+} elseif {[check_target_arc64_64]} {
+    lappend qemu_flags -cpu hs6x
     set qemu_arch "arc64"
-} elseif { [check_target_arc64_32] } {
-    lappend qemu_flags \
-	-cpu hs5x
+} elseif {[check_target_arc64_32]} {
+    lappend qemu_flags -cpu hs5x
     set qemu_arch "arc"
 } else {
     perror "Unknown CPU configuration"
 }
 
 # Check if we want a semihosting run
-if ![info exists qemu_serial_io] {
-    lappend qemu_flags  -semihosting
+if {![info exists qemu_serial_io]} {
+    lappend qemu_flags -semihosting
 } else {
     lappend qemu_flags -serial stdio
 }
@@ -77,7 +73,7 @@ set qemu_bin "$::env(QEMU_HOME)/bin/qemu-system-${qemu_arch}"
 
 set_board_info sim_time_limit 300
 # If we test libstdc++ increase the time.
-if { $tool == "libstdc++" } {
+if {$tool == "libstdc++"} {
     set_board_info sim_time_limit 1200
 }
 
@@ -85,9 +81,9 @@ if { $tool == "libstdc++" } {
 set_board_info sim "$qemu_bin [join $qemu_flags]"
 set_board_info is_simulator 1
 
-set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags]"
-set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+set_board_info compiler "[find_gcc]"
+set_board_info cflags "[libgloss_include_flags] [newlib_include_flags]"
+set_board_info ldflags "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 # No linker script needed.
 set_board_info ldscript ""
 

@@ -35,18 +35,16 @@ search_and_load_file "library file" "arc-common.exp" ${boards_dir}
 process_multilib_options [arc_get_multilib_options]
 
 #set QEMU flags
-if ![info exists qemu_flags] {
+if {![info exists qemu_flags]} {
     set qemu_flags {}
 }
 
 # Select processor family.
-if { [check_target_archs] } {
-    lappend qemu_flags \
-	-cpu archs
+if {[check_target_archs]} {
+    lappend qemu_flags -cpu archs
     set qemu_arch "arc"
-} elseif { [check_target_arc64_64] } {
-    lappend qemu_flags \
-	-cpu hs6x
+} elseif {[check_target_arc64_64]} {
+    lappend qemu_flags -cpu hs6x
     set qemu_arch "arc64"
 } else {
     perror "Unknown CPU configuration"
@@ -56,7 +54,7 @@ set qemu_bin "$::env(QEMU_HOME)/bin/qemu-${qemu_arch}"
 
 set_board_info sim_time_limit 300
 # If we test libstdc++ increase the time.
-if { $tool == "libstdc++" } {
+if {$tool == "libstdc++"} {
     set_board_info sim_time_limit 1200
 }
 
@@ -64,7 +62,7 @@ if { $tool == "libstdc++" } {
 set_board_info sim "$qemu_bin [join $qemu_flags]"
 set_board_info is_simulator 1
 
-set_board_info compiler  "[find_gcc]"
+set_board_info compiler "[find_gcc]"
 
 # The simulator returns exit statuses
 set_board_info needs_status_wrapper ""

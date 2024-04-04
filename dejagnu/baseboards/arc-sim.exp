@@ -46,13 +46,15 @@ setup_sim arc
 process_multilib_options [arc_get_multilib_options]
 
 # Extra link flags specific to ARC
-set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
+set xldflags "-Wl,--defsym=__DEFAULT_HEAP_SIZE=256m \
+    -Wl,--defsym=__DEFAULT_STACK_SIZE=32m"
 
 # We only support newlib on this target. We assume that all multilib
 # options have been specified before we get here.
-set_board_info compiler  "[find_gcc]"
-set_board_info cflags    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
-set_board_info ldflags   "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
+set_board_info compiler "[find_gcc]"
+set_board_info cflags \
+    "[libgloss_include_flags] [newlib_include_flags] [arc_get_cflags]"
+set_board_info ldflags "[libgloss_link_flags] ${xldflags} [newlib_link_flags]"
 # No linker script needed.
 set_board_info ldscript ""
 
