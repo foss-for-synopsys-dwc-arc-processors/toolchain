@@ -1,0 +1,24 @@
+name: "Toolchain CI"
+
+on:
+  push:
+    branches: [arc-releases]
+  pull_request:
+    branches: [arc-releases]
+
+jobs:
+  tclint:
+    name: Lint a set of Expect scripts for dejagnu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          pip install tclint
+
+      - name: Lint scripts
+        run: |
+          tclint $(find dejagnu/ \( -name "arc*.exp" -o -name "nsim*.exp" \)) \
+            --show-categories
