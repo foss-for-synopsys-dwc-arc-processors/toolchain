@@ -80,23 +80,26 @@ if { $tool == "libstdc++" } {
 }
 
 # Check if nsim_download_elf_sections option is required - whether nSIM version
-# is > 2015.06. If revision.txt doesn't exist - this is a private verification
-# build of nSIM, so assume that this is the latest version.
+# is > 2015.06 and a target is not ARC-V. If revision.txt doesn't exist - this
+# is a private verification build of nSIM, so assume that this is the latest
+# version.
 set nsim_version_path "$::env(NSIM_HOME)/revision.txt"
-if [file exists $nsim_version_path] {
-    set nsim_version_fid [open $nsim_version_path r]
-    set nsim_version_text [read $nsim_version_fid]
-    close $nsim_version_fid
-    regexp "Version\\s+: (\\d+)\.(\\d+)" $nsim_version_text -> \
-	nsim_version_year nsim_version_month
-    if { $nsim_version_year > 2015 || \
-	($nsim_version_year == 2015 && $nsim_version_month > 6) } {
-	# Avoid performance penalty of useless initialization of heap and stack
-	# sections.
-	lappend nsim_flags "-on nsim_download_elf_sections"
+if {![check_target_arcv]} {
+    if {[file exists $nsim_version_path]} {
+        set nsim_version_fid [open $nsim_version_path r]
+        set nsim_version_text [read $nsim_version_fid]
+        close $nsim_version_fid
+        regexp "Version\\s+: (\\d+)\.(\\d+)" $nsim_version_text -> \
+            nsim_version_year nsim_version_month
+        if {$nsim_version_year > 2015 || \
+            ($nsim_version_year == 2015 && $nsim_version_month > 6)} {
+            # Avoid performance penalty of useless initialization of heap and
+            # stack sections.
+            lappend nsim_flags "-on nsim_download_elf_sections"
+        }
+    } else {
+        lappend nsim_flags "-on nsim_download_elf_sections"
     }
-} else {
-    lappend nsim_flags "-on nsim_download_elf_sections"
 }
 
 # Hostlink library support
@@ -106,8 +109,9 @@ if { [info exists env(ARC_HOSTLINK_LIBRARY)] } {
 } elseif { [info exists env(ARC_NSIM_HOSTLINK)] } {
     set_board_info arc,hostlink $env(ARC_NSIM_HOSTLINK)
 
-    if { [board_info $board arc,hostlink] != "metaware" && \
-	 [board_info $board arc,hostlink] != "nsim" } {
+    if {[board_info $board arc,hostlink] != "metaware" && \
+	 [board_info $board arc,hostlink] != "nsim" && \
+	 [board_info $board arc,hostlink] != "semihost"} {
         perror "Unknown nSIM HOSTLINK type $env(ARC_NSIM_HOSTLINK)"
         exit 1
     }
@@ -210,6 +214,13 @@ if { [check_target_arc64_64] } {
 	-p nsim_isa_family=av2em \
 	-p nsim_isa_core=3 \
 	-on nsim_isa_sat
+} elseif {[check_target_arcv]} {
+    set ext "-all.i.zicsr.zifencei.zihintpause.b.zca.zcb.zcmp.zcmt.a.m.zbb"
+    lappend nsim_flags \
+        -p nsim_isa_family=rv32 \
+        -p nsim_isa_ext=${ext} \
+        -p nsim_semihosting=1 \
+        -off=enable_exceptions
 } else {
     perror "Unknown CPU configuration"
 }

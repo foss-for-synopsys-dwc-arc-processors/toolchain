@@ -49,18 +49,22 @@ proc arc_get_cflags {} {
 
     # Use cflags instead ldflags because lto tests of ld testsuite ignore
     # ldflags
-    if { ![info exists env(ARC_HOSTLINK_LIBRARY)] } {
-	if [board_info $board exists arc,hostlink] {
-	    if { [board_info $board arc,hostlink] == "nsim" } {
-		lappend cflags --specs=nsim.specs
-	    } elseif { [board_info $board arc,hostlink] == "metaware" } {
-		lappend cflags --specs=hl.specs
-	    } else {
-		lappend cflags --specs=nosys.specs
-	    }
-	} else {
-	    lappend cflags --specs=nosys.specs
-	}
+    if {![info exists env(ARC_HOSTLINK_LIBRARY)]} {
+        if {[board_info $board exists arc,hostlink]} {
+            if {[board_info $board arc,hostlink] == "nsim"} {
+                lappend cflags --specs=nsim.specs
+            } elseif {[board_info $board arc,hostlink] == "metaware"} {
+                lappend cflags --specs=hl.specs
+            } elseif {[board_info $board arc,hostlink] == "semihost"} {
+                lappend cflags --specs=semihost.specs --specs=arcv.specs \
+                    -mabi=ilp32 -march=rv32im_zba_zbb_zbs_zca_zcb_zcmp_zicsr \
+                    -T arcv.ld
+            } else {
+                lappend cflags --specs=nosys.specs
+            }
+        } else {
+            lappend cflags --specs=nosys.specs
+        }
     }
 
     # GCC generates improper DWARF info when frame-pointer is involved - all

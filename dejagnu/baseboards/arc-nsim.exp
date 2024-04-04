@@ -100,25 +100,27 @@ if { $tool == "libstdc++" } {
 }
 
 # Check if nsim_download_elf_sections option is required - whether nSIM version
-# is > 2015.06. If revision.txt doesn't exist - this is a private verification
-# build of nSIM, so assume that this is the latest version.
+# is > 2015.06 and a target is not ARC-V. If revision.txt doesn't exist - this
+# is a private verification build of nSIM, so assume that this is the latest
+# version.
 set nsim_version_path "$::env(NSIM_HOME)/revision.txt"
-if [file exists $nsim_version_path] {
-    set nsim_version_fid [open $nsim_version_path r]
-    set nsim_version_text [read $nsim_version_fid]
-    close $nsim_version_fid
-    regexp "Version\\s+: (\\d+)\.(\\d+)" $nsim_version_text -> \
-	nsim_version_year nsim_version_month
-    if { $nsim_version_year > 2015 || \
-	($nsim_version_year == 2015 && $nsim_version_month > 6) } {
-	# Avoid performance penalty of useless initialization of heap and stack
-	# sections.
-	lappend nsim_flags "-on nsim_download_elf_sections"
+if {![check_target_arcv]} {
+    if {[file exists $nsim_version_path]} {
+        set nsim_version_fid [open $nsim_version_path r]
+        set nsim_version_text [read $nsim_version_fid]
+        close $nsim_version_fid
+        regexp "Version\\s+: (\\d+)\.(\\d+)" $nsim_version_text -> \
+            nsim_version_year nsim_version_month
+        if {$nsim_version_year > 2015 || \
+	        ($nsim_version_year == 2015 && $nsim_version_month > 6)} {
+            # Avoid performance penalty of useless initialization of heap and
+            # stack sections.
+            lappend nsim_flags "-on nsim_download_elf_sections"
+        }
+    } else {
+        lappend nsim_flags "-on nsim_download_elf_sections"
     }
-} else {
-    lappend nsim_flags "-on nsim_download_elf_sections"
 }
-
 set_board_info nsim_flags [join $nsim_flags]
 
 # nSIM is an exclusive resource -- only one client can connect at a time.
