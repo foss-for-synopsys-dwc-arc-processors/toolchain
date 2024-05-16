@@ -215,7 +215,8 @@ if {[check_target_arc64_64]} {
         -p nsim_isa_core=3 \
         -on nsim_isa_sat
 } elseif {[check_target_arcv]} {
-    set ext "-all.i.zicsr.zifencei.zihintpause.b.zca.zcb.zcmp.zcmt.a.m.zbb"
+    set ext \
+        "-all.i.zicsr.zifencei.zihintpause.b.zca.zcb.zcmp.zcmt.a.m.zbb.zba.zbs"
     lappend nsim_flags \
         -p nsim_isa_family=rv32 \
         -p nsim_isa_ext=${ext} \
