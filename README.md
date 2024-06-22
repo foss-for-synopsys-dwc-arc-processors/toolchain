@@ -15,6 +15,15 @@ While the top of *development* branches should build and run reliably, there
 is no guarantee of this. Users who encountered an error are welcomed to create
 a new bug report at GitHub Issues for this `toolchain` project.
 
+## Documentation
+
+There are several documentation sites for ARC GNU toolchain:
+
+1. [GNU toolchain documentation site](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation) - the documentation site for ARC Classic targets.
+2. [ARC-V Processors Getting Started](https://foss-for-synopsys-dwc-arc-processors.github.io/arc-v-getting-started) - the documentation for ARC-V targets.
+3. [Old GNU toolchain documentation site](https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/) - the documentation site for ARC Classic targets
+for release 2023.03 and earlier.
+
 ## Build environment
 
 The toolchain building is being done by [Crosstool-NG](https://github.com/crosstool-ng/crosstool-ng)
@@ -211,6 +220,8 @@ The following pre-defined configurations (they are called "samples" on Crosstool
 1. `snps-arc64-snps-linux-gnu` - Linux glibc cross-toolchain for for ARC HS6x processors for 64-bit Linux hosts
 1. `snps-arc64-snps-native-gnu` -  Linux glibc "native" toolchain from ARC HS6x processors
 1. `snps-arc64-unknown-elf` - Bare-metal cross-toolchain for ARC HS6x processors for 64-bit Linux hosts
+1. `snps-riscv64-unknown-elf` - Bare-metal cross-toolchain for ARC-V processors for 64-bit Linux hosts
+1. `snps-riscv64-win-elf` - Bare-metal cross-toolchain for ARC-V processors for 64-bit Windows hosts
 
 And to get Crosstool-NG configured with either of those samples just say: `./ct-ng sample_name`. For example, to get bare-metal toolchain for ARCompact/ARCv2 processors say: `./ct-ng snps-arc-multilib-elf32`.
 
@@ -225,9 +236,9 @@ and make all the settings manually. For that just say `./ct-ng menuconfig` and u
 
 The most interesting options for toolchain users might be:
 
-* Selection of the default target CPU model. To change it go to `Target options -> Emit assembly for CPU` and specify one of the possible values for GCC's `-mcpu` option, see <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/Understanding-GCC-mcpu-option> for the reference.
-* Selection of ARC64 processors. For that go to  `Target options -> Bitness` and select `64-bit`.
-* `CFLAGS` to be used for compilation of libraries for the target. Those might be set in  `Target options -> Target CFLAGS`.
+* Selection of the default target CPU model. To change it go to `Target options -> Emit assembly for CPU` and specify one of the possible values for GCC's `-mcpu` option (refer to [documentation](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/toolchain/target-options/) for details).
+* Selection of ARC64 processors. For that go to `Target options -> Bitness` and select `64-bit`.
+* `CFLAGS` to be used for compilation of libraries for the target. Those might be set in `Target options -> Target CFLAGS`.
 
 ## Building a toolchain with Crosstool-NG
 
@@ -322,9 +333,14 @@ Prefixes which start with `arc-` correspond to little endian toolchains. Prefixe
 `arceb-elf32-gdb`. However, big endian tools are not available for ARCv3 yet.
 
 You can find more information about variants of toolchains, `-mcpu` values
-and matching TCF files in [ARC Toolchain Variants](https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/gcc-mcpu.html) page.
+and matching TCF files on [Toolchains for ARC Processors](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/toolchain/) page.
 
 ### Using nSIM simulator to run bare metal ARC applications
+
+> Refer to [nSIM](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/simulators/nsim/)
+> page of the documentation for details. Refer to
+> [GNU tools for ARC-V](https://foss-for-synopsys-dwc-arc-processors.github.io/arc-v-getting-started/synopsys-tools/gnu.html)
+> for details regarding running ARC-V applications on simulators.
 
 nSIM simulator supports GNU IO hostlink used by the libc library of bare metal
 GNU toolchain for ARC. nSIM option `nsim_emt=1` enables GNU IO hostlink. nSIM
@@ -404,25 +420,24 @@ developing for hardware platform which doesn't have hostlink support is that
 while `exit` functions `nosys.specs` is an infinite loop. For more details
 please see [documentation](https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/index.html).
 
-### Using EM Starter Kit to run bare metal ARC EM application
+### Using HS Development Kit to run bare metal applications
 
-> A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building an application" of our EM Starter Kit page:
-> <https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/em-starter-kit.html>
-
-Build instructions for OpenOCD are available at its page:
-<https://github.com/foss-for-synopsys-dwc-arc-processors/openocd/blob/arc-2021.09/doc/README.ARC>
+> Refer to [Getting OpenOCD](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/platforms/get-openocd/)
+> and [Using OpenOCD](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/platforms/use-openocd/)
+> pages of the documentation for details regarding OpenOCD. Refer to
+> [Baremetal Targets](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/baremetal/)
+> regarding building and running applications on boards.
 
 To run OpenOCD:
 
 ```shell
-openocd -f /usr/local/share/openocd/scripts/board/snps_em_sk_v2.3.cfg
+openocd -f board/snps_hsdk.cfg
 ```
 
 Compile test application and run:
 
 ```shell
-$ arc-elf32-gcc -mcpu=em4_dmips -g --specs=emsk_em9d.specs simple.c
+$ arc-elf32-gcc -mcpu=hs38_linux -specs=hsdk.specs -g simple.c
 $ arc-elf32-gdb --quiet a.out
 (gdb) target remote :3333
 (gdb) load
@@ -434,66 +449,6 @@ $ arc-elf32-gdb --quiet a.out
 (gdb) continue
 (gdb) quit
 ```
-
-### Using Ashling Opella-XD debug probe to debug bare metal applications
-
-> A custom linker script is required to link applications for EM Starter Kit.
-> Refer to the section "Building an application" of our EM Starter Kit page:
-> <https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/em-starter-kit.html>
-> For different hardware configurations other changes might be required.
->
-> The Ashling Opella-XD debug probe and its drivers are not part of the GNU
-> tools distribution and should be obtained separately.
-
-The Ashling Opella-XD drivers distribution contains gdbserver for GNU toolchain.
-Command to start it:
-
-```shell
-$ ./ash-arc-gdb-server --jtag-frequency 8mhz --device arc \
-    --arc-reg-file <core.xml>
-```
-
-Where <core.xml> is a path to XML file describing AUX registers of target core.
-The Ashling drivers distribution contain files for ARC 600 (arc600-core.xml)
-and ARC 700 (arc700-core.xml). However due to recent changes in GDB with
-regards of support of XML target descriptions those files will not work out of
-the box, as order of some registers changed. To use Ashling GDB server with GDB
-starting from 2015.06 release, it is required to use modified files that can be
-found in this `toolchain` repository in `extras/opella-xd` directory.
-
-*Before* connecting GDB to an Opella-XD gdbserver it is essential to specify
-path to XML target description file that is aligned to `<core.xml>` file passed
-to GDB server. All registers described in `<core.xml>` also must be described
-in XML target description file in the same order. Otherwise GDB will not
-function properly.
-
-```shell
-(gdb) set tdesc filename <path/to/opella-CPU-tdesc.xml>
-```
-
-XML target description files are provided in the same `extras/opella-xd`
-directory as Ashling GDB server core files.
-
-Then connect to the target as with the OpenOCD/Linux gdbserver. For example a
-full session with an Opella-XD controlling an ARC EM target could start as
-follows:
-
-```shell
-$ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs simple.c
-$ arc-elf32-gdb --quiet a.out
-(gdb) set tdesc filename toolchain/extras/opella-xd/opella-arcem-tdesc.xml
-(gdb) target remote :2331
-(gdb) load
-(gdb) break main
-(gdb) continue
-(gdb) break exit
-(gdb) continue
-# Register R0 contains exit code of function main()
-(gtb) info reg r0
-(gdb) quit
-```
-
-Similar to OpenOCD hostlink is not available in GDB with Ashling Opella-XD.
 
 ### Debugging applications on Linux for ARC
 
