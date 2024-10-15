@@ -3,8 +3,12 @@ name: "Toolchain CI"
 on:
   push:
     branches: [arc-releases]
+    paths:
+      - dejagnu/**
   pull_request:
     branches: [arc-releases]
+    paths:
+      - dejagnu/**
 
 jobs:
   tclint:
