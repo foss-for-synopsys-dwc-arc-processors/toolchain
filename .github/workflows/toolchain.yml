@@ -5,10 +5,12 @@ on:
     branches: [arc-releases]
     paths:
       - dejagnu/**
+      - .github/workflows/**
   pull_request:
     branches: [arc-releases]
     paths:
       - dejagnu/**
+      - .github/workflows/**
 
 jobs:
   tclint:

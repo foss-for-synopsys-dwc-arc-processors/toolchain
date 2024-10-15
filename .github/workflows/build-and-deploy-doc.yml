@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - doc/**
+      - .github/workflows/**
 
   pull_request:
     paths:
       - doc/**
+      - .github/workflows/**
 
   workflow_dispatch:
     inputs:
