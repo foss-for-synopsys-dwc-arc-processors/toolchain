@@ -1,4 +1,5 @@
-name: "Build and deploy doumentation"
+name: "Build and deploy documentation"
+
 on:
   push:
     paths:
