@@ -39,3 +39,10 @@ jobs:
         with:
           branch: gh-pages
           folder: doc/_build/html
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: html_doc
+          path: doc/_build/html
+          retention-days: 7
