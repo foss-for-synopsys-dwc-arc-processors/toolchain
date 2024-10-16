@@ -3,16 +3,22 @@ name: "Toolchain CI"
 on:
   push:
     branches: [arc-releases]
+    paths:
+      - dejagnu/**
+      - .github/workflows/**
   pull_request:
     branches: [arc-releases]
+    paths:
+      - dejagnu/**
+      - .github/workflows/**
 
 jobs:
   tclint:
     name: Lint a set of Expect scripts for dejagnu
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
