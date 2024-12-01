@@ -55,7 +55,7 @@ lappend nsim_flags \
 
 set nsim_bin "$::env(NSIM_HOME)/bin/nsimdrv"
 
-set_board_info sim_time_limit 300
+set_board_info sim_time_limit 600
 
 # Detect if nSIM Turbo is available and libstdc++ is being tested.  Most of the
 # Dejagnu tests do not benefit from Turbo mode, because they are extremely
