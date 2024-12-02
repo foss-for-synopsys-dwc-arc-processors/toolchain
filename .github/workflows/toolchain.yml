@@ -26,5 +26,4 @@ jobs:
 
       - name: Lint scripts
         run: |
-          tclint $(find dejagnu/ \( -name "arc*.exp" -o -name "nsim*.exp" \)) \
-            --show-categories
+          tclint $(find dejagnu/ \( -name "arc*.exp" -o -name "nsim*.exp" \))
