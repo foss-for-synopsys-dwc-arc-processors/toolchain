@@ -57,7 +57,6 @@ proc arc_get_cflags {} {
                 lappend cflags --specs=hl.specs
             } elseif {[board_info $board arc,hostlink] == "semihost"} {
                 lappend cflags --specs=semihost.specs --specs=arcv.specs \
-                    -mabi=ilp32 -march=rv32im_zba_zbb_zbs_zca_zcb_zcmp_zicsr \
                     -T arcv.ld
             } else {
                 lappend cflags --specs=nosys.specs
