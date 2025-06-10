@@ -4,17 +4,6 @@ This is the main Git repository for the ARC GNU toolchain. It contains
 documentation & various supplementary materials required for development,
 verification & releasing of pre-built toolchain artifacts.
 
-Branches in this repository are:
-
-* `arc-releases` is the stable branch for the toolchain release. Head of
-  this branch is a latest stable release. It is a branch recommended for most
-  users
-* `arc-dev` is the development branch for the current toolchain release
-
-While the top of *development* branches should build and run reliably, there
-is no guarantee of this. Users who encountered an error are welcomed to create
-a new bug report at GitHub Issues for this `toolchain` project.
-
 ## Documentation
 
 There are several documentation sites for ARC GNU toolchain:
@@ -22,7 +11,7 @@ There are several documentation sites for ARC GNU toolchain:
 1. [GNU toolchain documentation site](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation) - the documentation site for ARC Classic targets.
 2. [ARC-V Processors Getting Started](https://foss-for-synopsys-dwc-arc-processors.github.io/arc-v-getting-started) - the documentation for ARC-V targets.
 3. [Old GNU toolchain documentation site](https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/) - the documentation site for ARC Classic targets
-for release 2023.03 and earlier.
+for release `arc-2023.03` and earlier.
 
 ## Build environment
 
@@ -64,8 +53,8 @@ execution of a prebuilt toolchain it's necessary to use up-to-date Linux distrib
 
 As of today, the oldest supported distributions are:
 
-* CentOS/RHEL 7
-* Ubuntu 18.04 LTS
+* Ubuntu 22.04 LTS
+* RHEL/AlmaLinux 8
 
 ## Prerequisites
 
@@ -73,11 +62,38 @@ GNU toolchain for ARC has the same standard prerequisites as an upstream GNU
 toolchain as documented in the GNU toolchain user guide or on the [GCC
 website](http://gcc.gnu.org/install/prerequisites.html)
 
-### Autoconf
+### Ubuntu 22.04
 
-Starting from version 2023.03, Crosstool-NG which is used for building toolchains, requires Autoconf 2.71
-instead of 2.67. It may not be available on old Linux distributions. In this case you can build it manually
-(use your own prefix):
+```shell
+sudo apt update
+sudo apt install -y autoconf help2man libtool libtool-bin texinfo byacc flex libncurses5-dev zlib1g-dev \
+                    libexpat1-dev texlive build-essential git wget gawk libncursesw5 \
+                    bison xz-utils make python3 rsync locales meson ninja-build
+```
+
+### RHEL/AlmaLinux 8
+
+Some packages like `gperf`, `help2man` & `texinfo` are not available in a base
+package repositories, instead they are distributed via so-called "PowerTools Repository",
+to enable it, do the following:
+
+```shell
+sudo dnf -y install dnf-plugins-core
+sudo dnf config-manager --set-enabled powertools
+```
+
+Then install all necessary packages:
+
+```shell
+sudo dnf install -y autoconf bison bzip2 diffutils file flex gcc-c++ git \
+                    gperf help2man libtool make ncurses-devel patch \
+                    perl-Thread-Queue python3 rsync texinfo unzip wget \
+                    which xz meson ninja-build
+```
+
+Autoconf 2.71 is required for configuring Crosstool-NG instead of 2.67. By default,
+RHEL/AlmaLinux 8 is shipped with Autoconf 2.67. In this case you should build Autoconf 2.71
+manually (use your own prefix):
 
 ```shell
 wget https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
@@ -92,63 +108,6 @@ Then configure your environment:
 
 ```shell
 export PATH="/tools/autoconf2.71/bin:$PATH"
-```
-
-### Ubuntu 18.04 and newer
-
-```shell
-sudo apt update
-sudo apt install -y autoconf help2man libtool libtool-bin texinfo byacc flex libncurses5-dev zlib1g-dev \
-                    libexpat1-dev texlive build-essential git wget gawk libncursesw5 \
-                    bison xz-utils make python3 rsync locales
-```
-
-### CentOS/RHEL 7.x
-
-```shell
-sudo yum install -y autoconf bison bzip2 file flex gcc-c++ git gperf \
-                    help2man libtool make ncurses-devel patch \
-                    perl-Thread-Queue python3 rsync texinfo unzip wget \
-                    which xz
-```
-
-The latest Crosstool-NG may require building tools newer than tools which are shipped
-with CentOS 7 by default (for example, there are GCC 4.8.5 and Make 3.82). At least
-it's not enough anymore for building ARC toolchain for Windows hosts. In this
-case consider using `centos-release-scl` repository to install the latest tools:
-
-```shell
-# Install fresh tools
-sudo yum install centos-release-scl
-sudo yum install devtoolset-9
-
-# Enable them in a new Bash session
-scl enable devtoolset-9 bash
-```
-
-### Fedora & CentOS/RHEL 8.x
-
-#### Enabling "PowerTools" repository for CentOS/RHEL 8.x
-
-Some packages like `gperf`, `help2man` & `texinfo` are not available in a base
-package repositories, instead they are distributed via so-called "PowerTools Repository",
-to enable it, do the following:
-
-```shell
-sudo dnf -y install dnf-plugins-core
-sudo dnf config-manager --set-enabled powertools
-```
-
-Then install all the packages in the same way as it is done for Fedora in the next
-section.
-
-#### Packages installation in Fedora, CentOS/RHEL 8.x
-
-```shell
-sudo dnf install -y autoconf bison bzip2 diffutils file flex gcc-c++ git \
-                    gperf help2man libtool make ncurses-devel patch \
-                    perl-Thread-Queue python3 rsync texinfo unzip wget \
-                    which xz
 ```
 
 ### Locale installation for building uClibc
@@ -183,11 +142,13 @@ git clone https://github.com/foss-for-synopsys-dwc-arc-processors/crosstool-ng.g
 # Step into the just obtained source tree
 cd crosstool-ng
 
-# Optionally select its version of choice, for example the one used for creation of `arc-2021.09` release
-git checkout arc-2021.09-release
+# Optionally select its version of choice, for example the one used for creation of `arc-2024.12` release
+git checkout arc-2024.12-release
 
 # Configure & build Crosstool-NG
-./bootstrap && ./configure --enable-local && make
+./bootstrap
+./configure --enable-local
+make
 ```
 
 ## Building the Toolchain
@@ -220,7 +181,7 @@ The following pre-defined configurations (they are called "samples" on Crosstool
 1. `snps-arc64-snps-linux-gnu` - Linux glibc cross-toolchain for for ARC HS6x processors for 64-bit Linux hosts
 1. `snps-arc64-snps-native-gnu` -  Linux glibc "native" toolchain from ARC HS6x processors
 1. `snps-arc64-unknown-elf` - Bare-metal cross-toolchain for ARC HS6x processors for 64-bit Linux hosts
-1. `snps-riscv64-unknown-elf` - Bare-metal cross-toolchain for ARC-V processors for 64-bit Linux hosts
+1. `snps-riscv64-unknown-elf` - Bare-metal cross-toolchain for ARC-V processors with Newlib standard library for 64-bit Linux hosts
 1. `snps-riscv64-win-elf` - Bare-metal cross-toolchain for ARC-V processors for 64-bit Windows hosts
 
 And to get Crosstool-NG configured with either of those samples just say: `./ct-ng sample_name`. For example, to get bare-metal toolchain for ARCompact/ARCv2 processors say: `./ct-ng snps-arc-multilib-elf32`.
@@ -280,8 +241,8 @@ Some limitations apply:
 To do a canadian-cross toolchain on Linux, MinGW toolchain must be installed on the build host.
 There're muliple ways to get MinGW installed:
 
-* On Ubuntu 18.04 & 20.04 that can be done with: `sudo apt install mingw-w64`
-* On CentOS/RHEL 8.x it's a bit more challenging:
+* On Ubuntu 22.04 that can be done with: `sudo apt install mingw-w64`
+* On RHEL/AlmaLinux 8.x it's a bit more challenging:
 
     ```shell
     sudo dnf -y install dnf-plugins-core
@@ -328,154 +289,28 @@ For example:
 * With `snps-arc-multilib-elf32` sample built toolchain will be installed in `~/x-tools/arc-snps-elf`
 * With `snps-arc64-unknown-elf` sample built toolchain will be installed in `~/x-tools/arc64-snps-elf`
 
-Prefixes which start with `arc-` correspond to little endian toolchains. Prefixes which start with
-`arceb-` correspond to big endian toolchains. E.g., GDB for big endian ARCv2 baremetal toolchain is
-`arceb-elf32-gdb`. However, big endian tools are not available for ARCv3 yet.
+You can find general information about GNU ARC toolchains on the official
+documentation page:
 
-You can find more information about variants of toolchains, `-mcpu` values
-and matching TCF files on [Toolchains for ARC Processors](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/toolchain/) page.
+1. [GNU toolchain for ARC Classic](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/toolchain/)
+2. [GNU toolchain for ARC-V](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/arcv/)
 
-### Using nSIM simulator to run bare metal ARC applications
+Also, detailed usage examples for various targets and platform may found on [the official
+documentation page](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/):
 
-> Refer to [nSIM](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/simulators/nsim/)
-> page of the documentation for details. Refer to
-> [GNU tools for ARC-V](https://foss-for-synopsys-dwc-arc-processors.github.io/arc-v-getting-started/synopsys-tools/gnu.html)
-> for details regarding running ARC-V applications on simulators.
+Usage examples for ARC Classic:
 
-nSIM simulator supports GNU IO hostlink used by the libc library of bare metal
-GNU toolchain for ARC. nSIM option `nsim_emt=1` enables GNU IO hostlink. nSIM
-simulator also supports semihosting, which is essential for ARC-V targets, more
-details can be found in nSIM documentation.
+* [Building baremetal applications for ARC Classic and running them on nSIM](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/baremetal/simulators/nsim/)
+* [Building baremetal applications for ARC Classic and running them on HS Development Kit](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/baremetal/hardware/hsdk/)
+* [Building baremetal applications for ARC Classic and running them on EM Software Development Platform](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/baremetal/hardware/emsdp/)
+* [Debugging applications on Linux](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/linux/hsdk/build/#debugging-applications-using-gdbserver)
 
-To start nSIM in gdbserver mode for ARC EM6:
+Usage examples for ARC-V:
 
-```shell
-$ $NSIM_HOME/bin/nsimdrv -gdb -port 51000 \
-  -tcf $NSIM_HOME/etc/tcf/templates/em6_gp.tcf -on nsim_emt
-```
-
-And in second console (GDB output is omitted):
-
-```shell
-$ arc-elf32-gcc -mcpu=arcem -g --specs=nsim.specs hello_world.c
-$ arc-elf32-gdb --quiet a.out
-(gdb) target remote :51000
-(gdb) load
-(gdb) break main
-(gdb) break exit
-(gdb) continue
-(gdb) continue
-(gdb) quit
-```
-
-GDB also might execute commands in a batch mode so that it could be done
-automatically:
-
-```shell
-$ arc-elf32-gdb -nx --batch -ex 'target remote :51000' -ex 'load' \
-                            -ex 'break main' -ex 'break exit' \
-                            -ex 'continue' -ex 'continue' -ex 'quit' a.out
-```
-
-If one of the HS TCFs is used, then it is required to add `-on
-nsim_isa_ll64_option` to nSIM options, because GCC for ARC automatically
-generates double-world memory operations, which are not enabled in TCFs
-supplied with nSIM:
-
-```shell
-$ $NSIM_HOME/bin/nsimdrv -gdb -port 51000 \
-  -tcf $NSIM_HOME/etc/tcf/templates/hs36.tcf -on nsim_emt \
-  -on nsim_isa_ll64_option
-```
-
-nSIM distribution doesn't contain big-endian TCFs, so `-on
-nsim_isa_big_endian` should be added to nSIM options to simulate big-endian
-cores:
-
-```shell
-$ $NSIM_HOME/bin/nsimdrv -gdb -port 51000 \
-  -tcf $NSIM_HOME/etc/tcf/templates/em6_gp.tcf -on nsim_emt \
-  -on nsim_isa_big_endian
-```
-
-Default linker script of GNU Toolchain for ARC is not compatible with memory
-maps of cores that only has CCM memory (EM4, EM5D, HS34), thus to run
-application on nSIM with those TCFs it is required to link application with
-linker script appropriate for selected core.
-
-When application is simulated on nSIM gdbserver all input and output happens on
-the side of host that runs gdbserver, so in "hello world" example string will
-be printed in the console that runs nSIM gdbserver.
-
-Note the usage of `nsim.specs` specification file. This file specifies that
-applications should be linked with nSIM IO hostlink library libnsim.a, which is
-implemented in libgloss - part of newlib project. libnsim provides several
-functions that are required to link C applications - those functions a
-considered board/OS specific, hence are not part of the normal libc.a. To link
-application without nSIM IO hostlink support use `nosys.specs` file - note that
-in this case system calls are either not available or have stub
-implementations. One reason to prefer `nsim.specs` over `nosys.specs` even when
-developing for hardware platform which doesn't have hostlink support is that
-`nsim` will halt target core on call to function "exit" and on many errors,
-while `exit` functions `nosys.specs` is an infinite loop. For more details
-please see [documentation](https://foss-for-synopsys-dwc-arc-processors.github.io/toolchain/baremetal/index.html).
-
-### Using HS Development Kit to run bare metal applications
-
-> Refer to [Getting OpenOCD](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/platforms/get-openocd/)
-> and [Using OpenOCD](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/platforms/use-openocd/)
-> pages of the documentation for details regarding OpenOCD. Refer to
-> [Baremetal Targets](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2024.06/baremetal/)
-> regarding building and running applications on boards.
-
-To run OpenOCD:
-
-```shell
-openocd -f board/snps_hsdk.cfg
-```
-
-Compile test application and run:
-
-```shell
-$ arc-elf32-gcc -mcpu=hs38_linux -specs=hsdk.specs -g simple.c
-$ arc-elf32-gdb --quiet a.out
-(gdb) target remote :3333
-(gdb) load
-(gdb) break main
-(gdb) continue
-(gdb) step
-(gdb) next
-(gdb) break exit
-(gdb) continue
-(gdb) quit
-```
-
-### Debugging applications on Linux for ARC
-
-Compile application:
-
-```shell
-arc-linux-gcc -g -o hello_world hello_world.c
-```
-
-Copy it to the NFS share, or place it in rootfs, or make it available to target
-system in any way other way. Start gdbserver on target system:
-
-```shell
-[ARCLinux] # gdbserver :51000 hello_world
-```
-
-Start GDB on the host:
-
-```shell
-$ arc-linux-gdb --quiet hello_world
-(gdb) set sysroot <buildroot/output/target>
-(gdb) target remote 192.168.218.2:51000
-(gdb) break main
-(gdb) continue
-(gdb) continue
-(gdb) quit
-```
+* [Building applications with Picolibc](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/arcv/building-picolibc/)
+* [Building applications with Newlib](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/arcv/building-newlib/)
+* [Running on nSIM](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/arcv/nsim/)
+* [Running on QEMU](https://foss-for-synopsys-dwc-arc-processors.github.io/documentation/2025.06/arcv/qemu/)
 
 ## Getting help
 
