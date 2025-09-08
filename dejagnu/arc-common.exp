@@ -56,8 +56,14 @@ proc arc_get_cflags {} {
             } elseif {[board_info $board arc,hostlink] == "metaware"} {
                 lappend cflags --specs=hl.specs
             } elseif {[board_info $board arc,hostlink] == "semihost"} {
-                lappend cflags --specs=semihost.specs --specs=arcv.specs \
-                    -T arcv.ld
+                # Special case for picolibc
+                if {[istarget "riscv*-snps-elf-picolibc"]} {
+                    lappend cflags --specs=picolibcpp.specs --crt0=semihost \
+                        --oslib=semihost
+                } else {
+                    lappend cflags --specs=semihost.specs --specs=arcv.specs \
+                        -T arcv.ld
+               }
             } else {
                 lappend cflags --specs=nosys.specs
             }
