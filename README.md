@@ -182,7 +182,9 @@ The following pre-defined configurations (they are called "samples" on Crosstool
 1. `snps-arc64-snps-native-gnu` -  Linux glibc "native" toolchain from ARC HS6x processors
 1. `snps-arc64-unknown-elf` - Bare-metal cross-toolchain for ARC HS6x processors for 64-bit Linux hosts
 1. `snps-riscv64-unknown-elf` - Bare-metal cross-toolchain for ARC-V processors with Newlib standard library for 64-bit Linux hosts
-1. `snps-riscv64-win-elf` - Bare-metal cross-toolchain for ARC-V processors for 64-bit Windows hosts
+1. `snps-riscv64-elf-win` - Bare-metal cross-toolchain for ARC-V processors with Newlib standard library for 64-bit Windows hosts
+1. `snps-riscv64-snps-elf-picolibc` - Bare-metal cross-toolchain for ARC-V processors with Picolibc standard library for 64-bit Linux hosts
+1. `snps-riscv64-elf-win-picolibc` - Bare-metal cross-toolchain for ARC-V processors with Picolibc standard library for 64-bit Windows hosts
 
 And to get Crosstool-NG configured with either of those samples just say: `./ct-ng sample_name`. For example, to get bare-metal toolchain for ARCompact/ARCv2 processors say: `./ct-ng snps-arc-multilib-elf32`.
 
