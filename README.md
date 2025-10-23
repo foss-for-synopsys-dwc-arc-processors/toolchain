@@ -153,6 +153,9 @@ make
 
 ## Building the Toolchain
 
+> :warning: Note, that `PATH` should not contain toolchains for the same target
+> to prevent builds issue. `LD_LIBRARY_PATH` should be unset as well.
+
 Once Crosstool-NG is built and ready for use it's very easy to get a toolchain
 of choice to be built. One just needs to decide on configuration options
 to be used for toolchain building or use one of the existing pre-defined
