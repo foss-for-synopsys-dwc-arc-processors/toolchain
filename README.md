@@ -56,6 +56,9 @@ As of today, the oldest supported distributions are:
 * Ubuntu 22.04 LTS
 * RHEL/AlmaLinux 8
 
+A host machine must have at least 8GB of RAM and 200GB of disk space
+to successfully build any of the toolchains listed below.
+
 ## Prerequisites
 
 GNU toolchain for ARC has the same standard prerequisites as an upstream GNU
