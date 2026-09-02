@@ -57,7 +57,7 @@ proc arc_get_cflags {} {
                 lappend cflags --specs=hl.specs
             } elseif {[board_info $board arc,hostlink] == "semihost"} {
                 # Special case for picolibc
-                if {[istarget "riscv*-snps-elf-picolibc"]} {
+                if {[istarget "riscv*-gf-elf-picolibc"]} {
                     lappend cflags --specs=picolibcpp.specs --crt0=semihost \
                         --oslib=semihost
                 } else {
