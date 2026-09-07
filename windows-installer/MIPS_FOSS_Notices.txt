@@ -1,6 +1,6 @@
-Synopsys® free and open-source licensing notices for:
-* GNU Toolchain for ARC® Processors
-* Eclipse IDE with GNU Toolchain for ARC® Processors
+MIPS Holding, Inc. free and open-source licensing notices for MIPS ARC® processors:
+* GNU Toolchain for MIPS ARC® Processors
+* Eclipse IDE with GNU Toolchain for MIPS ARC® Processors
 
 CONTENTS
 Document Overview
@@ -28,17 +28,15 @@ Oracle Binary Code License Agreement for Java SE Platform Products and JavaFX
 
 
 Document Overview
-This document includes licensing information relating to free and open-source software (“FOSS”) included in source and binary distributions of GNU Toolchain for ARC® Processors and Eclipse IDE with GNU Toolchain for ARC® Processors (the “Software”).  The terms of the applicable FOSS license(s) govern Synopsys’s® distribution and your use of the Software.  Synopsys® and the other authors, licensors, and distributors of the FOSS have disclaimed all warranties relating to any liability arising from all use and distribution of the FOSS.
-Synopsys® has reproduced below copyright and other licensing notices appearing within the FOSS packages.  While Synopsys® seeks to provide complete and accurate copyright and licensing information for each FOSS package, Synopsys® does not represent or warrant that the licensing information provided is complete, correct, or error-free.  Recipients of the Software are encouraged to (a) investigate the identified FOSS packages to confirm the accuracy of the licensing information provided herein and (b) notify Synopsys® of any inaccurate information or errors found in this document.
-Certain FOSS Licenses, such as the GNU General Public License, GNU Lesser (or Library) General Public License, and Ecplipse Public License, require that Synopsys® make the source code corresponding to those distributed FOSS binaries available under the terms of the same FOSS License.   Recipients who would like to receive a copy of such corresponding source code should submit a request to Synopsys® by post at:
-Synopsys
+This document includes licensing information relating to free and open-source software (“FOSS”) included in source and binary distributions of GNU Toolchain for MIPS ARC® Processors and Eclipse IDE with GNU Toolchain for MIPS ARC® Processors (the “Software”).  The terms of the applicable FOSS license(s) govern MIPS Holding, Inc.'s distribution and your use of the Software.  MIPS Holding, Inc. and the other authors, licensors, and distributors of the FOSS have disclaimed all warranties relating to any liability arising from all use and distribution of the FOSS.
+MIPS Holding, Inc. has reproduced below copyright and other licensing notices appearing within the FOSS packages.  While MIPS Holding, Inc. seeks to provide complete and accurate copyright and licensing information for each FOSS package, MIPS Holding, Inc. does not represent or warrant that the licensing information provided is complete, correct, or error-free.  Recipients of the Software are encouraged to (a) investigate the identified FOSS packages to confirm the accuracy of the licensing information provided herein and (b) notify MIPS Holding, Inc. of any inaccurate information or errors found in this document.
+Certain FOSS Licenses, such as the GNU General Public License, GNU Lesser (or Library) General Public License, and Ecplipse Public License, require that MIPS Holding, Inc. make the source code corresponding to those distributed FOSS binaries available under the terms of the same FOSS License.   Recipients who would like to receive a copy of such corresponding source code should submit a request to MIPS Holding, Inc. at:
+MIPS Holding, Inc.
 Attn: Open Source Requests
-700 East Middlefield Road
-Mountain View, CA 94043
 Please provide the following information in all submitted FOSS requests:
 * the FOSS packages for which you are requesting source code;
-* the Synopsys® product (and any available version information) with which the requested FOSS packages are distributed;
-* an email address at which Synopsys® may contact you regarding the request (if available); and
+* the MIPS Holding, Inc. product (and any available version information) with which the requested FOSS packages are distributed;
+* an email address at which MIPS Holding, Inc. may contact you regarding the request (if available); and
 * the postal address for delivery of the requested source code.
 Document Key
 Formatting

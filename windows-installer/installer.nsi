@@ -72,7 +72,7 @@ RequestExecutionLevel admin
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_RIGHT
-!define MUI_HEADERIMAGE_BITMAP "snps_logo.bmp"
+!define MUI_HEADERIMAGE_BITMAP "mips_arc_logo.bmp"
 
 !insertmacro MUI_PAGE_LICENSE "Synopsys_FOSS_Notices.txt"
 !insertmacro MUI_PAGE_COMPONENTS
