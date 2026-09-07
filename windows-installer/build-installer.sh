@@ -114,7 +114,7 @@ echo "Creating installer..."
 # all of them are in current directory.
 cp toolchain/windows-installer/*.nsi .
 cp toolchain/windows-installer/*.nsh .
-cp toolchain/windows-installer/snps_logo.bmp .
+cp toolchain/windows-installer/mips_arc_logo.bmp .
 cp toolchain/windows-installer/Synopsys_FOSS_Notices.txt .
 /u/svc-arcoss_auto/tools/nsis-3.06.1/Bin/makensis -Darcver=$RELEASE installer.nsi
 
